@@ -1,0 +1,120 @@
+class LinkedList {
+    Node head;
+    private Node tail;
+
+    void addNode(int data) {
+        Node node = new Node(data);
+        if (head == null) {
+            head = tail = node;
+        }
+        else {
+            tail.next = node;
+            tail = node;
+        }
+    }
+
+    // https://www.interviewbit.com/problems/palindrome-list/
+    boolean isPalindrome() {
+        if (head == null || head.next == null)
+            return true;
+
+        boolean palindrome = false;
+        Node slow = head, fast = head, slow_prev = null, mid;
+        while (fast != null && fast.next != null) {
+            slow_prev = slow;
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        if (fast == null)
+            mid = slow_prev;
+        else
+            mid = slow;
+
+        Node second_head = mid.next;
+        mid.next = null;
+
+        second_head = reverse(second_head);
+        Node n1 = head, n2 = second_head;
+        while (n1 != null && n2 != null) {
+            if (n1.data != n2.data)
+                break;
+            n1 = n1.next;
+            n2 = n2.next;
+        }
+        if (n1 == null || n2 == null)
+            palindrome = true;
+        return palindrome;
+    }
+
+    static void print(Node head) {
+        if (head == null) {
+            System.out.println("Empty list");
+            return;
+        }
+        Node curr = head;
+        while (curr != null) {
+            System.out.print(curr.data);
+            if (curr.next != null)
+                System.out.print(" -> ");
+            curr = curr.next;
+        }
+        System.out.println();
+    }
+
+    static Node reverse(Node head) {
+        Node curr = head, prev = null, next;
+        while (curr != null) {
+            next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
+        }
+        head = prev;
+        return head;
+    }
+
+    // https://www.interviewbit.com/problems/remove-duplicates-from-sorted-list/
+    static Node removeDuplicates(Node head) {
+        if (head == null || head.next == null)
+            return head;
+        Node curr = head;
+        while (curr != null) {
+            Node temp = curr;
+            while (temp != null && curr.data == temp.data) {
+                temp = temp.next;
+            }
+            curr.next = temp;
+            curr = temp;
+        }
+        return head;
+    }
+
+    // https://www.interviewbit.com/problems/remove-duplicates-from-sorted-list-ii/
+    static Node removeAllDuplicates(Node head) {
+        Node dummy = new Node(0);
+        dummy.next = head;
+
+        Node curr = head, prev = dummy;
+        while (curr != null) {
+            while (curr.next != null && prev.next.data == curr.next.data)
+                curr = curr.next;
+            if (prev.next == curr)
+                prev = prev.next;
+            else
+                prev.next = curr.next;
+            curr = curr.next;
+        }
+        head = dummy.next;
+        return head;
+    }
+
+    static class Node {
+        int data;
+        Node next;
+
+        Node(int data) {
+            this.data = data;
+            next = null;
+        }
+    }
+}
