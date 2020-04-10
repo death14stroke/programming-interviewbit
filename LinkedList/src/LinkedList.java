@@ -6,8 +6,7 @@ class LinkedList {
         Node node = new Node(data);
         if (head == null) {
             head = tail = node;
-        }
-        else {
+        } else {
             tail.next = node;
             tail = node;
         }
@@ -106,6 +105,74 @@ class LinkedList {
         }
         head = dummy.next;
         return head;
+    }
+
+    // https://www.interviewbit.com/problems/merge-two-sorted-lists/
+    static Node mergeSortedLinkedLists(Node head1, Node head2) {
+        Node dummy = new Node(0);
+        Node tail = dummy;
+        while (true) {
+            if (head1 == null) {
+                tail.next = head2;
+                break;
+            }
+            if (head2 == null) {
+                tail.next = head1;
+                break;
+            }
+            if (head1.data <= head2.data) {
+                tail.next = head1;
+                head1 = head1.next;
+            } else {
+                tail.next = head2;
+                head2 = head2.next;
+            }
+            tail = tail.next;
+        }
+        return dummy.next;
+    }
+
+    // https://www.interviewbit.com/problems/remove-nth-node-from-list-end/
+    static Node removeNthFromEnd(Node head, int n) {
+        Node first = head, second = head;
+        for (int i=0; i<n; i++) {
+            if (second.next == null) {
+                head = head.next;
+                return head;
+            }
+            second = second.next;
+        }
+
+        while (second.next != null) {
+            second = second.next;
+            first = first.next;
+        }
+
+        first.next = first.next.next;
+        return head;
+    }
+
+    // https://www.interviewbit.com/problems/rotate-list/
+    static Node rotateRight(Node head, int k) {
+        if (head == null)
+            return null;
+        int len = 1;
+        Node tail = head;
+        while (tail.next != null) {
+            tail = tail.next;
+            len ++;
+        }
+        k = k % len;
+        if (k == 0)
+            return head;
+        k = len - k;
+        Node tail2 = head;
+        for (int i=1; i<k; i++)
+            tail2 = tail2.next;
+        Node head2 = tail2.next;
+        tail.next = head;
+        tail2.next = null;
+        return head2;
     }
 
     static class Node {
