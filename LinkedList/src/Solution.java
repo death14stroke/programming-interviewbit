@@ -16,6 +16,6 @@ public class Solution {
         LinkedList.print(l1.head);
         //LinkedList.print(l2.head);
 
-        LinkedList.print(LinkedList.rotateRight(l1.head, 9));
+        LinkedList.print(LinkedList.reverseBetween(l1.head, 2, 4));
     }
 }

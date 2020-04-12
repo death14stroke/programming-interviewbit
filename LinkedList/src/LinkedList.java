@@ -175,6 +175,34 @@ class LinkedList {
         return head2;
     }
 
+    // https://www.interviewbit.com/problems/reverse-link-list-ii/
+    static Node reverseBetween(Node head, int m, int n) {
+        if (m == n)
+            return head;
+        Node dummy = new Node(-1);
+        dummy.next = head;
+
+        Node prev = dummy;
+        for (int i=1; i<m; i++) {
+            prev = prev.next;
+        }
+        Node reversePrev = prev;
+
+        prev = prev.next;
+        Node head2 = prev;
+
+        Node curr = head2.next, next;
+        for (int i=m; i<n; i++) {
+            next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
+        }
+        head2.next = curr;
+        reversePrev.next = prev;
+        return dummy.next;
+    }
+
     static class Node {
         int data;
         Node next;
