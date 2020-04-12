@@ -24,8 +24,10 @@ class LinkedList {
             slow = slow.next;
             fast = fast.next.next;
         }
+		// even number of nodes in the list
         if (fast == null)
             mid = slow_prev;
+		// odd number of nodes in the list
         else
             mid = slow;
 
@@ -34,12 +36,16 @@ class LinkedList {
 
         second_head = reverse(second_head);
         Node n1 = head, n2 = second_head;
+		
+		// loop through first half and reversed second half checking similarity of two lists
         while (n1 != null && n2 != null) {
             if (n1.data != n2.data)
                 break;
             n1 = n1.next;
             n2 = n2.next;
         }
+		
+		// if any of the halves reaches end
         if (n1 == null || n2 == null)
             palindrome = true;
         return palindrome;
@@ -74,14 +80,17 @@ class LinkedList {
 
     // https://www.interviewbit.com/problems/remove-duplicates-from-sorted-list/
     static Node removeDuplicates(Node head) {
+		// length of list is 0 or 1
         if (head == null || head.next == null)
             return head;
         Node curr = head;
         while (curr != null) {
             Node temp = curr;
+			// move forward till a unique node is found
             while (temp != null && curr.data == temp.data) {
                 temp = temp.next;
             }
+			// point last unique node to the new unique node
             curr.next = temp;
             curr = temp;
         }
@@ -90,15 +99,19 @@ class LinkedList {
 
     // https://www.interviewbit.com/problems/remove-duplicates-from-sorted-list-ii/
     static Node removeAllDuplicates(Node head) {
+		// add a dummy unique node to avoid null
         Node dummy = new Node(0);
         dummy.next = head;
 
         Node curr = head, prev = dummy;
         while (curr != null) {
+			// loop till a node doesn't match with previous unique data
             while (curr.next != null && prev.next.data == curr.next.data)
                 curr = curr.next;
+			// if no duplicate nodes in between move previous pointer
             if (prev.next == curr)
                 prev = prev.next;
+			// else link previous pointer to the next unique
             else
                 prev.next = curr.next;
             curr = curr.next;
@@ -112,14 +125,17 @@ class LinkedList {
         Node dummy = new Node(0);
         Node tail = dummy;
         while (true) {
+			// if first list has reached end
             if (head1 == null) {
                 tail.next = head2;
                 break;
             }
+			// if second list has reached end
             if (head2 == null) {
                 tail.next = head1;
                 break;
             }
+			// add first or second list node to end
             if (head1.data <= head2.data) {
                 tail.next = head1;
                 head1 = head1.next;
@@ -135,7 +151,9 @@ class LinkedList {
     // https://www.interviewbit.com/problems/remove-nth-node-from-list-end/
     static Node removeNthFromEnd(Node head, int n) {
         Node first = head, second = head;
+		// move second to nth node from start
         for (int i=0; i<n; i++) {
+			// if the list size is smaller than n remove first node
             if (second.next == null) {
                 head = head.next;
                 return head;
@@ -143,11 +161,13 @@ class LinkedList {
             second = second.next;
         }
 
+		// iterate second till end so first reaches at (len - n)th node from beginning i.e. nth node from end
         while (second.next != null) {
             second = second.next;
             first = first.next;
         }
 
+		// remove nth node from end
         first.next = first.next.next;
         return head;
     }
@@ -158,18 +178,24 @@ class LinkedList {
             return null;
         int len = 1;
         Node tail = head;
+		// calculate length and find tail node
         while (tail.next != null) {
             tail = tail.next;
             len ++;
         }
         k = k % len;
+		// no need to rotate
         if (k == 0)
             return head;
+		// rotate len-k from left
         k = len - k;
+		// new tail
         Node tail2 = head;
         for (int i=1; i<k; i++)
             tail2 = tail2.next;
+		// new head
         Node head2 = tail2.next;
+		// link old tail with head
         tail.next = head;
         tail2.next = null;
         return head2;
@@ -186,19 +212,24 @@ class LinkedList {
         for (int i=1; i<m; i++) {
             prev = prev.next;
         }
+		// node before the head of sublist to reverse
         Node reversePrev = prev;
 
         prev = prev.next;
+		// head of sublist to reverse
         Node head2 = prev;
 
         Node curr = head2.next, next;
+		// reversing the sublist from m to n
         for (int i=m; i<n; i++) {
             next = curr.next;
             curr.next = prev;
             prev = curr;
             curr = next;
         }
+		// link head of original sublist to the (m+1)th node
         head2.next = curr;
+		// link node before head of original sublist to point to the tail of the original sublist
         reversePrev.next = prev;
         return dummy.next;
     }
