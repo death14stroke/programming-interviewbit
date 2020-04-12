@@ -234,6 +234,50 @@ class LinkedList {
         return dummy.next;
     }
 
+    // https://www.interviewbit.com/problems/reorder-list/
+    static Node reorderList(Node head) {
+        // if list has zero or one elements no reordering needed
+        if (head == null || head.next == null)
+            return head;
+
+        // find middle of the list
+        Node slow = head, fast = head, mid, slow_prev = null;
+        while (fast != null && fast.next != null) {
+            slow_prev = slow;
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        // if list size is even
+        if (fast == null)
+            mid = slow_prev;
+        // else if list size is odd
+        else
+            mid = slow;
+
+        // split list into two halves and reverse the second half
+        Node head2 = mid.next;
+        mid.next = null;
+        head2 = reverse(head2);
+
+        // alternate merge of two sublist
+        Node n1 = head, n2 = head2, next1, next2;
+        while (n1 != null && n2 != null) {
+            // add node of sublist 1
+            next1 = n1.next;
+            n1.next = n2;
+
+            // add node of sublist 2
+            next2 = n2.next;
+            n2.next = next1;
+
+            // move forward in both sublists
+            n1 = next1;
+            n2 = next2;
+        }
+        return head;
+    }
+
     static class Node {
         int data;
         Node next;
