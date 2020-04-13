@@ -278,6 +278,57 @@ class LinkedList {
         return head;
     }
 
+    // https://www.interviewbit.com/problems/add-two-numbers-as-lists/
+    static Node addTwoNumbers(Node head1, Node head2) {
+        // if any list is null
+        if (head1 == null)
+            return head2;
+        if (head2 == null)
+            return head1;
+
+        // dummy node to avoid null
+        Node dummy = new Node(-1);
+        Node head = dummy;
+        int carry = 0;
+
+        // till both numbers have same number of digits
+        while (head1 != null && head2 != null) {
+            int sum = head1.data + head2.data + carry;
+            carry = sum / 10;
+            sum = sum % 10;
+            head.next = new Node(sum);
+            head = head.next;
+            head1 = head1.next;
+            head2 = head2.next;
+        }
+
+        // if number 1 has more digits
+        while (head1 != null) {
+            int sum = head1.data + carry;
+            carry = sum / 10;
+            sum = sum % 10;
+            head.next = new Node(sum);
+            head = head.next;
+            head1 = head1.next;
+        }
+
+        // if number 2 has more digits
+        while (head2 != null) {
+            int sum = head2.data + carry;
+            carry = sum / 10;
+            sum = sum % 10;
+            head.next = new Node(sum);
+            head = head.next;
+            head2 = head2.next;
+        }
+
+        // if carry is not zero, create new node for carry
+        if (carry != 0) {
+            head.next = new Node(carry);
+        }
+        return dummy.next;
+    }
+
     static class Node {
         int data;
         Node next;
