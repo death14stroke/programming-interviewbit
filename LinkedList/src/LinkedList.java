@@ -1,6 +1,6 @@
 class LinkedList {
     Node head;
-    private Node tail;
+    Node tail;
 
     void addNode(int data) {
         Node node = new Node(data);
@@ -325,6 +325,106 @@ class LinkedList {
         // if carry is not zero, create new node for carry
         if (carry != 0) {
             head.next = new Node(carry);
+        }
+        return dummy.next;
+    }
+
+    // https://www.interviewbit.com/problems/list-cycle/
+    static Node detectCycle(Node head) {
+        // zero or single node in the list
+        if (head == null || head.next == null)
+            return null;
+
+        Node slow = head, fast = head;
+        // move one step for loop to run
+        slow = slow.next;
+        fast = fast.next.next;
+
+        // move both pointers till they meet or fast pointer reaches null
+        while (fast != null && fast.next != null) {
+            // found the meeting point
+            if (slow == fast)
+                break;
+
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        // pointers didn't meet as fast pointer reached null hence no loop
+        if (slow != fast)
+            return null;
+
+        // reset slow pointer to head and keep fast pointer at the meeting point
+        slow = head;
+
+        // while both pointers don't meet again
+        while (slow != fast) {
+            slow = slow.next;
+            fast = fast.next;
+        }
+        return slow;
+    }
+
+    // https://www.interviewbit.com/problems/k-reverse-linked-list/
+    static Node reverseList(Node head, int k) {
+        // dummy node for previous node to start as non-null
+        Node dummy = new Node(-1);
+        dummy.next = head;
+
+        Node curr = head, prev = dummy, temp_head, temp_tail, next;
+
+        // loop through the entire list
+        while (curr != null) {
+            // head of the sublist of size k
+            temp_head = curr;
+
+            for (int i=1; i<k; i++) {
+                curr = curr.next;
+            }
+            // tail of the sublist of size k
+            temp_tail = curr;
+            // save the next node of the sublist tail
+            next = temp_tail.next;
+            // separate the sublist
+            temp_tail.next = null;
+
+            // reverse the sublist and the previous node of the original sublist head point next to the reverse head
+            prev.next = reverse(temp_head);
+            // temp_head will now be in position of temp_tail hence it will point next to the original next node
+            temp_head.next = next;
+
+            // prev will be the new temp_tail i.e temp_head and move to the next sublist
+            prev = temp_head;
+            curr = next;
+        }
+        return dummy.next;
+    }
+
+    // https://www.interviewbit.com/problems/swap-list-nodes-in-pairs/
+    static Node swapPairs(Node head) {
+        // create dummy node for non-null prev
+        Node dummy = new Node(-1);
+        dummy.next = head;
+
+        // pair1 and pair2 are nodes to be swapped. prev is node before pair1 and next is node after pair2
+        Node pair1 = head, prev = dummy, pair2, next;
+
+        // looping two nodes at a time
+        while (pair1 != null && pair1.next != null) {
+            pair2 = pair1.next;
+            next = pair2.next;
+
+            // prev will be before the node after pair1 which is to be swapped
+            prev.next = pair2;
+            // pair2 will be now before pair1
+            pair2.next = pair1;
+            // pair1 will now be before the node after pair2 in the original list
+            pair1.next = next;
+
+            // moving to next pair. pair1 will now be at pair2's position hence prev will point to pair1
+            // and pair1 will point to node next to pair2 originally
+            prev = pair1;
+            pair1 = next;
         }
         return dummy.next;
     }
