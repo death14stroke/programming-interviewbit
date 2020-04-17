@@ -429,6 +429,48 @@ class LinkedList {
         return dummy.next;
     }
 
+    // https://www.interviewbit.com/problems/partition-list/
+    static Node partition(Node head, int x) {
+        // create two list: one with less than x and other with the rest
+        Node smallerHead = null, smallerTail = null, greaterHead = null, greaterTail = null, curr = head;
+        while (curr != null) {
+            if (curr.data < x) {
+                // first node with value less than x
+                if (smallerHead == null)
+                    smallerHead = smallerTail = curr;
+                // append at the end of smaller than x list
+                else {
+                    smallerTail.next = curr;
+                    smallerTail = curr;
+                }
+            }
+            else {
+                // first node with value greater than or equal to x
+                if (greaterHead == null)
+                    greaterHead = greaterTail = curr;
+                // append at the end of greater than or equal to x
+                else {
+                    greaterTail.next = curr;
+                    greaterTail = curr;
+                }
+            }
+            curr = curr.next;
+        }
+
+        // make sure the greater than or equal to x list has an end
+        if (greaterTail != null)
+            greaterTail.next = null;
+
+        // if there are no nodes with value smaller than x
+        if (smallerHead == null) {
+            return greaterHead;
+        }
+
+        // else join the two list
+        smallerTail.next = greaterHead;
+        return smallerHead;
+    }
+
     static class Node {
         int data;
         Node next;
