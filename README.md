@@ -16,3 +16,5 @@ Interview bit problems topic wise
 - [K reverse linked list](https://www.interviewbit.com/problems/k-reverse-linked-list/)
 - [Swap List Nodes in pairs](https://www.interviewbit.com/problems/swap-list-nodes-in-pairs/)
 - [Partition List](https://www.interviewbit.com/problems/partition-list/)
+- [Intersection of Linked Lists](https://www.interviewbit.com/problems/intersection-of-linked-lists/)
+- [Reverse Linked List](https://www.interviewbit.com/problems/reverse-linked-list/)
