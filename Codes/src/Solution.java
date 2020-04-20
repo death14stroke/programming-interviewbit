@@ -1,14 +1,26 @@
 public class Solution {
     public static void main(String[] args) {
-        /*int[] values = {339, 571, 654, 888, 429, 636, 30, 958, 627, 310, 709, 544, 798, 546, 442, 585, 373, 801, 423,
+        int[][] in = {
+                {133, 241, 22, 258, 187, 150, 79, 207, 196, 401, 366, 335, 198},
+                {401, 55, 260, 363, 14, 318, 178, 296, 333, 296, 45, 37, 10},
+                {112, 374, 79, 12, 97, 39, 310, 223, 139, 91, 171, 95, 126}
+        };
+
+        int[] out = Array.spiralOrder(in);
+        for (int value : out)
+            System.out.print(value + " ");
+    }
+
+    private void runLinkedListCodes() {
+        int[] values = {339, 571, 654, 888, 429, 636, 30, 958, 627, 310, 709, 544, 798, 546, 442, 585, 373, 801, 423,
                 660, 123, 694, 107, 437, 44, 303, 72, 284, 796, 983, 653, 28, 466, 363, 840, 29, 298, 86, 21, 637, 170,
                 70, 505, 334, 822, 73, 164, 741, 894, 420, 999, 670, 88, 987, 679, 690, 816, 568, 525, 462, 463, 433,
                 991, 752, 405, 98, 364, 422, 162, 312, 924, 762, 321, 728, 977, 138, 973, 496, 873, 380, 672, 14};
-*/
+
         LinkedList l1 = new LinkedList();
-        /*for (int val : values) {
+        for (int val : values) {
             l1.addNode(val);
-        }*/
+        }
 
         l1.addNode(1);
         l1.addNode(4);
@@ -34,6 +46,6 @@ public class Solution {
 
         //LinkedList.Node loopStart = LinkedList.detectCycle(l1.head);
         //System.out.println("The loop begins at: "+ (loopStart != null ? loopStart.data : "null"));
-        System.out.println("Intersection node = "+LinkedList.getIntersectionNode(l1.head, l2.head).data);
+        System.out.println("Intersection node = " + LinkedList.getIntersectionNode(l1.head, l2.head).data);
     }
 }
