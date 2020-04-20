@@ -18,3 +18,7 @@ Interview bit problems topic wise
 - [Partition List](https://www.interviewbit.com/problems/partition-list/)
 - [Intersection of Linked Lists](https://www.interviewbit.com/problems/intersection-of-linked-lists/)
 - [Reverse Linked List](https://www.interviewbit.com/problems/reverse-linked-list/)
+
+## Arrays
+
+- [Spiral Order Matrix I](https://www.interviewbit.com/problems/spiral-order-matrix-i/)
