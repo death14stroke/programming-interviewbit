@@ -22,3 +22,8 @@ Interview bit problems topic wise
 ## Arrays
 
 - [Spiral Order Matrix I](https://www.interviewbit.com/problems/spiral-order-matrix-i/)
+- [Insertion Sort](https://www.interviewbit.com/tutorial/insertion-sort-algorithm/)
+- [Merge Sort](https://www.interviewbit.com/tutorial/merge-sort-algorithm/)
+- [Quick Sort](https://www.interviewbit.com/tutorial/quicksort-algorithm/)
+- [Selection Sort](https://www.interviewbit.com/tutorial/selection-sort/)
+- [Bubble Sort](https://www.interviewbit.com/tutorial/bubble-sort/)

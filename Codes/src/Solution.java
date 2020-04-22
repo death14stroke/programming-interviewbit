@@ -1,14 +1,14 @@
 public class Solution {
     public static void main(String[] args) {
-        int[][] in = {
-                {133, 241, 22, 258, 187, 150, 79, 207, 196, 401, 366, 335, 198},
-                {401, 55, 260, 363, 14, 318, 178, 296, 333, 296, 45, 37, 10},
-                {112, 374, 79, 12, 97, 39, 310, 223, 139, 91, 171, 95, 126}
-        };
+        int[] a = {5, 1, 4, 9, 2};
+        Array.printArray(a);
 
-        int[] out = Array.spiralOrder(in);
+        Array.bubbleSort(a);
+        Array.printArray(a);
+
+        /*int[] out = Array.spiralOrder(in);
         for (int value : out)
-            System.out.print(value + " ");
+            System.out.print(value + " ");*/
     }
 
     private void runLinkedListCodes() {
