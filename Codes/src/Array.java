@@ -176,7 +176,7 @@ public class Array {
     private static int findMinIndex(int[] a, int start, int end) {
         int min_pos = start;
 
-        for (int i = start+1; i < end; i++) {
+        for (int i = start + 1; i < end; i++) {
             if (a[i] < a[min_pos])
                 min_pos = i;
         }
@@ -207,6 +207,32 @@ public class Array {
             // last element is maximum now so not needed to check it for swap
             n--;
         }
+    }
+
+    // https://www.interviewbit.com/problems/max-sum-contiguous-subarray/
+    static int maxSubArray(int[] a) {
+        int max_so_far = a[0], curr_max = a[0];
+
+        for (int i = 1; i < a.length; i++) {
+            // check if current element is greater than the previous sum
+            curr_max = Math.max(a[i], curr_max + a[i]);
+            // check if sum of the sub-array till now is greater than any other previous sub-arrays
+            max_so_far = Math.max(max_so_far, curr_max);
+        }
+        return max_so_far;
+    }
+
+    // https://www.interviewbit.com/problems/min-steps-in-infinite-grid/
+    static int coverPoints(int[] a, int[] b) {
+        int steps = 0;
+        // get minimum steps required from previous point to the next and sum up
+        for (int i = 1; i < a.length; i++) {
+            // minimum steps from (x1, y1) to (x2, y2) is moving diagonally
+            // and then towards the coordinate which is not reached yet =
+            // max of diagonal distance between both coordinates
+            steps += Math.max(Math.abs(a[i] - a[i - 1]), Math.abs(b[i] - b[i - 1]));
+        }
+        return steps;
     }
 
     static void printArray(int[] a) {

@@ -1,14 +1,12 @@
 public class Solution {
     public static void main(String[] args) {
-        int[] a = {5, 1, 4, 9, 2};
+        int[] a = {0, 1, 2};
+        int[] b = {0, 1, 2};
         Array.printArray(a);
+        Array.printArray(b);
 
-        Array.bubbleSort(a);
-        Array.printArray(a);
+        System.out.println("Min steps required = " + Array.coverPoints(a, b));
 
-        /*int[] out = Array.spiralOrder(in);
-        for (int value : out)
-            System.out.print(value + " ");*/
     }
 
     private void runLinkedListCodes() {

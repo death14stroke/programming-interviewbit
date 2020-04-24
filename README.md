@@ -27,3 +27,5 @@ Interview bit problems topic wise
 - [Quick Sort](https://www.interviewbit.com/tutorial/quicksort-algorithm/)
 - [Selection Sort](https://www.interviewbit.com/tutorial/selection-sort/)
 - [Bubble Sort](https://www.interviewbit.com/tutorial/bubble-sort/)
+- [Max Sum Contiguous Subarray](https://www.interviewbit.com/problems/max-sum-contiguous-subarray/)
+- [Min Steps In Infinite Grid](https://www.interviewbit.com/problems/min-steps-in-infinite-grid/)
