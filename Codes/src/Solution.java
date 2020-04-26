@@ -1,12 +1,10 @@
 public class Solution {
     public static void main(String[] args) {
-        int[] a = {0, 1, 2};
-        int[] b = {0, 1, 2};
+        int[] a = {1967513926, 1540383426, -1303455736, -521595368};
         Array.printArray(a);
-        Array.printArray(b);
 
-        System.out.println("Min steps required = " + Array.coverPoints(a, b));
-
+        System.out.println("max non-neg sum ");
+        Array.printArray(Array.maxset(a));
     }
 
     private void runLinkedListCodes() {

@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class Array {
 
     // https://www.interviewbit.com/problems/spiral-order-matrix-i/
@@ -233,6 +235,170 @@ public class Array {
             steps += Math.max(Math.abs(a[i] - a[i - 1]), Math.abs(b[i] - b[i - 1]));
         }
         return steps;
+    }
+
+    // https://www.interviewbit.com/problems/maximum-absolute-difference/
+    static int maxArr(int[] a) {
+        /*
+         |a[i]-a[j]| + |i-j| =
+         Case 1: (a[i]-a[j]) + (i-j) = (a[i]+i) - (a[j]+j)
+         Case 2: (-a[i]+a[j]) + (-i+j) = -(a[i]+i) + (a[j]+j)
+         Case 3: (a[i]-a[j]) + (-i+j) = (a[i]-i) - (a[j]-j)
+         Case 4: (-a[i]+a[j]) + (i-j) = -(a[i]-i) + (a[j]-j)
+
+         Hence ans = max([(a[i]-i)-(a[j]-j)], [(a[i]+i)-(a[j]+j)])
+        */
+
+        // min and max for a[i]-i
+        int min1 = Integer.MAX_VALUE, max1 = Integer.MIN_VALUE;
+        // min and max for a[i]+i
+        int min2 = Integer.MAX_VALUE, max2 = Integer.MIN_VALUE;
+
+        for (int i = 0; i < a.length; i++) {
+            min1 = Math.min(min1, a[i] - i);
+            max1 = Math.max(max1, a[i] - i);
+
+            min2 = Math.min(min2, a[i] + i);
+            max2 = Math.max(max2, a[i] + i);
+        }
+
+        return Math.max(max1 - min1, max2 - min2);
+    }
+
+    // https://www.interviewbit.com/problems/add-one-to-number/
+    static int[] plusOne(int[] a) {
+        int zero_index = 0;
+        // find first non-zero digit of the number
+        while (zero_index < a.length && a[zero_index] == 0) {
+            zero_index++;
+        }
+
+        // if the number is zero
+        if (zero_index == a.length) {
+            return new int[]{1};
+        }
+
+        int carry = 1;
+        int[] ans = new int[a.length - zero_index + 1];
+
+        // add 1 to last digit and keep adding carry till the first non-zero digit
+        for (int i = a.length - 1; i >= zero_index; i--) {
+            int j = i + (ans.length - a.length);
+            ans[j] = a[i] + carry;
+            carry = ans[j] / 10;
+            ans[j] %= 10;
+        }
+        // if there is carry left add at 0th position of answer array
+        int start = 0;
+        if (carry == 1)
+            ans[0] = carry;
+            // exclude the first zero in answer array
+        else
+            start = 1;
+
+        return Arrays.copyOfRange(ans, start, ans.length);
+    }
+
+    // https://www.interviewbit.com/problems/repeat-and-missing-number-array/
+    static int[] repeatedNumber(final int[] a) {
+        int n = a.length;
+        long sum = 0, sum2 = 0;
+
+        // sum of 1st n numbers
+        long n_sum = (long) n * (long) (n + 1) / (long) 2;
+        // sum of squares of 1st n numbers
+        long n2_sum = (long) n * (long) (n + 1) * (long) (2 * n + 1) / (long) 6;
+
+        // sum and square sum of all numbers in the array
+        // sum = n_sum + x - y
+        // sum2 = n2_sum + x^2 - y^2 ,
+        // where x is the repeating number and y is the missing number
+        for (int value : a) {
+            sum += value;
+            sum2 += (long) Math.pow(value, 2);
+        }
+
+        // x - y
+        long diff_repeat_miss = sum - n_sum;
+        // x + y = (x^2 - y^2)/(x - y)
+        long sum_repeat_miss = (sum2 - n2_sum) / diff_repeat_miss;
+
+        // x = (x - y + x + y) / 2
+        int repeat = (int) (diff_repeat_miss + sum_repeat_miss) / 2;
+        // substitute x in x + y equation
+        int missing = (int) sum_repeat_miss - repeat;
+
+        return new int[]{repeat, missing};
+    }
+
+    // https://www.interviewbit.com/problems/flip/
+    static int[] flip(String a) {
+        // all 1's in the string
+        if (!a.contains("0"))
+            return new int[0];
+
+        // use Kadane's algorithm to find largest sequence of 0's
+        int[] res = new int[2];
+        int start = 0, diff = 0, maxDiff = Integer.MIN_VALUE;
+
+        for (int i = 0; i < a.length(); i++) {
+            // 0 is required hence +1, 1 is not required hence -1
+            diff += (a.charAt(i) == '0') ? 1 : -1;
+
+            // number of 1's is more in the current sequence
+            // so reset starting point to next possible 0
+            if (diff < 0) {
+                diff = 0;
+                start = (a.charAt(i) == '0') ? i : i + 1;
+            }
+            // this sequence has more 0's than all previous ones
+            else if (maxDiff < diff) {
+                maxDiff = diff;
+                res[0] = start + 1;
+                res[1] = i + 1;
+            }
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/max-non-negative-subarray/
+    static int[] maxset(final int[] a) {
+        // finding the largest positive sum
+        long curr_sum = 0, max_sum = Long.MIN_VALUE;
+        int curr_start = 0, curr_end = 0, start = -1, end = -1;
+
+        for (int i = 0; i < a.length; i++) {
+            // if negative number comes, reset the sum and sub-array endpoints
+            if (a[i] < 0) {
+                curr_sum = 0;
+                curr_start = i + 1;
+                curr_end = i + 1;
+            } else {
+                curr_sum += a[i];
+
+                // sum of current sub-array is more than previous ones
+                if (max_sum < curr_sum) {
+                    start = curr_start;
+                    end = i;
+                    max_sum = curr_sum;
+                }
+                // sum is equal but current sub-array is larger than the previous one
+                else if (max_sum == curr_sum && curr_end - curr_start > end - start) {
+                    start = curr_start;
+                    end = i;
+                    max_sum = curr_sum;
+                }
+
+                curr_end++;
+            }
+        }
+
+        // all numbers are negative
+        if (start == -1)
+            return new int[0];
+
+        return Arrays.copyOfRange(a, start, end + 1);
     }
 
     static void printArray(int[] a) {

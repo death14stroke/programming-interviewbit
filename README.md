@@ -29,3 +29,8 @@ Interview bit problems topic wise
 - [Bubble Sort](https://www.interviewbit.com/tutorial/bubble-sort/)
 - [Max Sum Contiguous Subarray](https://www.interviewbit.com/problems/max-sum-contiguous-subarray/)
 - [Min Steps In Infinite Grid](https://www.interviewbit.com/problems/min-steps-in-infinite-grid/)
+- [Maximum Absolute Difference](https://www.interviewbit.com/problems/maximum-absolute-difference/)
+- [Add One To Number](https://www.interviewbit.com/problems/add-one-to-number/)
+- [Repeat and Missing Number Array](https://www.interviewbit.com/problems/repeat-and-missing-number-array/)
+- [Flip](https://www.interviewbit.com/problems/flip/)
+- [Max Non Negative SubArray](https://www.interviewbit.com/problems/max-non-negative-subarray/)
