@@ -34,3 +34,6 @@ Interview bit problems topic wise
 - [Repeat and Missing Number Array](https://www.interviewbit.com/problems/repeat-and-missing-number-array/)
 - [Flip](https://www.interviewbit.com/problems/flip/)
 - [Max Non Negative SubArray](https://www.interviewbit.com/problems/max-non-negative-subarray/)
+- [Spiral Order Matrix II](https://www.interviewbit.com/problems/spiral-order-matrix-ii/)
+- [Pascal Triangle](https://www.interviewbit.com/problems/pascal-triangle/)
+- [Kth Row of Pascal's Triangle](https://www.interviewbit.com/problems/kth-row-of-pascals-triangle/)

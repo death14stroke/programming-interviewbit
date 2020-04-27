@@ -1,10 +1,9 @@
 public class Solution {
     public static void main(String[] args) {
-        int[] a = {1967513926, 1540383426, -1303455736, -521595368};
-        Array.printArray(a);
+        int n = 4;
 
-        System.out.println("max non-neg sum ");
-        Array.printArray(Array.maxset(a));
+        System.out.println("Pascal triangle "+n+"th row");
+        Array.printArray(Array.getRow(n));
     }
 
     private void runLinkedListCodes() {

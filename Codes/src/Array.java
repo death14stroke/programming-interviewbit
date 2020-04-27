@@ -401,9 +401,112 @@ public class Array {
         return Arrays.copyOfRange(a, start, end + 1);
     }
 
+    // https://www.interviewbit.com/problems/spiral-order-matrix-ii/
+    static int[][] generateMatrix(int n) {
+        int[][] res = new int[n][n];
+        int k = 1;
+        int l=0, t=0, b=n-1, r=n-1;
+
+        while (k <= n*n) {
+            // move from left to right in topmost row
+            for (int i=l; i<=r; i++) {
+                res[t][i] = k;
+                k++;
+            }
+            t++;
+
+            // move from top to bottom in rightmost row
+            for (int i=t; i<=b; i++) {
+                res[i][r] = k;
+                k++;
+            }
+            r--;
+
+            // move from right to left in bottommost row
+            for (int i=r; i>=l; i--) {
+                res[b][i] = k;
+                k++;
+            }
+            b--;
+
+            // move from bottom to top in leftmost row
+            for (int i=b; i>=t; i--) {
+                res[i][l] = k;
+                k++;
+            }
+            l++;
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/pascal-triangle/
+    static int[][] solve(int n) {
+        int[][] res = new int[n][];
+
+        for (int i=1; i<=n; i++) {
+            // first row
+            if (i == 1)
+                res[i - 1] = new int[]{1};
+            // second row
+            else if (i == 2)
+                res[i-1] = new int[]{1, 1};
+            else {
+                res[i-1] = new int[i];
+
+                // first and last elements of the row are 1
+                res[i-1][0] = 1;
+                res[i-1][i-1] = 1;
+
+                // middle ones are the sum of the upper row entries
+                for (int j=1; j<i-1; j++)
+                    res[i-1][j] = res[i-2][j-1] + res[i-2][j];
+            }
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/kth-row-of-pascals-triangle/
+    static int[] getRow(int k) {
+        int[] res = new int[k+1];
+
+        // kth row is C(k, 0) to C(k, k)
+        for (int i=0; i<=k; i++)
+            res[i] = (int) C(k, i);
+
+        return res;
+    }
+
+    private static long C(int n, int k) {
+        long ans, num = 1, den = 1;
+
+        // C(n, k) = C(n, n-k)
+        if (k > n/2)
+            k = n-k;
+
+        for (int i=0; i<k; i++) {
+            num *= (n-i);
+            den *= (k-i);
+        }
+
+        ans = num / den;
+        return ans;
+    }
+
     static void printArray(int[] a) {
         for (int val : a)
             System.out.print(val + " ");
+        System.out.println();
+    }
+
+    static void printMatrix(int[][] a) {
+        for (int i=0; i<a.length; i++) {
+            for (int j=0; j<a[i].length; j++) {
+                System.out.print(a[i][j] + " ");
+            }
+            System.out.println();
+        }
         System.out.println();
     }
 }
