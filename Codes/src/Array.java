@@ -1,6 +1,7 @@
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.*;
 
 public class Array {
 
@@ -370,6 +371,18 @@ public class Array {
         long curr_sum = 0, max_sum = Long.MIN_VALUE;
         int curr_start = 0, curr_end = 0, start = -1, end = -1;
 
+        boolean allNeg = true;
+        for (int val : a) {
+            if (val >= 0) {
+                allNeg = false;
+                break;
+            }
+        }
+
+        // all numbers are negative
+        if (allNeg)
+            return new int[0];
+
         for (int i = 0; i < a.length; i++) {
             // if negative number comes, reset the sum and sub-array endpoints
             if (a[i] < 0) {
@@ -379,14 +392,9 @@ public class Array {
             } else {
                 curr_sum += a[i];
 
-                // sum of current sub-array is more than previous ones
-                if (max_sum < curr_sum) {
-                    start = curr_start;
-                    end = i;
-                    max_sum = curr_sum;
-                }
+                // sum of current sub-array is more than previous ones OR
                 // sum is equal but current sub-array is larger than the previous one
-                else if (max_sum == curr_sum && curr_end - curr_start > end - start) {
+                if ((max_sum < curr_sum) || (max_sum == curr_sum && curr_end - curr_start > end - start)) {
                     start = curr_start;
                     end = i;
                     max_sum = curr_sum;
@@ -395,10 +403,6 @@ public class Array {
                 curr_end++;
             }
         }
-
-        // all numbers are negative
-        if (start == -1)
-            return new int[0];
 
         return Arrays.copyOfRange(a, start, end + 1);
     }
@@ -638,20 +642,176 @@ public class Array {
     static int[] wave(int[] a) {
         Arrays.sort(a);
 
-        int i=0;
+        int i = 0;
 
         // sort and swap alternate numbers
-        while (i+1 < a.length) {
+        while (i + 1 < a.length) {
             int temp = a[i];
-            a[i] = a[i+1];
-            a[i+1] = temp;
+            a[i] = a[i + 1];
+            a[i + 1] = temp;
 
-            i+=2;
+            i += 2;
         }
+
         return a;
     }
 
+    // https://www.interviewbit.com/problems/hotel-bookings-possible/
+    static boolean hotel(ArrayList<Integer> arrive, ArrayList<Integer> depart, int k) {
+        Collections.sort(arrive);
+        Collections.sort(depart);
+
+        int n = arrive.size();
+        int i = 0, j = 0, cnt = 0;
+
+        while (i < n && j < n) {
+            // if another guest arrives before previous ones departure,
+            // allot new room, move to next guest
+            if (arrive.get(i) < depart.get(j)) {
+                cnt++;
+                i++;
+            }
+
+            // previous guest left, empty his room, wait for next guest to leave
+            else {
+                cnt--;
+                j++;
+            }
+
+            // max rooms exceeded
+            if (cnt > k)
+                return false;
+        }
+
+        return true;
+    }
+
+    // TODO: gfg wrong solution
+    // https://www.interviewbit.com/problems/max-distance/
+    static int maximumGap(final int[] a) {
+        return -1;
+    }
+
+    // https://www.interviewbit.com/problems/maximum-unsorted-subarray/
+    static ArrayList<Integer> subUnsort(ArrayList<Integer> a) {
+        int n = a.size();
+        int[] mins = new int[n], maxs = new int[n];
+
+        mins[n - 1] = a.get(n - 1);
+        maxs[0] = a.get(0);
+
+        for (int i = 1; i < n; i++) {
+            // maxs[i] = max from 0 to i
+            maxs[i] = Math.max(maxs[i - 1], a.get(i));
+            // mins[i] = min from n-1 down to i
+            mins[n - i - 1] = Math.min(mins[n - i], a.get(n - i - 1));
+        }
+
+        int start = 0, end = n - 1;
+        ArrayList<Integer> positions = new ArrayList<>();
+
+        // if array is sorted mins = maxs = original array
+        while (start < n && mins[start] == a.get(start))
+            start++;
+
+        // array is completely sorted
+        if (start == n) {
+            positions.add(-1);
+            return positions;
+        }
+
+        while (end >= 0 && maxs[end] == a.get(end))
+            end--;
+
+        positions.add(start);
+        positions.add(end);
+
+        return positions;
+    }
+
+    // https://www.interviewbit.com/problems/find-duplicate-in-array/
+    static int multiRepeatedNumber(final int[] a) {
+        int n = a.length;
+
+        for (int i = 0; i < n; i++) {
+            int pos = Math.abs(a[i]);
+
+            // encountered this number before
+            if (a[pos] < 0)
+                return pos;
+
+            // mark as visited (negative)
+            a[pos] = -a[pos];
+        }
+
+        // no duplicates
+        return -1;
+    }
+
+    // TODO: O(n) solution
+    // https://www.interviewbit.com/problems/maximum-consecutive-gap/
+    static int unsortedMaximumGap(final int[] a) {
+        if (a.length < 2)
+            return 0;
+
+        Arrays.sort(a);
+
+        int max_diff = 0;
+
+        for (int i = 1; i < a.length; i++) {
+            max_diff = Math.max(max_diff, a[i] - a[i - 1]);
+        }
+
+        return max_diff;
+    }
+
+    // https://www.interviewbit.com/problems/next-permutation/
+    static int[] nextPermutation(int[] a) {
+        int n = a.length;
+        int i = n - 1;
+
+        while (i > 0) {
+            if (a[i] > a[i - 1])
+                break;
+            i--;
+        }
+
+        System.out.println("i="+i+", n="+n);
+
+        Integer[] arr = new Integer[a.length];
+        intToIntegerArr(a, arr, 0);
+
+        if (i == 0)
+            Arrays.sort(arr, Collections.reverseOrder());
+        else {
+            int temp = arr[i - 1];
+            arr[i - 1] = arr[i];
+            arr[i] = temp;
+
+            Arrays.sort(arr, i, n);
+        }
+
+        intToIntegerArr(a, arr, 1);
+        return a;
+    }
+
+    static void intToIntegerArr(int[] a, Integer[] arr, int mode) {
+        if (mode == 0) {
+            for (int i = 0; i < a.length; i++)
+                arr[i] = a[i];
+        } else if (mode == 1) {
+            for (int i = 0; i < a.length; i++)
+                a[i] = arr[i];
+        }
+    }
+
     static void printArray(int[] a) {
+        for (int val : a)
+            System.out.print(val + " ");
+        System.out.println();
+    }
+
+    static void printArray(Integer[] a) {
         for (int val : a)
             System.out.print(val + " ");
         System.out.println();
@@ -671,5 +831,15 @@ public class Array {
             System.out.println();
         }
         System.out.println();
+    }
+
+    static void printArrayList(ArrayList<Integer> a) {
+        for (int val : a)
+            System.out.print(val + " ");
+        System.out.println();
+    }
+
+    static ArrayList<Integer> toIntArrayList(Integer[] arr) {
+        return new ArrayList<>(Arrays.asList(arr));
     }
 }
