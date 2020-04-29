@@ -1,4 +1,6 @@
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class Array {
 
@@ -405,32 +407,32 @@ public class Array {
     static int[][] generateMatrix(int n) {
         int[][] res = new int[n][n];
         int k = 1;
-        int l=0, t=0, b=n-1, r=n-1;
+        int l = 0, t = 0, b = n - 1, r = n - 1;
 
-        while (k <= n*n) {
+        while (k <= n * n) {
             // move from left to right in topmost row
-            for (int i=l; i<=r; i++) {
+            for (int i = l; i <= r; i++) {
                 res[t][i] = k;
                 k++;
             }
             t++;
 
             // move from top to bottom in rightmost row
-            for (int i=t; i<=b; i++) {
+            for (int i = t; i <= b; i++) {
                 res[i][r] = k;
                 k++;
             }
             r--;
 
             // move from right to left in bottommost row
-            for (int i=r; i>=l; i--) {
+            for (int i = r; i >= l; i--) {
                 res[b][i] = k;
                 k++;
             }
             b--;
 
             // move from bottom to top in leftmost row
-            for (int i=b; i>=t; i--) {
+            for (int i = b; i >= t; i--) {
                 res[i][l] = k;
                 k++;
             }
@@ -444,23 +446,23 @@ public class Array {
     static int[][] solve(int n) {
         int[][] res = new int[n][];
 
-        for (int i=1; i<=n; i++) {
+        for (int i = 1; i <= n; i++) {
             // first row
             if (i == 1)
                 res[i - 1] = new int[]{1};
-            // second row
+                // second row
             else if (i == 2)
-                res[i-1] = new int[]{1, 1};
+                res[i - 1] = new int[]{1, 1};
             else {
-                res[i-1] = new int[i];
+                res[i - 1] = new int[i];
 
                 // first and last elements of the row are 1
-                res[i-1][0] = 1;
-                res[i-1][i-1] = 1;
+                res[i - 1][0] = 1;
+                res[i - 1][i - 1] = 1;
 
                 // middle ones are the sum of the upper row entries
-                for (int j=1; j<i-1; j++)
-                    res[i-1][j] = res[i-2][j-1] + res[i-2][j];
+                for (int j = 1; j < i - 1; j++)
+                    res[i - 1][j] = res[i - 2][j - 1] + res[i - 2][j];
             }
         }
 
@@ -469,10 +471,10 @@ public class Array {
 
     // https://www.interviewbit.com/problems/kth-row-of-pascals-triangle/
     static int[] getRow(int k) {
-        int[] res = new int[k+1];
+        int[] res = new int[k + 1];
 
         // kth row is C(k, 0) to C(k, k)
-        for (int i=0; i<=k; i++)
+        for (int i = 0; i <= k; i++)
             res[i] = (int) C(k, i);
 
         return res;
@@ -482,16 +484,171 @@ public class Array {
         long ans, num = 1, den = 1;
 
         // C(n, k) = C(n, n-k)
-        if (k > n/2)
-            k = n-k;
+        if (k > n / 2)
+            k = n - k;
 
-        for (int i=0; i<k; i++) {
-            num *= (n-i);
-            den *= (k-i);
+        for (int i = 0; i < k; i++) {
+            num *= (n - i);
+            den *= (k - i);
         }
 
         ans = num / den;
         return ans;
+    }
+
+    // https://www.interviewbit.com/problems/anti-diagonals/
+    static int[][] diagonal(int[][] a) {
+        int n = a.length;
+
+        int[][] res = new int[2 * n - 1][];
+        int pos = 0;
+
+        // upper half of the matrix
+        for (int k = 0; k < n; k++) {
+            int i = 0, j = k, cnt = 0;
+            res[pos] = new int[k + 1];
+
+            // traversing the row
+            while (i < n && j >= 0) {
+                res[pos][cnt] = a[i][j];
+                i++;
+                j--;
+                cnt++;
+            }
+
+            pos++;
+        }
+
+        // lower half of the matrix
+        for (int k = 1; k < n; k++) {
+            int i = k, j = n - 1, cnt = 0;
+            res[pos] = new int[n - k];
+
+            // traversing the row
+            while (i < n && j >= 0) {
+                res[pos][cnt] = a[i][j];
+                i++;
+                j--;
+                cnt++;
+            }
+
+            pos++;
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/noble-integer/
+    static int solve(int[] a) {
+        int n = a.length;
+
+        mergeSort(a, 0, n - 1);
+
+        for (int i = 0; i < n; i++) {
+            int k = i + 1;
+
+            // skip elements equal to current number
+            while (k < n && a[k] == a[i])
+                k++;
+            k--;
+
+            // number of elements greater than this number is equal to the number
+            if (n - 1 - k == a[i])
+                return 1;
+        }
+        return -1;
+    }
+
+    // https://www.interviewbit.com/problems/triplets-with-sum-between-given-range/
+    static int solve(String[] a) {
+        float[] arr = new float[a.length];
+        for (int i = 0; i < a.length; i++) {
+            arr[i] = Float.parseFloat(a[i]);
+        }
+
+        // take first three numbers
+        float x = arr[0], y = arr[1], z = arr[2];
+
+        for (int i = 3; i < arr.length; i++) {
+            // if satisfy condition, return
+            if (x + y + z > 1 && x + y + z < 2)
+                return 1;
+
+                // if sum is greater, replace the largest element in the triplet
+            else if (x + y + z > 2) {
+                if (x > y && x > z)
+                    x = arr[i];
+                else if (y > x && y > z)
+                    y = arr[i];
+                else
+                    z = arr[i];
+            }
+
+            // sum is smaller, replace the smallest element in the triplet
+            else {
+                if (x < y && x < z)
+                    x = arr[i];
+                else if (y < x & y < z)
+                    y = arr[i];
+                else
+                    z = arr[i];
+            }
+        }
+
+        // if satisfy condition
+        if (x + y + z > 1 && x + y + z < 2)
+            return 1;
+        return 0;
+    }
+
+    // https://www.interviewbit.com/problems/largest-number/
+    static String largestNumber(final int[] a) {
+        String[] arr = new String[a.length];
+        for (int i = 0; i < a.length; i++)
+            arr[i] = String.valueOf(a[i]);
+
+        // sort array with custom comparator
+        Arrays.sort(arr, new Comparator<>() {
+            @Override
+            public int compare(String s1, String s2) {
+                String ab = s1 + s2, ba = s2 + s1;
+                return ba.compareTo(ab);
+            }
+        });
+
+        // construct string from array and remove leading zeroes
+        boolean isLeadingZero = true;
+        StringBuilder builder = new StringBuilder();
+        for (String str : arr) {
+            if (isLeadingZero && str.charAt(0) == '0')
+                isLeadingZero = true;
+            else {
+                isLeadingZero = false;
+                builder.append(str);
+            }
+        }
+
+        // if all are zeroes
+        if (builder.toString().isEmpty())
+            return "0";
+        return builder.toString();
+    }
+
+    // https://www.interviewbit.com/problems/wave-array/
+    static int[] wave(int[] a) {
+        Arrays.sort(a);
+
+        int i=0;
+
+        // sort and swap alternate numbers
+        while (i+1 < a.length) {
+            int temp = a[i];
+            a[i] = a[i+1];
+            a[i+1] = temp;
+
+            i+=2;
+        }
+        return a;
     }
 
     static void printArray(int[] a) {
@@ -500,9 +657,15 @@ public class Array {
         System.out.println();
     }
 
+    static void printArray(String[] a) {
+        for (String val : a)
+            System.out.print(val + " ");
+        System.out.println();
+    }
+
     static void printMatrix(int[][] a) {
-        for (int i=0; i<a.length; i++) {
-            for (int j=0; j<a[i].length; j++) {
+        for (int i = 0; i < a.length; i++) {
+            for (int j = 0; j < a[i].length; j++) {
                 System.out.print(a[i][j] + " ");
             }
             System.out.println();

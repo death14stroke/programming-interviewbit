@@ -37,3 +37,8 @@ Interview bit problems topic wise
 - [Spiral Order Matrix II](https://www.interviewbit.com/problems/spiral-order-matrix-ii/)
 - [Pascal Triangle](https://www.interviewbit.com/problems/pascal-triangle/)
 - [Kth Row of Pascal's Triangle](https://www.interviewbit.com/problems/kth-row-of-pascals-triangle/)
+- [Anti Diagonals](https://www.interviewbit.com/problems/anti-diagonals/)
+- [Noble Integer](https://www.interviewbit.com/problems/noble-integer/)
+- [Triplets with Sum between given range](https://www.interviewbit.com/problems/triplets-with-sum-between-given-range/)
+- [Largest Number](https://www.interviewbit.com/problems/largest-number/)
+- [Wave Array](https://www.interviewbit.com/problems/wave-array/)

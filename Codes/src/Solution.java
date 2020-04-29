@@ -1,9 +1,7 @@
 public class Solution {
     public static void main(String[] args) {
-        int n = 4;
-
-        System.out.println("Pascal triangle "+n+"th row");
-        Array.printArray(Array.getRow(n));
+        int[] a = {0, 0, 0, 0, 0};
+        System.out.println("Largest number is "+Array.largestNumber(a));
     }
 
     private void runLinkedListCodes() {
