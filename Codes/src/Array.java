@@ -776,7 +776,7 @@ public class Array {
             i--;
         }
 
-        System.out.println("i="+i+", n="+n);
+        System.out.println("i=" + i + ", n=" + n);
 
         Integer[] arr = new Integer[a.length];
         intToIntegerArr(a, arr, 0);
