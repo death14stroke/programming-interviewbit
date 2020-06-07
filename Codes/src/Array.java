@@ -795,6 +795,68 @@ public class Array {
         return a;
     }
 
+    // TODO: merge intervals section (value ranges)
+    // https://www.interviewbit.com/problems/set-matrix-zeros/
+    static void setZeroes(ArrayList<ArrayList<Integer>> a) {
+        int m = a.size(), n = a.get(0).size();
+        boolean[] rows = new boolean[m], columns = new boolean[n];
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (a.get(i).get(j) == 0) {
+                    rows[i] = true;
+                    columns[j] = true;
+                }
+            }
+        }
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (rows[i] || columns[j])
+                    a.get(i).set(j, 0);
+            }
+        }
+    }
+
+    // https://www.interviewbit.com/problems/first-missing-integer/
+    static int firstMissingPositive(int[] a) {
+        // partition the array with positives at left and non-positives at right
+        int pi = partitionPositives(a);
+
+        // multiply the number at pos by -1 to mark as visited in the positive subarray
+        // if all numbers are present, whole subarray array will be negative now
+        for (int i = 0; i < pi; i++) {
+            int pos = Math.abs(a[i]) - 1;
+            if (pos >= 0 && pos < a.length)
+                a[pos] *= -1;
+        }
+
+        // if any position is positive after marking, then it is the missing number
+        for (int i = 0; i < pi; i++) {
+            if (a[i] > 0)
+                return i + 1;
+        }
+
+        // else the largest positive in the array is missing
+        return pi + 1;
+    }
+
+    private static int partitionPositives(int[] a) {
+        int pi = 0, pivot = 0;
+
+        for (int i = 0; i < a.length; i++) {
+            if (a[i] > pivot) {
+                int temp = a[i];
+                a[i] = a[pi];
+                a[pi] = temp;
+
+                pi++;
+            }
+        }
+
+        return pi;
+    }
+
     static void intToIntegerArr(int[] a, Integer[] arr, int mode) {
         if (mode == 0) {
             for (int i = 0; i < a.length; i++)
@@ -824,10 +886,18 @@ public class Array {
     }
 
     static void printMatrix(int[][] a) {
-        for (int i = 0; i < a.length; i++) {
-            for (int j = 0; j < a[i].length; j++) {
-                System.out.print(a[i][j] + " ");
-            }
+        for (int[] arr : a) {
+            for (int val : arr)
+                System.out.print(val + " ");
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    public static void printMatrix(ArrayList<ArrayList<Integer>> a) {
+        for (List<Integer> arr : a) {
+            for (int val : arr)
+                System.out.print(val + " ");
             System.out.println();
         }
         System.out.println();

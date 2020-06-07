@@ -46,3 +46,5 @@ Interview bit problems topic wise
 - [Hotel Bookings Possible](https://www.interviewbit.com/problems/hotel-bookings-possible/)
 - [Maximum Unsorted Subarray](https://www.interviewbit.com/problems/maximum-unsorted-subarray/)
 - [Find Duplicate in Array](https://www.interviewbit.com/problems/find-duplicate-in-array/)
+- [Set Matrix Zeros](https://www.interviewbit.com/problems/set-matrix-zeros/)
+- [First Missing Integer](https://www.interviewbit.com/problems/first-missing-integer/)
