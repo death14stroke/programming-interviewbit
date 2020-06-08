@@ -48,3 +48,5 @@ Interview bit problems topic wise
 - [Find Duplicate in Array](https://www.interviewbit.com/problems/find-duplicate-in-array/)
 - [Set Matrix Zeros](https://www.interviewbit.com/problems/set-matrix-zeros/)
 - [First Missing Integer](https://www.interviewbit.com/problems/first-missing-integer/)
+- [Merge Intervals](https://www.interviewbit.com/problems/merge-intervals/)
+- [Merge Overlapping Intervals](https://www.interviewbit.com/problems/merge-overlapping-intervals/)
