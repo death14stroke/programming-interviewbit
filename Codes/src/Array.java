@@ -748,7 +748,6 @@ public class Array {
         return -1;
     }
 
-    // TODO: O(n) solution
     // https://www.interviewbit.com/problems/maximum-consecutive-gap/
     static int unsortedMaximumGap(final int[] a) {
         if (a.length < 2)

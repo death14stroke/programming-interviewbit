@@ -50,3 +50,4 @@ Interview bit problems topic wise
 - [First Missing Integer](https://www.interviewbit.com/problems/first-missing-integer/)
 - [Merge Intervals](https://www.interviewbit.com/problems/merge-intervals/)
 - [Merge Overlapping Intervals](https://www.interviewbit.com/problems/merge-overlapping-intervals/)
+- [Maximum Consecutive Gap](https://www.interviewbit.com/problems/maximum-consecutive-gap/)
