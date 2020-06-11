@@ -2,17 +2,12 @@ import java.util.ArrayList;
 
 public class Solution {
     public static void main(String[] args) {
-        Integer[] a1 = {39, 99, 70, 24, 49, 13, 86, 43, 88, 74, 45, 92, 72, 71, 90, 32, 19, 76, 84, 46, 63, 15, 87, 1, 39, 58, 17, 65, 99, 43, 83, 29, 64, 67, 100, 14, 17, 100, 81, 26, 45, 40, 95, 94, 86, 2, 89, 57, 52, 91, 45};
-        Integer[] b1 = {1221, 360, 459, 651, 958, 584, 345, 181, 536, 116, 1310, 403, 669, 1044, 1281, 711, 222, 280, 1255, 257, 811, 409, 698, 74, 838};
+        Integer[] a1 = {5, 9, 6, 8, 6, 4, 6, 9, 5, 4, 9};
+        ArrayList<Integer> a = Array.toIntArrayList(a1);
 
-        double val = Math.pow(2, 100000);
-        System.out.println("2^1e5="+val);
-
-        ArrayList<Integer> a = Array.toIntArrayList(a1), b = Array.toIntArrayList(b1);
         Array.printArrayList(a);
-        Array.printArrayList(b);
-        ArrayList<Integer> out = Array.solve(a, b);
-        Array.printArrayList(out);
+
+        System.out.println("max special product = "+Array.maxSpecialProduct(a));
     }
 
     private void runLinkedListCodes() {

@@ -2,6 +2,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.*;
+import java.util.LinkedList;
 
 public class Array {
 
@@ -546,7 +547,7 @@ public class Array {
     static int solve(int[] a) {
         int n = a.length;
 
-        mergeSort(a, 0, n - 1);
+        Arrays.sort(a);
 
         for (int i = 0; i < n; i++) {
             int k = i + 1;
@@ -559,21 +560,18 @@ public class Array {
             // number of elements greater than this number is equal to the number
             if (n - 1 - k == a[i])
                 return 1;
+
+            i = k;
         }
         return -1;
     }
 
     // https://www.interviewbit.com/problems/triplets-with-sum-between-given-range/
     static int solve(String[] a) {
-        float[] arr = new float[a.length];
-        for (int i = 0; i < a.length; i++) {
-            arr[i] = Float.parseFloat(a[i]);
-        }
-
         // take first three numbers
-        float x = arr[0], y = arr[1], z = arr[2];
+        float x = Float.parseFloat(a[0]), y = Float.parseFloat(a[1]), z = Float.parseFloat(a[2]);
 
-        for (int i = 3; i < arr.length; i++) {
+        for (int i = 3; i < a.length; i++) {
             // if satisfy condition, return
             if (x + y + z > 1 && x + y + z < 2)
                 return 1;
@@ -581,21 +579,21 @@ public class Array {
                 // if sum is greater, replace the largest element in the triplet
             else if (x + y + z > 2) {
                 if (x > y && x > z)
-                    x = arr[i];
+                    x = Float.parseFloat(a[i]);
                 else if (y > x && y > z)
-                    y = arr[i];
+                    y = Float.parseFloat(a[i]);
                 else
-                    z = arr[i];
+                    z = Float.parseFloat(a[i]);
             }
 
             // sum is smaller, replace the smallest element in the triplet
             else {
                 if (x < y && x < z)
-                    x = arr[i];
+                    x = Float.parseFloat(a[i]);
                 else if (y < x & y < z)
-                    y = arr[i];
+                    y = Float.parseFloat(a[i]);
                 else
-                    z = arr[i];
+                    z = Float.parseFloat(a[i]);
             }
         }
 
@@ -686,10 +684,35 @@ public class Array {
         return true;
     }
 
-    // TODO: gfg wrong solution
     // https://www.interviewbit.com/problems/max-distance/
     static int maximumGap(final int[] a) {
-        return -1;
+        int n = a.length;
+
+        // find left minimums and right maximums
+        int[] lMins = new int[n], rMaxs = new int[n];
+
+        lMins[0] = a[0];
+        rMaxs[n - 1] = a[n - 1];
+
+        for (int i = 1; i < n; i++) {
+            // lMins[i] = min(a[0..i])
+            lMins[i] = Math.min(a[i], lMins[i - 1]);
+            // rMaxs[i] = max(a[i..n-1])
+            rMaxs[n - 1 - i] = Math.max(a[n - 1 - i], rMaxs[n - i]);
+        }
+
+        int i = 0, j = 0, maxGap = 0;
+
+        // traverse both arrays from left to right and maximize j-i
+        while (i < n && j < n) {
+            if (lMins[i] <= rMaxs[j]) {
+                maxGap = Math.max(maxGap, j - i);
+                j++;
+            } else
+                i++;
+        }
+
+        return maxGap;
     }
 
     // https://www.interviewbit.com/problems/maximum-unsorted-subarray/
@@ -766,35 +789,52 @@ public class Array {
 
     // https://www.interviewbit.com/problems/next-permutation/
     static int[] nextPermutation(int[] a) {
-        int n = a.length;
-        int i = n - 1;
+        int n = a.length, last = n - 2;
 
-        while (i > 0) {
-            if (a[i] > a[i - 1])
-                break;
-            i--;
+        // find the last increasing pair
+        while (last >= 0 && a[last] > a[last + 1])
+            last--;
+
+        // all elements are in decreasing order (i.e last permutation)
+        if (last < 0) {
+            reverseArray(a, 0, n - 1);
+            return a;
         }
 
-        System.out.println("i=" + i + ", n=" + n);
+        // find the successor of a[last]
+        int nextPos = findRightMostSuccessor(a, last + 1, n, a[last]);
 
-        Integer[] arr = new Integer[a.length];
-        intToIntegerArr(a, arr, 0);
+        // swap a[last] with its successor
+        int temp = a[last];
+        a[last] = a[nextPos];
+        a[nextPos] = temp;
 
-        if (i == 0)
-            Arrays.sort(arr, Collections.reverseOrder());
-        else {
-            int temp = arr[i - 1];
-            arr[i - 1] = arr[i];
-            arr[i] = temp;
+        // reverse the array from last + 1 till end
+        reverseArray(a, last + 1, n - 1);
 
-            Arrays.sort(arr, i, n);
-        }
-
-        intToIntegerArr(a, arr, 1);
         return a;
     }
 
-    // TODO: merge intervals section (value ranges)
+    private static int findRightMostSuccessor(int[] a, int start, int n, int k) {
+        for (int i = n - 1; i >= start; i--) {
+            if (a[i] > k)
+                return i;
+        }
+
+        return n - 1;
+    }
+
+    private static void reverseArray(int[] a, int start, int end) {
+        while (start < end) {
+            int temp = a[start];
+            a[start] = a[end];
+            a[end] = temp;
+
+            start++;
+            end--;
+        }
+    }
+
     // https://www.interviewbit.com/problems/set-matrix-zeros/
     static void setZeroes(ArrayList<ArrayList<Integer>> a) {
         int m = a.size(), n = a.get(0).size();
@@ -988,21 +1028,21 @@ public class Array {
             a.set(i, productOfFactors(a.get(i)));
         }
 
-        long[] sum = new long [n];
+        long[] sum = new long[n];
         sum[0] = 1;
 
-        for (int i=1; i<n; i++) {
-            sum[i] = sum[i-1] + (int) Math.pow(2, i);
+        for (int i = 1; i < n; i++) {
+            sum[i] = sum[i - 1] + (int) Math.pow(2, i);
         }
 
         for (long val : sum)
-            System.out.print(val+" ");
+            System.out.print(val + " ");
         System.out.println();
 
-        long last = (long) Math.pow(2, n-1);
+        long last = (long) Math.pow(2, n - 1);
         for (int i = 0; i < b.size(); i++) {
             int k = b.get(i);
-            b.set(i, a.get(binarySearch(sum, (int) (last-k))));
+            b.set(i, a.get(binarySearch(sum, (int) (last - k))));
         }
 
         return b;
@@ -1013,12 +1053,11 @@ public class Array {
         int l = 0, r = a.length - 1;
 
         while (l <= r) {
-            int mid = (l+r)/2;
+            int mid = (l + r) / 2;
             if (k < a[mid]) {
                 res = mid;
                 r = mid - 1;
-            }
-            else
+            } else
                 l = mid + 1;
         }
 
@@ -1064,13 +1103,161 @@ public class Array {
         return res;
     }
 
-    static void intToIntegerArr(int[] a, Integer[] arr, int mode) {
-        if (mode == 0) {
-            for (int i = 0; i < a.length; i++)
-                arr[i] = a[i];
-        } else if (mode == 1) {
-            for (int i = 0; i < a.length; i++)
-                a[i] = arr[i];
+    // https://www.interviewbit.com/problems/n3-repeat-number/
+    static int repeatedNumber(final List<Integer> a) {
+        int n = a.size();
+
+        // empty list, no repeating number
+        if (n == 0)
+            return -1;
+
+        // single element
+        if (n == 1)
+            return a.get(0);
+
+        // Moore's voting algorithm variant. Use two candidates
+        int first = Integer.MIN_VALUE, second = Integer.MAX_VALUE;
+        int count1 = 0, count2 = 0;
+
+        for (int val : a) {
+            // first candidate repeating
+            if (val == first)
+                count1++;
+
+                // second candidate repeating
+            else if (val == second)
+                count2++;
+
+                // change first candidate
+            else if (count1 == 0) {
+                count1 = 1;
+                first = val;
+            }
+
+            // change second candidate
+            else if (count2 == 0) {
+                count2 = 1;
+                second = val;
+            }
+
+            // number is not equal to both first and second
+            else {
+                count1--;
+                count2--;
+            }
+        }
+
+        count1 = 0;
+        count2 = 0;
+
+        // count actual frequencies of first and second
+        for (int val : a) {
+            if (val == first)
+                count1++;
+            else if (val == second)
+                count2++;
+        }
+
+        // first is the answer
+        if (count1 > n / 3)
+            return first;
+
+        // second is the anwser
+        if (count2 > n / 3)
+            return second;
+
+        // no n/3 repeating found
+        return -1;
+    }
+
+    // https://www.interviewbit.com/problems/rotate-matrix/
+    static void rotate(ArrayList<ArrayList<Integer>> a) {
+        int n = a.size();
+
+        for (int level = 0; level < n / 2; level++) {
+            for (int y = level; y < n - level - 1; y++) {
+                int temp = a.get(level).get(y);
+
+                a.get(level).set(y, a.get(n - y - 1).get(level));
+                a.get(n - y - 1).set(level, a.get(n - level - 1).get(n - y - 1));
+                a.get(n - level - 1).set(n - y - 1, a.get(y).get(n - level - 1));
+                a.get(y).set(n - level - 1, temp);
+            }
+        }
+    }
+
+    // https://www.interviewbit.com/problems/find-permutation/
+    static ArrayList<Integer> findPerm(final String s, int n) {
+        ArrayList<Integer> out = new ArrayList<>();
+
+        // dual end pointers for deque of numbers 1..n
+        int min = 1, max = n;
+
+        // if I is encountered then add the smallest element remaining in output
+        // else add the largest element remaining in output
+        for (char c : s.toCharArray()) {
+            if (c == 'I') {
+                out.add(min);
+                min++;
+            } else {
+                out.add(max);
+                max--;
+            }
+        }
+
+        // add the last remaining element
+        out.add(max);
+
+        return out;
+    }
+
+    // https://www.interviewbit.com/problems/maxspprod/
+    static int maxSpecialProduct(ArrayList<Integer> a) {
+        int n = a.size();
+        long p = 1000000007;
+        long ans = -1;
+
+        int[] leftSpecials = new int[n];
+        int[] rightSpecials = new int[n];
+
+        // get left and right specials with next greater element logic
+        calculateLeftSpecials(a, leftSpecials, n);
+        calculateRightSpecials(a, rightSpecials, n);
+
+        // maximize the product first then take modulo
+        for (int i=0; i<n; i++)
+            ans = Math.max(ans, (long) leftSpecials[i] * (long) rightSpecials[i]);
+
+        return (int) (ans % p);
+    }
+
+    private static void calculateRightSpecials(ArrayList<Integer> a, int[] rightSpecials, int n) {
+        // no element on right
+        rightSpecials[n-1] = 0;
+        Stack<Integer> s = new Stack<>();
+
+        for (int i=0; i<n; i++) {
+            while (!s.empty() && a.get(i) > a.get(s.peek())) {
+                int top = s.pop();
+                rightSpecials[top] = i;
+            }
+
+            s.push(i);
+        }
+    }
+
+    private static void calculateLeftSpecials(ArrayList<Integer> a, int[] leftSpecials, int n) {
+        // no element on left
+        leftSpecials[0] = 0;
+        Stack<Integer> s = new Stack<>();
+
+        for (int i=n-1; i>=0; i--) {
+            while (!s.empty() && a.get(i) > a.get(s.peek())) {
+                int top = s.pop();
+                leftSpecials[top] = i;
+            }
+
+            s.push(i);
         }
     }
 
@@ -1118,5 +1305,18 @@ public class Array {
 
     static ArrayList<Integer> toIntArrayList(Integer[] arr) {
         return new ArrayList<>(Arrays.asList(arr));
+    }
+
+    static ArrayList<ArrayList<Integer>> toIntMatrix(int[][] a1) {
+        ArrayList<ArrayList<Integer>> a = new ArrayList<>();
+
+        for (int[] row : a1) {
+            ArrayList<Integer> rw = new ArrayList<>();
+            for (int val : row)
+                rw.add(val);
+            a.add(rw);
+        }
+
+        return a;
     }
 }
