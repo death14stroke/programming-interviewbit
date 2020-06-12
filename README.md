@@ -42,7 +42,6 @@ Interview bit problems topic wise
 - [Triplets with Sum between given range](https://www.interviewbit.com/problems/triplets-with-sum-between-given-range/)
 - [Largest Number](https://www.interviewbit.com/problems/largest-number/)
 - [Wave Array](https://www.interviewbit.com/problems/wave-array/)
-- [Wave Array](https://www.interviewbit.com/problems/wave-array/)
 - [Hotel Bookings Possible](https://www.interviewbit.com/problems/hotel-bookings-possible/)
 - [Maximum Unsorted Subarray](https://www.interviewbit.com/problems/maximum-unsorted-subarray/)
 - [Find Duplicate in Array](https://www.interviewbit.com/problems/find-duplicate-in-array/)
@@ -57,3 +56,10 @@ Interview bit problems topic wise
 - [Next Permutation](https://www.interviewbit.com/problems/next-permutation/)
 - [Find Permutation](https://www.interviewbit.com/problems/find-permutation/)
 - [MAXSPPROD](https://www.interviewbit.com/problems/maxspprod/)
+
+## Math
+
+- [All Factors](https://www.interviewbit.com/problems/all-factors/)
+- [Verify Prime](https://www.interviewbit.com/problems/verify-prime/)
+- [Prime Numbers](https://www.interviewbit.com/problems/prime-numbers/)
+- [Binary Representation](https://www.interviewbit.com/problems/binary-representation/)

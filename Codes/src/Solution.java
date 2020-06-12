@@ -2,6 +2,11 @@ import java.util.ArrayList;
 
 public class Solution {
     public static void main(String[] args) {
+        int n = 7;
+        Array.printArrayList(Math.sieve(n));
+    }
+
+    private void runArrayCodes() {
         Integer[] a1 = {5, 9, 6, 8, 6, 4, 6, 9, 5, 4, 9};
         ArrayList<Integer> a = Array.toIntArrayList(a1);
 
