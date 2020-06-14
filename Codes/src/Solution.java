@@ -2,8 +2,9 @@ import java.util.ArrayList;
 
 public class Solution {
     public static void main(String[] args) {
-        int n = 7;
-        Array.printArrayList(Math.sieve(n));
+        String s = "bdca";
+
+        System.out.println("rank = "+Maths.findRank(s));
     }
 
     private void runArrayCodes() {

@@ -63,3 +63,7 @@ Interview bit problems topic wise
 - [Verify Prime](https://www.interviewbit.com/problems/verify-prime/)
 - [Prime Numbers](https://www.interviewbit.com/problems/prime-numbers/)
 - [Binary Representation](https://www.interviewbit.com/problems/binary-representation/)
+- [Prime Sum](https://www.interviewbit.com/problems/prime-sum/)
+- [Sum of pairwise Hamming Distance](https://www.interviewbit.com/problems/sum-of-pairwise-hamming-distance/)
+- [FizzBuzz](https://www.interviewbit.com/problems/fizzbuzz/)
+- [Power Of Two Integers](https://www.interviewbit.com/problems/power-of-two-integers/)
