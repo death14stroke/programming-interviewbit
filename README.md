@@ -67,3 +67,7 @@ Interview bit problems topic wise
 - [Sum of pairwise Hamming Distance](https://www.interviewbit.com/problems/sum-of-pairwise-hamming-distance/)
 - [FizzBuzz](https://www.interviewbit.com/problems/fizzbuzz/)
 - [Power Of Two Integers](https://www.interviewbit.com/problems/power-of-two-integers/)
+- [Excel Column Number](https://www.interviewbit.com/problems/excel-column-number/)
+- [Excel Column Title](https://www.interviewbit.com/problems/excel-column-title/)
+- [Palindrome Integer](https://www.interviewbit.com/problems/palindrome-integer/)
+- [Reverse integer](https://www.interviewbit.com/problems/reverse-integer/)

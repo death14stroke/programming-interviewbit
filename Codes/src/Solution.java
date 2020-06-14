@@ -2,9 +2,9 @@ import java.util.ArrayList;
 
 public class Solution {
     public static void main(String[] args) {
-        String s = "bdca";
+        int n = -1146467285;
 
-        System.out.println("rank = "+Maths.findRank(s));
+        System.out.println("reverse = "+Maths.reverse(n));
     }
 
     private void runArrayCodes() {

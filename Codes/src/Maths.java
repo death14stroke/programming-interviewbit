@@ -179,6 +179,92 @@ public class Maths {
         return 0;
     }
 
+    // https://www.interviewbit.com/problems/excel-column-number/
+    static int titleToNumber(String s) {
+        int ans = 0, power = 1;
+
+        for (int i = s.length() - 1; i >= 0; i--) {
+            // 26^(bit pos) * (int mapping of char) for each bit
+            ans += (s.charAt(i) - 'A' + 1) * power;
+            power *= 26;
+        }
+
+        return ans;
+    }
+
+    // https://www.interviewbit.com/problems/excel-column-title/
+    static String convertToTitle(int n) {
+        char c;
+        StringBuilder builder = new StringBuilder("");
+
+        while (n > 0) {
+            // 1 is 'A' not 0 hence subtract 1 every time
+            n--;
+
+            c = (char) ('A' + (n % 26));
+            builder.insert(0, c);
+
+            n /= 26;
+        }
+
+        return builder.toString();
+    }
+
+    // https://www.interviewbit.com/problems/palindrome-integer/
+    static int isPalindrome(int n) {
+        if (n < 0)
+            return 0;
+
+        // reverse the int and check
+        return (n == reverseUtil(n)) ? 1 : 0;
+    }
+
+    private static int reverseUtil(int n) {
+        int res = 0;
+
+        // multiply res by 10 to shift all digits one pos to left
+        while (n > 0) {
+            res = (res * 10) + (n % 10);
+            n /= 10;
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/reverse-integer/
+    static int reverse(int n) {
+        boolean neg = false;
+        // make number positive for reverse func and mark flag
+        if (n < 0) {
+            neg = true;
+            n = -n;
+        }
+
+        n = reverseOverflowUtil(n);
+
+        // if original num was negative
+        if (neg)
+            n = -n;
+
+        return n;
+    }
+
+    private static int reverseOverflowUtil(int n) {
+        long res = 0;
+
+        // multiply res by 10 to shift all digits one pos to left
+        while (n > 0) {
+            res = (res * 10L) + (n % 10);
+
+            n /= 10;
+        }
+
+        // overflow has occurred
+        if (res > Integer.MAX_VALUE)
+            return 0;
+        return (int) res;
+    }
+
     // https://www.interviewbit.com/problems/sorted-permutation-rank/#
     static int findRank(String s) {
         TreeSet<Character> set = new TreeSet<>();
