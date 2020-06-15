@@ -71,3 +71,5 @@ Interview bit problems topic wise
 - [Excel Column Title](https://www.interviewbit.com/problems/excel-column-title/)
 - [Palindrome Integer](https://www.interviewbit.com/problems/palindrome-integer/)
 - [Reverse integer](https://www.interviewbit.com/problems/reverse-integer/)
+- [Greatest Common Divisor](https://www.interviewbit.com/problems/greatest-common-divisor/)
+- [Trailing Zeros in Factorial](https://www.interviewbit.com/problems/trailing-zeros-in-factorial/)

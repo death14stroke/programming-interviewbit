@@ -265,34 +265,191 @@ public class Maths {
         return (int) res;
     }
 
-    // https://www.interviewbit.com/problems/sorted-permutation-rank/#
-    static int findRank(String s) {
-        TreeSet<Character> set = new TreeSet<>();
-
-        for (char c : s.toCharArray())
-            set.add(c);
-
-        int n = s.length(), rank = 0;
-
-        for (int i = 0; i < n; i++) {
-            char c = set.first();
-            rank += (s.charAt(i) - c) * fact(n - i - 1);
-
-            System.out.printf("c = %c, charAt = %c, fact = %d\n", c, s.charAt(i), fact(n - i - 1));
-            System.out.printf("rank = %d, i = %d, point = %d\n", rank, i, (s.charAt(i) - c) * fact(n - i - 1));
-
-            set.remove(c);
-        }
-
-        return rank;
+    // https://www.interviewbit.com/problems/greatest-common-divisor/
+    static int gcd(int A, int B) {
+        if (B == 0)
+            return A;
+        return gcd(B, A % B);
     }
 
-    private static int fact(int n) {
-        int fact = 1;
+    // https://www.interviewbit.com/problems/trailing-zeros-in-factorial/
+    static int trailingZeroes(int n) {
+        int cnt = 0;
 
-        for (int i = 1; i <= n; i++)
-            fact *= i;
+        // count the #5's in the factorial as #5's < #2's
+        // #5's = (n/5) + (n/25) +... = (n/5) + ((n/5)/5) +...
+        while (n > 0) {
+            cnt += n / 5;
+            n /= 5;
+        }
 
-        return fact;
+        return cnt;
+    }
+
+    // TODO: optimize factorial
+    // https://www.interviewbit.com/problems/sorted-permutation-rank/
+    static int findRank(String s) {
+        int p = 1000003, MAX_CHAR = 256;
+        // count[i] : count of characters <= s.charAt(i)
+        int[] count = new int[MAX_CHAR];
+
+        // count frequency initially
+        for (char c : s.toCharArray())
+            count[c]++;
+
+        // get cumulative frequency
+        for (int i = 1; i < MAX_CHAR; i++)
+            count[i] += count[i - 1];
+
+        int n = s.length();
+        long rank = 1, fact;
+
+        for (int i = 0; i < s.length(); i++) {
+            // fact(n) % p
+            fact = modFact(n - 1 - i, p);
+
+            char c = s.charAt(i);
+            // rank = rank + (#chars less than c)*fact(#chars to the right)
+            rank += ((long) count[c - 1] * fact) % p;
+
+            // remove current character from cumulative frequency of all following characters
+            for (int j = c; j < MAX_CHAR; j++)
+                count[j]--;
+        }
+
+        rank %= p;
+
+        return (int) rank;
+    }
+
+    private static long modFact(int n, int p) {
+        long fact = 1;
+
+        for (long i = 1; i <= n; i++)
+            fact = (fact * i) % p;
+
+        return fact % p;
+    }
+
+    // TODO: simpler approach from editorial hint and solution
+    // https://www.interviewbit.com/problems/largest-coprime-divisor/
+    static int cpFact(int a, int b) {
+        a /= gcd(a, b);
+
+        int ans = 1;
+
+        for (int i = 1; i * i <= a; i++) {
+            if (a % i == 0) {
+                if (a / i > ans && gcd(a / i, b) == 1)
+                    ans = a / i;
+                else if (i > ans && gcd(i, b) == 1)
+                    ans = i;
+            }
+        }
+
+        return ans;
+    }
+
+    // TODO: modular inverse for prime number
+    // https://www.interviewbit.com/problems/sorted-permutation-rank-with-repeats/
+    static int findRepeatRank(String s) {
+        int p = 1000003, MAX_CHAR = 256;
+
+        int n = s.length();
+        int[] count = new int[MAX_CHAR];
+
+        for (char c : s.toCharArray())
+            count[c]++;
+
+        for (int i = 1; i < MAX_CHAR; i++)
+            count[i] += count[i - 1];
+
+        long rank = 1, fact;
+
+        for (int i = 0; i < n; i++) {
+            char c = s.charAt(i);
+
+            fact = modFact(n - 1 - i, p);
+            long num = ((long) count[c - 1] * fact) % p;
+            long den = modFact(count[0], p);
+
+            for (int j = 1; j < MAX_CHAR; j++) {
+                fact = modFact(count[j] - count[j - 1], p);
+                den = (den * fact) % p;
+            }
+
+            rank = (rank + (num * modularInverse(den, p)) % p) % p;
+
+            for (int j = c; j < MAX_CHAR; j++)
+                count[j]--;
+        }
+
+        return (int) rank;
+    }
+
+    private static long modularInverse(long a, int p) {
+        return modPower(a, p - 2, p);
+    }
+
+    private static long modPower(long x, int y, int p) {
+        long res = 1;
+
+        while (y > 0) {
+            if (y % 2 != 0)
+                res = (res * x) % p;
+
+            x = (x * x) % p;
+            y /= 2;
+        }
+
+        return res;
+    }
+
+    // TODO: O(1) space and O(n) time mathematically
+    // https://www.interviewbit.com/problems/grid-unique-paths/
+    static int uniquePaths(int m, int n) {
+        if (m == 1 && n == 1)
+            return 1;
+
+        int[][] dp = new int[m][n];
+
+        dp[m - 1][n - 1] = 0;
+
+        for (int i = 0; i < m - 1; i++)
+            dp[i][n - 1] = 1;
+
+        for (int j = 0; j < n - 1; j++)
+            dp[m - 1][j] = 1;
+
+        for (int i = m - 2; i >= 0; i--) {
+            for (int j = n - 2; j >= 0; j--)
+                dp[i][j] = dp[i][j + 1] + dp[i + 1][j];
+        }
+
+        for (int[] arr : dp) {
+            for (int val : arr)
+                System.out.printf("%2d ", val);
+            System.out.println();
+        }
+        System.out.println();
+
+        return dp[0][0];
+    }
+
+    // https://www.interviewbit.com/problems/rearrange-array/
+    static void arrange(ArrayList<Integer> a) {
+        int temp = -1;
+        for (int i = 0; i < a.size(); i++) {
+            int pos = a.get(i);
+
+            if (pos >= i) {
+                if (temp == -1)
+                    temp = a.get(i);
+                a.set(i, a.get(pos));
+            } else {
+                a.set(pos, temp);
+                temp = -1;
+            }
+        }
     }
 }

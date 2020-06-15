@@ -2,9 +2,12 @@ import java.util.ArrayList;
 
 public class Solution {
     public static void main(String[] args) {
-        int n = -1146467285;
+        String s = "sadasdsasassasas";
 
-        System.out.println("reverse = "+Maths.reverse(n));
+        int a = 257579, p = 1000003;
+        System.out.printf("mod inverse of %d with %d is %d\n", a, p, Maths.modularInverse(a, p));
+
+        System.out.println("rank = "+Maths.findRepeatRank(s));
     }
 
     private void runArrayCodes() {
