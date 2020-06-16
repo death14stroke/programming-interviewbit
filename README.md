@@ -73,3 +73,6 @@ Interview bit problems topic wise
 - [Reverse integer](https://www.interviewbit.com/problems/reverse-integer/)
 - [Greatest Common Divisor](https://www.interviewbit.com/problems/greatest-common-divisor/)
 - [Trailing Zeros in Factorial](https://www.interviewbit.com/problems/trailing-zeros-in-factorial/)
+- [Sorted Permutation Rank](https://www.interviewbit.com/problems/sorted-permutation-rank/)
+- [Largest Coprime Divisor](https://www.interviewbit.com/problems/largest-coprime-divisor/)
+- [Sorted Permutation Rank with Repeats](https://www.interviewbit.com/problems/sorted-permutation-rank-with-repeats/)

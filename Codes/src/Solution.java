@@ -2,12 +2,12 @@ import java.util.ArrayList;
 
 public class Solution {
     public static void main(String[] args) {
-        String s = "sadasdsasassasas";
+        Integer[] a1 = {0, 1, 5};
+        int b = 1, c = 2;
 
-        int a = 257579, p = 1000003;
-        System.out.printf("mod inverse of %d with %d is %d\n", a, p, Maths.modularInverse(a, p));
+        ArrayList<Integer> a = Array.toIntArrayList(a1);
 
-        System.out.println("rank = "+Maths.findRepeatRank(s));
+        System.out.printf("possible num count = %d\n", Maths.solve(a, b, c));
     }
 
     private void runArrayCodes() {

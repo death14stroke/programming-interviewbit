@@ -286,33 +286,35 @@ public class Maths {
         return cnt;
     }
 
-    // TODO: optimize factorial
     // https://www.interviewbit.com/problems/sorted-permutation-rank/
     static int findRank(String s) {
-        int p = 1000003, MAX_CHAR = 256;
-        // count[i] : count of characters <= s.charAt(i)
+        int MAX_CHAR = 256, p = 1000003;
+        int n = s.length();
+
+        // count[i] = #characters in string < char i
         int[] count = new int[MAX_CHAR];
 
-        // count frequency initially
+        // each character count
         for (char c : s.toCharArray())
             count[c]++;
 
-        // get cumulative frequency
+        // perform cumulative count
         for (int i = 1; i < MAX_CHAR; i++)
             count[i] += count[i - 1];
 
-        int n = s.length();
-        long rank = 1, fact;
+        // fact[i] = i! mod p
+        int[] fact = modFact(n, p);
 
-        for (int i = 0; i < s.length(); i++) {
-            // fact(n) % p
-            fact = modFact(n - 1 - i, p);
+        char c;
+        long rank = 1;
 
-            char c = s.charAt(i);
-            // rank = rank + (#chars less than c)*fact(#chars to the right)
-            rank += ((long) count[c - 1] * fact) % p;
+        for (int i = 0; i < n; i++) {
+            c = s.charAt(i);
 
-            // remove current character from cumulative frequency of all following characters
+            // rank = rank + (#chars smaller than c)*(#places on the right)!
+            rank += ((long) count[c - 1] * (long) fact[n - 1 - i]) % p;
+
+            // remove the current character from all greater characters count
             for (int j = c; j < MAX_CHAR; j++)
                 count[j]--;
         }
@@ -322,64 +324,61 @@ public class Maths {
         return (int) rank;
     }
 
-    private static long modFact(int n, int p) {
-        long fact = 1;
+    private static int[] modFact(int n, int p) {
+        int[] fact = new int[n + 1];
+        fact[0] = 1;
 
-        for (long i = 1; i <= n; i++)
-            fact = (fact * i) % p;
+        for (int i = 1; i <= n; i++)
+            fact[i] = (int) (((long) fact[i - 1] * (long) i) % p);
 
-        return fact % p;
+        return fact;
     }
 
-    // TODO: simpler approach from editorial hint and solution
     // https://www.interviewbit.com/problems/largest-coprime-divisor/
     static int cpFact(int a, int b) {
-        a /= gcd(a, b);
+        while (gcd(a, b) != 1)
+            a /= gcd(a, b);
 
-        int ans = 1;
-
-        for (int i = 1; i * i <= a; i++) {
-            if (a % i == 0) {
-                if (a / i > ans && gcd(a / i, b) == 1)
-                    ans = a / i;
-                else if (i > ans && gcd(i, b) == 1)
-                    ans = i;
-            }
-        }
-
-        return ans;
+        return a;
     }
 
-    // TODO: modular inverse for prime number
     // https://www.interviewbit.com/problems/sorted-permutation-rank-with-repeats/
     static int findRepeatRank(String s) {
-        int p = 1000003, MAX_CHAR = 256;
-
+        int MAX_CHAR = 256, p = 1000003;
         int n = s.length();
+
+        // count[i] = #characters in string < char i
         int[] count = new int[MAX_CHAR];
 
+        // each character count
         for (char c : s.toCharArray())
             count[c]++;
 
-        for (int i = 1; i < MAX_CHAR; i++)
+        // perform cumulative count
+        for (int i = 1; i < 256; i++)
             count[i] += count[i - 1];
 
-        long rank = 1, fact;
+        // fact[i] = i! mod p
+        int[] fact = modFact(n, p);
+
+        long rank = 1, num, den;
+        char c;
 
         for (int i = 0; i < n; i++) {
-            char c = s.charAt(i);
+            c = s.charAt(i);
 
-            fact = modFact(n - 1 - i, p);
-            long num = ((long) count[c - 1] * fact) % p;
-            long den = modFact(count[0], p);
+            // num = (#chars smaller than c)*(#places on the right)!
+            num = ((long) count[c - 1] * (long) fact[n - 1 - i]) % p;
+            // den = (p1! * p2! * ... pn!)
+            den = fact[count[0]] % p;
+            for (int j = 1; j < MAX_CHAR; j++)
+                den = (den * (long) (fact[count[j] - count[j - 1]])) % p;
 
-            for (int j = 1; j < MAX_CHAR; j++) {
-                fact = modFact(count[j] - count[j - 1], p);
-                den = (den * fact) % p;
-            }
+            // rank = rank + num/den
+            // modular inverse for modulo division (p is prime)
+            rank = (rank + (num * modInverse(den, p)) % p) % p;
 
-            rank = (rank + (num * modularInverse(den, p)) % p) % p;
-
+            // remove the current character from all greater characters count
             for (int j = c; j < MAX_CHAR; j++)
                 count[j]--;
         }
@@ -387,7 +386,8 @@ public class Maths {
         return (int) rank;
     }
 
-    private static long modularInverse(long a, int p) {
+    // Fermat's little theorem: a^(p-1) mod p = a if p is prime
+    private static long modInverse(long a, int p) {
         return modPower(a, p - 2, p);
     }
 
@@ -395,9 +395,10 @@ public class Maths {
         long res = 1;
 
         while (y > 0) {
-            if (y % 2 != 0)
+            if (y % 2 == 1)
                 res = (res * x) % p;
 
+            // x^y = (x^2)^(y/2)
             x = (x * x) % p;
             y /= 2;
         }
@@ -405,51 +406,70 @@ public class Maths {
         return res;
     }
 
+    // https://www.interviewbit.com/problems/numbers-of-length-n-and-value-less-than-k/
+    static int solve(ArrayList<Integer> a, int b, int c) {
+        int revC = 0, c1 = c, n = a.size();
+
+        while (c1 > 0) {
+            revC = revC * 10 + c1 % 10;
+            c1 /= 10;
+        }
+
+        int[][] dp = new int[n][b];
+        dp[0][0] = a.get(0) < (c % 10) ? 1 : 0;
+
+        for (int i = 1; i < n; i++)
+            dp[i][0] = dp[i - 1][0] + (a.get(i) < (c % 10) ? 1 : 0);
+
+        for (int i = 0; i < n; i++) {
+            c1 = revC;
+
+            for (int j = 1; j < b; j++) {
+                if (a.get(i) == 0 && j == b - 1) {
+                    dp[i][j] = 0;
+                    continue;
+                }
+
+                int dig = c1 % 10;
+
+                if (a.get(i) == dig) {
+                    dp[i][j] = dp[i][j - 1] + dp[i - 1][j];
+                } else if (a.get(i) > dig)
+                    dp[i][j] = dp[i - 1][j];
+                else
+                    dp[i][j] = C(n, j) + dp[i - 1][j];
+
+                c1 /= 10;
+            }
+        }
+
+        Array.printMatrix(dp);
+
+        return dp[n - 1][b - 1];
+    }
+
+    private static int C(int n, int r) {
+        if (r > n / 2)
+            r = n - r;
+
+        int num = 1, den = 1;
+
+        for (int i = 0; i < r; i++) {
+            num *= (n - i);
+            den *= (r - i);
+        }
+
+        return num / den;
+    }
+
     // TODO: O(1) space and O(n) time mathematically
     // https://www.interviewbit.com/problems/grid-unique-paths/
     static int uniquePaths(int m, int n) {
-        if (m == 1 && n == 1)
-            return 1;
-
-        int[][] dp = new int[m][n];
-
-        dp[m - 1][n - 1] = 0;
-
-        for (int i = 0; i < m - 1; i++)
-            dp[i][n - 1] = 1;
-
-        for (int j = 0; j < n - 1; j++)
-            dp[m - 1][j] = 1;
-
-        for (int i = m - 2; i >= 0; i--) {
-            for (int j = n - 2; j >= 0; j--)
-                dp[i][j] = dp[i][j + 1] + dp[i + 1][j];
-        }
-
-        for (int[] arr : dp) {
-            for (int val : arr)
-                System.out.printf("%2d ", val);
-            System.out.println();
-        }
-        System.out.println();
-
-        return dp[0][0];
+        return 0;
     }
 
     // https://www.interviewbit.com/problems/rearrange-array/
     static void arrange(ArrayList<Integer> a) {
-        int temp = -1;
-        for (int i = 0; i < a.size(); i++) {
-            int pos = a.get(i);
 
-            if (pos >= i) {
-                if (temp == -1)
-                    temp = a.get(i);
-                a.set(i, a.get(pos));
-            } else {
-                a.set(pos, temp);
-                temp = -1;
-            }
-        }
     }
 }
