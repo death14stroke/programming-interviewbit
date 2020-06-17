@@ -76,3 +76,6 @@ Interview bit problems topic wise
 - [Sorted Permutation Rank](https://www.interviewbit.com/problems/sorted-permutation-rank/)
 - [Largest Coprime Divisor](https://www.interviewbit.com/problems/largest-coprime-divisor/)
 - [Sorted Permutation Rank with Repeats](https://www.interviewbit.com/problems/sorted-permutation-rank-with-repeats/)
+- [Numbers of length N and value less than K](https://www.interviewbit.com/problems/numbers-of-length-n-and-value-less-than-k/)
+- [Rearrange Array](https://www.interviewbit.com/problems/rearrange-array/)
+- [Grid Unique Paths](https://www.interviewbit.com/problems/grid-unique-paths/)

@@ -408,68 +408,118 @@ public class Maths {
 
     // https://www.interviewbit.com/problems/numbers-of-length-n-and-value-less-than-k/
     static int solve(ArrayList<Integer> a, int b, int c) {
-        int revC = 0, c1 = c, n = a.size();
+        int MAX_DIG = 10;
+        List<Integer> digits = getDigitsFromNumber(c);
 
-        while (c1 > 0) {
-            revC = revC * 10 + c1 % 10;
-            c1 /= 10;
+        int n = a.size(), d = digits.size();
+
+        // CASE-1: no digits in set or output digits < limit number's digits
+        if (n == 0 || b > d)
+            return 0;
+
+        // CASE-2: output digits < limit number's digits
+        if (b < d) {
+            if (a.get(0) == 0 && b != 1)
+                return (int) ((n - 1) * Math.pow(n, b - 1));
+            else
+                return (int) Math.pow(n, b);
         }
 
-        int[][] dp = new int[n][b];
-        dp[0][0] = a.get(0) < (c % 10) ? 1 : 0;
+        // CASE-3: output digits == limit number's digits
+        int[] lower = new int[MAX_DIG + 1];
 
-        for (int i = 1; i < n; i++)
-            dp[i][0] = dp[i - 1][0] + (a.get(i) < (c % 10) ? 1 : 0);
+        // initialize lower for the digits in list a
+        for (int dig : a)
+            lower[dig + 1] = 1;
 
+        // cumulative count
+        for (int i = 1; i <= MAX_DIG; i++)
+            lower[i] += lower[i - 1];
+
+        // number of digits lower than digit[i] excluding 0
+        int d2;
+        // if a digit in c has equal digit in list a and
+        // no other such digits are present to its left
+        boolean eqFlag = true;
+
+        int[] dp = new int[b + 1];
+        dp[0] = 0;
+
+        for (int i = 1; i <= b; i++) {
+            // for digits lower than digit[i-2]
+            // we can place all the digits in list a after them
+            dp[i] = dp[i - 1] * n;
+
+            d2 = lower[digits.get(i - 1)];
+
+            // if list a contains 0 and output is not 1 digit number
+            if (i == 1 && b != 1 && a.get(0) == 0)
+                d2--;
+
+            // if prev digit was a digit from the list
+            if (eqFlag)
+                dp[i] += d2;
+
+            // flag is true if digit[i-1] is present in list a and
+            // is first such digit from the left
+            eqFlag = (eqFlag && lower[digits.get(i - 1) + 1] - lower[digits.get(i - 1)] == 1);
+        }
+
+        return dp[b];
+    }
+
+    private static List<Integer> getDigitsFromNumber(int n) {
+        List<Integer> digits = new ArrayList<>();
+
+        // add new digit at the front
+        while (n > 0) {
+            digits.add(0, n % 10);
+            n /= 10;
+        }
+
+        // if n == 0
+        if (digits.size() == 0)
+            digits.add(0);
+
+        return digits;
+    }
+
+    // https://www.interviewbit.com/problems/rearrange-array/
+    static void arrange(ArrayList<Integer> a) {
+        // if x = a + bn where a is old value and b is new value then
+        // old value = x % n and new value = x / n
+        int n = a.size();
+
+        // add new value b to old value a of each element (a + bn)
         for (int i = 0; i < n; i++) {
-            c1 = revC;
-
-            for (int j = 1; j < b; j++) {
-                if (a.get(i) == 0 && j == b - 1) {
-                    dp[i][j] = 0;
-                    continue;
-                }
-
-                int dig = c1 % 10;
-
-                if (a.get(i) == dig) {
-                    dp[i][j] = dp[i][j - 1] + dp[i - 1][j];
-                } else if (a.get(i) > dig)
-                    dp[i][j] = dp[i - 1][j];
-                else
-                    dp[i][j] = C(n, j) + dp[i - 1][j];
-
-                c1 /= 10;
-            }
+            int x = a.get(i), y = a.get(x) % n;
+            a.set(i, x + y * n);
         }
 
-        Array.printMatrix(dp);
+        // retrieve new value b from the a + bn sum
+        for (int i = 0; i < n; i++)
+            a.set(i, a.get(i) / n);
+    }
 
-        return dp[n - 1][b - 1];
+    // https://www.interviewbit.com/problems/grid-unique-paths/
+    static int uniquePaths(int m, int n) {
+        // total steps that must be taken will be (m - 1) steps right + (n - 1) steps bottom
+        // if we choose either (m - 1) steps, remaining (n - 1) steps would be fixed or vice-versa
+        // hence # unique paths = C (m + n - 2, m - 1) = C (m + n - 2, n - 1)
+        return C(m + n - 2, m - 1);
     }
 
     private static int C(int n, int r) {
         if (r > n / 2)
             r = n - r;
 
-        int num = 1, den = 1;
+        long num = 1, den = 1;
 
         for (int i = 0; i < r; i++) {
             num *= (n - i);
             den *= (r - i);
         }
 
-        return num / den;
-    }
-
-    // TODO: O(1) space and O(n) time mathematically
-    // https://www.interviewbit.com/problems/grid-unique-paths/
-    static int uniquePaths(int m, int n) {
-        return 0;
-    }
-
-    // https://www.interviewbit.com/problems/rearrange-array/
-    static void arrange(ArrayList<Integer> a) {
-
+        return (int) (num / den);
     }
 }

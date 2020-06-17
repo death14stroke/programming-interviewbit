@@ -2,12 +2,13 @@ import java.util.ArrayList;
 
 public class Solution {
     public static void main(String[] args) {
-        Integer[] a1 = {0, 1, 5};
-        int b = 1, c = 2;
+        Integer[] a1 = { 2, 3, 5, 6, 7, 9 };
 
         ArrayList<Integer> a = Array.toIntArrayList(a1);
+        int b = 5, c = 42950;
 
-        System.out.printf("possible num count = %d\n", Maths.solve(a, b, c));
+        Array.printArrayList(a);
+        System.out.printf("values with %d digits less than %d = %d\n", b, c, Maths.solve(a, b, c));
     }
 
     private void runArrayCodes() {
