@@ -522,4 +522,34 @@ public class Maths {
 
         return (int) (num / den);
     }
+
+    // Jump to LEVEL-3 code
+    // https://www.interviewbit.com/problems/prettyprint/
+    static ArrayList<ArrayList<Integer>> prettyPrint(int n) {
+        int len = 2 * n - 1;
+        ArrayList<ArrayList<Integer>> out = new ArrayList<>(len);
+
+        ArrayList<Integer> list = new ArrayList<>(len);
+        for (int i = 0; i < len; i++)
+            list.add(0);
+        for (int i = 0; i < len; i++)
+            out.add(new ArrayList<>(list));
+
+        int start = 0, end = len - 1;
+
+        while (start <= end) {
+            for (int i = start; i <= end; i++) {
+                out.get(i).set(start, n);
+                out.get(i).set(end, n);
+                out.get(start).set(i, n);
+                out.get(end).set(i, n);
+            }
+
+            n--;
+            start++;
+            end--;
+        }
+
+        return out;
+    }
 }

@@ -2,13 +2,8 @@ import java.util.ArrayList;
 
 public class Solution {
     public static void main(String[] args) {
-        Integer[] a1 = { 2, 3, 5, 6, 7, 9 };
-
-        ArrayList<Integer> a = Array.toIntArrayList(a1);
-        int b = 5, c = 42950;
-
-        Array.printArrayList(a);
-        System.out.printf("values with %d digits less than %d = %d\n", b, c, Maths.solve(a, b, c));
+        int n = 4;
+        Array.printMatrix(Maths.prettyPrint(n));
     }
 
     private void runArrayCodes() {

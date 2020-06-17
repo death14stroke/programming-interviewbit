@@ -79,3 +79,4 @@ Interview bit problems topic wise
 - [Numbers of length N and value less than K](https://www.interviewbit.com/problems/numbers-of-length-n-and-value-less-than-k/)
 - [Rearrange Array](https://www.interviewbit.com/problems/rearrange-array/)
 - [Grid Unique Paths](https://www.interviewbit.com/problems/grid-unique-paths/)
+- [PRETTYPRINT](https://www.interviewbit.com/problems/prettyprint/)
