@@ -80,3 +80,9 @@ Interview bit problems topic wise
 - [Rearrange Array](https://www.interviewbit.com/problems/rearrange-array/)
 - [Grid Unique Paths](https://www.interviewbit.com/problems/grid-unique-paths/)
 - [PRETTYPRINT](https://www.interviewbit.com/problems/prettyprint/)
+
+## Binary Search
+
+- [Count Element Occurence](https://www.interviewbit.com/problems/count-element-occurence/)
+- [Rotated Array](https://www.interviewbit.com/problems/rotated-array/)
+- [Square Root of Integer](https://www.interviewbit.com/problems/square-root-of-integer/)
