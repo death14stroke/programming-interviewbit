@@ -86,6 +86,8 @@ Interview bit problems topic wise
 - [Count Element Occurence](https://www.interviewbit.com/problems/count-element-occurence/)
 - [Rotated Array](https://www.interviewbit.com/problems/rotated-array/)
 - [Square Root of Integer](https://www.interviewbit.com/problems/square-root-of-integer/)
+- [Painter's Partition Problem](https://www.interviewbit.com/problems/painters-partition-problem/)
+- [Allocate Books](https://www.interviewbit.com/problems/allocate-books/)
 - [Matrix Search](https://www.interviewbit.com/problems/matrix-search/)
 - [Search for a Range](https://www.interviewbit.com/problems/search-for-a-range/)
 - [Sorted Insert Position](https://www.interviewbit.com/problems/sorted-insert-position/)
