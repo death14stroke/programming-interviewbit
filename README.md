@@ -86,3 +86,8 @@ Interview bit problems topic wise
 - [Count Element Occurence](https://www.interviewbit.com/problems/count-element-occurence/)
 - [Rotated Array](https://www.interviewbit.com/problems/rotated-array/)
 - [Square Root of Integer](https://www.interviewbit.com/problems/square-root-of-integer/)
+- [Matrix Search](https://www.interviewbit.com/problems/matrix-search/)
+- [Search for a Range](https://www.interviewbit.com/problems/search-for-a-range/)
+- [Sorted Insert Position](https://www.interviewbit.com/problems/sorted-insert-position/)
+- [Implement Power Function](https://www.interviewbit.com/problems/implement-power-function/)
+- [Rotated Sorted Array Search](https://www.interviewbit.com/problems/rotated-sorted-array-search/)
