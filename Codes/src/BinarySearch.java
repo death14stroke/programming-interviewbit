@@ -68,6 +68,116 @@ public class BinarySearch {
         return -1;
     }
 
+    // https://www.interviewbit.com/problems/matrix-median/
+    static int findMedian(ArrayList<ArrayList<Integer>> A) {
+        int m = A.size(), n = A.get(0).size();
+        int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
+
+        // matrix is sorted by rows
+        // hence check top for each row for min and bottom for each row for max
+        for (ArrayList<Integer> row : A) {
+            min = Math.min(min, row.get(0));
+            max = Math.max(max, row.get(n - 1));
+        }
+
+        // all entries in matrix are same
+        if (min == max)
+            return min;
+
+        // if a number is median, these many elements must be less than it
+        int req = (m * n + 1) / 2;
+
+        // check all values from min to max as median
+        while (min <= max) {
+            int mid = min + (max - min) / 2;
+            int totalCnt = 0;
+
+            // count for numbers <= mid in each row
+            for (ArrayList<Integer> row : A) {
+                int cnt = lastOccurenceOrNeighbour(row, n, mid) + 1;
+                totalCnt += cnt;
+            }
+
+            // if mid has less elements <= it
+            // try higher value as median
+            if (totalCnt < req)
+                min = mid + 1;
+            // else try lower value as median
+            else
+                max = mid - 1;
+        }
+
+        // min will have elements = (m*n)/2 if it doesn't have duplicate
+        // else one of its duplicates will have (m*n)/2 elements on its left
+        return min;
+    }
+
+    // return the position of largest number less than x or last occurence of x
+    private static int lastOccurenceOrNeighbour(ArrayList<Integer> a, int n, int x) {
+        int l = 0, r = n - 1, res = -1;
+
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+
+            // search for a larger number or more duplicates
+            if (a.get(mid) <= x) {
+                res = mid;
+                l = mid + 1;
+            }
+            // else search in the left half
+            else
+                r = mid - 1;
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/median-of-array/
+    static double findMedianSortedArrays(final List<Integer> a, final List<Integer> b) {
+        // a must be the smaller array
+        if (a.size() > b.size())
+            return findMedianSortedArrays(b, a);
+
+        int x = a.size(), y = b.size();
+        int l = 0, r = x;
+
+        // binary search for partition over x
+        while (l <= r) {
+            int partitionX = l + (r - l) / 2;
+            int partitionY = (x + y + 1) / 2 - partitionX;
+
+            // rightmost in left partition from array A
+            int maxLeftX = (partitionX == 0) ? Integer.MIN_VALUE : a.get(partitionX - 1);
+            // leftmost in right partition from array A
+            int minRightX = (partitionX == x) ? Integer.MAX_VALUE : a.get(partitionX);
+
+            // rightmost in left partition from array B
+            int maxLeftY = (partitionY == 0) ? Integer.MIN_VALUE : b.get(partitionY - 1);
+            // leftmost in right partition from array B
+            int minRightY = (partitionY == y) ? Integer.MAX_VALUE : b.get(partitionY);
+
+            // correct partition. Found interested 4 elements of the middle
+            if (maxLeftX <= minRightY && maxLeftY <= minRightX) {
+                // result size is even. n/2 pos will be taken by max of left partitions and
+                // (n/2 + 1) pos will be taken by min of right partitions
+                if ((x + y) % 2 == 0)
+                    return (Math.max(maxLeftX, maxLeftY) + Math.min(minRightX, minRightY)) / 2.0;
+                // result size is odd. n/2 pos will be taken by max of left partitions
+                // (because left partition has one element extra)
+                else
+                    return Math.max(maxLeftX, maxLeftY);
+            }
+            // left partition for x is too large. Move to left
+            else if (maxLeftX > minRightY)
+                r = partitionX - 1;
+            // left partition for x is too small. Move to right
+            else
+                l = partitionX + 1;
+        }
+
+        return -1;
+    }
+
     // https://www.interviewbit.com/problems/square-root-of-integer/
     static int sqrt(int n) {
         // sqrt(0) = 0, sqrt(1) = 1
