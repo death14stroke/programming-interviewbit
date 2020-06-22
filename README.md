@@ -95,3 +95,7 @@ Interview bit problems topic wise
 - [Implement Power Function](https://www.interviewbit.com/problems/implement-power-function/)
 - [Rotated Sorted Array Search](https://www.interviewbit.com/problems/rotated-sorted-array-search/)
 - [Median of Array](https://www.interviewbit.com/problems/median-of-array/)
+
+## Strings
+
+- [Palindrome String](https://www.interviewbit.com/problems/palindrome-string/)
