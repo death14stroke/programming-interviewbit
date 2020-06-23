@@ -102,7 +102,7 @@ public class BinarySearch {
             // try higher value as median
             if (totalCnt < req)
                 min = mid + 1;
-            // else try lower value as median
+                // else try lower value as median
             else
                 max = mid - 1;
         }
@@ -130,52 +130,6 @@ public class BinarySearch {
         }
 
         return res;
-    }
-
-    // https://www.interviewbit.com/problems/median-of-array/
-    static double findMedianSortedArrays(final List<Integer> a, final List<Integer> b) {
-        // a must be the smaller array
-        if (a.size() > b.size())
-            return findMedianSortedArrays(b, a);
-
-        int x = a.size(), y = b.size();
-        int l = 0, r = x;
-
-        // binary search for partition over x
-        while (l <= r) {
-            int partitionX = l + (r - l) / 2;
-            int partitionY = (x + y + 1) / 2 - partitionX;
-
-            // rightmost in left partition from array A
-            int maxLeftX = (partitionX == 0) ? Integer.MIN_VALUE : a.get(partitionX - 1);
-            // leftmost in right partition from array A
-            int minRightX = (partitionX == x) ? Integer.MAX_VALUE : a.get(partitionX);
-
-            // rightmost in left partition from array B
-            int maxLeftY = (partitionY == 0) ? Integer.MIN_VALUE : b.get(partitionY - 1);
-            // leftmost in right partition from array B
-            int minRightY = (partitionY == y) ? Integer.MAX_VALUE : b.get(partitionY);
-
-            // correct partition. Found interested 4 elements of the middle
-            if (maxLeftX <= minRightY && maxLeftY <= minRightX) {
-                // result size is even. n/2 pos will be taken by max of left partitions and
-                // (n/2 + 1) pos will be taken by min of right partitions
-                if ((x + y) % 2 == 0)
-                    return (Math.max(maxLeftX, maxLeftY) + Math.min(minRightX, minRightY)) / 2.0;
-                // result size is odd. n/2 pos will be taken by max of left partitions
-                // (because left partition has one element extra)
-                else
-                    return Math.max(maxLeftX, maxLeftY);
-            }
-            // left partition for x is too large. Move to left
-            else if (maxLeftX > minRightY)
-                r = partitionX - 1;
-            // left partition for x is too small. Move to right
-            else
-                l = partitionX + 1;
-        }
-
-        return -1;
     }
 
     // https://www.interviewbit.com/problems/square-root-of-integer/
@@ -208,6 +162,62 @@ public class BinarySearch {
         }
 
         return sqrt;
+    }
+
+    // https://www.interviewbit.com/problems/painters-partition-problem/
+    static int paint(int A, int B, ArrayList<Integer> C) {
+        int p = 10000003, sum = 0, max = 0;
+
+        for (int board : C) {
+            sum = (sum + board) % p;
+            max = Math.max(max, board);
+        }
+
+        // min for range will be case when each painter paints one.
+        // Hence time will be length of max board
+        // max for range will be when one painter paints all.
+        // Hence time will be sum of all lengths
+        int l = max, r = sum, ans = -1;
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+
+            // found a solution. Look for a lower time cost
+            if (canPaint(C, A, mid, p)) {
+                ans = mid;
+                r = mid - 1;
+            }
+            // else increase the time limit for a possible solution
+            else
+                l = mid + 1;
+        }
+
+        // multiply length by time and take mod
+        return (int) (((long) ans * (long) B) % p);
+    }
+
+    private static boolean canPaint(ArrayList<Integer> boards, int painters, int maxTime, int p) {
+        int curr_sum = 0, cnt = 1;
+
+        for (int cost : boards) {
+            // if board is longer than max length decided
+            if (cost % p > maxTime)
+                return false;
+
+            // if board is longer than painter's max length capacity add new painter
+            if ((curr_sum + cost) % p > maxTime) {
+                curr_sum = cost;
+                cnt++;
+
+                // if count of painters is reached
+                if (cnt > painters)
+                    return false;
+            }
+            // allocate board to same painter
+            else
+                curr_sum = (curr_sum + cost) % p;
+        }
+
+        return true;
     }
 
     // https://www.interviewbit.com/problems/allocate-books/
@@ -263,71 +273,15 @@ public class BinarySearch {
         return true;
     }
 
-    // https://www.interviewbit.com/problems/painters-partition-problem/
-    static int paint(int A, int B, ArrayList<Integer> C) {
-        int p = 10000003, sum = 0, max = 0;
-
-        for (int board : C) {
-            sum = (sum + board) % p;
-            max = Math.max(max, board);
-        }
-
-        // min for range will be case when each painter paints one.
-        // Hence time will be length of max board
-        // max for range will be when one painter paints all.
-        // Hence time will be sum of all lengths
-        int l = max, r = sum, ans = -1;
-        while (l <= r) {
-            int mid = l + (r - l) / 2;
-
-            // found a solution. Look for a lower time cost
-            if (canPaint(C, A, B, mid, p)) {
-                ans = mid;
-                r = mid - 1;
-            }
-            // else increase the time limit for a possible solution
-            else
-                l = mid + 1;
-        }
-
-        // multiply length by time and take mod
-        return (int) (((long) ans * (long) B) % p);
-    }
-
-    private static boolean canPaint(ArrayList<Integer> boards, int painters, int time, int maxTime, int p) {
-        int curr_sum = 0, cnt = 1;
-
-        for (int cost : boards) {
-            // if board is longer than max length decided
-            if (cost % p > maxTime)
-                return false;
-
-            // if board is longer than painter's max length capacity add new painter
-            if ((curr_sum + cost) % p > maxTime) {
-                curr_sum = cost;
-                cnt++;
-
-                // if count of painters is reached
-                if (cnt > painters)
-                    return false;
-            }
-            // allocate board to same painter
-            else
-                curr_sum = (curr_sum + cost) % p;
-        }
-
-        return true;
-    }
-
     // https://www.interviewbit.com/problems/matrix-search/
     static int searchMatrix(ArrayList<ArrayList<Integer>> A, int B) {
         int m = A.size();
         if (m == 0)
-            return -1;
+            return 0;
 
         int n = A.get(0).size();
         if (n == 0)
-            return -1;
+            return 0;
 
         // since matrix is sorted such, we can consider it as a sorted array of m*n
         int l = 0, r = m * n - 1, mid;
@@ -340,7 +294,7 @@ public class BinarySearch {
             // found B
             if (B == A.get(row).get(col))
                 return 1;
-            if (B >= A.get(row).get(col))
+            if (B > A.get(row).get(col))
                 l = mid + 1;
             else
                 r = mid - 1;
@@ -439,7 +393,7 @@ public class BinarySearch {
                 // x lies in left sub-array
                 if (x < A.get(mid) && x >= A.get(0))
                     r = mid - 1;
-                    // else search in left
+                    // else search in right
                 else
                     l = mid + 1;
             }
@@ -448,10 +402,56 @@ public class BinarySearch {
                 // x lies in right sub-array
                 if (x > A.get(mid) && x <= A.get(n - 1))
                     l = mid + 1;
-                    // else search in right
+                    // else search in left
                 else
                     r = mid - 1;
             }
+        }
+
+        return -1;
+    }
+
+    // https://www.interviewbit.com/problems/median-of-array/
+    static double findMedianSortedArrays(final List<Integer> a, final List<Integer> b) {
+        // a must be the smaller array
+        if (a.size() > b.size())
+            return findMedianSortedArrays(b, a);
+
+        int x = a.size(), y = b.size();
+        int l = 0, r = x;
+
+        // binary search for partition over x
+        while (l <= r) {
+            int partitionX = l + (r - l) / 2;
+            int partitionY = (x + y + 1) / 2 - partitionX;
+
+            // rightmost in left partition from array A
+            int maxLeftX = (partitionX == 0) ? Integer.MIN_VALUE : a.get(partitionX - 1);
+            // leftmost in right partition from array A
+            int minRightX = (partitionX == x) ? Integer.MAX_VALUE : a.get(partitionX);
+
+            // rightmost in left partition from array B
+            int maxLeftY = (partitionY == 0) ? Integer.MIN_VALUE : b.get(partitionY - 1);
+            // leftmost in right partition from array B
+            int minRightY = (partitionY == y) ? Integer.MAX_VALUE : b.get(partitionY);
+
+            // correct partition. Found interested 4 elements of the middle
+            if (maxLeftX <= minRightY && maxLeftY <= minRightX) {
+                // result size is even. n/2 pos will be taken by max of left partitions and
+                // (n/2 + 1) pos will be taken by min of right partitions
+                if ((x + y) % 2 == 0)
+                    return (Math.max(maxLeftX, maxLeftY) + Math.min(minRightX, minRightY)) / 2.0;
+                    // result size is odd. n/2 pos will be taken by max of left partitions
+                    // (because left partition has one element extra)
+                else
+                    return Math.max(maxLeftX, maxLeftY);
+            }
+            // left partition for x is too large. Move to left
+            else if (maxLeftX > minRightY)
+                r = partitionX - 1;
+                // left partition for x is too small. Move to right
+            else
+                l = partitionX + 1;
         }
 
         return -1;

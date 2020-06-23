@@ -99,3 +99,5 @@ Interview bit problems topic wise
 ## Strings
 
 - [Palindrome String](https://www.interviewbit.com/problems/palindrome-string/)
+- [Longest Common Prefix](https://www.interviewbit.com/problems/longest-common-prefix/)
+- [Amazing Subarrays](https://www.interviewbit.com/problems/amazing-subarrays/)
