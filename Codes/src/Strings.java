@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.regex.Pattern;
 
 public class Strings {
     // https://www.interviewbit.com/problems/palindrome-string/
@@ -66,6 +68,40 @@ public class Strings {
         return A.get(0).substring(0, endIndex);
     }
 
+    // https://www.interviewbit.com/problems/count-and-say/
+    static String countAndSay(int n) {
+        // for n = 1 sequence is 1
+        if (n == 1)
+            return String.valueOf(1);
+
+        StringBuilder res = new StringBuilder("1");
+        for (int i = 2; i <= n; i++) {
+            int cnt = 1;
+            // add dummy char at end to process the last char
+            res.append("$");
+            StringBuilder temp = new StringBuilder();
+
+            for (int j = 1; j < res.length(); j++) {
+                // if res[i] matches with res[i-1] increase count
+                if (res.charAt(j) == res.charAt(j - 1))
+                    cnt++;
+                else {
+                    // append the count of digit followed by the digit to temp string
+                    temp.append(cnt);
+                    temp.append(res.charAt(j - 1));
+
+                    // reset count to 1 for next char
+                    cnt = 1;
+                }
+            }
+
+            // assign temp to result
+            res = temp;
+        }
+
+        return res.toString();
+    }
+
     // https://www.interviewbit.com/problems/amazing-subarrays/
     static int solve(String A) {
         int n = A.length(), p = 10003;
@@ -82,5 +118,211 @@ public class Strings {
         }
 
         return cnt;
+    }
+
+    // TODO: use O(n) solution KMP lps
+    // https://www.interviewbit.com/problems/minimum-characters-required-to-make-a-string-palindromic/
+    static int minInsertions(String A) {
+        return 0;
+    }
+
+    // https://www.interviewbit.com/problems/implement-strstr/
+    static int strStr(final String str, final String pat) {
+        int n = str.length(), m = pat.length();
+
+        // if haystack (str) or needle(pat) is empty
+        if (n == 0 || m == 0)
+            return -1;
+
+        int[] lps = computeLpsArray(pat);
+        int i = 0, j = 0;
+
+        while (i < n && j < m) {
+            if (str.charAt(i) == pat.charAt(j)) {
+                i++;
+                j++;
+
+                // found pattern ending at i-1
+                if (j == m)
+                    return i - m;
+            } else {
+                // compare next char in str with pat[0]
+                if (j == 0)
+                    i++;
+                    // compare pat[i] with char after lps[j-1]
+                else
+                    j = lps[j - 1];
+            }
+        }
+
+        return -1;
+    }
+
+    // lps - longest prefix that is also a suffix (KMP pre-computation)
+    private static int[] computeLpsArray(String pat) {
+        int m = pat.length();
+        int[] lps = new int[m];
+
+        int i = 1, j = 0;
+
+        while (i < m) {
+            // pat[i] forms a part of previous lps (or new lps)
+            if (pat.charAt(i) == pat.charAt(j)) {
+                lps[i] = lps[i - 1] + 1;
+                i++;
+                j++;
+            } else {
+                // search for lps with next char after pat[i]
+                if (j == 0) {
+                    lps[i] = 0;
+                    i++;
+                }
+                // lps[j-1] must be matching, compare chars after that
+                else
+                    j = lps[j - 1];
+            }
+        }
+
+        return lps;
+    }
+
+    // https://www.interviewbit.com/problems/compare-version-numbers/
+    static int compareVersion(String A, String B) {
+        // split both strings by "."
+        Pattern pattern = Pattern.compile("\\.");
+        ArrayList<String> s1 = new ArrayList<>(Arrays.asList(pattern.split(A)));
+        ArrayList<String> s2 = new ArrayList<>(Arrays.asList(pattern.split(B)));
+
+        // make both list equal. Add empty strings to compensate
+        int i = 0;
+        while (s1.size() < s2.size())
+            s1.add("");
+        while (s2.size() < s1.size())
+            s2.add("");
+
+        // loop for all the version parts
+        while (i < s1.size()) {
+            String a = s1.get(i), b = s2.get(i);
+
+            // remove leading zeroes for both strings
+            int x = 0, y = 0;
+            while (x < a.length() && a.charAt(x) == '0')
+                x++;
+            while (y < b.length() && b.charAt(y) == '0')
+                y++;
+
+            // if s1[i] is smaller after leading zeroes
+            if (a.length() - x < b.length() - y)
+                return -1;
+                // if s2[i] is smaller after leading zeroes
+            else if (a.length() - x > b.length() - y)
+                return 1;
+                // else compare digit by digit
+            else {
+                while (x < a.length() && y < b.length()) {
+                    // s1[i] is smaller
+                    if (a.charAt(x) < b.charAt(y))
+                        return -1;
+                        // s2[i] is smaller
+                    else if (a.charAt(x) > b.charAt(y))
+                        return 1;
+                    else {
+                        x++;
+                        y++;
+                    }
+                }
+            }
+
+            // check next section
+            i++;
+        }
+
+        // both versions are equal
+        return 0;
+    }
+
+    // https://www.interviewbit.com/problems/atoi/
+    static int atoi(final String A) {
+        // empty string
+        if (A.length() == 0)
+            return 0;
+
+        long ans = 0;
+        int i = 0;
+        boolean neg = false;
+
+        // remove leading white spaces
+        while (i < A.length() && A.charAt(i) == ' ')
+            i++;
+
+        // check for + or - sign at beginning
+        if (A.charAt(i) == '+') {
+            i++;
+        } else if (A.charAt(i) == '-') {
+            neg = true;
+            i++;
+        }
+
+        while (i < A.length()) {
+            char c = A.charAt(i);
+
+            // not a digit
+            if (c < '0' || c > '9')
+                break;
+
+            ans = ans * 10 + (c - '0');
+
+            // overflow
+            if (ans > Integer.MAX_VALUE) {
+                if (neg)
+                    return Integer.MIN_VALUE;
+                return Integer.MAX_VALUE;
+            }
+
+            i++;
+        }
+
+        // if - sign encountered at beginning
+        if (neg)
+            ans = -ans;
+
+        return (int) ans;
+    }
+
+    // TODO: modify with interviewbit solution
+    // https://www.interviewbit.com/problems/valid-number/
+    static int isNumber(final String A) {
+        int n = A.length();
+        int l = 0, r = n - 1;
+
+        while (l < n && A.charAt(l) == ' ')
+            l++;
+        if (l == n)
+            return 0;
+        while (r >= l && A.charAt(r) == ' ')
+            r--;
+
+        if (A.charAt(r) == '+' || A.charAt(r) == '-' || A.charAt(r) == '.' || A.charAt(r) == 'e')
+            return 0;
+        char[] c = A.substring(l, r + 1).toCharArray();
+        boolean sign = false, dot = false, exp = false;
+        for (int i = 0; i < c.length; i++) {
+            if (c[i] == '+' || c[i] == '-') {
+                if (sign && c[i - 1] != 'e')
+                    return 0;
+                sign = true;
+            } else if (c[i] == '.') {
+                if (exp || dot)
+                    return 0;
+                dot = true;
+            } else if (c[i] == 'e') {
+                if (exp || c[i - 1] == '.' || c[i - 1] == '+' || c[i - 1] == '-')
+                    return 0;
+                exp = true;
+            } else if (c[i] < '0' || c[i] > '9')
+                return 0;
+        }
+
+        return 1;
     }
 }

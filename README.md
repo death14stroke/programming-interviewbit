@@ -100,4 +100,8 @@ Interview bit problems topic wise
 
 - [Palindrome String](https://www.interviewbit.com/problems/palindrome-string/)
 - [Longest Common Prefix](https://www.interviewbit.com/problems/longest-common-prefix/)
+- [Count And Say](https://www.interviewbit.com/problems/count-and-say/)
 - [Amazing Subarrays](https://www.interviewbit.com/problems/amazing-subarrays/)
+- [Implement StrStr](https://www.interviewbit.com/problems/implement-strstr/)
+- [Compare Version Numbers](https://www.interviewbit.com/problems/compare-version-numbers/)
+- [Atoi](https://www.interviewbit.com/problems/atoi/)
