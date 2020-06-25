@@ -120,10 +120,50 @@ public class Strings {
         return cnt;
     }
 
-    // TODO: use O(n) solution KMP lps
     // https://www.interviewbit.com/problems/minimum-characters-required-to-make-a-string-palindromic/
     static int minInsertions(String A) {
-        return 0;
+        // compute lps for A + "$" + rev(A)
+        String str = A + "$" + new StringBuilder(A).reverse().toString();
+        int[] lps = computeLpsArray(str);
+
+        // min insertions req = strlen(A) - lps[appended str last pos]
+        return A.length() - lps[str.length() - 1];
+    }
+
+    // https://www.interviewbit.com/problems/longest-palindromic-substring/
+    private static int length, left;
+
+    static String longestPalindrome(String A) {
+        int n = A.length();
+        if (n <= 1)
+            return A;
+
+        length = 1;
+        left = 0;
+
+        for (int i = 1; i < n; i++) {
+            // check for even length palindromes centered at i
+            checkPalindrome(A, i - 1, i);
+            // check for odd length palindromes centered at i
+            checkPalindrome(A, i - 1, i + 1);
+        }
+
+        return A.substring(left, left + length);
+    }
+
+    // check if string with given endpoints expands into palindrome or not
+    private static void checkPalindrome(String A, int start, int end) {
+        // keep moving boundaries till the substring is palindrome
+        while (start >= 0 && end < A.length() && A.charAt(start) == A.charAt(end)) {
+            start--;
+            end++;
+        }
+
+        // if this is a longer palindrome substring
+        if (end - start - 1 > length) {
+            length = end - start - 1;
+            left = start + 1;
+        }
     }
 
     // https://www.interviewbit.com/problems/implement-strstr/
@@ -168,7 +208,7 @@ public class Strings {
         while (i < m) {
             // pat[i] forms a part of previous lps (or new lps)
             if (pat.charAt(i) == pat.charAt(j)) {
-                lps[i] = lps[i - 1] + 1;
+                lps[i] = j + 1;
                 i++;
                 j++;
             } else {
@@ -289,40 +329,88 @@ public class Strings {
         return (int) ans;
     }
 
-    // TODO: modify with interviewbit solution
     // https://www.interviewbit.com/problems/valid-number/
     static int isNumber(final String A) {
         int n = A.length();
-        int l = 0, r = n - 1;
+        // empty string
+        if (n == 0)
+            return 0;
 
+        // remove leading and ending zeroes
+        int l = 0, r = n - 1;
         while (l < n && A.charAt(l) == ' ')
             l++;
+        // all were zeroes
         if (l == n)
             return 0;
         while (r >= l && A.charAt(r) == ' ')
             r--;
 
-        if (A.charAt(r) == '+' || A.charAt(r) == '-' || A.charAt(r) == '.' || A.charAt(r) == 'e')
-            return 0;
         char[] c = A.substring(l, r + 1).toCharArray();
-        boolean sign = false, dot = false, exp = false;
-        for (int i = 0; i < c.length; i++) {
-            if (c[i] == '+' || c[i] == '-') {
-                if (sign && c[i - 1] != 'e')
-                    return 0;
-                sign = true;
-            } else if (c[i] == '.') {
+        // if processed string is empty or the only char is not digit
+        if (c.length == 0 || c.length == 1 && !Character.isDigit(c[0]))
+            return 0;
+
+        // if first char is not sign, dot or digit
+        if (c[0] != '+' && c[0] != '-' && c[0] != '.' && !Character.isDigit(c[0]))
+            return 0;
+
+        boolean dot = false, exp = false;
+        for (int i = 1; i < c.length; i++) {
+            // if char is not sign, dot, exp or digit
+            if (c[i] != '+' && c[i] != '-' && c[i] != 'e' && c[i] != '.' && !Character.isDigit(c[i]))
+                return 0;
+
+            if (c[i] == '.') {
+                // if exp or dot has already occurred
                 if (exp || dot)
                     return 0;
+
+                // if dot is last char or next char is not digit
+                if (i + 1 >= n || !Character.isDigit(c[i + 1]))
+                    return 0;
+
                 dot = true;
             } else if (c[i] == 'e') {
-                if (exp || c[i - 1] == '.' || c[i - 1] == '+' || c[i - 1] == '-')
+                // if exp has already occurred
+                if (exp)
                     return 0;
+
+                // if prev char is not digit
+                if (!Character.isDigit(c[i - 1]))
+                    return 0;
+
+                // if exp is last char or next char is not sign or digit
+                if (i + 1 >= n || (c[i + 1] != '-' && c[i + 1] != '+' && !Character.isDigit(c[i + 1])))
+                    return 0;
+
+                // mark exp and dot as true
                 exp = true;
-            } else if (c[i] < '0' || c[i] > '9')
-                return 0;
+                dot = true;
+            } else if (c[i] == '+' || c[i] == '-') {
+                // if prev char is not exp or sign is the last char or next char is not digit
+                // (since initial sign has already been processed, this sign will always be after exp for valid num)
+                if (c[i - 1] != 'e' || i + 1 >= n || !Character.isDigit(c[i + 1]))
+                    return 0;
+            }
         }
 
+        // all cases passed
         return 1;
+    }
+
+    // https://www.interviewbit.com/problems/length-of-last-word/
+    static int lengthOfLastWord(final String A) {
+        int n = A.length() - 1;
+        // remove ending white spaces
+        while (n >= 0 && A.charAt(n) == ' ')
+            n--;
+
+        int lastWordPos = n;
+        // keep traversing till blank space is reached
+        while (lastWordPos >= 0 && A.charAt(lastWordPos) != ' ')
+            lastWordPos--;
+
+        return n - lastWordPos;
     }
 }
