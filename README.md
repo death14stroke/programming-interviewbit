@@ -109,3 +109,7 @@ Interview bit problems topic wise
 - [Atoi](https://www.interviewbit.com/problems/atoi/)
 - [Valid Number](https://www.interviewbit.com/problems/valid-number/)
 - [Length of Last Word](https://www.interviewbit.com/problems/length-of-last-word/)
+- [Reverse the String](https://www.interviewbit.com/problems/reverse-the-string/)
+- [Roman To Integer](https://www.interviewbit.com/problems/roman-to-integer/)
+- [Add Binary Strings](https://www.interviewbit.com/problems/add-binary-strings/)
+- [Power of 2](https://www.interviewbit.com/problems/power-of-2/)

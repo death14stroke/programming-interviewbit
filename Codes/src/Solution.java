@@ -1,7 +1,7 @@
 public class Solution {
     public static void main(String[] args) {
-        String A = "   ";
+        String A = "1";
 
-        System.out.printf("Last word length for %s is %d\n", A, Strings.lengthOfLastWord(A));
+        System.out.printf("%s is power of two = %d\n", A, Strings.power(A));
     }
 }

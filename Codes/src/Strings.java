@@ -1,5 +1,7 @@
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 
 public class Strings {
@@ -412,5 +414,158 @@ public class Strings {
             lastWordPos--;
 
         return n - lastWordPos;
+    }
+
+    // https://www.interviewbit.com/problems/reverse-the-string/
+    static String reverseWords(String A) {
+        StringBuilder res = new StringBuilder();
+        // split the words by blank space
+        String[] words = A.split(" ");
+
+        for (int i = words.length - 1; i >= 0; i--) {
+            // if word is not empty
+            if (!words[i].isEmpty()) {
+                res.append(words[i]);
+                res.append(" ");
+            }
+        }
+
+        // remove last blank space
+        return res.toString().trim();
+    }
+
+    // https://www.interviewbit.com/problems/roman-to-integer/
+    static int romanToInt(String A) {
+        int n = A.length();
+
+        // map each Roman char to its value
+        HashMap<Character, Integer> map = new HashMap<>();
+        map.put('I', 1);
+        map.put('V', 5);
+        map.put('X', 10);
+        map.put('L', 50);
+        map.put('C', 100);
+        map.put('D', 500);
+        map.put('M', 1000);
+
+        // process last Roman char
+        int res = map.get(A.charAt(n - 1));
+
+        for (int i = n - 2; i >= 0; i--) {
+            // if current Roman char is less than its right one, subtract
+            // e.g IV, IX
+            if (map.get(A.charAt(i)) < map.get(A.charAt(i + 1)))
+                res -= map.get(A.charAt(i));
+                // else add its value
+                // e.g VI, XX, XV
+            else
+                res += map.get(A.charAt(i));
+        }
+
+        return res;
+    }
+
+    // TODO: use representation of all nums in array
+    // https://www.interviewbit.com/problems/integer-to-roman/
+    static String intToRoman(int n) {
+        HashMap<Integer, String> map = new HashMap<>();
+        map.put(1, "I");
+        map.put(4, "IV");
+        map.put(5, "V");
+        map.put(9, "IX");
+        map.put(10, "X");
+        map.put(40, "XL");
+        map.put(50, "L");
+        map.put(90, "XC");
+        map.put(100, "C");
+        map.put(400, "CD");
+        map.put(500, "D");
+        map.put(900, "CM");
+        map.put(1000, "M");
+
+        StringBuilder res = new StringBuilder();
+        int power = 1;
+
+        while (n > 0) {
+            int num = (n % 10) * power;
+            if (map.containsKey(num))
+                res.insert(0, map.get(num));
+            else {
+                if (num / power < 5) {
+                    for (int i = 0; i < num / power; i++)
+                        res.insert(0, map.get(power));
+                } else {
+                    res.insert(0, map.get(power * 5));
+                    for (int i = 5; i < num / power; i++)
+                        res.insert(1, map.get(power));
+                }
+            }
+
+            n /= 10;
+            power *= 10;
+        }
+
+        return res.toString();
+    }
+
+    // https://www.interviewbit.com/problems/add-binary-strings/
+    static String addBinary(String A, String B) {
+        StringBuilder res = new StringBuilder();
+        int m = A.length(), n = B.length();
+        int i = m - 1, j = n - 1, carry = 0;
+
+        // loop from end till both strings have bits
+        while (i >= 0 && j >= 0) {
+            char a = A.charAt(i), b = B.charAt(j);
+            // add A, B and carry at pos i (=j)
+            res.append(carry ^ (a - '0') ^ (b - '0'));
+
+            // if any two of the three bits are 1, carry will be 1 again
+            if ((a == '1' && b == '1') || (carry == 1 && (a == '1' || b == '1')))
+                carry = 1;
+            else
+                carry = 0;
+
+            i--;
+            j--;
+        }
+
+        // loop for remaining bits in string A
+        while (i >= 0) {
+            char a = A.charAt(i);
+            res.append(carry ^ (a - '0'));
+
+            carry = carry & (a - '0');
+            i--;
+        }
+
+        // else loop for remaining bits in string B
+        while (j >= 0) {
+            char b = B.charAt(j);
+            res.append(carry ^ (b - '0'));
+
+            carry = carry & (b - '0');
+            j--;
+        }
+
+        // if carry at the end is 1, add extra bit
+        if (carry == 1)
+            res.append(1);
+
+        // reverse the string as we were appending instead of insert at beginning
+        return res.reverse().toString();
+    }
+
+    // https://www.interviewbit.com/problems/power-of-2/
+    static int power(String A) {
+        BigInteger n = new BigInteger(A);
+        // if n < 2 not power of 2
+        if (n.compareTo(BigInteger.valueOf(2)) < 0)
+            return 0;
+
+        // if # set bits is 1, then it is power of 2
+        if (n.bitCount() == 1)
+            return 1;
+        return 0;
     }
 }
