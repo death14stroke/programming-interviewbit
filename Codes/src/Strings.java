@@ -401,6 +401,35 @@ public class Strings {
         return 1;
     }
 
+    // https://www.interviewbit.com/problems/valid-ip-addresses/
+    static ArrayList<String> restoreIpAddresses(String A) {
+        ArrayList<String> res = new ArrayList<>();
+
+        int n = A.length();
+        // length of valid IPV4 address will be min 4 and max 12
+        if (n < 4 || n > 12)
+            return res;
+
+        // regex pattern for ipv4
+        Pattern ipv4 = Pattern.compile("((([0-9])|([1-9][0-9])|(1[0-9][0-9])|(2[0-4][0-9])|(25[0-5]))\\.){3}(([0-9])|([1-9][0-9])|(1[0-9][0-9])|(2[0-4][0-9])|(25[0-5]))");
+
+        // try out all combinations for placing dots
+        for (int i = 0; i < n - 3; i++) {
+            for (int j = i + 1; j < n - 2; j++) {
+                for (int k = j + 1; k < n - 1; k++) {
+                    // create ipv4 string and match with regex
+                    String address = A.substring(0, i + 1) + "." + A.substring(i + 1, j + 1) + "." +
+                            A.substring(j + 1, k + 1) + "." + A.substring(k + 1);
+
+                    if (ipv4.matcher(address).matches())
+                        res.add(address);
+                }
+            }
+        }
+
+        return res;
+    }
+
     // https://www.interviewbit.com/problems/length-of-last-word/
     static int lengthOfLastWord(final String A) {
         int n = A.length() - 1;
@@ -465,47 +494,18 @@ public class Strings {
         return res;
     }
 
-    // TODO: use representation of all nums in array
     // https://www.interviewbit.com/problems/integer-to-roman/
     static String intToRoman(int n) {
-        HashMap<Integer, String> map = new HashMap<>();
-        map.put(1, "I");
-        map.put(4, "IV");
-        map.put(5, "V");
-        map.put(9, "IX");
-        map.put(10, "X");
-        map.put(40, "XL");
-        map.put(50, "L");
-        map.put(90, "XC");
-        map.put(100, "C");
-        map.put(400, "CD");
-        map.put(500, "D");
-        map.put(900, "CM");
-        map.put(1000, "M");
+        // ones = { blank, 1...9 }
+        String[] ones = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
+        // tens = { blank, 10...90 }
+        String[] tens = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
+        // hundreds = { blank, 100...900 }
+        String[] hundreds = {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
+        // thousands = { blank, 1000...3000 }
+        String[] thousands = {"", "M", "MM", "MMM"};
 
-        StringBuilder res = new StringBuilder();
-        int power = 1;
-
-        while (n > 0) {
-            int num = (n % 10) * power;
-            if (map.containsKey(num))
-                res.insert(0, map.get(num));
-            else {
-                if (num / power < 5) {
-                    for (int i = 0; i < num / power; i++)
-                        res.insert(0, map.get(power));
-                } else {
-                    res.insert(0, map.get(power * 5));
-                    for (int i = 5; i < num / power; i++)
-                        res.insert(1, map.get(power));
-                }
-            }
-
-            n /= 10;
-            power *= 10;
-        }
-
-        return res.toString();
+        return thousands[n / 1000] + hundreds[(n % 1000) / 100] + tens[(n % 100) / 10] + ones[n % 10];
     }
 
     // https://www.interviewbit.com/problems/add-binary-strings/
@@ -567,5 +567,178 @@ public class Strings {
         if (n.bitCount() == 1)
             return 1;
         return 0;
+    }
+
+    // https://www.interviewbit.com/problems/multiply-strings/
+    static String multiply(String A, String B) {
+        int m = A.length(), n = B.length();
+        String res = "";
+
+        // school multiplication technique: 123 * 456 =
+        // (123 * 400) + (123 * 50) + (123 * 6)
+        for (int i = n - 1; i >= 0; i--) {
+            StringBuilder tmp = new StringBuilder();
+            int carry = 0;
+
+            // multiply string A with each digit of B
+            for (int j = m - 1; j >= 0; j--) {
+                int prod = (B.charAt(i) - '0') * (A.charAt(j) - '0') + carry;
+                int digit = prod % 10;
+                carry = prod / 10;
+
+                tmp.append(digit);
+            }
+
+            // append carry for multiplication
+            if (carry != 0)
+                tmp.append(carry);
+            // reverse the string as it was appended
+            tmp.reverse();
+
+            // add the zeroes as per the decimal position of digit in string b
+            //noinspection StringRepeatCanBeUsed
+            for (int k = 0; k < n - 1 - i; k++)
+                tmp.append(0);
+
+            // add the current product with previous result
+            res = add(res, tmp.toString());
+        }
+
+        // remove leading zeroes
+        int start = 0;
+        while (start < res.length() && res.charAt(start) == '0')
+            start++;
+
+        return res.substring(start);
+    }
+
+    // util for adding two strings
+    private static String add(String A, String B) {
+        // ensure A is the larger string
+        if (A.length() < B.length())
+            return add(B, A);
+
+        int m = A.length(), n = B.length();
+        StringBuilder res = new StringBuilder();
+
+        int i = m - 1, j = n - 1;
+        int carry = 0;
+
+        // add all the digits in B with corresponding digits in A
+        while (i >= 0 && j >= 0) {
+            int sum = (A.charAt(i) - '0') + (B.charAt(j) - '0') + carry;
+            int digit = sum % 10;
+            carry = sum / 10;
+
+            res.append(digit);
+            i--;
+            j--;
+        }
+
+        // add the remaining digits in A
+        while (i >= 0) {
+            int sum = (A.charAt(i) - '0') + carry;
+            int digit = sum % 10;
+            carry = sum / 10;
+
+            res.append(digit);
+            i--;
+        }
+
+        // append carry if exists
+        if (carry > 0)
+            res.append(carry);
+
+        // reverse the result to get the number
+        return res.reverse().toString();
+    }
+
+    // https://www.interviewbit.com/problems/justified-text/
+    static ArrayList<String> fullJustify(ArrayList<String> words, int L) {
+        ArrayList<String> res = new ArrayList<>();
+        if (words.isEmpty())
+            return res;
+
+        // chars = number of non-space characters
+        // spaces = minimum number of spaces required
+        // start = position of first word of the line in list
+        int chars = words.get(0).length(), spaces = 0, start = 0;
+        for (int i = 1; i < words.size(); i++) {
+            // skip empty words
+            if (words.get(i).isEmpty())
+                continue;
+
+            // if current word cannot be added in the same line
+            if (chars + spaces + words.get(i).length() + 1 > L) {
+                // construct and add current line
+                String line = constructLineWithSpaces(words, start, i, L, chars, spaces);
+                res.add(line);
+
+                // create new line
+                start = i;
+                chars = words.get(i).length();
+                spaces = 0;
+            } else {
+                // add word to current line
+                chars += words.get(i).length();
+                spaces++;
+            }
+        }
+
+        // add the remaining words to last line
+        String line = constructLineWithSpaces(words, start, words.size(), L, chars, spaces);
+        res.add(line);
+
+        return res;
+    }
+
+    // util to construct string with equal spaces in middle as per limit
+    private static String constructLineWithSpaces(ArrayList<String> words, int start, int end, int L, int chars, int spaces) {
+        StringBuilder line = new StringBuilder();
+        // total white spaces in the string
+        int totalSpace = L - chars;
+
+        // add the first word
+        line.append(words.get(start));
+
+        // if there is only one word on the line
+        if (spaces == 0) {
+            // add all the white spaces at the end
+            for (int i = 0; i < totalSpace; i++)
+                line.append(" ");
+
+            return line.toString();
+        }
+
+        // blanks = # white spaces per word
+        int blanks = totalSpace / spaces;
+        for (int i = start + 1; i < end; i++) {
+            // if this is the last string, add only one white space after each word
+            if (end == words.size()) {
+                line.append(" ");
+                totalSpace--;
+            } else {
+                // add the equal amount of white spaces
+                for (int k = 0; k < blanks; k++)
+                    line.append(" ");
+
+                // if division is not even give the extra white space if left
+                if (totalSpace % spaces != 0) {
+                    line.append(" ");
+                    totalSpace--;
+                }
+            }
+
+            // append the current word after white space
+            line.append(words.get(i));
+        }
+
+        // if this is last string add all the remaining white spaces at the end
+        if (end == words.size()) {
+            for (int k = 0; k < totalSpace; k++)
+                line.append(" ");
+        }
+
+        return line.toString();
     }
 }
