@@ -117,3 +117,5 @@ Interview bit problems topic wise
 - [Power of 2](https://www.interviewbit.com/problems/power-of-2/)
 - [Multiply Strings](https://www.interviewbit.com/problems/multiply-strings/)
 - [Justified Text](https://www.interviewbit.com/problems/justified-text/)
+- [Zigzag String](https://www.interviewbit.com/problems/zigzag-string/)
+- [Pretty Json](https://www.interviewbit.com/problems/pretty-json/)

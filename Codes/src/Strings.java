@@ -741,4 +741,139 @@ public class Strings {
 
         return line.toString();
     }
+
+    // https://www.interviewbit.com/problems/zigzag-string/
+    static String convert(String A, int rows) {
+        // if # required rows is 1 return the string itself
+        if (rows == 1)
+            return A;
+
+        int n = A.length();
+        StringBuilder res = new StringBuilder();
+
+        // first row: always move down
+        int pos = 0;
+        while (pos < n) {
+            res.append(A.charAt(pos));
+            pos += 2 * (rows - 1);
+        }
+
+        // middle rows: move down and then up
+        for (int r = 1; r < rows - 1; r++) {
+            // initial direction will be down
+            boolean down = true;
+            pos = r;
+
+            while (pos < n) {
+                res.append(A.charAt(pos));
+
+                // move down and then switch dir to up
+                if (down) {
+                    pos += 2 * (rows - 1 - r);
+                    down = false;
+                }
+                // move up and then switch dir to down
+                else {
+                    pos += 2 * r;
+                    down = true;
+                }
+            }
+        }
+
+        // last row: always move up
+        pos = rows - 1;
+        while (pos < n) {
+            res.append(A.charAt(pos));
+            pos += 2 * (rows - 1);
+        }
+
+        return res.toString();
+    }
+
+    // https://www.interviewbit.com/problems/pretty-json/
+    static ArrayList<String> prettyJson(String A) {
+        ArrayList<String> res = new ArrayList<>();
+
+        // empty string or first char is not open bracket (invalid JSON)
+        if (A.length() == 0 || (A.charAt(0) != '{' && A.charAt(0) != '['))
+            return res;
+
+        int tabs = 0;
+        StringBuilder line = new StringBuilder();
+
+        for (int i = 0; i < A.length(); i++) {
+            switch (A.charAt(i)) {
+                case '{':
+                case '[':
+                    // if previous line is not blank, add to result and clear line
+                    if (line.length() != 0 && !Character.isWhitespace(line.charAt(line.length() - 1)))
+                        res.add(line.toString());
+
+                    // create new line with tabs for current line
+                    initTabbedLine(line, tabs);
+                    line.append(A.charAt(i));
+
+                    // add line to result list
+                    res.add(line.toString());
+
+                    // create new line with tabs for next line
+                    tabs++;
+                    initTabbedLine(line, tabs);
+                    break;
+
+                case '}':
+                case ']':
+                    // if previous line is not blank, add to result and clear line
+                    if (line.length() != 0 && !Character.isWhitespace(line.charAt(line.length() - 1)))
+                        res.add(line.toString());
+
+                    // decrement tab count
+                    tabs--;
+                    initTabbedLine(line, tabs);
+                    line.append(A.charAt(i));
+
+                    // skip white spaces
+                    int tmp = i + 1;
+                    while (tmp < A.length() && A.charAt(tmp) == ' ')
+                        tmp++;
+                    // if next char is comma(,) then add it to the same line
+                    // skip to char after comma
+                    if (tmp < A.length() && A.charAt(tmp) == ',') {
+                        line.append(A.charAt(tmp));
+                        i = tmp;
+                    }
+                    // add line to result and clear line
+                    res.add(line.toString());
+
+                    // add tabs for next line
+                    initTabbedLine(line, tabs);
+                    break;
+
+                case ',':
+                    // add comma at the end, add line to result and clear
+                    line.append(A.charAt(i));
+                    res.add(line.toString());
+
+                    // add tabs for new line
+                    initTabbedLine(line, tabs);
+                    break;
+
+                case ' ':
+                    // ignore space chars
+                    break;
+
+                default:
+                    line.append(A.charAt(i));
+            }
+        }
+
+        return res;
+    }
+
+    // util for creating tabs at the beginning
+    private static void initTabbedLine(StringBuilder builder, int tabs) {
+        builder.setLength(0);
+        for (int j = 0; j < tabs; j++)
+            builder.append("\t");
+    }
 }
