@@ -805,61 +805,52 @@ public class Strings {
             switch (A.charAt(i)) {
                 case '{':
                 case '[':
-                    // if previous line is not blank, add to result and clear line
+                    // if previous line is not blank, add to result
                     if (line.length() != 0 && !Character.isWhitespace(line.charAt(line.length() - 1)))
                         res.add(line.toString());
 
-                    // create new line with tabs for current line
+                    // create new line with tabs for current line,
+                    // append bracket and add to result
                     initTabbedLine(line, tabs);
                     line.append(A.charAt(i));
-
-                    // add line to result list
                     res.add(line.toString());
 
-                    // create new line with tabs for next line
+                    // increment tabs and create new line with tabs for next line
                     tabs++;
                     initTabbedLine(line, tabs);
                     break;
 
                 case '}':
                 case ']':
-                    // if previous line is not blank, add to result and clear line
+                    // if previous line is not blank, add to result
                     if (line.length() != 0 && !Character.isWhitespace(line.charAt(line.length() - 1)))
                         res.add(line.toString());
 
-                    // decrement tab count
+                    // decrement tab count and create new line with tabs and bracket
                     tabs--;
                     initTabbedLine(line, tabs);
                     line.append(A.charAt(i));
 
-                    // skip white spaces
-                    int tmp = i + 1;
-                    while (tmp < A.length() && A.charAt(tmp) == ' ')
-                        tmp++;
                     // if next char is comma(,) then add it to the same line
                     // skip to char after comma
-                    if (tmp < A.length() && A.charAt(tmp) == ',') {
-                        line.append(A.charAt(tmp));
-                        i = tmp;
+                    if (i + 1 < A.length() && A.charAt(i + 1) == ',') {
+                        line.append(A.charAt(i + 1));
+                        i++;
                     }
-                    // add line to result and clear line
+                    // add line to result
                     res.add(line.toString());
 
-                    // add tabs for next line
+                    // create new line with tabs for next line
                     initTabbedLine(line, tabs);
                     break;
 
                 case ',':
-                    // add comma at the end, add line to result and clear
+                    // add comma at the end, add line to result
                     line.append(A.charAt(i));
                     res.add(line.toString());
 
-                    // add tabs for new line
+                    // create new line with tabs for next line
                     initTabbedLine(line, tabs);
-                    break;
-
-                case ' ':
-                    // ignore space chars
                     break;
 
                 default:

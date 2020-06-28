@@ -119,3 +119,7 @@ Interview bit problems topic wise
 - [Justified Text](https://www.interviewbit.com/problems/justified-text/)
 - [Zigzag String](https://www.interviewbit.com/problems/zigzag-string/)
 - [Pretty Json](https://www.interviewbit.com/problems/pretty-json/)
+
+## Bit Manipulation
+
+- [Single Number](https://www.interviewbit.com/problems/single-number/)
