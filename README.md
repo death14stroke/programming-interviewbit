@@ -122,4 +122,8 @@ Interview bit problems topic wise
 
 ## Bit Manipulation
 
+- [Number of 1 Bits](https://www.interviewbit.com/problems/number-of-1-bits/)
+- [Reverse Bits](https://www.interviewbit.com/problems/reverse-bits/)
+- [Different Bits Sum Pairwise](https://www.interviewbit.com/problems/different-bits-sum-pairwise/)
 - [Single Number](https://www.interviewbit.com/problems/single-number/)
+- [Single Number II](https://www.interviewbit.com/problems/single-number-ii/)

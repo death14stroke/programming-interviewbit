@@ -2,10 +2,8 @@ import java.util.ArrayList;
 
 public class Solution {
     public static void main(String[] args) {
-        String A = "{\"a\": \"This is a space\"}";
+        long a = 4294967296L;
 
-        ArrayList<String> json = Strings.prettyJson(A);
-        for (String s : json)
-            System.out.println(s);
+        System.out.printf("reverse bits for %d is %d\n", a, BitManipulation.reverseBits(a));
     }
 }
