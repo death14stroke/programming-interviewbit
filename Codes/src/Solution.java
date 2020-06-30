@@ -2,8 +2,11 @@ import java.util.ArrayList;
 
 public class Solution {
     public static void main(String[] args) {
-        long a = 4294967296L;
+        Integer[] a1 = {0, 4, 7, 9};
+        ArrayList<Integer> A = Array.toIntArrayList(a1);
 
-        System.out.printf("reverse bits for %d is %d\n", a, BitManipulation.reverseBits(a));
+        Array.printArrayList(A);
+
+        System.out.printf("min xor value = %d\n", BitManipulation.minXor(A));
     }
 }

@@ -124,6 +124,8 @@ Interview bit problems topic wise
 
 - [Number of 1 Bits](https://www.interviewbit.com/problems/number-of-1-bits/)
 - [Reverse Bits](https://www.interviewbit.com/problems/reverse-bits/)
+- [Divide Integers](https://www.interviewbit.com/problems/divide-integers/)
 - [Different Bits Sum Pairwise](https://www.interviewbit.com/problems/different-bits-sum-pairwise/)
+- [Min XOR value](https://www.interviewbit.com/problems/min-xor-value/)
 - [Single Number](https://www.interviewbit.com/problems/single-number/)
 - [Single Number II](https://www.interviewbit.com/problems/single-number-ii/)

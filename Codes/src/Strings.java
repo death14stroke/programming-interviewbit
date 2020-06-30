@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("StringRepeatCanBeUsed")
 public class Strings {
     // https://www.interviewbit.com/problems/palindrome-string/
     static int isPalindrome(String A) {
@@ -122,52 +123,6 @@ public class Strings {
         return cnt;
     }
 
-    // https://www.interviewbit.com/problems/minimum-characters-required-to-make-a-string-palindromic/
-    static int minInsertions(String A) {
-        // compute lps for A + "$" + rev(A)
-        String str = A + "$" + new StringBuilder(A).reverse().toString();
-        int[] lps = computeLpsArray(str);
-
-        // min insertions req = strlen(A) - lps[appended str last pos]
-        return A.length() - lps[str.length() - 1];
-    }
-
-    // https://www.interviewbit.com/problems/longest-palindromic-substring/
-    private static int length, left;
-
-    static String longestPalindrome(String A) {
-        int n = A.length();
-        if (n <= 1)
-            return A;
-
-        length = 1;
-        left = 0;
-
-        for (int i = 1; i < n; i++) {
-            // check for even length palindromes centered at i
-            checkPalindrome(A, i - 1, i);
-            // check for odd length palindromes centered at i
-            checkPalindrome(A, i - 1, i + 1);
-        }
-
-        return A.substring(left, left + length);
-    }
-
-    // check if string with given endpoints expands into palindrome or not
-    private static void checkPalindrome(String A, int start, int end) {
-        // keep moving boundaries till the substring is palindrome
-        while (start >= 0 && end < A.length() && A.charAt(start) == A.charAt(end)) {
-            start--;
-            end++;
-        }
-
-        // if this is a longer palindrome substring
-        if (end - start - 1 > length) {
-            length = end - start - 1;
-            left = start + 1;
-        }
-    }
-
     // https://www.interviewbit.com/problems/implement-strstr/
     static int strStr(final String str, final String pat) {
         int n = str.length(), m = pat.length();
@@ -226,6 +181,97 @@ public class Strings {
         }
 
         return lps;
+    }
+
+    // https://www.interviewbit.com/problems/minimum-characters-required-to-make-a-string-palindromic/
+    static int minInsertions(String A) {
+        // compute lps for A + "$" + rev(A)
+        String str = A + "$" + new StringBuilder(A).reverse().toString();
+        int[] lps = computeLpsArray(str);
+
+        // min insertions req = strlen(A) - lps[appended str last pos]
+        return A.length() - lps[str.length() - 1];
+    }
+
+    // https://www.interviewbit.com/problems/longest-palindromic-substring/
+    private static int length, left;
+
+    static String longestPalindrome(String A) {
+        int n = A.length();
+        if (n <= 1)
+            return A;
+
+        length = 1;
+        left = 0;
+
+        for (int i = 1; i < n; i++) {
+            // check for even length palindromes centered at i
+            checkPalindrome(A, i - 1, i);
+            // check for odd length palindromes centered at i
+            checkPalindrome(A, i - 1, i + 1);
+        }
+
+        return A.substring(left, left + length);
+    }
+
+    // check if string with given endpoints expands into palindrome or not
+    private static void checkPalindrome(String A, int start, int end) {
+        // keep moving boundaries till the substring is palindrome
+        while (start >= 0 && end < A.length() && A.charAt(start) == A.charAt(end)) {
+            start--;
+            end++;
+        }
+
+        // if this is a longer palindrome substring
+        if (end - start - 1 > length) {
+            length = end - start - 1;
+            left = start + 1;
+        }
+    }
+
+    // https://www.interviewbit.com/problems/length-of-last-word/
+    static int lengthOfLastWord(final String A) {
+        int n = A.length() - 1;
+        // remove ending white spaces
+        while (n >= 0 && A.charAt(n) == ' ')
+            n--;
+
+        int lastWordPos = n;
+        // keep traversing till blank space is reached
+        while (lastWordPos >= 0 && A.charAt(lastWordPos) != ' ')
+            lastWordPos--;
+
+        return n - lastWordPos;
+    }
+
+    // https://www.interviewbit.com/problems/reverse-the-string/
+    static String reverseWords(String A) {
+        int n = A.length();
+        int start = n - 1, end = n - 1;
+        StringBuilder res = new StringBuilder();
+
+        // one-pass algorithm: iterate the string in reverse and keep track of start and end for each word
+        // skip extra white spaces at the end or middle if any
+        while (start >= 0 && start <= end) {
+            // remove extra white spaces
+            while (end >= 0 && A.charAt(end) == ' ')
+                end--;
+
+            start = end;
+
+            // find starting point of word
+            while (start >= 0 && A.charAt(start) != ' ')
+                start--;
+
+            // append word with one blank space
+            res.append(A, start + 1, end + 1);
+            res.append(" ");
+
+            // check for next word from the right
+            end = start;
+        }
+
+        return res.toString().trim();
     }
 
     // https://www.interviewbit.com/problems/compare-version-numbers/
@@ -338,11 +384,11 @@ public class Strings {
         if (n == 0)
             return 0;
 
-        // remove leading and ending zeroes
+        // remove leading and ending spaces
         int l = 0, r = n - 1;
         while (l < n && A.charAt(l) == ' ')
             l++;
-        // all were zeroes
+        // all were spaces
         if (l == n)
             return 0;
         while (r >= l && A.charAt(r) == ' ')
@@ -350,14 +396,14 @@ public class Strings {
 
         char[] c = A.substring(l, r + 1).toCharArray();
         // if processed string is empty or the only char is not digit
-        if (c.length == 0 || c.length == 1 && !Character.isDigit(c[0]))
+        if (c.length == 1 && !Character.isDigit(c[0]))
             return 0;
 
         // if first char is not sign, dot or digit
         if (c[0] != '+' && c[0] != '-' && c[0] != '.' && !Character.isDigit(c[0]))
             return 0;
 
-        boolean dot = false, exp = false;
+        boolean dot = (c[0] == '.'), exp = false;
         for (int i = 1; i < c.length; i++) {
             // if char is not sign, dot, exp or digit
             if (c[i] != '+' && c[i] != '-' && c[i] != 'e' && c[i] != '.' && !Character.isDigit(c[i]))
@@ -428,39 +474,6 @@ public class Strings {
         }
 
         return res;
-    }
-
-    // https://www.interviewbit.com/problems/length-of-last-word/
-    static int lengthOfLastWord(final String A) {
-        int n = A.length() - 1;
-        // remove ending white spaces
-        while (n >= 0 && A.charAt(n) == ' ')
-            n--;
-
-        int lastWordPos = n;
-        // keep traversing till blank space is reached
-        while (lastWordPos >= 0 && A.charAt(lastWordPos) != ' ')
-            lastWordPos--;
-
-        return n - lastWordPos;
-    }
-
-    // https://www.interviewbit.com/problems/reverse-the-string/
-    static String reverseWords(String A) {
-        StringBuilder res = new StringBuilder();
-        // split the words by blank space
-        String[] words = A.split(" ");
-
-        for (int i = words.length - 1; i >= 0; i--) {
-            // if word is not empty
-            if (!words[i].isEmpty()) {
-                res.append(words[i]);
-                res.append(" ");
-            }
-        }
-
-        // remove last blank space
-        return res.toString().trim();
     }
 
     // https://www.interviewbit.com/problems/roman-to-integer/

@@ -32,6 +32,30 @@ public class BitManipulation {
         return a;
     }
 
+    // https://www.interviewbit.com/problems/divide-integers/
+    static int divide(int A, int B) {
+        // save the sign of result
+        int sign = (A < 0) ^ (B < 0) ? -1 : 1;
+        // long to check for overflow
+        long a = Math.abs((long) A), b = Math.abs((long) B);
+        long quotient = 0, temp = 0;
+
+        // check for each bit in quotient if it is set
+        for (int i = 31; i >= 0; i--) {
+            if (temp + (b << i) <= a) {
+                temp += (b << i);
+                quotient = quotient | (1L << i);
+            }
+        }
+        // make the quotient negative if required
+        quotient *= sign;
+
+        // overflow
+        if (quotient >= Integer.MAX_VALUE || quotient < Integer.MIN_VALUE)
+            return Integer.MAX_VALUE;
+        return (int) quotient;
+    }
+
     // https://www.interviewbit.com/problems/different-bits-sum-pairwise/
     static int cntBits(ArrayList<Integer> A) {
         int p = 1000000007;
@@ -48,6 +72,85 @@ public class BitManipulation {
         }
 
         return (int) sum;
+    }
+
+    // https://www.interviewbit.com/problems/min-xor-value/
+    private static Trie trie;
+
+    static int minXor(ArrayList<Integer> A) {
+        int minXor = Integer.MAX_VALUE;
+
+        // insert first element into trie
+        trie = new Trie();
+        trie.insert(A.get(0));
+
+        // search for the number with largest number of similar bits with current number till now
+        // take xor and compare with minimum. Insert current number in trie
+        for (int i = 1; i < A.size(); i++) {
+            minXor = Math.min(minXor, minXorUtil(A.get(i)));
+            trie.insert(A.get(i));
+        }
+
+        return minXor;
+    }
+
+    // util to find the number with largest number of bits similar to key in trie
+    // and take xor with it as the result xor will be minimum
+    private static int minXorUtil(int key) {
+        Trie.TrieNode curr = trie.root;
+
+        // check from MSB to LSB
+        for (int i = 31; i >= 0; i--) {
+            int bit = (key & 1 << i) == 0 ? 0 : 1;
+
+            // if there is number with current bit same
+            if (curr.child[bit] != null)
+                curr = curr.child[bit];
+                // else bit at this position will be different for all
+            else if (curr.child[1 - bit] != null)
+                curr = curr.child[1 - bit];
+            else
+                break;
+        }
+
+        // minimum xor value including key with any number from trie
+        return key ^ curr.data;
+    }
+
+    static class Trie {
+        static class TrieNode {
+            int data;
+            TrieNode[] child;
+
+            // binary trie with two child for each bit
+            // trie runs from MSB to LSB
+            TrieNode() {
+                child = new TrieNode[2];
+            }
+        }
+
+        TrieNode root;
+
+        Trie() {
+            root = new TrieNode();
+        }
+
+        public void insert(int key) {
+            TrieNode curr = root;
+
+            // check from MSB to LSB
+            for (int i = 31; i >= 0; i--) {
+                int bit = (key & (1 << i)) == 0 ? 0 : 1;
+
+                if (curr.child[bit] == null)
+                    curr.child[bit] = new TrieNode();
+
+                curr = curr.child[bit];
+            }
+
+            // leaf node will store the value
+            curr.data = key;
+        }
     }
 
     // https://www.interviewbit.com/problems/single-number/
