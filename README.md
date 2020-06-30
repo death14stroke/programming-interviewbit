@@ -129,3 +129,7 @@ Interview bit problems topic wise
 - [Min XOR value](https://www.interviewbit.com/problems/min-xor-value/)
 - [Single Number](https://www.interviewbit.com/problems/single-number/)
 - [Single Number II](https://www.interviewbit.com/problems/single-number-ii/)
+
+## Two Pointers
+
+- [Merge Two Sorted Lists II](https://www.interviewbit.com/problems/merge-two-sorted-lists-ii/)
