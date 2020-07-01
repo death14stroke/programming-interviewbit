@@ -133,3 +133,8 @@ Interview bit problems topic wise
 ## Two Pointers
 
 - [Merge Two Sorted Lists II](https://www.interviewbit.com/problems/merge-two-sorted-lists-ii/)
+- [Intersection Of Sorted Arrays](https://www.interviewbit.com/problems/intersection-of-sorted-arrays/)
+- [3 Sum](https://www.interviewbit.com/problems/3-sum/)
+- [3 Sum Zero](https://www.interviewbit.com/problems/3-sum-zero/)
+- [Diffk](https://www.interviewbit.com/problems/diffk/)
+- [Remove Duplicates from Sorted Array](https://www.interviewbit.com/problems/remove-duplicates-from-sorted-array/)
