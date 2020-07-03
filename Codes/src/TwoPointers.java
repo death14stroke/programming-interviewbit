@@ -187,4 +187,92 @@ public class TwoPointers {
         // return the length of new list
         return i;
     }
+
+    // https://www.interviewbit.com/problems/remove-duplicates-from-sorted-array-ii/
+    static int removeDuplicates2(ArrayList<Integer> A) {
+        int n = A.size(), atMost = 2;
+        // if list is smaller than least requirement
+        if (n <= atMost)
+            return n;
+
+        // find first position which is to be deleted (repeating more than atMost times)
+        int i = atMost;
+        while (i < n && !A.get(i).equals(A.get(i - atMost)))
+            i++;
+
+        // check for all elements after that
+        for (int j = i + 1; j < n; j++) {
+            // if A[j] is not repeating more than atMost times, replace it with the position to be removed
+            // and update the position
+            // (i - atMost) is the first occurence of duplicate/next element
+            if (!A.get(j).equals(A.get(i - atMost))) {
+                A.set(i, A.get(j));
+                i++;
+            }
+        }
+
+        // remove the end of the list
+        A.subList(i, n).clear();
+        // return the length of new list
+        return i;
+    }
+
+    // https://www.interviewbit.com/problems/remove-element-from-array/
+    static int removeElement(ArrayList<Integer> A, int k) {
+        int n = A.size(), i = 0;
+        // find first occurence of k
+        while (i < n && A.get(i) != k)
+            i++;
+
+        // keep replacing values at positions to be removed
+        for (int j = i + 1; j < n; j++) {
+            // if not target, shift it to the left
+            if (A.get(j) != k) {
+                A.set(i, A.get(j));
+                i++;
+            }
+        }
+
+        // length of new array
+        return i;
+    }
+
+    // https://www.interviewbit.com/problems/sort-by-color/
+    static void sortByColor(ArrayList<Integer> A) {
+        int n = A.size();
+        int c0 = 0, c1, c2 = n - 1;
+
+        // skip all zeroes at the beginning
+        while (c0 < n && A.get(c0) == 0)
+            c0++;
+        c1 = c0;
+
+        // skip all twos at the end
+        while (c2 >= 0 && A.get(c2) == 2)
+            c2--;
+
+        // shrink the unknown range from c1 to c2
+        while (c1 <= c2) {
+            // swap c1 with the known 0-range
+            if (A.get(c1) == 0) {
+                swap(A, c1, c0);
+                c0++;
+                c1++;
+            }
+            // swap c1 with the known 2-range
+            else if (A.get(c1) == 2) {
+                swap(A, c1, c2);
+                c2--;
+            }
+            // shrink unknown range with 1s fixed at the position c1
+            else
+                c1++;
+        }
+    }
+
+    private static void swap(ArrayList<Integer> A, int i, int j) {
+        int temp = A.get(i);
+        A.set(i, A.get(j));
+        A.set(j, temp);
+    }
 }

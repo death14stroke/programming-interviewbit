@@ -138,3 +138,6 @@ Interview bit problems topic wise
 - [3 Sum Zero](https://www.interviewbit.com/problems/3-sum-zero/)
 - [Diffk](https://www.interviewbit.com/problems/diffk/)
 - [Remove Duplicates from Sorted Array](https://www.interviewbit.com/problems/remove-duplicates-from-sorted-array/)
+- [Remove Duplicates from Sorted Array II](https://www.interviewbit.com/problems/remove-duplicates-from-sorted-array-ii/)
+- [Remove Element from Array](https://www.interviewbit.com/problems/remove-element-from-array/)
+- [Sort by Color](https://www.interviewbit.com/problems/sort-by-color/)
