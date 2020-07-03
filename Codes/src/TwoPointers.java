@@ -275,4 +275,118 @@ public class TwoPointers {
         A.set(i, A.get(j));
         A.set(j, temp);
     }
+
+    // https://www.interviewbit.com/problems/max-continuous-series-of-1s/
+    static ArrayList<Integer> maxone(ArrayList<Integer> A, int M) {
+        // current window
+        int wL = 0, wR = 0;
+        // best window
+        int bestL = 0, bestWindow = 0;
+        // number of zeroes in current window
+        int cnt = 0;
+
+        // keep sliding window till end
+        while (wR < A.size()) {
+            // if window can contain more zeroes, expand on right
+            if (cnt <= M) {
+                if (A.get(wR) == 0)
+                    cnt++;
+                wR++;
+            }
+            // shrink window from the left to remove extra zeroes
+            else {
+                if (A.get(wL) == 0)
+                    cnt--;
+                wL++;
+            }
+
+            // if number of zeroes in current window is below limit and
+            // this window is larger than the previous best window
+            if (cnt <= M && bestWindow < wR - wL) {
+                bestWindow = wR - wL;
+                bestL = wL;
+            }
+        }
+
+        // result list with all indices of the best window
+        ArrayList<Integer> res = new ArrayList<>();
+        for (int i = bestL; i < bestL + bestWindow; i++)
+            res.add(i);
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/array-3-pointers/
+    static int minimize(final List<Integer> A, final List<Integer> B, final List<Integer> C) {
+        int i = 0, j = 0, k = 0;
+        int diff = Integer.MAX_VALUE;
+
+        while (i < A.size() && j < B.size() && k < C.size()) {
+            int max = Math.max(A.get(i), Math.max(B.get(j), C.get(k)));
+            int min = Math.min(A.get(i), Math.min(B.get(j), C.get(k)));
+
+            // if difference of max and min from all three is lower, this is new result
+            if (max - min < diff)
+                diff = max - min;
+
+            // increase the index of minimum element among all to get lower difference next time
+            if (min == A.get(i))
+                i++;
+            else if (min == B.get(j))
+                j++;
+            else
+                k++;
+        }
+
+        return diff;
+    }
+
+    // https://www.interviewbit.com/problems/container-with-most-water/
+    static int maxArea(ArrayList<Integer> A) {
+        int n = A.size();
+        int l = 0, r = n - 1;
+        int maxArea = 0;
+
+        // take the widest container and then keep shrinking it
+        while (l < r) {
+            maxArea = Math.max(maxArea, Math.min(A.get(r), A.get(l)) * (r - l));
+
+            // if left side is smaller, shrink on left side
+            if (A.get(l) < A.get(r))
+                l++;
+                // shrink on right side
+            else
+                r--;
+        }
+
+        return maxArea;
+    }
+
+    // https://www.interviewbit.com/problems/counting-triangles/
+    static int nTriang(ArrayList<Integer> A) {
+        int p = 1000000007, n = A.size();
+        long ans = 0;
+
+        Collections.sort(A);
+
+        // choose the largest side
+        for (int k = 2; k < n; k++) {
+            int i = 0, j = k - 1;
+
+            // keep checking for first and second sides
+            while (i < j) {
+                // if sum is less, increase the smallest side
+                if (A.get(i) + A.get(j) <= A.get(k))
+                    i++;
+                // found a triangle, all triangles with smallest side greater than A[i] will also form a triangle
+                // decrement the second side and check again
+                else {
+                    ans = (ans + (j - i)) % p;
+                    j--;
+                }
+            }
+        }
+
+        return (int) ans;
+    }
 }
