@@ -378,8 +378,8 @@ public class TwoPointers {
                 // if sum is less, increase the smallest side
                 if (A.get(i) + A.get(j) <= A.get(k))
                     i++;
-                // found a triangle, all triangles with smallest side greater than A[i] will also form a triangle
-                // decrement the second side and check again
+                    // found a triangle, all triangles with smallest side greater than A[i] will also form a triangle
+                    // decrement the second side and check again
                 else {
                     ans = (ans + (j - i)) % p;
                     j--;
@@ -388,5 +388,54 @@ public class TwoPointers {
         }
 
         return (int) ans;
+    }
+
+    // https://www.interviewbit.com/problems/pair-with-given-difference/
+    static int solve(ArrayList<Integer> A, int B) {
+        HashSet<Integer> set = new HashSet<>();
+
+        // for each element val, check if there is an element with diff +B or -B with val
+        for (int val : A) {
+            if (set.contains(val - B) || set.contains(val + B))
+                return 1;
+
+            set.add(val);
+        }
+
+        // no such pair exists
+        return 0;
+    }
+
+    // https://www.interviewbit.com/problems/maximum-ones-after-modification/
+    static int maxOnesLength(ArrayList<Integer> A, int B) {
+        // current window
+        int wL = 0, wR = 0;
+        // best window
+        int bestWindow = 0;
+        // number of zeroes in current window
+        int cnt = 0;
+
+        // keep sliding window till end
+        while (wR < A.size()) {
+            // if window can contain more zeroes, expand on right
+            if (cnt <= B) {
+                if (A.get(wR) == 0)
+                    cnt++;
+                wR++;
+            }
+            // shrink window from the left to remove extra zeroes
+            else {
+                if (A.get(wL) == 0)
+                    cnt--;
+                wL++;
+            }
+
+            // if number of zeroes in current window is below limit and
+            // this window is larger than the previous best window
+            if (cnt <= B && bestWindow < wR - wL)
+                bestWindow = wR - wL;
+        }
+
+        return bestWindow;
     }
 }

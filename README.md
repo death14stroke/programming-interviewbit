@@ -145,3 +145,5 @@ Interview bit problems topic wise
 - [Max Continuous Series of 1s](https://www.interviewbit.com/problems/max-continuous-series-of-1s/)
 - [Array 3 Pointers](https://www.interviewbit.com/problems/array-3-pointers/)
 - [Container With Most Water](https://www.interviewbit.com/problems/container-with-most-water/)
+- [Pair With Given Difference](https://www.interviewbit.com/problems/pair-with-given-difference/)
+- [Maximum Ones After Modification](https://www.interviewbit.com/problems/maximum-ones-after-modification/)
