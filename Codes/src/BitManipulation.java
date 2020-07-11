@@ -153,6 +153,31 @@ public class BitManipulation {
         }
     }
 
+    // https://www.interviewbit.com/problems/count-total-set-bits/
+    static int countTotalSetBits(int A) {
+        int p = 1000000007, cnt = 0;
+        // two: store 2 ** i at each pos
+        // a: loop through LSB to MSB
+        int two = 2, a = A;
+
+        // check for each bit position from LSB to significant MSB
+        while (a > 0) {
+            // for complete set of bit flips
+            // cnt = cnt + (A / 2 ** i) * (2 ** (i - 1))
+            cnt = (cnt + (A / two) * (two >> 1)) % p;
+
+            // if the incomplete set has complete zeroes for previous bit position
+            // cnt = cnt + (N % (2 ** i) - ((2 ** (i - 1) - 1)
+            if (A % two >= (two >> 1) - 1)
+                cnt = (cnt + (A % two) - ((two >> 1) - 1)) % p;
+
+            a >>= 1;
+            two <<= 1;
+        }
+
+        return cnt;
+    }
+
     // https://www.interviewbit.com/problems/single-number/
     static int singleNumber(final List<Integer> A) {
         int ans = 0;
@@ -184,5 +209,17 @@ public class BitManipulation {
         }
 
         return ans;
+    }
+
+    // https://www.interviewbit.com/problems/trailing-zeroes/
+    static int solve(int A) {
+        for (int i = 0; i < 32; i++) {
+            // check if ith bit is zero or not
+            if ((A & (1 << i)) != 0)
+                return i;
+        }
+
+        // all bits are zero
+        return 32;
     }
 }

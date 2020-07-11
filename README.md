@@ -119,6 +119,8 @@ Interview bit problems topic wise
 - [Justified Text](https://www.interviewbit.com/problems/justified-text/)
 - [Zigzag String](https://www.interviewbit.com/problems/zigzag-string/)
 - [Pretty Json](https://www.interviewbit.com/problems/pretty-json/)
+- [Minimum Parantheses!](https://www.interviewbit.com/problems/minimum-parantheses/)
+- [Remove Consecutive Characters](https://www.interviewbit.com/problems/remove-consecutive-characters/)
 
 ## Bit Manipulation
 
@@ -127,8 +129,10 @@ Interview bit problems topic wise
 - [Divide Integers](https://www.interviewbit.com/problems/divide-integers/)
 - [Different Bits Sum Pairwise](https://www.interviewbit.com/problems/different-bits-sum-pairwise/)
 - [Min XOR value](https://www.interviewbit.com/problems/min-xor-value/)
+- [Count Total Set Bits](https://www.interviewbit.com/problems/count-total-set-bits/)
 - [Single Number](https://www.interviewbit.com/problems/single-number/)
 - [Single Number II](https://www.interviewbit.com/problems/single-number-ii/)
+- [Trailing Zeroes](https://www.interviewbit.com/problems/trailing-zeroes/)
 
 ## Two Pointers
 

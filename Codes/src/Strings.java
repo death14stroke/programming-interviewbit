@@ -2,6 +2,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Stack;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("StringRepeatCanBeUsed")
@@ -879,5 +880,51 @@ public class Strings {
         builder.setLength(0);
         for (int j = 0; j < tabs; j++)
             builder.append("\t");
+    }
+
+    // https://www.interviewbit.com/problems/minimum-parantheses/
+    static int minParenthesis(String A) {
+        int n = 0, cnt = 0;
+        // check each parenthesis and maintain the balance count
+        for (char c : A.toCharArray()) {
+            if (c == '(')
+                n++;
+            else
+                n--;
+
+            // if number of closing parenthesis is greater than open so far
+            // add open parenthesis at beginning to balance
+            if (n < 0) {
+                cnt += Math.abs(n);
+                n = 0;
+            }
+        }
+
+        // add closing parenthesis at end for extra open ones
+        cnt += Math.abs(n);
+
+        return cnt;
+    }
+
+    // https://www.interviewbit.com/problems/remove-consecutive-characters/
+    static String removeConsecutive(String A, int B) {
+        StringBuilder res = new StringBuilder();
+
+        int n = A.length(), i = 0;
+        while (i < n) {
+            int j = i + 1;
+            // skip consecutive duplicate characters
+            while (j < n && A.charAt(j) == A.charAt(i))
+                j++;
+
+            // if count of consecutive duplicates is not exactly B, add A[i]
+            if (j - i != B)
+                res.append(A.charAt(i));
+
+            // check for next char after skipping duplicates
+            i = j;
+        }
+
+        return res.toString();
     }
 }
