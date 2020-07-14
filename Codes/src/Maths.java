@@ -552,4 +552,79 @@ public class Maths {
 
         return out;
     }
+
+    // https://www.interviewbit.com/problems/next-similar-number/
+    static String nextSimilarNumber(String A) {
+        int n = A.length(), i = n - 1;
+        // find the first increasing pair from the end
+        while (i - 1 >= 0 && A.charAt(i - 1) >= A.charAt(i))
+            i--;
+
+        // if no increasing pair, no higher next permutation
+        if (i == 0)
+            return "-1";
+
+        // append the substring before i to result
+        StringBuilder res = new StringBuilder(A.substring(0, i));
+        // search for next greater pos for A[i - 1]
+        int nextPos = binarySearchRev(A, i, n - 1, A.charAt(i - 1));
+
+        // swap next greater of A[i - 1] at i - 1
+        char temp = res.charAt(i - 1);
+        res.setCharAt(i - 1, A.charAt(nextPos));
+
+        int j = n - 1;
+        // merge two sorted lists one of size 1 (temp) and other from n - 1 to nextPos
+        while (j > nextPos && temp != '#') {
+            if (temp <= A.charAt(j)) {
+                res.append(temp);
+                // mark temp as added to list
+                temp = '#';
+            } else {
+                res.append(A.charAt(j));
+                j--;
+            }
+        }
+
+        // if temp is the last position
+        if (temp != '#')
+            res.append(temp);
+
+        // if temp is added by merging, add the remaining part of subList 1
+        while (j > nextPos) {
+            res.append(A.charAt(j));
+            j--;
+        }
+
+        j = nextPos - 1;
+        // add the second part from nextPos - 1 to i
+        while (j >= i) {
+            res.append(A.charAt(j));
+            j--;
+        }
+
+        return res.toString();
+    }
+
+    // util to binary search next greater of x in a reverse sorted string
+    private static int binarySearchRev(String A, int l, int r, char x) {
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            if (A.charAt(mid) > x)
+                l = mid + 1;
+            else
+                r = mid - 1;
+        }
+
+        return r;
+    }
+
+    // https://www.interviewbit.com/problems/is-rectangle/
+    static int isRectangle(int a, int b, int c, int d) {
+        // check if any pair of opposite sides is equal
+        if ((a == b && c == d) || (a == c && b == d) || (a == d && b == c))
+            return 1;
+        // not a rectangle else
+        return 0;
+    }
 }

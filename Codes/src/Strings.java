@@ -2,7 +2,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Stack;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("StringRepeatCanBeUsed")
@@ -880,6 +879,53 @@ public class Strings {
         builder.setLength(0);
         for (int j = 0; j < tabs; j++)
             builder.append("\t");
+    }
+
+    // https://www.interviewbit.com/problems/convert-to-palindrome/
+    static int convertToPalindrome(String A) {
+        int start = 0, end = A.length() - 1;
+
+        // skip the palindromic characters at the ends
+        while (start < end && A.charAt(start) == A.charAt(end)) {
+            start++;
+            end--;
+        }
+
+        // odd length palindrome or substring by removing first non-matching or last-non matching char is palindrome
+        if (start == end || isPalindrome(A, start + 1, end) || isPalindrome(A, start, end - 1))
+            return 1;
+
+        // not possible to make palindrome by removing exactly one char
+        return 0;
+    }
+
+    // util to check if string is palindrome or not
+    private static boolean isPalindrome(String A, int start, int end) {
+        while (start <= end) {
+            // not palindrome
+            if (A.charAt(start) != A.charAt(end))
+                return false;
+
+            // check for next positions
+            start++;
+            end--;
+        }
+
+        return true;
+    }
+
+    // https://www.interviewbit.com/problems/minimum-appends-for-palindrome/
+    static int minAppendsForPalindrome(String A) {
+        // create string rev(A) + "$" + A and compute lps
+        String str = new StringBuilder(A)
+                .reverse()
+                .append('$')
+                .append(A)
+                .toString();
+        int[] lps = computeLpsArray(str);
+
+        // characters needed at end = len(A) - lps(last pos of str)
+        return A.length() - lps[str.length() - 1];
     }
 
     // https://www.interviewbit.com/problems/minimum-parantheses/

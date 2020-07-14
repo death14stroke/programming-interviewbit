@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class BinarySearch {
@@ -455,5 +457,37 @@ public class BinarySearch {
         }
 
         return -1;
+    }
+
+    // https://www.interviewbit.com/problems/woodcutting-made-easy/
+    static int woodCutting(ArrayList<Integer> A, int B) {
+        // try for all values from min saw height (all wood cut) to max saw height (0 wood cut)
+        int l = 0, r = Collections.max(A);
+        // optimum saw height
+        int ans = 0;
+
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            // if enough wood not acquired, decrease saw height
+            if (countWood(A, mid) < B)
+                r = mid - 1;
+                // increase saw height to check for a larger possible value
+            else {
+                ans = mid;
+                l = mid + 1;
+            }
+        }
+
+        return ans;
+    }
+
+    // util to get wood cut by saw of height sawHeight
+    private static long countWood(ArrayList<Integer> A, int sawHeight) {
+        long woodCnt = 0;
+        // add upper part of each tree to wood count
+        for (int tree : A)
+            woodCnt += Math.max(tree - sawHeight, 0);
+
+        return woodCnt;
     }
 }

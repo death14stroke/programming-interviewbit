@@ -2,8 +2,8 @@ import java.util.ArrayList;
 
 public class Solution {
     public static void main(String[] args) {
-        String A = "(((";
+        String A = "abecbea";
 
-        System.out.printf("min parenthesis = %d\n", Strings.minParenthesis(A));
+        System.out.printf("remove 1 palindrome = %d\n", Strings.convertToPalindrome(A));
     }
 }

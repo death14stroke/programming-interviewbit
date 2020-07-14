@@ -80,6 +80,8 @@ Interview bit problems topic wise
 - [Rearrange Array](https://www.interviewbit.com/problems/rearrange-array/)
 - [Grid Unique Paths](https://www.interviewbit.com/problems/grid-unique-paths/)
 - [PRETTYPRINT](https://www.interviewbit.com/problems/prettyprint/)
+- [Next Similar Number](https://www.interviewbit.com/problems/next-similar-number/)
+- [Is Rectangle?](https://www.interviewbit.com/problems/is-rectangle/)
 
 ## Binary Search
 
@@ -95,6 +97,7 @@ Interview bit problems topic wise
 - [Implement Power Function](https://www.interviewbit.com/problems/implement-power-function/)
 - [Rotated Sorted Array Search](https://www.interviewbit.com/problems/rotated-sorted-array-search/)
 - [Median of Array](https://www.interviewbit.com/problems/median-of-array/)
+- [WoodCutting Made Easy!](https://www.interviewbit.com/problems/woodcutting-made-easy/)
 
 ## Strings
 
@@ -119,6 +122,8 @@ Interview bit problems topic wise
 - [Justified Text](https://www.interviewbit.com/problems/justified-text/)
 - [Zigzag String](https://www.interviewbit.com/problems/zigzag-string/)
 - [Pretty Json](https://www.interviewbit.com/problems/pretty-json/)
+- [Convert to Palindrome](https://www.interviewbit.com/problems/convert-to-palindrome/)
+- [Minimum Appends for Palindrome!](https://www.interviewbit.com/problems/minimum-appends-for-palindrome/)
 - [Minimum Parantheses!](https://www.interviewbit.com/problems/minimum-parantheses/)
 - [Remove Consecutive Characters](https://www.interviewbit.com/problems/remove-consecutive-characters/)
 
