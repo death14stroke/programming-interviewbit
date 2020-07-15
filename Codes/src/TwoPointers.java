@@ -145,6 +145,34 @@ public class TwoPointers {
         return ans;
     }
 
+    // https://www.interviewbit.com/problems/counting-triangles/
+    static int nTriang(ArrayList<Integer> A) {
+        int p = 1000000007, n = A.size();
+        long ans = 0;
+
+        Collections.sort(A);
+
+        // choose the largest side
+        for (int k = 2; k < n; k++) {
+            int i = 0, j = k - 1;
+
+            // keep checking for first and second sides
+            while (i < j) {
+                // if sum is less, increase the smallest side
+                if (A.get(i) + A.get(j) <= A.get(k))
+                    i++;
+                    // found a triangle, all triangles with smallest side greater than A[i] will also form a triangle
+                    // decrement the second side and check again
+                else {
+                    ans = (ans + (j - i)) % p;
+                    j--;
+                }
+            }
+        }
+
+        return (int) ans;
+    }
+
     // https://www.interviewbit.com/problems/diffk/
     static int diffK(ArrayList<Integer> A, int k) {
         int n = A.size(), i = 0, j = 1;
@@ -360,34 +388,6 @@ public class TwoPointers {
         }
 
         return maxArea;
-    }
-
-    // https://www.interviewbit.com/problems/counting-triangles/
-    static int nTriang(ArrayList<Integer> A) {
-        int p = 1000000007, n = A.size();
-        long ans = 0;
-
-        Collections.sort(A);
-
-        // choose the largest side
-        for (int k = 2; k < n; k++) {
-            int i = 0, j = k - 1;
-
-            // keep checking for first and second sides
-            while (i < j) {
-                // if sum is less, increase the smallest side
-                if (A.get(i) + A.get(j) <= A.get(k))
-                    i++;
-                    // found a triangle, all triangles with smallest side greater than A[i] will also form a triangle
-                    // decrement the second side and check again
-                else {
-                    ans = (ans + (j - i)) % p;
-                    j--;
-                }
-            }
-        }
-
-        return (int) ans;
     }
 
     // https://www.interviewbit.com/problems/pair-with-given-difference/

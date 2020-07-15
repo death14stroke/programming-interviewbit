@@ -1224,7 +1224,7 @@ public class Array {
         calculateRightSpecials(a, rightSpecials, n);
 
         // maximize the product first then take modulo
-        for (int i=0; i<n; i++)
+        for (int i = 0; i < n; i++)
             ans = Math.max(ans, (long) leftSpecials[i] * (long) rightSpecials[i]);
 
         return (int) (ans % p);
@@ -1232,10 +1232,10 @@ public class Array {
 
     private static void calculateRightSpecials(ArrayList<Integer> a, int[] rightSpecials, int n) {
         // no element on right
-        rightSpecials[n-1] = 0;
+        rightSpecials[n - 1] = 0;
         Stack<Integer> s = new Stack<>();
 
-        for (int i=0; i<n; i++) {
+        for (int i = 0; i < n; i++) {
             while (!s.empty() && a.get(i) > a.get(s.peek())) {
                 int top = s.pop();
                 rightSpecials[top] = i;
@@ -1250,7 +1250,7 @@ public class Array {
         leftSpecials[0] = 0;
         Stack<Integer> s = new Stack<>();
 
-        for (int i=n-1; i>=0; i--) {
+        for (int i = n - 1; i >= 0; i--) {
             while (!s.empty() && a.get(i) > a.get(s.peek())) {
                 int top = s.pop();
                 leftSpecials[top] = i;
@@ -1258,6 +1258,41 @@ public class Array {
 
             s.push(i);
         }
+    }
+
+    // https://www.interviewbit.com/problems/maximum-sum-triplet/
+    static int maxSumTriplet(ArrayList<Integer> A) {
+        int n = A.size();
+
+        // calculate max suffix array such that maxSuffix[i] = max(A[i]...A[n - 1])
+        int[] maxSuffix = new int[n];
+        maxSuffix[n - 1] = A.get(n - 1);
+        for (int i = n - 2; i >= 0; i--)
+            maxSuffix[i] = Math.max(maxSuffix[i + 1], A.get(i));
+
+        // use a treeSet to keep track of element just smaller than current
+        TreeSet<Integer> leftMax = new TreeSet<>();
+        leftMax.add(A.get(0));
+
+        int maxSum = Integer.MIN_VALUE;
+        // select A[j] one by one and check for corresponding A[i] and A[k]
+        for (int j = 1; j < n - 1; j++) {
+            // choose optimum A[k]
+            int ak = maxSuffix[j + 1];
+            // j < k always so check if A[j] < A[k]
+            if (A.get(j) < ak) {
+                // get A[i] for A[j]
+                Integer ai = leftMax.lower(A.get(j));
+                // if there exists an element just smaller than A[j] on its left
+                if (ai != null)
+                    maxSum = Math.max(maxSum, ai + A.get(j) + ak);
+
+                // add A[i] to the set for finding just smaller in next iteration
+                leftMax.add(A.get(j));
+            }
+        }
+
+        return maxSum;
     }
 
     static void printArray(int[] a) {

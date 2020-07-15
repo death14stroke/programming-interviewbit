@@ -56,6 +56,7 @@ Interview bit problems topic wise
 - [Next Permutation](https://www.interviewbit.com/problems/next-permutation/)
 - [Find Permutation](https://www.interviewbit.com/problems/find-permutation/)
 - [MAXSPPROD](https://www.interviewbit.com/problems/maxspprod/)
+- [Maximum Sum Triplet](https://www.interviewbit.com/problems/maximum-sum-triplet/)
 
 ## Math
 
@@ -82,6 +83,7 @@ Interview bit problems topic wise
 - [PRETTYPRINT](https://www.interviewbit.com/problems/prettyprint/)
 - [Next Similar Number](https://www.interviewbit.com/problems/next-similar-number/)
 - [Is Rectangle?](https://www.interviewbit.com/problems/is-rectangle/)
+- [Find Nth Fibonacci](https://www.interviewbit.com/problems/find-nth-fibonacci/)
 
 ## Binary Search
 
@@ -138,6 +140,7 @@ Interview bit problems topic wise
 - [Single Number](https://www.interviewbit.com/problems/single-number/)
 - [Single Number II](https://www.interviewbit.com/problems/single-number-ii/)
 - [Trailing Zeroes](https://www.interviewbit.com/problems/trailing-zeroes/)
+- [XOR-ing the Subarrays!](https://www.interviewbit.com/problems/xor-ing-the-subarrays/)
 
 ## Two Pointers
 

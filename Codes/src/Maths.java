@@ -627,4 +627,55 @@ public class Maths {
         // not a rectangle else
         return 0;
     }
+
+    // https://www.interviewbit.com/problems/find-nth-fibonacci/
+    static int nthFibonacci(int n) {
+        // F1 = 1
+        if (n == 1)
+            return 1;
+
+        int p = 1000000007;
+        int[][] matrix = {
+                {1, 1},
+                {1, 0}
+        };
+
+        // Mn = power(Mat({1, 1}, {1, 0}), n - 2) where Mn[0][0] = Fn
+        matrix = matrixPowerMod(matrix, n - 2, p);
+        return matrix[0][0];
+    }
+
+    // util to calculate matrix power modulo
+    private static int[][] matrixPowerMod(int[][] a, int n, int p) {
+        int[][] res = {
+                {1, 1},
+                {1, 1}
+        };
+
+        // calculate power(a, n) in O(log n)
+        while (n > 0) {
+            if (n % 2 == 1)
+                res = sqMatrixModMult(res, a, p);
+
+            a = sqMatrixModMult(a, a, p);
+            n /= 2;
+        }
+
+        return res;
+    }
+
+    // util to multiply two square matrices
+    private static int[][] sqMatrixModMult(int[][] a, int[][] b, int p) {
+        int n = a.length;
+        int[][] res = new int[n][n];
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                for (int k = 0; k < n; k++)
+                    res[i][j] = (res[i][j] + (int) (((long) a[i][k] * (long) b[k][j]) % p)) % p;
+            }
+        }
+
+        return res;
+    }
 }

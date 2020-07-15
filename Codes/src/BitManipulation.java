@@ -222,4 +222,20 @@ public class BitManipulation {
         // all bits are zero
         return 32;
     }
+
+    // https://www.interviewbit.com/problems/xor-ing-the-subarrays/
+    static int xoringSubarrays(ArrayList<Integer> A) {
+        int n = A.size();
+
+        // if array size is even, result xor is 0
+        if (n % 2 == 0)
+            return 0;
+
+        // else result xor is the xor of all even positioned numbers
+        int xor = 0;
+        for (int i = 0; i < n; i += 2)
+            xor = xor ^ A.get(i);
+
+        return xor;
+    }
 }
