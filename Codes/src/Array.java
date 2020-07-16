@@ -4,7 +4,6 @@ import java.util.Comparator;
 import java.util.*;
 
 public class Array {
-
     // https://www.interviewbit.com/problems/spiral-order-matrix-i/
     static int[] spiralOrder(final int[][] a) {
         int n = a.length, m = a[0].length;
@@ -1260,6 +1259,40 @@ public class Array {
         }
     }
 
+    // https://www.interviewbit.com/problems/minimum-lights-to-activate/
+    static int minLights(int[] A, int B) {
+        int n = A.length;
+        // initial start position will be min of range of light and the last position
+        int i = Math.min(B - 1, n - 1), cnt = 0;
+
+        // keep jumping to the end
+        while (i >= 0) {
+            // if there is light
+            if (A[i] == 1) {
+                // turn on the light, mark as on and jump to next unlighted position
+                cnt++;
+                A[i] = 2;
+                i += B;
+
+                // if all positions are covered
+                if (i >= n)
+                    return cnt;
+
+                // jump to minimum of last position of array or position where light should be
+                i = Math.min(n - 1, i + B - 1);
+            }
+            // light was already turned on
+            else if (A[i] == 2)
+                return -1;
+                // no light, move backwards
+            else
+                i--;
+        }
+
+        // some positions are left unlighted (i < n - 1)
+        return -1;
+    }
+
     // https://www.interviewbit.com/problems/maximum-sum-triplet/
     static int maxSumTriplet(ArrayList<Integer> A) {
         int n = A.size();
@@ -1293,6 +1326,91 @@ public class Array {
         }
 
         return maxSum;
+    }
+
+    // https://www.interviewbit.com/problems/maximum-sum-square-submatrix/
+    static int maxSumSquareSubmatrix(int[][] A, int B) {
+        int n = A.length;
+        // pre-calculate sum of sub-matrix ending at A[i][j]
+        // first calculate sum of i x 1 and 1 x i sub-matrices
+        for (int i = 1; i < n; i++) {
+            A[0][i] = A[0][i] + A[0][i - 1];
+            A[i][0] = A[i][0] + A[i - 1][0];
+        }
+
+        // sum of sub-matrix ending at A[i][j]
+        for (int i = 1; i < n; i++) {
+            for (int j = 1; j < n; j++)
+                A[i][j] = A[i][j] + A[i - 1][j] + A[i][j - 1] - A[i - 1][j - 1];
+        }
+
+        // max sum of sub-matrix of size B. Initialize with the first sub-matrix possible
+        int maxSum = A[B - 1][B - 1];
+        // calculate and compare sub-matrix sum ending at (i, j) of B x B for corner cases (i.e i = B - 1 or j = B - 1)
+        for (int i = B; i < n; i++) {
+            maxSum = Math.max(maxSum, A[B - 1][i] - A[B - 1][i - B]);
+            maxSum = Math.max(maxSum, A[i][B - 1] - A[i - B][B - 1]);
+        }
+
+        // calculate and compare sub-matrix sum ending at (i, j) of B x B
+        for (int i = B; i < n; i++) {
+            for (int j = B; j < n; j++) {
+                int matrixSum = A[i][j] - A[i - B][j] - A[i][j - B] + A[i - B][j - B];
+                maxSum = Math.max(maxSum, matrixSum);
+            }
+        }
+
+        return maxSum;
+    }
+
+    // https://www.interviewbit.com/problems/perfect-peak-of-array/
+    static int perfectPeak(int[] A) {
+        int n = A.length;
+
+        // leftMax[i] = max(A[0]...A[i])
+        int[] leftMax = new int[n];
+        leftMax[0] = A[0];
+        for (int i = 1; i < n; i++)
+            leftMax[i] = Math.max(leftMax[i - 1], A[i]);
+
+        // rightMin = min(A[i]...A[n - 1])
+        int rightMin = A[n - 1];
+
+        // check for all middle positions from end
+        for (int i = n - 2; i >= 1; i--) {
+            // if A[i] is greater than max of all lefts and less than min of all rights
+            if (leftMax[i - 1] < A[i] && A[i] < rightMin)
+                return 1;
+
+            // add current position in rightMin calculation
+            rightMin = Math.min(rightMin, A[i]);
+        }
+
+        return 0;
+    }
+
+    // https://www.interviewbit.com/problems/leaders-in-an-array/
+    static ArrayList<Integer> leadersInArray(ArrayList<Integer> A) {
+        ArrayList<Integer> res = new ArrayList<>();
+        int n = A.size();
+        if (n == 0)
+            return res;
+
+        // keep track of max elements to the right of A[i]
+        int maxRight = A.get(n - 1);
+        // right most is always leader
+        res.add(maxRight);
+
+        // check for each element from the end
+        for (int i = n - 2; i >= 0; i--) {
+            // A[i] is a leader. Add to result and update maxRight
+            if (A.get(i) > maxRight) {
+                res.add(A.get(i));
+                maxRight = A.get(i);
+            }
+        }
+
+        return res;
     }
 
     static void printArray(int[] a) {

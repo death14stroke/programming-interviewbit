@@ -56,7 +56,11 @@ Interview bit problems topic wise
 - [Next Permutation](https://www.interviewbit.com/problems/next-permutation/)
 - [Find Permutation](https://www.interviewbit.com/problems/find-permutation/)
 - [MAXSPPROD](https://www.interviewbit.com/problems/maxspprod/)
+- [Minimum Lights to Activate](https://www.interviewbit.com/problems/minimum-lights-to-activate/)
 - [Maximum Sum Triplet](https://www.interviewbit.com/problems/maximum-sum-triplet/)
+- [Maximum Sum Square SubMatrix](https://www.interviewbit.com/problems/maximum-sum-square-submatrix/)
+- [Perfect Peak of Array](https://www.interviewbit.com/problems/perfect-peak-of-array/)
+- [Leaders in an array](https://www.interviewbit.com/problems/leaders-in-an-array/)
 
 ## Math
 
