@@ -1,10 +1,8 @@
-import java.util.ArrayList;
-
 public class Solution {
     public static void main(String[] args) {
-        Integer[] a1 = {4, 5, 7, 5};
-        ArrayList<Integer> A = Array.toIntArrayList(a1);
+        int[] A = {2, 1, 6, 4};
 
-        System.out.printf("xor subarray = %d\n", BitManipulation.xoringSubarrays(A));
+        Array.printArray(A);
+        System.out.printf("balance array = %d\n", Array.balanceArray(A));
     }
 }

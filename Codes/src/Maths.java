@@ -678,4 +678,30 @@ public class Maths {
 
         return res;
     }
+
+    // https://www.interviewbit.com/problems/step-by-step/
+    static int stepByStep(int A) {
+        // moving in either side is symmetric
+        A = Math.abs(A);
+        int sum = 0, steps = 0;
+
+        // keep moving forward till either destination is reached or
+        // the difference between target and destination is odd
+        while (sum < A || (sum - A) % 2 != 0) {
+            steps++;
+            sum += steps;
+        }
+
+        // if difference is even i.e sum - target = 2 * i,
+        // we can take ith step in the opposite direction to reach our destination
+        return steps;
+    }
+
+    // https://www.interviewbit.com/problems/distribute-in-circle/
+    static int distributeInCircle(int A, int B, int C) {
+        // A: item pos in queue
+        // C: position in circle starting from 1
+        // B: size of circle
+        return (A + C - 1) % B;
+    }
 }

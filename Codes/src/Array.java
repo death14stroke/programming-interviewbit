@@ -1413,6 +1413,93 @@ public class Array {
         return res;
     }
 
+    // https://www.interviewbit.com/problems/pick-from-both-sides/
+    static int pickFromBothSides(int[] A, int B) {
+        int n = A.length;
+        // calculate prefix and suffix sum
+        int[] prefixSum = new int[n + 1], suffixSum = new int[n + 1];
+        for (int i = 1; i < n; i++) {
+            prefixSum[i] = A[i - 1] + prefixSum[i - 1];
+            suffixSum[n - i] = A[n - i] + suffixSum[n - i + 1];
+        }
+        prefixSum[n] = A[n - 1] + prefixSum[n - 1];
+        suffixSum[0] = A[0] + suffixSum[1];
+
+        // find max of (prefix[i] + suffix[n-(B - i)])
+        int maxSum = Integer.MIN_VALUE;
+        for (int i = 0; i <= B; i++)
+            maxSum = Math.max(maxSum, prefixSum[i] + suffixSum[n - (B - i)]);
+
+        return maxSum;
+    }
+
+    // https://www.interviewbit.com/problems/partitions/
+    static int partitions(int n, int[] A) {
+        // calculate total sum
+        int s = 0;
+        for (int val : A)
+            s += val;
+
+        // total sum cannot be divided into 3 parts
+        if (s % 3 != 0)
+            return 0;
+
+        int s1 = s / 3, s2 = 2 * s1;
+        // sum = running sum, cnt = total positions where sum is s1 till now
+        int sum = 0, cnt = 0, ans = 0;
+
+        for (int i = 0; i < n - 1; i++) {
+            sum += A[i];
+
+            // if sum at position i is s2, it can be paired with all prev positions where sum is s1
+            if (sum == s2)
+                ans += cnt;
+            // if sum at position i is s1, increment the count of positions where sum is s1
+            if (sum == s1)
+                cnt++;
+        }
+
+        return ans;
+    }
+
+    // https://www.interviewbit.com/problems/balance-array/
+    static int balanceArray(int[] A) {
+        int n = A.length;
+        // calculate prefix sum for odd and even positions
+        // leftOdd[i] = prefix sum of odd positions till i-1
+        int[] leftOdd = new int[n], leftEven = new int[n];
+
+        int odd = 0, even = 0;
+        for (int i = 0; i < n; i++) {
+            leftOdd[i] = odd;
+            leftEven[i] = even;
+
+            // update left prefix sum for odd and even positions
+            if (i % 2 == 0)
+                even += A[i];
+            else
+                odd += A[i];
+        }
+
+        // calculate running suffix sum for odd and even positions after the current position
+        int rightOdd = 0, rightEven = 0;
+        int cnt = 0;
+
+        for (int i = n - 1; i >= 0; i--) {
+            // if the special property holds
+            if (leftOdd[i] + rightEven == leftEven[i] + rightOdd)
+                cnt++;
+
+            // update right even and odd suffix sums
+            if (i % 2 == 0)
+                rightEven += A[i];
+            else
+                rightOdd += A[i];
+        }
+
+        return cnt;
+    }
+
     static void printArray(int[] a) {
         for (int val : a)
             System.out.print(val + " ");

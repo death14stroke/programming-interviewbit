@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class BinarySearch {
     // https://www.interviewbit.com/problems/count-element-occurence/
@@ -489,5 +486,51 @@ public class BinarySearch {
             woodCnt += Math.max(tree - sawHeight, 0);
 
         return woodCnt;
+    }
+
+    // https://www.interviewbit.com/problems/search-in-bitonic-array/
+    static int bitonicSearch(int[] A, int B) {
+        int n = A.length;
+        int l = 0, r = n - 1;
+
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+
+            // found B
+            if (A[mid] == B)
+                return mid;
+
+            // left half is strictly increasing
+            if (A[l] <= A[mid]) {
+                if (A[l] <= B && B < A[mid])
+                    r = mid - 1;
+                else
+                    l = mid + 1;
+            }
+            // left half is strictly decreasing
+            else if (A[l] >= A[mid]) {
+                if (A[l] >= B && B > A[mid])
+                    r = mid - 1;
+                else
+                    l = mid + 1;
+            }
+            // right half is strictly increasing
+            else if (A[mid] <= A[r]) {
+                if (A[mid] < B && B <= A[r])
+                    l = mid + 1;
+                else
+                    r = mid - 1;
+            }
+            // right half is strictly decreasing
+            else {
+                if (A[mid] > B && B >= A[r])
+                    l = mid + 1;
+                else
+                    r = mid - 1;
+            }
+        }
+
+        // not found
+        return -1;
     }
 }

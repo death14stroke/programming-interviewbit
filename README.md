@@ -61,6 +61,9 @@ Interview bit problems topic wise
 - [Maximum Sum Square SubMatrix](https://www.interviewbit.com/problems/maximum-sum-square-submatrix/)
 - [Perfect Peak of Array](https://www.interviewbit.com/problems/perfect-peak-of-array/)
 - [Leaders in an array](https://www.interviewbit.com/problems/leaders-in-an-array/)
+- [Pick from both sides!](https://www.interviewbit.com/problems/pick-from-both-sides/)
+- [Partitions](https://www.interviewbit.com/problems/partitions/)
+- [Balance Array](https://www.interviewbit.com/problems/balance-array/)
 
 ## Math
 
@@ -88,6 +91,8 @@ Interview bit problems topic wise
 - [Next Similar Number](https://www.interviewbit.com/problems/next-similar-number/)
 - [Is Rectangle?](https://www.interviewbit.com/problems/is-rectangle/)
 - [Find Nth Fibonacci](https://www.interviewbit.com/problems/find-nth-fibonacci/)
+- [Step by Step](https://www.interviewbit.com/problems/step-by-step/)
+- [Distribute in Circle!](https://www.interviewbit.com/problems/distribute-in-circle/)
 
 ## Binary Search
 
@@ -104,6 +109,7 @@ Interview bit problems topic wise
 - [Rotated Sorted Array Search](https://www.interviewbit.com/problems/rotated-sorted-array-search/)
 - [Median of Array](https://www.interviewbit.com/problems/median-of-array/)
 - [WoodCutting Made Easy!](https://www.interviewbit.com/problems/woodcutting-made-easy/)
+- [Search in Bitonic Array!](https://www.interviewbit.com/problems/search-in-bitonic-array/)
 
 ## Strings
 
