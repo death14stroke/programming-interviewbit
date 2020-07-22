@@ -64,6 +64,7 @@ Interview bit problems topic wise
 - [Pick from both sides!](https://www.interviewbit.com/problems/pick-from-both-sides/)
 - [Partitions](https://www.interviewbit.com/problems/partitions/)
 - [Balance Array](https://www.interviewbit.com/problems/balance-array/)
+- [Maximum Area of Triangle!](https://www.interviewbit.com/problems/maximum-area-of-triangle/)
 
 ## Math
 
@@ -169,3 +170,5 @@ Interview bit problems topic wise
 - [Container With Most Water](https://www.interviewbit.com/problems/container-with-most-water/)
 - [Pair With Given Difference](https://www.interviewbit.com/problems/pair-with-given-difference/)
 - [Maximum Ones After Modification](https://www.interviewbit.com/problems/maximum-ones-after-modification/)
+- [Counting Subarrays!](https://www.interviewbit.com/problems/counting-subarrays/)
+- [Subarrays with distinct integers!](https://www.interviewbit.com/problems/subarrays-with-distinct-integers/)

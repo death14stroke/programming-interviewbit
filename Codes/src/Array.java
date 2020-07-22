@@ -1500,50 +1500,110 @@ public class Array {
         return cnt;
     }
 
+    // https://www.interviewbit.com/problems/maximum-area-of-triangle/
+    static int maxArea(String[] matrix) {
+        int r = matrix.length, c = matrix[0].length();
+        // calculate first and last occurence from top for each color in each column
+        int[][] top = new int[3][c], bottom = new int[3][c];
+        // calculate first and last occurence from left for each color among all columns
+        int[] left = new int[3], right = new int[3];
+
+        for (int i = 0; i < 3; i++) {
+            Arrays.fill(top[i], Integer.MAX_VALUE);
+            Arrays.fill(bottom[i], Integer.MIN_VALUE);
+        }
+        Arrays.fill(left, Integer.MAX_VALUE);
+        Arrays.fill(right, Integer.MIN_VALUE);
+
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                int color = mapColor(matrix[i].charAt(j));
+
+                left[color] = Math.min(left[color], j);
+                right[color] = Math.max(right[color], j);
+                top[color][j] = Math.min(top[color][j], i);
+                bottom[color][j] = Math.max(bottom[color][j], i);
+            }
+        }
+
+        double maxArea = 0;
+        // loop for each column
+        for (int i = 0; i < c; i++) {
+            // select color of top vertex of base
+            for (int x = 0; x < 3; x++) {
+                // select color of bottom vertex of base
+                for (int y = 0; y < 3; y++) {
+                    // if color is same or the vertices are not present in the column
+                    if (x == y || top[x][i] == Integer.MAX_VALUE || bottom[y][i] == Integer.MIN_VALUE)
+                        continue;
+
+                    // calculate base of the triangle
+                    int base = Math.abs(bottom[y][i] - top[x][i]) + 1;
+
+                    // third vertex which forms the height
+                    int z = 3 - x - y;
+                    // check if the third vertex lies on the left of current column
+                    if (left[z] != Integer.MAX_VALUE)
+                        maxArea = Math.max(maxArea, 0.5 * base * Math.abs(i - left[z] + 1));
+
+                    // check if the third vertex lies on the right of current column
+                    if (right[z] != Integer.MIN_VALUE)
+                        maxArea = Math.max(maxArea, 0.5 * base * Math.abs(right[z] - i + 1));
+                }
+            }
+        }
+
+        return (int) maxArea;
+    }
+
+    // util to map 'r', 'g' and 'b' to 0, 1 and 2 resp
+    private static int mapColor(char c) {
+        switch (c) {
+            case 'r':
+                return 0;
+            case 'g':
+                return 1;
+            case 'b':
+                return 2;
+            default:
+                return -1;
+        }
+    }
+
     static void printArray(int[] a) {
         for (int val : a)
             System.out.print(val + " ");
         System.out.println();
     }
 
-    static void printArray(Integer[] a) {
-        for (int val : a)
+    static <T> void printArray(T[] a) {
+        for (T val : a)
             System.out.print(val + " ");
         System.out.println();
     }
 
-    static void printArray(String[] a) {
-        for (String val : a)
-            System.out.print(val + " ");
-        System.out.println();
-    }
-
-    static void printMatrix(int[][] a) {
-        for (int[] arr : a) {
-            for (int val : arr)
+    static <T> void printMatrix(T[][] a) {
+        for (T[] arr : a) {
+            for (T val : arr)
                 System.out.print(val + " ");
             System.out.println();
         }
         System.out.println();
     }
 
-    public static void printMatrix(ArrayList<ArrayList<Integer>> a) {
-        for (List<Integer> arr : a) {
-            for (int val : arr)
+    static <T> void printMatrix(ArrayList<ArrayList<T>> a) {
+        for (List<T> arr : a) {
+            for (T val : arr)
                 System.out.print(val + " ");
             System.out.println();
         }
         System.out.println();
     }
 
-    static void printArrayList(ArrayList<Integer> a) {
-        for (int val : a)
+    static <T> void printArrayList(ArrayList<T> a) {
+        for (T val : a)
             System.out.print(val + " ");
         System.out.println();
-    }
-
-    static ArrayList<Integer> toIntArrayList(Integer[] arr) {
-        return new ArrayList<>(Arrays.asList(arr));
     }
 
     static ArrayList<ArrayList<Integer>> toIntMatrix(int[][] a1) {

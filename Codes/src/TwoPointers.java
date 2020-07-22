@@ -438,4 +438,66 @@ public class TwoPointers {
 
         return bestWindow;
     }
+
+    // https://www.interviewbit.com/problems/counting-subarrays/
+    static int countingSubArrays(int[] A, int B) {
+        int n = A.length;
+        int start = 0, end = 0;
+        int sum = 0, cnt = 0;
+
+        // sliding window approach
+        while (end < n) {
+            // if new sum is less than B count new subarrays
+            if (sum + A[end] < B) {
+                sum += A[end];
+                cnt += end - start + 1;
+                end++;
+            }
+            // else keep removing sum from the start
+            else {
+                sum -= A[start];
+                start++;
+            }
+        }
+
+        return cnt;
+    }
+
+    // https://www.interviewbit.com/problems/subarrays-with-distinct-integers/
+    static int subArraysWithDistinct(int[] A, int B) {
+        // # subarrays with exactly B distinct =
+        // # subarrays with at most B distinct - # subarrays with at most (B - 1) distinct
+        return atMostB(A, B) - atMostB(A, B - 1);
+    }
+
+    // util to get subarray count with at most B distinct elements
+    private static int atMostB(int[] A, int B) {
+        int n = A.length;
+        HashMap<Integer, Integer> map = new HashMap<>();
+        int start = 0, end = 0;
+        int cnt = 0;
+
+        while (end < n) {
+            // increment frequency of end pointer value
+            map.put(A[end], map.getOrDefault(A[end], 0) + 1);
+
+            // while there are more than B distinct elements keep removing from the start
+            while (map.size() > B) {
+                int freq = map.get(A[start]) - 1;
+                if (freq == 0)
+                    map.remove(A[start]);
+                else
+                    map.put(A[start], freq);
+
+                start++;
+            }
+
+            // add subarrays formed by current range to answer
+            cnt += end - start + 1;
+            // move right
+            end++;
+        }
+
+        return cnt;
+    }
 }
