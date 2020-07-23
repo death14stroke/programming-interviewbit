@@ -500,4 +500,72 @@ public class TwoPointers {
 
         return cnt;
     }
+
+    // https://www.interviewbit.com/problems/kth-smallest-element-in-the-array/
+    static int kthSmallest(final int[] A, int k) {
+        // binary search on answer from min to max
+        int max = A[0], min = A[0];
+        for (int i = 1; i < A.length; i++) {
+            max = Math.max(max, A[i]);
+            min = Math.min(min, A[i]);
+        }
+
+        int l = min, r = max;
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+
+            // count number of elements less than and less than equal to mid
+            int lt = 0, le = 0;
+            for (int val : A) {
+                if (val < mid)
+                    lt++;
+                if (val <= mid)
+                    le++;
+            }
+
+            // if number of elements less than mid is less than k and
+            // less than equal to mid is greater than equal k, mid is the kth smallest
+            if (lt < k && le >= k)
+                return mid;
+            // else look for higher value as answer
+            if (le < k)
+                l = mid + 1;
+                // else look for smaller value as answer
+            else
+                r = mid - 1;
+        }
+
+        return -1;
+    }
+
+    // https://www.interviewbit.com/problems/numrange/
+    static int numRange(int[] A, int B, int C) {
+        // #subarrays with sum in [B, C] =
+        // #subarrays with sum <= C - #subarrays with sum <= B - 1
+        return sumAtMost(A, C) - sumAtMost(A, B - 1);
+    }
+
+    // util to calculate #subarrays with sum less than equal to k
+    private static int sumAtMost(int[] A, int k) {
+        int n = A.length;
+        int start = 0, end = 0;
+        int sum = 0, cnt = 0;
+
+        // sliding window
+        while (start < n && end < n) {
+            // if window can be expanded, expand and add the count of new subarrays possible
+            if (sum + A[end] <= k) {
+                sum += A[end];
+                cnt += end - start + 1;
+                end++;
+            }
+            // shrink window from the left
+            else {
+                sum -= A[start];
+                start++;
+            }
+        }
+
+        return cnt;
+    }
 }
