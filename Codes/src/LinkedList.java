@@ -423,6 +423,307 @@ class LinkedList {
         return smallerDummy.next;
     }
 
+    // https://www.interviewbit.com/problems/insertion-sort-list/
+    static ListNode insertionSort(ListNode head) {
+        // if 0 or 1 node in linked list
+        if (head == null || head.next == null)
+            return head;
+
+        // create dummy node to avoid null in previous node pointers
+        ListNode dummy = new ListNode(-1);
+        dummy.next = head;
+
+        ListNode curr = head.next, prev = head;
+        // check for each node starting from pos 1 if it should be inserted or not
+        while (curr != null) {
+            ListNode j = dummy.next, tempPrev = dummy;
+
+            // look for position to insert current node in the previous half of the list which is sorted
+            while (j != null && j.val < curr.val) {
+                tempPrev = j;
+                j = j.next;
+            }
+
+            ListNode next = curr.next;
+            // if found a position for current node to be inserted
+            if (j != curr) {
+                tempPrev.next = curr;
+                curr.next = j;
+                prev.next = next;
+            }
+            // else don't insert and update prev pointer
+            // (in above case prev pointer will remain same)
+            else
+                prev = curr;
+
+            // update current pointer
+            curr = next;
+        }
+
+        return dummy.next;
+    }
+
+    // https://www.interviewbit.com/problems/sort-list/
+    static ListNode sortList(ListNode head) {
+        return mergeSort(head);
+    }
+
+    // util to perform mergesort on linked list
+    private static ListNode mergeSort(ListNode head) {
+        // if 0 or 1 nodes in linked list
+        if (head == null || head.next == null)
+            return head;
+
+        ListNode slow = head, fast = head;
+        // find the mid pointer (slow)
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        // break the list from the middle
+        ListNode head2 = slow.next;
+        slow.next = null;
+
+        // merge the two halves after recursively sorting them using mergeSort
+        return mergeSortedLinkedLists(mergeSort(head), mergeSort(head2));
+    }
+
+    // https://www.interviewbit.com/problems/reverse-link-list-ii/
+    static ListNode reverseBetween(ListNode head, int m, int n) {
+        // no need to reverse
+        if (m == n)
+            return head;
+
+        // create dummy node to avoid null previous pointer
+        ListNode dummy = new ListNode(-1);
+        dummy.next = head;
+
+        // skip m positions
+        ListNode prev = dummy;
+        for (int i = 1; i < m; i++)
+            prev = prev.next;
+
+        // node before the head of sublist to reverse
+        ListNode reversePrev = prev;
+
+        prev = prev.next;
+        // head of sublist to reverse
+        ListNode head2 = prev;
+
+        ListNode curr = head2.next;
+        // reversing the sublist from m to n
+        for (int i = m; i < n; i++) {
+            ListNode next = curr.next;
+            curr.next = prev;
+
+            prev = curr;
+            curr = next;
+        }
+
+        // link head of original sublist to the (m+1)th node
+        head2.next = curr;
+        // link node before head of original sublist to point to the tail of the original sublist
+        reversePrev.next = prev;
+
+        return dummy.next;
+    }
+
+    // https://www.interviewbit.com/problems/reorder-list/
+    static ListNode reorderList(ListNode head) {
+        // if list has zero or one elements no reordering needed
+        if (head == null || head.next == null)
+            return head;
+
+        // find middle of the list
+        ListNode slow = head, fast = head;
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        // split list into two halves and reverse the second half
+        ListNode head2 = slow.next;
+        slow.next = null;
+        head2 = reverse(head2);
+
+        // alternate merge of two sublist
+        ListNode n1 = head, n2 = head2;
+        while (n1 != null && n2 != null) {
+            // add node of sublist 1
+            ListNode next1 = n1.next;
+            n1.next = n2;
+
+            // add node of sublist 2
+            ListNode next2 = n2.next;
+            n2.next = next1;
+
+            // move forward in both sublists
+            n1 = next1;
+            n2 = next2;
+        }
+
+        return head;
+    }
+
+    // https://www.interviewbit.com/problems/reverse-alternate-k-nodes/
+    static ListNode reverseAlternateK(ListNode head, int k) {
+        // create dummy node to avoid null previous pointer
+        ListNode dummy = new ListNode(-1);
+        dummy.next = head;
+
+        ListNode prev = dummy, curr = head;
+        // process 2k nodes at a time
+        while (curr != null) {
+            ListNode tempPrev = prev, temp = curr;
+
+            // reverse the first set of k nodes
+            for (int i = 0; i < k; i++) {
+                ListNode next = curr.next;
+                curr.next = prev;
+
+                prev = curr;
+                curr = next;
+            }
+
+            // join the nodes before and after the reversed part
+            tempPrev.next = prev;
+            temp.next = curr;
+
+            // update previous pointer
+            prev = temp;
+
+            // skip next k nodes if present
+            if (curr != null) {
+                for (int i = 0; i < k; i++) {
+                    prev = curr;
+                    curr = curr.next;
+                }
+            }
+        }
+
+        return dummy.next;
+    }
+
+    // https://www.interviewbit.com/problems/kth-node-from-middle/
+    static int kthFromMiddle(ListNode head, int k) {
+        ListNode curr = head;
+        int n = 0;
+        // calculate length of the linked list
+        while (curr != null) {
+            curr = curr.next;
+            n++;
+        }
+
+        // kth node from middle (n/2 + 1) towards beginning = (n/2) + 1 - k from the beginning
+        k = (n / 2) + 1 - k;
+        // if k is not valid
+        if (k < 1)
+            return -1;
+
+        // move k positions from the beginning
+        curr = head;
+        while (k > 1) {
+            curr = curr.next;
+            k--;
+        }
+
+        return curr.val;
+    }
+
+    // https://www.interviewbit.com/problems/sort-binary-linked-list/
+    static ListNode sortBinaryList(ListNode head) {
+        // if 0 or 1 nodes in the list
+        if (head == null || head.next == null)
+            return head;
+
+        // dummy nodes to avoid null pointers
+        ListNode dummy0 = new ListNode(-1), dummy1 = new ListNode(-1);
+        // pointers to two sublists one for each zeroes and ones
+        ListNode zero = dummy0, one = dummy1, curr = head;
+
+        // traverse the list
+        while (curr != null) {
+            // if node is 0, link it to the zeroes list
+            if (curr.val == 0) {
+                zero.next = curr;
+                zero = zero.next;
+            }
+            // else link it to the ones list
+            else {
+                one.next = curr;
+                one = one.next;
+            }
+
+            curr = curr.next;
+        }
+
+        // connect zeroes list to the ones list
+        zero.next = dummy1.next;
+        // make sure ones list has an end
+        one.next = null;
+
+        return dummy0.next;
+    }
+
+    // https://www.interviewbit.com/problems/even-reverse/
+    static ListNode evenReverse(ListNode head) {
+        // if 0 or 1 node in the list
+        if (head == null || head.next == null)
+            return head;
+
+        // create odd position nodes sublist
+        ListNode odd = head, tempOdd = odd;
+        head = head.next;
+
+        // create even position nodes sublist
+        ListNode even = head, tempEven = even;
+        head = head.next;
+
+        boolean oddPos = true;
+        // keep adding each node to odd and even positions list alternately
+        while (head != null) {
+            if (oddPos) {
+                tempOdd.next = head;
+                tempOdd = tempOdd.next;
+            } else {
+                tempEven.next = head;
+                tempEven = tempEven.next;
+            }
+
+            head = head.next;
+            oddPos = !oddPos;
+        }
+
+        // make sure both sublists have an end
+        tempOdd.next = null;
+        tempEven.next = null;
+
+        // reverse the even positions sublist
+        even = reverse(even);
+
+        // create dummy node for resultant list by merging odd and reversed even positions sublists
+        ListNode dummy = new ListNode(-1);
+        head = dummy;
+        oddPos = true;
+
+        // merge both lists alternately
+        while (odd != null || even != null) {
+            if (oddPos) {
+                head.next = odd;
+                odd = odd.next;
+            } else {
+                head.next = even;
+                even = even.next;
+            }
+
+            head = head.next;
+            oddPos = !oddPos;
+        }
+
+        return dummy.next;
+    }
+
     ListNode head;
     ListNode tail;
 
@@ -449,83 +750,6 @@ class LinkedList {
             curr = curr.next;
         }
         System.out.println();
-    }
-
-    // https://www.interviewbit.com/problems/reverse-link-list-ii/
-    static ListNode reverseBetween(ListNode head, int m, int n) {
-        if (m == n)
-            return head;
-        ListNode dummy = new ListNode(-1);
-        dummy.next = head;
-
-        ListNode prev = dummy;
-        for (int i = 1; i < m; i++) {
-            prev = prev.next;
-        }
-        // node before the head of sublist to reverse
-        ListNode reversePrev = prev;
-
-        prev = prev.next;
-        // head of sublist to reverse
-        ListNode head2 = prev;
-
-        ListNode curr = head2.next, next;
-        // reversing the sublist from m to n
-        for (int i = m; i < n; i++) {
-            next = curr.next;
-            curr.next = prev;
-            prev = curr;
-            curr = next;
-        }
-        // link head of original sublist to the (m+1)th node
-        head2.next = curr;
-        // link node before head of original sublist to point to the tail of the original sublist
-        reversePrev.next = prev;
-        return dummy.next;
-    }
-
-    // https://www.interviewbit.com/problems/reorder-list/
-    static ListNode reorderList(ListNode head) {
-        // if list has zero or one elements no reordering needed
-        if (head == null || head.next == null)
-            return head;
-
-        // find middle of the list
-        ListNode slow = head, fast = head, mid, slow_prev = null;
-        while (fast != null && fast.next != null) {
-            slow_prev = slow;
-            slow = slow.next;
-            fast = fast.next.next;
-        }
-
-        // if list size is even
-        if (fast == null)
-            mid = slow_prev;
-            // else if list size is odd
-        else
-            mid = slow;
-
-        // split list into two halves and reverse the second half
-        ListNode head2 = mid.next;
-        mid.next = null;
-        head2 = reverse(head2);
-
-        // alternate merge of two sublist
-        ListNode n1 = head, n2 = head2, next1, next2;
-        while (n1 != null && n2 != null) {
-            // add node of sublist 1
-            next1 = n1.next;
-            n1.next = n2;
-
-            // add node of sublist 2
-            next2 = n2.next;
-            n2.next = next1;
-
-            // move forward in both sublists
-            n1 = next1;
-            n2 = next2;
-        }
-        return head;
     }
 
     static class ListNode {
