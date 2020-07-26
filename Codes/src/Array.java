@@ -1209,56 +1209,6 @@ public class Array {
         return out;
     }
 
-    // https://www.interviewbit.com/problems/maxspprod/
-    static int maxSpecialProduct(ArrayList<Integer> a) {
-        int n = a.size();
-        long p = 1000000007;
-        long ans = -1;
-
-        int[] leftSpecials = new int[n];
-        int[] rightSpecials = new int[n];
-
-        // get left and right specials with next greater element logic
-        calculateLeftSpecials(a, leftSpecials, n);
-        calculateRightSpecials(a, rightSpecials, n);
-
-        // maximize the product first then take modulo
-        for (int i = 0; i < n; i++)
-            ans = Math.max(ans, (long) leftSpecials[i] * (long) rightSpecials[i]);
-
-        return (int) (ans % p);
-    }
-
-    private static void calculateRightSpecials(ArrayList<Integer> a, int[] rightSpecials, int n) {
-        // no element on right
-        rightSpecials[n - 1] = 0;
-        Stack<Integer> s = new Stack<>();
-
-        for (int i = 0; i < n; i++) {
-            while (!s.empty() && a.get(i) > a.get(s.peek())) {
-                int top = s.pop();
-                rightSpecials[top] = i;
-            }
-
-            s.push(i);
-        }
-    }
-
-    private static void calculateLeftSpecials(ArrayList<Integer> a, int[] leftSpecials, int n) {
-        // no element on left
-        leftSpecials[0] = 0;
-        Stack<Integer> s = new Stack<>();
-
-        for (int i = n - 1; i >= 0; i--) {
-            while (!s.empty() && a.get(i) > a.get(s.peek())) {
-                int top = s.pop();
-                leftSpecials[top] = i;
-            }
-
-            s.push(i);
-        }
-    }
-
     // https://www.interviewbit.com/problems/minimum-lights-to-activate/
     static int minLights(int[] A, int B) {
         int n = A.length;

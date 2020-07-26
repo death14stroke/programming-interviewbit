@@ -1,12 +1,7 @@
 public class Solution {
     public static void main(String[] args) {
-        LinkedList l = new LinkedList();
-        l.addNode(1);
-        l.addNode(2);
-        l.addNode(3);
-        l.addNode(4);
+        String[] A = {"2", "1", "+", "3", "*"};
 
-        LinkedList.print(l.head);
-        LinkedList.print(LinkedList.evenReverse(l.head));
+        System.out.printf("evaluate = %d\n", StackQueue.evaluate(A));
     }
 }

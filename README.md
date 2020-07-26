@@ -37,7 +37,6 @@ Interview bit problems topic wise
 - [Rotate Matrix](https://www.interviewbit.com/problems/rotate-matrix/)
 - [Next Permutation](https://www.interviewbit.com/problems/next-permutation/)
 - [Find Permutation](https://www.interviewbit.com/problems/find-permutation/)
-- [MAXSPPROD](https://www.interviewbit.com/problems/maxspprod/)
 - [Minimum Lights to Activate](https://www.interviewbit.com/problems/minimum-lights-to-activate/)
 - [Maximum Sum Triplet](https://www.interviewbit.com/problems/maximum-sum-triplet/)
 - [Maximum Sum Square SubMatrix](https://www.interviewbit.com/problems/maximum-sum-square-submatrix/)
@@ -180,3 +179,11 @@ Interview bit problems topic wise
 - [Kth Node From Middle](https://www.interviewbit.com/problems/kth-node-from-middle/)
 - [Sort Binary Linked List](https://www.interviewbit.com/problems/sort-binary-linked-list/)
 - [Even Reverse](https://www.interviewbit.com/problems/even-reverse/)
+
+## Stacks And Queues
+
+- [Generate all Parentheses](https://www.interviewbit.com/problems/generate-all-parentheses/)
+- [Reverse String](https://www.interviewbit.com/problems/reverse-string/)
+- [MAXSPPROD](https://www.interviewbit.com/problems/maxspprod/)
+- [Evaluate Expression](https://www.interviewbit.com/problems/evaluate-expression/)
+- [Balanced Parantheses!](https://www.interviewbit.com/problems/balanced-parantheses/)
