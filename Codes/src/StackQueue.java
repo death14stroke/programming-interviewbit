@@ -1,5 +1,5 @@
-import java.util.ArrayList;
-import java.util.Stack;
+import java.util.*;
+import java.util.LinkedList;
 
 class StackQueue {
     // https://www.interviewbit.com/problems/generate-all-parentheses/
@@ -89,6 +89,142 @@ class StackQueue {
             }
 
             s.push(i);
+        }
+    }
+
+    // https://www.interviewbit.com/problems/nearest-smaller-element/
+    static int[] prevSmaller(int[] A) {
+        int n = A.length;
+        int[] G = new int[n];
+
+        int i = n - 1;
+        Stack<Integer> s = new Stack<>();
+
+        // traverse the array in reverse
+        while (i >= 0) {
+            // if stack is empty or current element is greater than equal stack top, both can have same previous smaller.
+            // Set prev smaller for index i as default - 1. Push i to stack and move to next
+            if (s.empty() || A[i] >= A[s.peek()]) {
+                G[i] = -1;
+                s.push(i--);
+            }
+            // else pop from stack. Set previous smaller for A[stack top] as A[i]
+            else {
+                int top = s.pop();
+                G[top] = A[i];
+            }
+        }
+
+        return G;
+    }
+
+    // https://www.interviewbit.com/problems/largest-rectangle-in-histogram/
+    static int largestRectangleArea(int[] A) {
+        int n = A.length;
+
+        Stack<Integer> s = new Stack<>();
+        int maxArea = 0, i = 0;
+
+        while (i < n) {
+            // if stack empty or current height is >= stack top, push and move to next
+            if (s.empty() || A[s.peek()] <= A[i])
+                s.push(i++);
+                // else pop top from the stack and compute area with top as height,
+                // i as right position and index of element below current stack top as left position
+            else {
+                int top = s.pop();
+                int areaWithTop = A[top] * (s.empty() ? i : i - s.peek() - 1);
+                maxArea = Math.max(maxArea, areaWithTop);
+            }
+        }
+
+        // check for the remaining sorted bars in stack
+        while (!s.empty()) {
+            int top = s.pop();
+            int areaWithTop = A[top] * (s.empty() ? i : i - s.peek() - 1);
+            maxArea = Math.max(maxArea, areaWithTop);
+        }
+
+        return maxArea;
+    }
+
+    // https://www.interviewbit.com/problems/simplify-directory-path/
+    static String simplifyDirPath(String A) {
+        // use deque as stack to not reverse the result at the end
+        Deque<String> q = new LinkedList<>();
+
+        // split by "/"
+        for (String s : A.split("/")) {
+            // do nothing if empty string or "."
+            if (s.isEmpty() || s.equals("."))
+                continue;
+
+            // move up in the path (pop current folder)
+            if (s.equals("..")) {
+                if (!q.isEmpty())
+                    q.removeLast();
+            }
+            // add current folder to path
+            else
+                q.addLast(s);
+        }
+
+        // if empty path
+        if (q.isEmpty())
+            return "/";
+
+        // else construct path by traversing stack from the bottom (deque)
+        StringBuilder res = new StringBuilder();
+        while (!q.isEmpty()) {
+            res.append("/");
+            res.append(q.pollFirst());
+        }
+
+        return res.toString();
+    }
+
+    // https://www.interviewbit.com/problems/min-stack/
+    static class MinStack {
+        // s: stack for entries, minStack: stack for minimum values
+        private final Stack<Integer> s, minStack;
+
+        public MinStack() {
+            s = new Stack<>();
+            minStack = new Stack<>();
+        }
+
+        public void push(int x) {
+            // push x to the main stack
+            s.push(x);
+
+            // if minStack is empty or x is a new minimum push to minStack
+            if (minStack.empty() || x <= minStack.peek())
+                minStack.push(x);
+        }
+
+        public void pop() {
+            // if main stack is not empty
+            if (!s.empty()) {
+                int top = s.pop();
+
+                // if minStack is not empty and top of the main stack is a minimum
+                if (!minStack.empty() && top == minStack.peek())
+                    minStack.pop();
+            }
+        }
+
+        public int top() {
+            // if main stack is empty
+            if (s.empty())
+                return -1;
+            return s.peek();
+        }
+
+        public int getMin() {
+            // if minStack is empty
+            if (minStack.empty())
+                return -1;
+            return minStack.peek();
         }
     }
 

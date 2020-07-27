@@ -1,7 +1,8 @@
 public class Solution {
     public static void main(String[] args) {
-        String[] A = {"2", "1", "+", "3", "*"};
+        int[] A = {2, 1, 5, 6, 2, 3};
 
-        System.out.printf("evaluate = %d\n", StackQueue.evaluate(A));
+        Array.printArray(A);
+        System.out.printf("largest area = %d\n", StackQueue.largestRectangleArea(A));
     }
 }
