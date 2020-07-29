@@ -1,8 +1,8 @@
 public class Solution {
     public static void main(String[] args) {
-        int[] A = {2, 1, 5, 6, 2, 3};
+        int[] A = {1, 2};
 
         Array.printArray(A);
-        System.out.printf("largest area = %d\n", StackQueue.largestRectangleArea(A));
+        System.out.printf("trapped water = %d\n", StackQueue.rainWaterTrapped(A));
     }
 }

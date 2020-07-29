@@ -1,4 +1,4 @@
-class LinkedList {
+class LinkedLists {
     // https://www.interviewbit.com/problems/intersection-of-linked-lists/
     static ListNode getIntersectionNode(ListNode head1, ListNode head2) {
         // calculate length of both lists

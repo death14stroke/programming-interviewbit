@@ -148,6 +148,79 @@ class StackQueue {
         return maxArea;
     }
 
+    // https://www.interviewbit.com/problems/first-non-repeating-character-in-a-stream-of-characters/
+    static String firstNonRepeating(String A) {
+        // queue to store first non-repeating char
+        Queue<Character> q = new LinkedList<>();
+        // map to keep frequency count of each char
+        int[] map = new int[26];
+        StringBuilder res = new StringBuilder();
+
+        for (char c : A.toCharArray()) {
+            map[c - 'a']++;
+            // if current char is appearing for the first time
+            if (map[c - 'a'] == 1)
+                q.add(c);
+
+            // keep removing repeating chars from the front of queue until a non-repeating char is found
+            while (!q.isEmpty() && map[q.peek() - 'a'] != 1)
+                q.remove();
+
+            // if no non-repeating char, append '#'
+            if (q.isEmpty())
+                res.append("#");
+            else
+                res.append(q.peek());
+        }
+
+        return res.toString();
+    }
+
+    // https://www.interviewbit.com/problems/sliding-window-maximum/
+    static int[] slidingWindowMax(final int[] A, int B) {
+        int n = A.length;
+        // if window is larger than array, take max of the array
+        if (B > n)
+            B = n;
+
+        int[] res = new int[n - B + 1];
+        Deque<Integer> q = new LinkedList<>();
+
+        // for the first window
+        for (int i = 0; i < B; i++) {
+            // remove all elements smaller than current from the back end of deque
+            while (!q.isEmpty() && A[i] >= A[q.peekLast()])
+                q.pollLast();
+
+            // add current element to the back end
+            q.addLast(i);
+        }
+
+        // max of first window
+        //noinspection ConstantConditions
+        res[0] = A[q.peekFirst()];
+
+        // for the remaining windows
+        for (int i = B; i < n; i++) {
+            // if first element in deque is out of range, remove
+            if (!q.isEmpty() && q.peekFirst() <= i - B)
+                q.pollFirst();
+
+            // remove all elements smaller than current from the back end of deque
+            while (!q.isEmpty() && A[i] >= A[q.peekLast()])
+                q.pollLast();
+
+            // add current element to the back end
+            q.addLast(i);
+
+            // max of the current window
+            //noinspection ConstantConditions
+            res[i - B + 1] = A[q.peekFirst()];
+        }
+
+        return res;
+    }
+
     // https://www.interviewbit.com/problems/simplify-directory-path/
     static String simplifyDirPath(String A) {
         // use deque as stack to not reverse the result at the end
@@ -181,6 +254,37 @@ class StackQueue {
         }
 
         return res.toString();
+    }
+
+    // https://www.interviewbit.com/problems/redundant-braces/
+    static int redundantBraces(String A) {
+        Stack<Character> s = new Stack<>();
+
+        for (char c : A.toCharArray()) {
+            // if closing braces encountered
+            if (c == ')') {
+                char top = s.pop();
+                boolean isOp = false;
+
+                // keep popping from stack till corresponding open parantheses is encountered
+                while (top != '(') {
+                    if (top == '+' || top == '-' || top == '*' || top == '/')
+                        isOp = true;
+
+                    top = s.pop();
+                }
+
+                // if there was no operator between the parantheses pair, redundant parenthesis
+                if (!isOp)
+                    return 1;
+            }
+            // push operators, operands and open parantheses on the stack
+            else
+                s.push(c);
+        }
+
+        // no redundant parentheses as all pairs contained at least one operator
+        return 0;
     }
 
     // https://www.interviewbit.com/problems/min-stack/
@@ -266,6 +370,32 @@ class StackQueue {
         return s.pop();
     }
 
+    // https://www.interviewbit.com/problems/rain-water-trapped/
+    static int rainWaterTrapped(final int[] A) {
+        int n = A.length;
+        int res = 0, l = 0, r = n - 1, leftMax = 0, rightMax = 0;
+
+        // keep two pointers at extreme ends
+        while (l <= r) {
+            // if left height is smaller, water will be trapped at this point
+            if (A[l] < A[r]) {
+                leftMax = Math.max(leftMax, A[l]);
+                // water trapped at this point is max height on the left - height of this level
+                res += leftMax - A[l];
+                l++;
+            }
+            // else right height is smaller, water will be trapped at this point
+            else {
+                rightMax = Math.max(rightMax, A[r]);
+                // water trapped at this point is max height on the right - height of this level
+                res += rightMax - A[r];
+                r--;
+            }
+        }
+
+        return res;
+    }
+
     // https://www.interviewbit.com/problems/balanced-parantheses/
     static int balancedParentheses(String A) {
         // maintain count of open parentheses
@@ -285,5 +415,60 @@ class StackQueue {
 
         // if all open balanced, valid string else invalid string
         return open == 0 ? 1 : 0;
+    }
+
+    // https://www.interviewbit.com/problems/subtract/
+    static LinkedLists.ListNode subtract(LinkedLists.ListNode head) {
+        LinkedLists.ListNode slow = head, fast = head;
+
+        // find middle of the linked list
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        Stack<LinkedLists.ListNode> s = new Stack<>();
+        fast = slow.next;
+
+        // push the nodes starting from middle on the stack
+        while (fast != null) {
+            s.push(fast);
+            fast = fast.next;
+        }
+
+        slow = head;
+        // start linked list traversal from head.
+        // Keep popping nodes from stack and update the value of nodes from beginning
+        while (!s.empty()) {
+            slow.val = s.pop().val - slow.val;
+            slow = slow.next;
+        }
+
+        return head;
+    }
+
+    // https://www.interviewbit.com/problems/nextgreater/
+    static int[] nextGreater(int[] A) {
+        int n = A.length;
+        int[] G = new int[n];
+        Stack<Integer> s = new Stack<>();
+
+        int i = 0;
+        // traverse the array from left to right
+        while (i < n) {
+            // if stack is empty or current element is <= stack top, both can have same next greater.
+            // Set next greater for index i as default - 1. Push i to stack and move to next
+            if (s.empty() || A[s.peek()] >= A[i]) {
+                G[i] = -1;
+                s.push(i++);
+            }
+            // else pop from stack. Set next greater for A[stack top] as A[i]
+            else {
+                int top = s.pop();
+                G[top] = A[i];
+            }
+        }
+
+        return G;
     }
 }
