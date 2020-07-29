@@ -197,3 +197,11 @@ Interview bit problems topic wise
 - [Balanced Parantheses!](https://www.interviewbit.com/problems/balanced-parantheses/)
 - [SUBTRACT](https://www.interviewbit.com/problems/subtract/)
 - [NEXTGREATER](https://www.interviewbit.com/problems/nextgreater/)
+
+## Backtracking
+
+- [Reverse Link List Recursion](https://www.interviewbit.com/problems/reverse-link-list-recursion)
+- [Modular Expression](https://www.interviewbit.com/problems/modular-expression/)
+- [Subset](https://www.interviewbit.com/problems/subset/)
+- [Combinations](https://www.interviewbit.com/problems/combinations/)
+- [Combination Sum](https://www.interviewbit.com/problems/combination-sum/)

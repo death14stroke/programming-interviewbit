@@ -1,8 +1,14 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Solution {
     public static void main(String[] args) {
-        int[] A = {1, 2};
+        Integer[] A = {1, 1, 1, 1, 1};
+        int target = 5;
 
-        Array.printArray(A);
-        System.out.printf("trapped water = %d\n", StackQueue.rainWaterTrapped(A));
+        ArrayList<ArrayList<Integer>> res = Backtracking.combinationSum(new ArrayList<>(Arrays.asList(A)), target);
+
+        for (ArrayList<Integer> subset : res)
+            Array.printArrayList(subset);
     }
 }
