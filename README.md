@@ -205,3 +205,8 @@ Interview bit problems topic wise
 - [Subset](https://www.interviewbit.com/problems/subset/)
 - [Combinations](https://www.interviewbit.com/problems/combinations/)
 - [Combination Sum](https://www.interviewbit.com/problems/combination-sum/)
+- [Combination Sum II](https://www.interviewbit.com/problems/combination-sum-ii/)
+- [Subsets II](https://www.interviewbit.com/problems/subsets-ii/)
+- [Letter Phone](https://www.interviewbit.com/problems/letter-phone/)
+- [Palindrome Partitioning](https://www.interviewbit.com/problems/palindrome-partitioning/)
+- [Generate all Parentheses II](https://www.interviewbit.com/problems/generate-all-parentheses-ii/)
