@@ -1,6 +1,4 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 
 class Backtracking {
     // https://www.interviewbit.com/problems/reverse-link-list-recursion
@@ -408,5 +406,169 @@ class Backtracking {
             generateParenthesis2Util(open, close - 1, new StringBuilder(builder), res);
             builder.setLength(builder.length() - 1);
         }
+    }
+
+    // https://www.interviewbit.com/problems/permutations/
+    static ArrayList<ArrayList<Integer>> permutations(ArrayList<Integer> A) {
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        // recursively find all permutations by selecting current position element from remaining one by one
+        permutationsUtil(A, 0, new ArrayList<>(), res);
+
+        return res;
+    }
+
+    // recursive util to find all permutations
+    private static void permutationsUtil(ArrayList<Integer> A, int pos, ArrayList<Integer> curr,
+                                         ArrayList<ArrayList<Integer>> res) {
+        // made a valid permutation
+        if (pos == A.size()) {
+            res.add(curr);
+            return;
+        }
+
+        // for all elements remaining
+        for (int i = pos; i < A.size(); i++) {
+            // mark current element as used by swapping it with current beginning element
+            swap(A, i, pos);
+            curr.add(A.get(pos));
+
+            // find permutations for remaining positions recursively
+            permutationsUtil(A, pos + 1, new ArrayList<>(curr), res);
+
+            // mark current element as unused by bringing it back to its original position
+            swap(A, pos, i);
+            curr.remove(curr.size() - 1);
+        }
+    }
+
+    // util to swap numbers at two positions in a list
+    private static void swap(ArrayList<Integer> A, int i, int j) {
+        int temp = A.get(i);
+        A.set(i, A.get(j));
+        A.set(j, temp);
+    }
+
+    // https://www.interviewbit.com/problems/gray-code/
+    static ArrayList<Integer> grayCode(int n) {
+        ArrayList<Integer> res = new ArrayList<>();
+        // recursively find gray code sequence for n bits
+        grayCodeUtil(1 << (n - 1), n, res);
+
+        return res;
+    }
+
+    // recursive util to find gray code sequence for n bits
+    private static void grayCodeUtil(int powOf2, int n, ArrayList<Integer> res) {
+        // base case
+        if (n == 1) {
+            res.add(0);
+            res.add(1);
+            return;
+        }
+
+        // find gray code sequence for n - 1 bits
+        grayCodeUtil(powOf2 >> 1, n - 1, res);
+
+        // G(n) = 0G(n-1) + 1R(n-1) where R(n) is the reverse sequence of G(n)
+        int len = res.size();
+        for (int i = len - 1; i >= 0; i--) {
+            // appending 1 as the MSB in the binary representation of the number
+            int val = res.get(i) + powOf2;
+            res.add(val);
+        }
+    }
+
+    // https://www.interviewbit.com/problems/kth-permutation-sequence/
+    static String kthPermutation(int n, int k) {
+        // convert to 0-based ranking
+        k--;
+
+        // pre-calculate factorials
+        long[] fact = new long[n];
+        fact[0] = 1;
+
+        for (int i = 1; i < n; i++) {
+            fact[i] = i * fact[i - 1];
+            // as k is in int range and fact[i] is in denominator,
+            // any fact[i] greater than INT_MAX will always give 0 in division
+            fact[i] = Math.min(fact[i], Integer.MAX_VALUE);
+        }
+
+        // list of all digits from 1 to n
+        List<Integer> dig = new ArrayList<>();
+        for (int i = 1; i <= n; i++)
+            dig.add(i);
+
+        StringBuilder res = new StringBuilder();
+
+        // fill up each position in permutation
+        while (n > 0) {
+            // position of digit to be added in the digits list
+            int pos = (int) (k / fact[n - 1]);
+            res.append(dig.get(pos));
+
+            // remove current digit
+            dig.remove(pos);
+
+            // update remaining rank
+            k = (int) (k % fact[n - 1]);
+            n--;
+        }
+
+        return res.toString();
+    }
+
+    // https://www.interviewbit.com/problems/maximal-string/
+    static String maximalString(String A, int B) {
+        return maximalStringUtil(A, B, 0);
+    }
+
+    // recursive util to find maximal string from A.substring(pos) with B swaps left
+    private static String maximalStringUtil(String A, int B, int pos) {
+        int n = A.length();
+        // if no swaps left or reached end of the string
+        if (B == 0 || pos == n)
+            return A;
+
+        // find the first maximum char in the substring
+        char maxChar = A.charAt(pos);
+        for (int i = pos + 1; i < n; i++) {
+            if (maxChar < A.charAt(i))
+                maxChar = A.charAt(i);
+        }
+
+        // if max char is first char, no swap is needed. Check for smaller maximal substrings
+        if (maxChar == A.charAt(pos))
+            return maximalStringUtil(A, B, pos + 1);
+
+        String res = A;
+        StringBuilder builder = new StringBuilder(A);
+
+        // for each char in string after the first position
+        for (int i = pos + 1; i < n; i++) {
+            // if this char is a maxChar
+            if (A.charAt(i) == maxChar) {
+                // swap it to the beginning
+                swapChar(builder, i, pos);
+
+                // recursively find maximal string for substring starting from pos + 1 and remaining swaps
+                String out = maximalStringUtil(builder.toString(), B - 1, pos + 1);
+                // update res
+                if (out.compareTo(res) > 0)
+                    res = out;
+
+                // swap back the maxChar from start to its position
+                swapChar(builder, i, pos);
+            }
+        }
+
+        return res;
+    }
+
+    // util to swap two chars in a StringBuilder
+    private static void swapChar(StringBuilder builder, int i, int j) {
+        char temp = builder.charAt(i);
+        builder.setCharAt(i, builder.charAt(j));
+        builder.setCharAt(j, temp);
     }
 }

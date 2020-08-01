@@ -210,3 +210,7 @@ Interview bit problems topic wise
 - [Letter Phone](https://www.interviewbit.com/problems/letter-phone/)
 - [Palindrome Partitioning](https://www.interviewbit.com/problems/palindrome-partitioning/)
 - [Generate all Parentheses II](https://www.interviewbit.com/problems/generate-all-parentheses-ii/)
+- [Permutations](https://www.interviewbit.com/problems/permutations/)
+- [Gray Code](https://www.interviewbit.com/problems/gray-code/)
+- [Kth Permutation Sequence](https://www.interviewbit.com/problems/kth-permutation-sequence/)
+- [Maximal String](https://www.interviewbit.com/problems/maximal-string/)
