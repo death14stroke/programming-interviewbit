@@ -216,3 +216,10 @@ Interview bit problems topic wise
 - [NQueens](https://www.interviewbit.com/problems/nqueens/)
 - [Sudoku](https://www.interviewbit.com/problems/sudoku/)
 - [Maximal String](https://www.interviewbit.com/problems/maximal-string/)
+
+## Hashing
+
+- [Colorful Number](https://www.interviewbit.com/problems/colorful-number/)
+- [Largest Continuous Sequence Zero Sum](https://www.interviewbit.com/problems/largest-continuous-sequence-zero-sum/)
+- [2 Sum](https://www.interviewbit.com/problems/2-sum/)
+- [First Repeating element](https://www.interviewbit.com/problems/first-repeating-element/)

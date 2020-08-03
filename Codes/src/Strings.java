@@ -4,14 +4,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
-@SuppressWarnings("StringRepeatCanBeUsed")
 public class Strings {
     // https://www.interviewbit.com/problems/palindrome-string/
     static int isPalindrome(String A) {
         int n = A.length();
         int l = 0, r = n - 1;
 
-        while (l <= r) {
+        while (l < r) {
             // convert left and right char to lowerCase
             // if any of them is not alphanumeric, skip it
             char c1 = Character.toLowerCase(A.charAt(l));
@@ -26,13 +25,13 @@ public class Strings {
                 continue;
             }
 
-            // if both left and right char are alphanumeric and equal
-            // check next pair of left and right
-            if (c1 == c2) {
-                l++;
-                r--;
-            } else
+            // if both left and right char are not equal
+            if (c1 != c2)
                 return 0;
+
+            // check next pair of characters
+            l++;
+            r--;
         }
 
         return 1;
@@ -717,8 +716,7 @@ public class Strings {
         // if there is only one word on the line
         if (spaces == 0) {
             // add all the white spaces at the end
-            for (int i = 0; i < totalSpace; i++)
-                line.append(" ");
+            line.append(" ".repeat(totalSpace));
 
             return line.toString();
         }
@@ -732,8 +730,7 @@ public class Strings {
                 totalSpace--;
             } else {
                 // add the equal amount of white spaces
-                for (int k = 0; k < blanks; k++)
-                    line.append(" ");
+                line.append(" ".repeat(blanks));
 
                 // if division is not even give the extra white space if left
                 if (totalSpace % spaces != 0) {
@@ -748,8 +745,7 @@ public class Strings {
 
         // if this is last string add all the remaining white spaces at the end
         if (end == words.size()) {
-            for (int k = 0; k < totalSpace; k++)
-                line.append(" ");
+            line.append(" ".repeat(totalSpace));
         }
 
         return line.toString();
@@ -877,8 +873,7 @@ public class Strings {
     // util for creating tabs at the beginning
     private static void initTabbedLine(StringBuilder builder, int tabs) {
         builder.setLength(0);
-        for (int j = 0; j < tabs; j++)
-            builder.append("\t");
+        builder.append("\t".repeat(tabs));
     }
 
     // https://www.interviewbit.com/problems/convert-to-palindrome/
