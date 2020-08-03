@@ -213,4 +213,6 @@ Interview bit problems topic wise
 - [Permutations](https://www.interviewbit.com/problems/permutations/)
 - [Gray Code](https://www.interviewbit.com/problems/gray-code/)
 - [Kth Permutation Sequence](https://www.interviewbit.com/problems/kth-permutation-sequence/)
+- [NQueens](https://www.interviewbit.com/problems/nqueens/)
+- [Sudoku](https://www.interviewbit.com/problems/sudoku/)
 - [Maximal String](https://www.interviewbit.com/problems/maximal-string/)

@@ -571,4 +571,133 @@ class Backtracking {
         builder.setCharAt(i, builder.charAt(j));
         builder.setCharAt(j, temp);
     }
+
+    // https://www.interviewbit.com/problems/nqueens/
+    static ArrayList<ArrayList<String>> nQueens(int n) {
+        ArrayList<ArrayList<String>> res = new ArrayList<>();
+
+        // initially mark all positions as empty
+        char[][] board = new char[n][n];
+        for (char[] arr : board)
+            Arrays.fill(arr, '.');
+
+        // recursively try for each position column-wise
+        nQueensUtil(0, n, board, res);
+
+        return res;
+    }
+
+    // recursive util to check if col queens can be placed in col columns
+    private static boolean nQueensUtil(int col, int n, char[][] board, ArrayList<ArrayList<String>> res) {
+        // found a valid solution
+        if (col == n) {
+            ArrayList<String> sol = new ArrayList<>();
+            for (char[] arr : board)
+                sol.add(new String(arr));
+            res.add(sol);
+
+            return true;
+        }
+
+        // flag to backtrack whether a solution is found in this column or not
+        boolean foundSol = false;
+        for (int i = 0; i < n; i++) {
+            // if queen can be placed at this position
+            if (isSafe(board, i, col)) {
+                board[i][col] = 'Q';
+
+                // check if solution exists with queen placed here
+                if (nQueensUtil(col + 1, n, board, res))
+                    foundSol = true;
+
+                // remove queen from current position
+                board[i][col] = '.';
+            }
+        }
+
+        return foundSol;
+    }
+
+    // util to check if queen is safe at this position
+    private static boolean isSafe(char[][] board, int row, int col) {
+        int n = board.length;
+
+        // check in top left direction
+        for (int i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--) {
+            if (board[i][j] == 'Q')
+                return false;
+        }
+
+        // check in left direction
+        for (int j = col - 1; j >= 0; j--) {
+            if (board[row][j] == 'Q')
+                return false;
+        }
+
+        // check in bottom left direction
+        for (int i = row + 1, j = col - 1; i < n && j >= 0; i++, j--) {
+            if (board[i][j] == 'Q')
+                return false;
+        }
+
+        // no queens are in the way of this queen
+        return true;
+    }
+
+    // https://www.interviewbit.com/problems/sudoku/
+    static void sudoku(ArrayList<ArrayList<Character>> board) {
+        sudokuUtil(0, 0, board);
+    }
+
+    // recursive util to find solution starting from board[i][j]
+    private static boolean sudokuUtil(int i, int j, ArrayList<ArrayList<Character>> board) {
+        // if all rows are filled
+        if (i == 9)
+            return true;
+        // if current row is filled, solve for next row
+        if (j == 9)
+            return sudokuUtil(i + 1, 0, board);
+        // if current place is not empty, move to next cell
+        if (board.get(i).get(j) != '.')
+            return sudokuUtil(i, j + 1, board);
+
+        // try all digits from 1 to 9
+        for (char c = '1'; c <= '9'; c++) {
+            // if can place number at current position
+            if (isValid(board, i, j, c)) {
+                board.get(i).set(j, c);
+
+                // place number at current position and solve for starting from next cell
+                if (sudokuUtil(i, j + 1, board))
+                    return true;
+
+                // if not found a solution, unset this position and try another number
+                board.get(i).set(j, '.');
+            }
+        }
+
+        // if no number can fit here
+        return false;
+    }
+
+    // util to check whether character c can be placed at board[row][col] or not
+    private static boolean isValid(ArrayList<ArrayList<Character>> board, int row, int col, char c) {
+        for (int i = 0; i < 9; i++) {
+            // check if current row and column do not contain character c
+            if (board.get(row).get(i) == c || board.get(i).get(col) == c)
+                return false;
+        }
+
+        // find the 3x3 box and check if any number matches current number
+        int x = (row / 3) * 3, y = (col) / 3 * 3;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (board.get(x + i).get(y + j) == c)
+                    return false;
+            }
+        }
+
+        // this number is not present in the row, column and box, position is valid
+        return true;
+    }
 }

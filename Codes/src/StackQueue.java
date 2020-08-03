@@ -264,18 +264,16 @@ class StackQueue {
             // if closing braces encountered
             if (c == ')') {
                 char top = s.pop();
-                boolean isOp = false;
+                int cnt = 0;
 
                 // keep popping from stack till corresponding open parantheses is encountered
                 while (top != '(') {
-                    if (top == '+' || top == '-' || top == '*' || top == '/')
-                        isOp = true;
-
                     top = s.pop();
+                    cnt++;
                 }
 
-                // if there was no operator between the parantheses pair, redundant parenthesis
-                if (!isOp)
+                // if there was no or only one operator/operand between
+                if (cnt < 2)
                     return 1;
             }
             // push operators, operands and open parantheses on the stack
