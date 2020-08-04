@@ -222,4 +222,8 @@ Interview bit problems topic wise
 - [Colorful Number](https://www.interviewbit.com/problems/colorful-number/)
 - [Largest Continuous Sequence Zero Sum](https://www.interviewbit.com/problems/largest-continuous-sequence-zero-sum/)
 - [2 Sum](https://www.interviewbit.com/problems/2-sum/)
+- [Valid Sudoku](https://www.interviewbit.com/problems/valid-sudoku/)
+- [Diffk II](https://www.interviewbit.com/problems/diffk-ii/)
+- [Pairs With Given Xor](https://www.interviewbit.com/problems/pairs-with-given-xor/)
+- [An Increment Problem](https://www.interviewbit.com/problems/an-increment-problem/)
 - [First Repeating element](https://www.interviewbit.com/problems/first-repeating-element/)
