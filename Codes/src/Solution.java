@@ -1,8 +1,12 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Solution {
     public static void main(String[] args) {
-        int[] A = {1, 2, 3, 2, 3, 1, 4, 2, 1, 3};
+        Integer[] A = {1, 2};
+        Integer[] B = {1, 3};
+        Integer[] C = {2, 3};
 
-        Array.printArray(A);
-        Array.printArray(Hashing.incrementProblem(A));
+        Array.printArrayList(Hashing.twoOutOfThree(new ArrayList<>(Arrays.asList(A)), new ArrayList<>(Arrays.asList(B)), new ArrayList<>(Arrays.asList(C))));
     }
 }
