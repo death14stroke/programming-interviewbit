@@ -144,6 +144,20 @@ class Hashing {
             this.first = first;
             this.second = second;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Pair<?, ?> pair = (Pair<?, ?>) o;
+            return Objects.equals(first, pair.first) &&
+                    Objects.equals(second, pair.second);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(first, second);
+        }
     }
 
     // https://www.interviewbit.com/problems/valid-sudoku/
@@ -282,6 +296,40 @@ class Hashing {
         return res;
     }
 
+    // https://www.interviewbit.com/problems/copy-list/
+    static class RandomListNode {
+        int label;
+        RandomListNode next, random;
+
+        RandomListNode(int label) {
+            this.label = label;
+        }
+    }
+
+    static RandomListNode copyList(RandomListNode head) {
+        // hashmap to map old nodes to new nodes
+        Map<RandomListNode, RandomListNode> map = new HashMap<>();
+        RandomListNode curr = head;
+
+        // traverse the list and map each node to a new node
+        while (curr != null) {
+            map.put(curr, new RandomListNode(curr.label));
+            curr = curr.next;
+        }
+
+        curr = head;
+        // traverse the list again and map the random and next pointers
+        while (curr != null) {
+            RandomListNode node = map.get(curr);
+            node.next = map.get(curr.next);
+            node.random = map.get(curr.random);
+
+            curr = curr.next;
+        }
+
+        return map.get(head);
+    }
+
     // https://www.interviewbit.com/problems/longest-substring-without-repeat/
     static int longestSubstringWithoutRepeat(String A) {
         // set to check whether char is repeating or not
@@ -349,6 +397,189 @@ class Hashing {
         return S.substring(minStart, minStart + minLen);
     }
 
+    // https://www.interviewbit.com/problems/fraction/
+    static String fraction(int A, int B) {
+        // typecast to long for handling overflow
+        long num = A, den = B;
+        if (num == 0)
+            return "0";
+
+        StringBuilder res = new StringBuilder();
+        // check sign for output
+        boolean neg = (num < 0) ^ (den < 0);
+        if (neg)
+            res.append('-');
+
+        // now perform operations on absolute values
+        num = Math.abs(num);
+        den = Math.abs(den);
+
+        // integer part of the division
+        long q = num / den;
+        res.append(q);
+
+        // if perfect division
+        if (num % den == 0)
+            return res.toString();
+
+        // decimal point
+        res.append('.');
+        // remainder. Use long to avoid negative numbers in modulo
+        long rem = num % den;
+        // map to keep track of remainders
+        Map<Long, Integer> map = new HashMap<>();
+
+        // perform division till remainder is not 0
+        while (rem != 0) {
+            // if this remainder is already seen, we have entered recurring sequence.
+            // Place parantheses at appropriate positions
+            if (map.containsKey(rem)) {
+                res.insert(map.get(rem), "(");
+                res.append(')');
+                break;
+            }
+            // else mark this remainder as seen with its position
+            else
+                map.put(rem, res.length());
+
+            // multiply remainder by 10 and perform division
+            rem *= 10;
+            res.append(rem / den);
+
+            // update remainder
+            rem = rem % den;
+        }
+
+        return res.toString();
+    }
+
+    // https://www.interviewbit.com/problems/points-on-the-straight-line/
+    static int pointsOnStraightLine(ArrayList<Integer> X, ArrayList<Integer> Y) {
+        int n = X.size();
+        // if there are less than 3 points
+        if (n <= 2)
+            return n;
+
+        int result = 0;
+        // max number of points with slope equal to current point
+        int curMax;
+        // number of points repeating with current point
+        int overlapPoints;
+        // number of points on the vertical x = X[i] line
+        int verticalPoints;
+
+        // for each point as reference
+        for (int i = 0; i < n - 1; i++) {
+            // map to store number of points with slope as key
+            Map<Slope, Integer> map = new HashMap<>();
+            // init
+            curMax = overlapPoints = verticalPoints = 0;
+
+            // for each possible pair
+            for (int j = i + 1; j < n; j++) {
+                // overlapping point
+                if (X.get(i).equals(X.get(j)) && Y.get(i).equals(Y.get(j)))
+                    overlapPoints++;
+                    // vertical point
+                else if (X.get(i).equals(X.get(j)))
+                    verticalPoints++;
+                    // else calculate slope
+                else {
+                    int xDiff = X.get(j) - X.get(i);
+                    int yDiff = Y.get(j) - Y.get(i);
+
+                    // find gcd to store slope in x/y form
+                    int g = Maths.gcd(xDiff, yDiff);
+                    xDiff /= g;
+                    yDiff /= g;
+
+                    Slope slope = new Slope(yDiff, xDiff);
+                    map.put(slope, map.getOrDefault(slope, 0) + 1);
+                    // slope with maximum points
+                    curMax = Math.max(curMax, map.get(slope));
+                }
+            }
+
+            // max of vertical points and max of definite slope
+            curMax = Math.max(curMax, verticalPoints);
+            // result max = max of prev points stats and current point max + overlaps for current point
+            result = Math.max(result, curMax + overlapPoints + 1);
+        }
+
+        return result;
+    }
+
+    // util class to store Slope in y/x form
+    static class Slope {
+        int y, x;
+
+        Slope(int y, int x) {
+            this.y = y;
+            this.x = x;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Slope slope = (Slope) o;
+            return x == slope.x && y == slope.y;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(x, y);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    // https://www.interviewbit.com/problems/substring-concatenation/
+    static ArrayList<Integer> substrConcat(String A, final List<String> B) {
+        int wordCnt = B.size(), wordLen = B.get(0).length();
+        int totalChars = wordCnt * wordLen;
+
+        ArrayList<Integer> res = new ArrayList<>();
+        int n = A.length();
+        // if string length is smaller than char count of all the words
+        if (n < totalChars)
+            return res;
+
+        // map each word in list to its frequency
+        HashMap<String, Integer> map = new HashMap<>();
+        for (String word : B)
+            map.put(word, map.getOrDefault(word, 0) + 1);
+
+        // check for all starting points
+        for (int i = 0; i < n - totalChars + 1; i++) {
+            // copy of original map to mark words visited
+            HashMap<String, Integer> temp = (HashMap<String, Integer>) map.clone();
+            // count: no of words remaining to find
+            int j = i, count = wordCnt;
+
+            // for all the words of size wordLen starting from i
+            while (j < i + totalChars) {
+                String word = A.substring(j, j + wordLen);
+                int freq = temp.getOrDefault(word, 0);
+
+                // if visited all occurrences or no occurrences in list
+                if (freq == 0)
+                    break;
+                // else found a word. Update total count of words remaining and count of this word remaining
+                else {
+                    temp.put(word, freq - 1);
+                    count--;
+                    j += wordLen;
+                }
+            }
+
+            // if all the words were found, add starting point to result
+            if (count == 0)
+                res.add(i);
+        }
+
+        return res;
+    }
+
     // https://www.interviewbit.com/problems/pairs-with-given-xor/
     static int pairsWithGivenXOR(int[] A, int B) {
         Set<Integer> set = new HashSet<>();
@@ -391,8 +622,37 @@ class Hashing {
         return A;
     }
 
+    // https://www.interviewbit.com/problems/subarray-with-given-xor/
+    @SuppressWarnings("ForLoopReplaceableByForEach")
+    static int subarrayWithXor(int[] A, int B) {
+        int n = A.length, xor = 0;
+        int res = 0;
+
+        Map<Integer, Integer> map = new HashMap<>();
+
+        // calculate running xor from A[0, i]
+        for (int i = 0; i < n; i++) {
+            xor ^= A[i];
+
+            int temp = xor ^ B;
+            // if there are any subarrays from (0, j) where j < i, add that count to result
+            if (map.containsKey(temp))
+                res += map.get(temp);
+
+            // if this subarray from A[0, i] has the target xor
+            if (xor == B)
+                res++;
+
+            // update count of current xor value in map
+            map.put(xor, map.getOrDefault(xor, 0) + 1);
+        }
+
+        return res;
+    }
+
     // https://www.interviewbit.com/problems/two-out-of-three/
-    static ArrayList<Integer> twoOutOfThree(ArrayList<Integer> A, ArrayList<Integer> B, ArrayList<Integer> C) {
+    static ArrayList<Integer> twoOutOfThree
+    (ArrayList<Integer> A, ArrayList<Integer> B, ArrayList<Integer> C) {
         // create sets from arrays
         Set<Integer> s1 = new HashSet<>(A), s2 = new HashSet<>(B), s3 = new HashSet<>(C);
         Map<Integer, Integer> map = new HashMap<>();

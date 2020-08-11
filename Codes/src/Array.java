@@ -1001,7 +1001,7 @@ public class Array {
         return new ArrayList<>(s);
     }
 
-    public static class Interval {
+    private static class Interval {
         int start;
         int end;
 

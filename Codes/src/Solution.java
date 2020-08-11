@@ -3,10 +3,12 @@ import java.util.Arrays;
 
 public class Solution {
     public static void main(String[] args) {
-        Integer[] A = {1, 2};
-        Integer[] B = {1, 3};
-        Integer[] C = {2, 3};
+        String S = "abbaccaaabcabbbccbabbccabbacabcacbbaabbbbbaaabaccaacbccabcbababbbabccabacbbcabbaacaccccbaabcabaabaaaabcaabcacabaa";
+        String[] l = {"cac", "aaa", "aba", "aab", "abc"};
 
-        Array.printArrayList(Hashing.twoOutOfThree(new ArrayList<>(Arrays.asList(A)), new ArrayList<>(Arrays.asList(B)), new ArrayList<>(Arrays.asList(C))));
+        ArrayList<String> L = new ArrayList<>(Arrays.asList(l));
+        System.out.println(S);
+        Array.printArrayList(L);
+        Array.printArrayList(Hashing.substrConcat(S, L));
     }
 }
