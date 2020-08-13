@@ -3,12 +3,8 @@ import java.util.Arrays;
 
 public class Solution {
     public static void main(String[] args) {
-        String S = "abbaccaaabcabbbccbabbccabbacabcacbbaabbbbbaaabaccaacbccabcbababbbabccabacbbcabbaacaccccbaabcabaabaaaabcaabcacabaa";
-        String[] l = {"cac", "aaa", "aba", "aab", "abc"};
+        int[] A = {1, 0, 0, 1, 0};
 
-        ArrayList<String> L = new ArrayList<>(Arrays.asList(l));
-        System.out.println(S);
-        Array.printArrayList(L);
-        Array.printArrayList(Hashing.substrConcat(S, L));
+        System.out.printf("subarray = %d\n", Hashing.longestSubarray(A));
     }
 }

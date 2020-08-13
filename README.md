@@ -237,4 +237,7 @@ Interview bit problems topic wise
 - [An Increment Problem](https://www.interviewbit.com/problems/an-increment-problem/)
 - [Subarray with given XOR](https://www.interviewbit.com/problems/subarray-with-given-xor/)
 - [Two out of Three](https://www.interviewbit.com/problems/two-out-of-three/)
+- [Subarray with B odd numbers](https://www.interviewbit.com/problems/subarray-with-b-odd-numbers/)
+- [Subarray with equal occurences!](https://www.interviewbit.com/problems/subarray-with-equal-occurences/)
+- [Longest Subarray Length](https://www.interviewbit.com/problems/longest-subarray-length/)
 - [First Repeating element](https://www.interviewbit.com/problems/first-repeating-element/)

@@ -564,7 +564,7 @@ class Hashing {
                 // if visited all occurrences or no occurrences in list
                 if (freq == 0)
                     break;
-                // else found a word. Update total count of words remaining and count of this word remaining
+                    // else found a word. Update total count of words remaining and count of this word remaining
                 else {
                     temp.put(word, freq - 1);
                     count--;
@@ -674,6 +674,81 @@ class Hashing {
         }
 
         Collections.sort(res);
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/subarray-with-b-odd-numbers/
+    static int subarrayWithOdd(int[] A, int B) {
+        int n = A.length, res = 0, odd = 0;
+        // maintain count of prefix arrays with i odd numbers
+        int[] count = new int[n + 1];
+
+        for (int val : A) {
+            // increase count of prefix arrays with i odd numbers
+            count[odd]++;
+
+            // found one more odd number
+            if (val % 2 == 1)
+                odd++;
+
+            // if required count of odd numbers met, there will be count[odd - B] elements
+            // which can be used to form a permutation
+            if (odd >= B)
+                res += count[odd - B];
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/subarray-with-equal-occurences/
+    static int subarrayEqualCount(int[] A, int B, int C) {
+        // prefix count of occurrences of B and C
+        int countB = 0, countC = 0;
+        // map to store diff between two prefix counts at each index
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int val : A) {
+            // update prefix counts
+            if (val == B)
+                countB++;
+            if (val == C)
+                countC++;
+
+            // update diff count in map
+            int diff = countB - countC;
+            map.put(diff, map.getOrDefault(diff, 0) + 1);
+        }
+
+        // initialize count with all prefixes having diff = 0
+        int res = map.getOrDefault(0, 0);
+        // select any two of same non-zero diff so that the subarray formed from their difference will have diff 0
+        for (int val : map.values())
+            res += val * (val - 1) / 2;
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/longest-subarray-length/
+    static int longestSubarray(int[] A) {
+        int n = A.length, sum = 0, res = 0;
+        // map each sum to its position
+        Map<Integer, Integer> map = new HashMap<>();
+
+        for (int i = 0; i < n; i++) {
+            // count difference between number of 1s and 0s at this position
+            sum += (A[i] == 0 ? -1 : 1);
+
+            // found prefix array with one more 1s than 0s
+            if (sum == 1)
+                res = i + 1;
+            // else check if there is a larger subarray than current max
+            else if (map.containsKey(sum - 1))
+                res = Math.max(res, i - map.get(sum - 1));
+
+            // mark first occurrence of sum to position
+            if (!map.containsKey(sum))
+                map.put(sum, i);
+        }
 
         return res;
     }
