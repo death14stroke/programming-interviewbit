@@ -241,3 +241,8 @@ Interview bit problems topic wise
 - [Subarray with equal occurences!](https://www.interviewbit.com/problems/subarray-with-equal-occurences/)
 - [Longest Subarray Length](https://www.interviewbit.com/problems/longest-subarray-length/)
 - [First Repeating element](https://www.interviewbit.com/problems/first-repeating-element/)
+
+## Heaps And Maps
+
+- [Magician and Chocolates](https://www.interviewbit.com/problems/magician-and-chocolates/)
+- [Profit Maximisation](https://www.interviewbit.com/problems/profit-maximisation/)
