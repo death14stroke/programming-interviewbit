@@ -244,5 +244,11 @@ Interview bit problems topic wise
 
 ## Heaps And Maps
 
+- [N max pair combinations](https://www.interviewbit.com/problems/n-max-pair-combinations/)
 - [Magician and Chocolates](https://www.interviewbit.com/problems/magician-and-chocolates/)
+- [Merge K Sorted Lists](https://www.interviewbit.com/problems/merge-k-sorted-lists/)
+- [Distinct Numbers in Window](https://www.interviewbit.com/problems/distinct-numbers-in-window/)
+- [Maximum Sum Combinations](https://www.interviewbit.com/problems/maximum-sum-combinations/)
+- [K Largest Elements](https://www.interviewbit.com/problems/k-largest-elements/)
 - [Profit Maximisation](https://www.interviewbit.com/problems/profit-maximisation/)
+- [Merge K sorted arrays!](https://www.interviewbit.com/problems/merge-k-sorted-arrays/)
