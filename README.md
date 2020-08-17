@@ -248,6 +248,7 @@ Interview bit problems topic wise
 - [Magician and Chocolates](https://www.interviewbit.com/problems/magician-and-chocolates/)
 - [Merge K Sorted Lists](https://www.interviewbit.com/problems/merge-k-sorted-lists/)
 - [Distinct Numbers in Window](https://www.interviewbit.com/problems/distinct-numbers-in-window/)
+- [LRU Cache](https://www.interviewbit.com/problems/lru-cache/)
 - [Maximum Sum Combinations](https://www.interviewbit.com/problems/maximum-sum-combinations/)
 - [K Largest Elements](https://www.interviewbit.com/problems/k-largest-elements/)
 - [Profit Maximisation](https://www.interviewbit.com/problems/profit-maximisation/)

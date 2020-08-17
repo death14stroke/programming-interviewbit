@@ -181,6 +181,126 @@ class HeapsMaps {
         return res;
     }
 
+    // https://www.interviewbit.com/problems/lru-cache/
+    static class LRUCache {
+        // hashmap to store key with values
+        private final Map<Integer, Node> map;
+        // capacity of the cache
+        private final int capacity;
+        // head and tail pointers of the doubly linked list
+        private Node head, tail;
+
+        public LRUCache(int capacity) {
+            map = new HashMap<>();
+            this.capacity = capacity;
+        }
+
+        public int get(int key) {
+            // if not present in cache
+            if (!map.containsKey(key))
+                return -1;
+
+            Node curr = map.get(key);
+            // shift current node to the last position in recently used list
+            shiftNodeToEnd(curr);
+
+            return curr.val;
+        }
+
+        public void set(int key, int value) {
+            // if cache contains key
+            if (map.containsKey(key)) {
+                Node curr = map.get(key);
+                // update value
+                curr.val = value;
+                // shift current node to the last position in recently used list
+                shiftNodeToEnd(curr);
+            }
+            // else if cache is full
+            else if (map.size() == capacity) {
+                // remove the least recently used
+                map.remove(head.key);
+
+                // if capacity is 1, update head node's values and put in map
+                if (capacity == 1) {
+                    head.key = key;
+                    head.val = value;
+                    map.put(key, head);
+                } else {
+                    // remove head
+                    removeHead();
+                    // add new node at the end in least recently used list and put in map
+                    Node curr = addNodeAtEnd(key, value);
+                    map.put(key, curr);
+                }
+            }
+            // else cache is not full and does not contain key
+            else {
+                // cache is empty
+                if (head == null) {
+                    head = new Node(key, value);
+                    tail = head;
+                    map.put(key, head);
+                } else {
+                    // add new node at the end of doubly linked list
+                    Node curr = addNodeAtEnd(key, value);
+                    map.put(key, curr);
+                }
+            }
+        }
+
+        // util to remove head of the doubly linked list
+        private void removeHead() {
+            head = head.next;
+            head.prev = null;
+        }
+
+        // util to add a node at the end of the doubly linked list
+        private Node addNodeAtEnd(int key, int val) {
+            Node curr = new Node(key, val);
+            // link new node at end
+            tail.next = curr;
+            curr.prev = tail;
+            // update tail
+            tail = curr;
+
+            return curr;
+        }
+
+        // util to shift a node at the end
+        private void shiftNodeToEnd(Node curr) {
+            // if one node or current node itself is tail
+            if (head == tail || curr == tail)
+                return;
+
+            // link next node's prev to current's prev
+            curr.next.prev = curr.prev;
+            // if curr is not head, skip current node from between
+            if (curr != head)
+                curr.prev.next = curr.next;
+                // else skip head node
+            else
+                head = curr.next;
+
+            // link current node to tail
+            curr.prev = tail;
+            tail.next = curr;
+            curr.next = null;
+            // update tail
+            tail = curr;
+        }
+
+        static class Node {
+            int key, val;
+            Node prev, next;
+
+            Node(int key, int val) {
+                this.key = key;
+                this.val = val;
+            }
+        }
+    }
+
     // https://www.interviewbit.com/problems/maximum-sum-combinations/
     @SuppressWarnings("ConstantConditions")
     static int[] maxSumCombinations(int[] A, int[] B, int C) {

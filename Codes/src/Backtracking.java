@@ -260,7 +260,7 @@ class Backtracking {
         // Find all combinations with it and then remove it to try next character.
         for (char c : digitMap[A.charAt(pos) - '0']) {
             builder.append(c);
-            letterPhoneUtil(A, pos + 1, new StringBuilder(builder), res);
+            letterPhoneUtil(A, pos + 1, builder, res);
             builder.setLength(builder.length() - 1);
         }
     }
@@ -319,7 +319,7 @@ class Backtracking {
             if (dp[l][r] != -1) {
                 // dp[start][end] will be the same
                 dp[start][end] = dp[l][r];
-                return dp[l][r] == 1;
+                return dp[start][end] == 1;
             }
 
             // if characters match, move one step
@@ -329,6 +329,7 @@ class Backtracking {
             }
             // else mark A.substring(start, end+1) as not palindrome and return
             else {
+                dp[l][r] = 0;
                 dp[start][end] = 0;
                 return false;
             }
@@ -338,41 +339,6 @@ class Backtracking {
         dp[start][end] = 1;
         return true;
     }
-
-    // palindromic partition using back tracking
-    /*static ArrayList<ArrayList<String>> palindromicPartitioning(String A) {
-        // dp[i][j] = 1, if A.substring(i, j+1) is palindrome else 0. -1 if not computed
-        dp = new int[A.length()][A.length()];
-        for (int[] arr : dp)
-            Arrays.fill(arr, -1);
-
-        ArrayList<ArrayList<String>> res = new ArrayList<>();
-        // find each palindromic partition using recursion
-        partitionUtil(A, 0, new ArrayList<>(), res);
-
-        return res;
-    }
-
-    // recursive util to try all substring starting from pos as first string in a partition
-    private static void partitionUtil(String A, int pos, ArrayList<String> curr, ArrayList<ArrayList<String>> res) {
-        // reached end, add current partition to result
-        if (pos == A.length()) {
-            res.add(curr);
-            return;
-        }
-
-        // for each substring starting from pos
-        for (int i = pos; i < A.length(); i++) {
-            // if the substring is palindrome
-            if (isPalindrome(A, pos, i)) {
-                // add to current partition and recur to find the remaining elements in partition
-                curr.add(A.substring(pos, i + 1));
-                partitionUtil(A, i + 1, new ArrayList<>(curr), res);
-                // remove from current partition
-                curr.remove(curr.size() - 1);
-            }
-        }
-    }*/
 
     // https://www.interviewbit.com/problems/generate-all-parentheses-ii/
     static ArrayList<String> generateParenthesis2(int n) {
@@ -396,14 +362,14 @@ class Backtracking {
         // can add more open parenthesis
         if (open != 0) {
             builder.append("(");
-            generateParenthesis2Util(open - 1, close, new StringBuilder(builder), res);
+            generateParenthesis2Util(open - 1, close, builder, res);
             builder.setLength(builder.length() - 1);
         }
 
         // can add close parenthesis
         if (open < close) {
             builder.append(")");
-            generateParenthesis2Util(open, close - 1, new StringBuilder(builder), res);
+            generateParenthesis2Util(open, close - 1, builder, res);
             builder.setLength(builder.length() - 1);
         }
     }
@@ -422,7 +388,7 @@ class Backtracking {
                                          ArrayList<ArrayList<Integer>> res) {
         // made a valid permutation
         if (pos == A.size()) {
-            res.add(curr);
+            res.add(new ArrayList<>(curr));
             return;
         }
 
@@ -433,7 +399,7 @@ class Backtracking {
             curr.add(A.get(pos));
 
             // find permutations for remaining positions recursively
-            permutationsUtil(A, pos + 1, new ArrayList<>(curr), res);
+            permutationsUtil(A, pos + 1, curr, res);
 
             // mark current element as unused by bringing it back to its original position
             swap(A, pos, i);
@@ -516,60 +482,6 @@ class Backtracking {
         }
 
         return res.toString();
-    }
-
-    // https://www.interviewbit.com/problems/maximal-string/
-    static String maximalString(String A, int B) {
-        return maximalStringUtil(A, B, 0);
-    }
-
-    // recursive util to find maximal string from A.substring(pos) with B swaps left
-    private static String maximalStringUtil(String A, int B, int pos) {
-        int n = A.length();
-        // if no swaps left or reached end of the string
-        if (B == 0 || pos == n)
-            return A;
-
-        // find the first maximum char in the substring
-        char maxChar = A.charAt(pos);
-        for (int i = pos + 1; i < n; i++) {
-            if (maxChar < A.charAt(i))
-                maxChar = A.charAt(i);
-        }
-
-        // if max char is first char, no swap is needed. Check for smaller maximal substrings
-        if (maxChar == A.charAt(pos))
-            return maximalStringUtil(A, B, pos + 1);
-
-        String res = A;
-        StringBuilder builder = new StringBuilder(A);
-
-        // for each char in string after the first position
-        for (int i = pos + 1; i < n; i++) {
-            // if this char is a maxChar
-            if (A.charAt(i) == maxChar) {
-                // swap it to the beginning
-                swapChar(builder, i, pos);
-
-                // recursively find maximal string for substring starting from pos + 1 and remaining swaps
-                String out = maximalStringUtil(builder.toString(), B - 1, pos + 1);
-                // update res
-                if (out.compareTo(res) > 0)
-                    res = out;
-
-                // swap back the maxChar from start to its position
-                swapChar(builder, i, pos);
-            }
-        }
-
-        return res;
-    }
-
-    // util to swap two chars in a StringBuilder
-    private static void swapChar(StringBuilder builder, int i, int j) {
-        char temp = builder.charAt(i);
-        builder.setCharAt(i, builder.charAt(j));
-        builder.setCharAt(j, temp);
     }
 
     // https://www.interviewbit.com/problems/nqueens/
@@ -699,5 +611,59 @@ class Backtracking {
 
         // this number is not present in the row, column and box, position is valid
         return true;
+    }
+
+    // https://www.interviewbit.com/problems/maximal-string/
+    static String maximalString(String A, int B) {
+        return maximalStringUtil(A, B, 0);
+    }
+
+    // recursive util to find maximal string from A.substring(pos) with B swaps left
+    private static String maximalStringUtil(String A, int B, int pos) {
+        int n = A.length();
+        // if no swaps left or reached end of the string
+        if (B == 0 || pos == n)
+            return A;
+
+        // find the first maximum char in the substring
+        char maxChar = A.charAt(pos);
+        for (int i = pos + 1; i < n; i++) {
+            if (maxChar < A.charAt(i))
+                maxChar = A.charAt(i);
+        }
+
+        // if max char is first char, no swap is needed. Check for smaller maximal substrings
+        if (maxChar == A.charAt(pos))
+            return maximalStringUtil(A, B, pos + 1);
+
+        String res = A;
+        StringBuilder builder = new StringBuilder(A);
+
+        // for each char in string after the first position
+        for (int i = pos + 1; i < n; i++) {
+            // if this char is a maxChar
+            if (A.charAt(i) == maxChar) {
+                // swap it to the beginning
+                swapChar(builder, i, pos);
+
+                // recursively find maximal string for substring starting from pos + 1 and remaining swaps
+                String out = maximalStringUtil(builder.toString(), B - 1, pos + 1);
+                // update res
+                if (out.compareTo(res) > 0)
+                    res = out;
+
+                // swap back the maxChar from start to its position
+                swapChar(builder, i, pos);
+            }
+        }
+
+        return res;
+    }
+
+    // util to swap two chars in a StringBuilder
+    private static void swapChar(StringBuilder builder, int i, int j) {
+        char temp = builder.charAt(i);
+        builder.setCharAt(i, builder.charAt(j));
+        builder.setCharAt(j, temp);
     }
 }
