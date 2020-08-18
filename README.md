@@ -253,3 +253,9 @@ Interview bit problems topic wise
 - [K Largest Elements](https://www.interviewbit.com/problems/k-largest-elements/)
 - [Profit Maximisation](https://www.interviewbit.com/problems/profit-maximisation/)
 - [Merge K sorted arrays!](https://www.interviewbit.com/problems/merge-k-sorted-arrays/)
+
+## Tree Data Structure
+
+- [Valid Binary Search Tree](https://www.interviewbit.com/problems/valid-binary-search-tree/)
+- [Next Greater Number BST](https://www.interviewbit.com/problems/next-greater-number-bst/)
+- [Valid BST from Preorder](https://www.interviewbit.com/problems/valid-bst-from-preorder/)
