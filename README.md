@@ -259,3 +259,5 @@ Interview bit problems topic wise
 - [Valid Binary Search Tree](https://www.interviewbit.com/problems/valid-binary-search-tree/)
 - [Next Greater Number BST](https://www.interviewbit.com/problems/next-greater-number-bst/)
 - [Valid BST from Preorder](https://www.interviewbit.com/problems/valid-bst-from-preorder/)
+- [Kth Smallest Element In Tree](https://www.interviewbit.com/problems/kth-smallest-element-in-tree/)
+- [Inorder Traversal](https://www.interviewbit.com/problems/inorder-traversal/)

@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Stack;
+
 class Trees {
     static class TreeNode {
         int val;
@@ -72,5 +75,60 @@ class Trees {
 
         // none of the triplets satisfy the invalid condition
         return 1;
+    }
+
+    // https://www.interviewbit.com/problems/kth-smallest-element-in-tree/
+    private static int pos, ans;
+
+    public int kthSmallest(TreeNode root, int k) {
+        // init global variables to keep track of position and result in inorder traversal
+        pos = ans = 0;
+        // inorder traversal as it will traverse in ascending order
+        inorder(root, k);
+
+        return ans;
+    }
+
+    // util to perform inorder traversal
+    private void inorder(TreeNode root, int k) {
+        if (root == null)
+            return;
+
+        // visit left child
+        inorder(root.left, k);
+
+        // visit current node. Update position
+        pos++;
+        // if found kth node, update result variable and result
+        if (pos == k) {
+            ans = root.val;
+            return;
+        }
+
+        // visit right child
+        inorder(root.right, k);
+    }
+
+    // https://www.interviewbit.com/problems/inorder-traversal/
+    public ArrayList<Integer> inorderTraversal(TreeNode root) {
+        ArrayList<Integer> res = new ArrayList<>();
+        Stack<TreeNode> s = new Stack<>();
+
+        // loop till all nodes traversed
+        while (root != null || !s.empty()) {
+            // keep pushing to stack till the leftmost node
+            while (root != null) {
+                s.push(root);
+                root = root.left;
+            }
+
+            // process topmost node
+            root = s.pop();
+            res.add(root.val);
+            // Now move to right child for processing
+            root = root.right;
+        }
+
+        return res;
     }
 }
