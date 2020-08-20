@@ -260,4 +260,6 @@ Interview bit problems topic wise
 - [Next Greater Number BST](https://www.interviewbit.com/problems/next-greater-number-bst/)
 - [Valid BST from Preorder](https://www.interviewbit.com/problems/valid-bst-from-preorder/)
 - [Kth Smallest Element In Tree](https://www.interviewbit.com/problems/kth-smallest-element-in-tree/)
+- [2-Sum Binary Tree](https://www.interviewbit.com/problems/2sum-binary-tree/)
+- [Remove Half Nodes](https://www.interviewbit.com/problems/remove-half-nodes/)
 - [Inorder Traversal](https://www.interviewbit.com/problems/inorder-traversal/)
