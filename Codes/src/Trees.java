@@ -177,6 +177,47 @@ class Trees {
         }
     }
 
+    // https://www.interviewbit.com/problems/bst-iterator/
+    static class BSTIterator {
+        // stack to store leftmost of inorder traversal
+        private final Stack<TreeNode> s;
+
+        BSTIterator(TreeNode root) {
+            s = new Stack<>();
+            // perform inorder traversal
+            while (root != null) {
+                s.push(root);
+                root = root.left;
+            }
+        }
+
+        /**
+         * @return whether we have a next smallest number
+         */
+        public boolean hasNext() {
+            return !s.empty();
+        }
+
+        /**
+         * @return the next smallest number
+         */
+        public int next() {
+            // get next minimum
+            TreeNode node = s.pop();
+            int val = node.val;
+
+            // move to right node
+            node = node.right;
+            // perform inorder traversal
+            while (node != null) {
+                s.push(node);
+                node = node.left;
+            }
+
+            return val;
+        }
+    }
+
     // https://www.interviewbit.com/problems/remove-half-nodes/
     static TreeNode removeHalfNodes(TreeNode root) {
         if (root == null)
@@ -198,6 +239,37 @@ class Trees {
 
         // else both children present, do not modify root
         return root;
+    }
+
+    // https://www.interviewbit.com/problems/path-to-given-node/
+    static ArrayList<Integer> findPath(TreeNode root, int B) {
+        ArrayList<Integer> res = new ArrayList<>();
+        // traverse all paths till we reach destination
+        findPathUtil(root, B, res);
+
+        return res;
+    }
+
+    // util to try all paths
+    private static boolean findPathUtil(TreeNode root, int B, ArrayList<Integer> res) {
+        // reached end
+        if (root == null)
+            return false;
+
+        // add current node to path
+        res.add(root.val);
+        // reached destination
+        if (root.val == B)
+            return true;
+
+        // if found target by moving left or right
+        if (findPathUtil(root.left, B, res) || findPathUtil(root.right, B, res))
+            return true;
+
+        // remove current node from path
+        res.remove(res.size() - 1);
+
+        return false;
     }
 
     // https://www.interviewbit.com/problems/inorder-traversal/

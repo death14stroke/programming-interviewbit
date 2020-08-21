@@ -261,5 +261,7 @@ Interview bit problems topic wise
 - [Valid BST from Preorder](https://www.interviewbit.com/problems/valid-bst-from-preorder/)
 - [Kth Smallest Element In Tree](https://www.interviewbit.com/problems/kth-smallest-element-in-tree/)
 - [2-Sum Binary Tree](https://www.interviewbit.com/problems/2sum-binary-tree/)
+- [BST Iterator](https://www.interviewbit.com/problems/bst-iterator/)
 - [Remove Half Nodes](https://www.interviewbit.com/problems/remove-half-nodes/)
+- [Path to Given Node](https://www.interviewbit.com/problems/path-to-given-node/)
 - [Inorder Traversal](https://www.interviewbit.com/problems/inorder-traversal/)
