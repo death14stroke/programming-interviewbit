@@ -264,4 +264,7 @@ Interview bit problems topic wise
 - [BST Iterator](https://www.interviewbit.com/problems/bst-iterator/)
 - [Remove Half Nodes](https://www.interviewbit.com/problems/remove-half-nodes/)
 - [Path to Given Node](https://www.interviewbit.com/problems/path-to-given-node/)
+- [Vertical Order traversal of Binary Tree](https://www.interviewbit.com/problems/vertical-order-traversal-of-binary-tree/)
+- [Diagonal Traversal](https://www.interviewbit.com/problems/diagonal-traversal/)
 - [Inorder Traversal](https://www.interviewbit.com/problems/inorder-traversal/)
+- [ZigZag Level Order Traversal BT](https://www.interviewbit.com/problems/zigzag-level-order-traversal-bt/)

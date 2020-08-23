@@ -1,5 +1,4 @@
-import java.util.ArrayList;
-import java.util.Stack;
+import java.util.*;
 
 class Trees {
     static class TreeNode {
@@ -272,6 +271,81 @@ class Trees {
         return false;
     }
 
+    // https://www.interviewbit.com/problems/vertical-order-traversal-of-binary-tree/
+    static ArrayList<ArrayList<Integer>> verticalOrderTraversal(TreeNode root) {
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        if (root == null)
+            return res;
+
+        // perform level order traversal and mark vertical level of each node
+        Queue<Pair<Integer, TreeNode>> q = new LinkedList<>();
+        q.add(new Pair<>(0, root));
+
+        Map<Integer, ArrayList<Integer>> map = new HashMap<>();
+        while (!q.isEmpty()) {
+            Pair<Integer, TreeNode> top = q.poll();
+
+            // map current node to its vertical level
+            map.putIfAbsent(top.first, new ArrayList<>());
+            map.get(top.first).add(top.second.val);
+
+            // go to next horizontal level
+            if (top.second.left != null)
+                q.offer(new Pair<>(top.first - 1, top.second.left));
+            if (top.second.right != null)
+                q.offer(new Pair<>(top.first + 1, top.second.right));
+        }
+
+        // find min and max vertical level
+        int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
+        for (int level : map.keySet()) {
+            min = Math.min(min, level);
+            max = Math.max(max, level);
+        }
+
+        // prepare output list
+        for (int i = min; i <= max; i++)
+            res.add(map.get(i));
+
+        return res;
+    }
+
+    static class Pair<K, V> {
+        K first;
+        V second;
+
+        Pair(K first, V second) {
+            this.first = first;
+            this.second = second;
+        }
+    }
+
+    // https://www.interviewbit.com/problems/diagonal-traversal/
+    static ArrayList<Integer> diagonalTraversal(TreeNode root) {
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+
+        ArrayList<Integer> res = new ArrayList<>();
+
+        while (!q.isEmpty()) {
+            TreeNode front = q.poll();
+
+            // keep moving right for current node (same diagonal)
+            while (front != null) {
+                res.add(front.val);
+
+                // if any left child found, add to queue
+                if (front.left != null)
+                    q.add(front.left);
+
+                // move along in same diagonal
+                front = front.right;
+            }
+        }
+
+        return res;
+    }
+
     // https://www.interviewbit.com/problems/inorder-traversal/
     static ArrayList<Integer> inorderTraversal(TreeNode root) {
         ArrayList<Integer> res = new ArrayList<>();
@@ -290,6 +364,54 @@ class Trees {
             res.add(root.val);
             // Now move to right child for processing
             root = root.right;
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/zigzag-level-order-traversal-bt/
+    @SuppressWarnings("ConstantConditions")
+    static ArrayList<ArrayList<Integer>> zigzagLevelOrder(TreeNode root) {
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        boolean reverse = false;
+        // deque to change directions while traversing
+        Deque<TreeNode> q = new LinkedList<>();
+        q.add(root);
+
+        while (!q.isEmpty()) {
+            ArrayList<Integer> level = new ArrayList<>();
+            int n = q.size();
+
+            // move from left to right in level
+            if (!reverse) {
+                // poll from deque front
+                for (int i = 0; i < n; i++) {
+                    TreeNode front = q.pollFirst();
+                    level.add(front.val);
+
+                    if (front.left != null)
+                        q.addLast(front.left);
+                    if (front.right != null)
+                        q.addLast(front.right);
+                }
+            }
+            // move from right to left in level
+            else {
+                // poll from deque back
+                for (int i = 0; i < n; i++) {
+                    TreeNode back = q.pollLast();
+                    level.add(back.val);
+
+                    if (back.right != null)
+                        q.addFirst(back.right);
+                    if (back.left != null)
+                        q.addFirst(back.left);
+                }
+            }
+
+            // add current level to result and flip direction
+            res.add(level);
+            reverse = !reverse;
         }
 
         return res;
