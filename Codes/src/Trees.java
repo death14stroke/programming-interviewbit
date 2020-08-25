@@ -369,6 +369,84 @@ class Trees {
         return res;
     }
 
+    // https://www.interviewbit.com/problems/cousins-in-binary-tree/
+    @SuppressWarnings("ConstantConditions")
+    static ArrayList<Integer> cousins(TreeNode root, int B) {
+        ArrayList<Integer> res = new ArrayList<>();
+
+        // root doesn't have any cousins
+        if (root.val == B)
+            return res;
+
+        boolean found = false;
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+
+        // perform level order traversal till required node is found as child
+        while (!found) {
+            int n = q.size();
+            // store next level nodes in the result
+            res = new ArrayList<>();
+
+            // for the current level
+            for (int i = 0; i < n; i++) {
+                TreeNode front = q.poll();
+
+                // if the front node is parent of required node, don't push its children to queue
+                if ((front.left != null && front.left.val == B) || (front.right != null && front.right.val == B)) {
+                    found = true;
+                    continue;
+                }
+
+                // push left child and add to result
+                if (front.left != null) {
+                    q.add(front.left);
+                    res.add(front.left.val);
+                }
+                // push right child and add to result
+                if (front.right != null) {
+                    q.add(front.right);
+                    res.add(front.right.val);
+                }
+            }
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/right-view-of-binary-tree/
+    @SuppressWarnings("ConstantConditions")
+    static ArrayList<Integer> rightView(TreeNode root) {
+        ArrayList<Integer> res = new ArrayList<>();
+        // empty tree
+        if (root == null)
+            return res;
+
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+
+        // perform level order traversal
+        while (!q.isEmpty()) {
+            int n = q.size();
+            TreeNode front = q.peek();
+
+            // traverse each node in this level and add its children to queue
+            for (int i = 0; i < n; i++) {
+                front = q.poll();
+
+                if (front.left != null)
+                    q.add(front.left);
+                if (front.right != null)
+                    q.add(front.right);
+            }
+
+            // add the last node in this level to result
+            res.add(front.val);
+        }
+
+        return res;
+    }
+
     // https://www.interviewbit.com/problems/zigzag-level-order-traversal-bt/
     @SuppressWarnings("ConstantConditions")
     static ArrayList<ArrayList<Integer>> zigzagLevelOrder(TreeNode root) {
@@ -415,5 +493,109 @@ class Trees {
         }
 
         return res;
+    }
+
+    // https://www.interviewbit.com/problems/hotel-reviews/
+    static int[] hotelReviews(String A, String[] B) {
+        Trie trie = new Trie();
+        // insert each good word into trie
+        for (String word : A.split("_"))
+            trie.add(word);
+
+        int n = B.length;
+        // create list of pair of no of good words and index of review
+        List<Pair<Integer, Integer>> cntList = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            int cnt = 0;
+            String review = B[i];
+
+            // check if each word of review is present in trie or not
+            for (String word : review.split("_")) {
+                if (trie.contains(word))
+                    cnt++;
+            }
+
+            cntList.add(new Pair<>(cnt, i));
+        }
+
+        // sort the list by number of good words in decreasing order
+        cntList.sort((p1, p2) -> p2.first - p1.first);
+
+        // copy indices to result array
+        int[] res = new int[n];
+        int i = 0;
+        for (Pair<Integer, Integer> pair : cntList) {
+            res[i] = pair.second;
+            i++;
+        }
+
+        return res;
+    }
+
+    // trie data structure
+    static class Trie {
+        TrieNode root;
+
+        Trie() {
+            root = new TrieNode();
+        }
+
+        // add a word to trie
+        void add(String word) {
+            TrieNode curr = root;
+
+            for (char c : word.toCharArray()) {
+                if (curr.child[c - 'a'] == null)
+                    curr.child[c - 'a'] = new TrieNode();
+
+                curr = curr.child[c - 'a'];
+            }
+
+            curr.isEnd = true;
+        }
+
+        // check if a word is present in trie or not
+        boolean contains(String word) {
+            TrieNode curr = root;
+
+            for (char c : word.toCharArray()) {
+                if (curr.child[c - 'a'] == null)
+                    return false;
+
+                curr = curr.child[c - 'a'];
+            }
+
+            return curr.isEnd;
+        }
+    }
+
+    // trie node structure
+    static class TrieNode {
+        TrieNode[] child;
+        boolean isEnd;
+
+        TrieNode() {
+            child = new TrieNode[26];
+            isEnd = false;
+        }
+    }
+
+    // https://www.interviewbit.com/problems/merge-two-binary-tree/
+    static TreeNode mergeBinaryTrees(TreeNode root1, TreeNode root2) {
+        // if one node is null, return the other
+        if (root1 == null)
+            return root2;
+        if (root2 == null)
+            return root1;
+
+        // update value of current node as it overlaps
+        root1.val += root2.val;
+
+        // recursively create left and right subtrees
+        root1.left = mergeBinaryTrees(root1.left, root2.left);
+        root1.right = mergeBinaryTrees(root1.right, root2.right);
+
+        // return updated tree 1
+        return root1;
     }
 }

@@ -29,7 +29,7 @@ class Hashing {
 
     // https://www.interviewbit.com/problems/largest-continuous-sequence-zero-sum/
     static int[] largestSequenceZeroSum(int[] A) {
-        // hashmap to store sum value with its starting ending position
+        // hashmap to store sum value with its ending position
         Map<Integer, Integer> map = new HashMap<>();
         // sum of no elements is 0
         map.put(0, -1);
@@ -107,8 +107,8 @@ class Hashing {
                         // if any element is overlapping
                         if (i == pair.first || i == pair.second || j == pair.first || j == pair.second)
                             continue;
-                        // if the other pair is not greater than current pair
-                        if (A.get(j) > A.get(pair.first))
+                        // if the other pair is starting between first pair
+                        if (j > pair.first)
                             continue;
 
                         // add solution to the set
@@ -143,20 +143,6 @@ class Hashing {
         Pair(F first, S second) {
             this.first = first;
             this.second = second;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Pair<?, ?> pair = (Pair<?, ?>) o;
-            return Objects.equals(first, pair.first) &&
-                    Objects.equals(second, pair.second);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(first, second);
         }
     }
 
@@ -207,12 +193,14 @@ class Hashing {
         Set<Integer> set = new HashSet<>();
 
         for (int val : A) {
+            // if already seen x where x - val = k or val - x = k
             if (set.contains(val - k) || set.contains(val + k))
                 return 1;
 
             set.add(val);
         }
 
+        // no such pair found
         return 0;
     }
 
@@ -232,7 +220,7 @@ class Hashing {
         return new ArrayList<>(map.values());
     }
 
-    // util to find hash of a string
+    // util to find hash of a string such that anagrams will have same hash
     private static int hash(String s) {
         // count of each character in the string
         int[] map = new int[26];
@@ -741,7 +729,7 @@ class Hashing {
             // found prefix array with one more 1s than 0s
             if (sum == 1)
                 res = i + 1;
-            // else check if there is a larger subarray than current max
+                // else check if there is a larger subarray than current max
             else if (map.containsKey(sum - 1))
                 res = Math.max(res, i - map.get(sum - 1));
 

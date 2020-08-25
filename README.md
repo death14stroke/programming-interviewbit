@@ -267,4 +267,8 @@ Interview bit problems topic wise
 - [Vertical Order traversal of Binary Tree](https://www.interviewbit.com/problems/vertical-order-traversal-of-binary-tree/)
 - [Diagonal Traversal](https://www.interviewbit.com/problems/diagonal-traversal/)
 - [Inorder Traversal](https://www.interviewbit.com/problems/inorder-traversal/)
+- [Cousins in Binary Tree](https://www.interviewbit.com/problems/cousins-in-binary-tree/)
+- [Right view of Binary tree](https://www.interviewbit.com/problems/right-view-of-binary-tree/)
 - [ZigZag Level Order Traversal BT](https://www.interviewbit.com/problems/zigzag-level-order-traversal-bt/)
+- [Hotel Reviews](https://www.interviewbit.com/problems/hotel-reviews/)
+- [Merge two Binary Tree](https://www.interviewbit.com/problems/merge-two-binary-tree/)
