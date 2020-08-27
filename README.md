@@ -271,4 +271,8 @@ Interview bit problems topic wise
 - [Right view of Binary tree](https://www.interviewbit.com/problems/right-view-of-binary-tree/)
 - [ZigZag Level Order Traversal BT](https://www.interviewbit.com/problems/zigzag-level-order-traversal-bt/)
 - [Hotel Reviews](https://www.interviewbit.com/problems/hotel-reviews/)
+- [Shortest Unique Prefix](https://www.interviewbit.com/problems/shortest-unique-prefix/)
+- [Path Sum](https://www.interviewbit.com/problems/path-sum/)
 - [Merge two Binary Tree](https://www.interviewbit.com/problems/merge-two-binary-tree/)
+- [Reverse Level Order](https://www.interviewbit.com/problems/reverse-level-order/)
+- [Maximum level sum](https://www.interviewbit.com/problems/maximum-level-sum/)

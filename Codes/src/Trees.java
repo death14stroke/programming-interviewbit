@@ -580,6 +580,95 @@ class Trees {
         }
     }
 
+    // https://www.interviewbit.com/problems/shortest-unique-prefix/
+    static String[] shortestUniquePrefix(String[] words) {
+        PrefixTrie trie = new PrefixTrie();
+        // add all words in prefix trie
+        for (String word : words)
+            trie.add(word);
+
+        int n = words.length;
+        String[] res = new String[n];
+        // get shortest prefix with last char as unique for each word inserted
+        for (int i = 0; i < n; i++)
+            res[i] = trie.getPrefix(words[i]);
+
+        return res;
+    }
+
+    // util class for prefix trie
+    // prefix trie will contain count of each node occurring in all the words inserted
+    static class PrefixTrie {
+        PrefixTrieNode root;
+
+        PrefixTrie() {
+            root = new PrefixTrieNode();
+        }
+
+        // add word
+        void add(String word) {
+            PrefixTrieNode curr = root;
+
+            for (char c : word.toCharArray()) {
+                if (curr.child[c - 'a'] == null)
+                    curr.child[c - 'a'] = new PrefixTrieNode();
+
+                curr = curr.child[c - 'a'];
+                // update count of this node
+                curr.cnt++;
+            }
+
+            curr.isEnd = true;
+        }
+
+        // get prefix string with the last character freq as 1
+        String getPrefix(String word) {
+            PrefixTrieNode curr = root;
+            StringBuilder res = new StringBuilder();
+
+            // search for word
+            for (char c : word.toCharArray()) {
+                res.append(c);
+
+                curr = curr.child[c - 'a'];
+                // found last unique char
+                if (curr.cnt == 1)
+                    break;
+            }
+
+            return res.toString();
+        }
+    }
+
+    // node for Prefix Trie
+    static class PrefixTrieNode {
+        PrefixTrieNode[] child;
+        boolean isEnd;
+        int cnt;
+
+        PrefixTrieNode() {
+            child = new PrefixTrieNode[26];
+            isEnd = false;
+            cnt = 0;
+        }
+    }
+
+    // https://www.interviewbit.com/problems/path-sum/
+    static int hasPathSum(TreeNode root, int sum) {
+        // empty node
+        if (root == null)
+            return 0;
+
+        // if leaf node, check if path sum is satisfied
+        if (root.left == null && root.right == null)
+            return sum - root.val == 0 ? 1 : 0;
+
+        // recursively check if left or right path satisfy path sum
+        if (hasPathSum(root.left, sum - root.val) == 1 || hasPathSum(root.right, sum - root.val) == 1)
+            return 1;
+        return 0;
+    }
+
     // https://www.interviewbit.com/problems/merge-two-binary-tree/
     static TreeNode mergeBinaryTrees(TreeNode root1, TreeNode root2) {
         // if one node is null, return the other
@@ -597,5 +686,63 @@ class Trees {
 
         // return updated tree 1
         return root1;
+    }
+
+    // https://www.interviewbit.com/problems/reverse-level-order/
+    static ArrayList<Integer> reverseLevelOrder(TreeNode root) {
+        // stack to save last level last node on top
+        Stack<TreeNode> s = new Stack<>();
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+
+        // perform level order traversal
+        while (!q.isEmpty()) {
+            TreeNode front = q.poll();
+            // push front to stack
+            s.push(front);
+
+            // reverse: take right child first then left for level order
+            if (front.right != null)
+                q.add(front.right);
+            if (front.left != null)
+                q.add(front.left);
+        }
+
+        ArrayList<Integer> res = new ArrayList<>();
+        while (!s.empty())
+            res.add(s.pop().val);
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/maximum-level-sum/
+    @SuppressWarnings("ConstantConditions")
+    static int maxLevelSum(TreeNode root) {
+        // maximum sum among all levels
+        int maxSum = 0;
+        // queue for level order traversal
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+
+        while (!q.isEmpty()) {
+            int n = q.size();
+            // calculate sum of nodes for each level
+            int sum = 0;
+
+            for (int i = 0; i < n; i++) {
+                TreeNode front = q.poll();
+                sum += front.val;
+
+                if (front.left != null)
+                    q.add(front.left);
+                if (front.right != null)
+                    q.add(front.right);
+            }
+
+            // find max level sum till this level
+            maxSum = Math.max(sum, maxSum);
+        }
+
+        return maxSum;
     }
 }
