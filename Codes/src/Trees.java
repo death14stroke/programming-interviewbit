@@ -653,6 +653,25 @@ class Trees {
         }
     }
 
+    // https://www.interviewbit.com/problems/invert-the-binary-tree/
+    static TreeNode invertTree(TreeNode root) {
+        // empty node
+        if (root == null)
+            return null;
+
+        // recursively invert left and right subtrees
+        root.left = invertTree(root.left);
+        root.right = invertTree(root.right);
+
+        // swap left and right child of current node
+        TreeNode temp = root.left;
+        root.left = root.right;
+        root.right = temp;
+
+        // updated node with swapped children
+        return root;
+    }
+
     // https://www.interviewbit.com/problems/path-sum/
     static int hasPathSum(TreeNode root, int sum) {
         // empty node
@@ -667,6 +686,104 @@ class Trees {
         if (hasPathSum(root.left, sum - root.val) == 1 || hasPathSum(root.right, sum - root.val) == 1)
             return 1;
         return 0;
+    }
+
+    // https://www.interviewbit.com/problems/root-to-leaf-paths-with-sum/
+    static ArrayList<ArrayList<Integer>> findAllPathSum(TreeNode root, int sum) {
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        // recursively try all paths
+        findAllPathSumUtil(root, sum, new ArrayList<>(), res);
+
+        return res;
+    }
+
+    // util to traverse all paths and check path sum
+    private static void findAllPathSumUtil(TreeNode root, int sum, ArrayList<Integer> path,
+                                           ArrayList<ArrayList<Integer>> res) {
+        // empty node
+        if (root == null)
+            return;
+
+        // add current node to path
+        path.add(root.val);
+
+        // if leaf node and path sum matches
+        if (root.left == null && root.right == null && sum - root.val == 0) {
+            // add current path to result
+            res.add(new ArrayList<>(path));
+            // backtrack
+            path.remove(path.size() - 1);
+            return;
+        }
+
+        // recursively check left and right paths
+        findAllPathSumUtil(root.left, sum - root.val, path, res);
+        findAllPathSumUtil(root.right, sum - root.val, path, res);
+
+        // backtrack
+        path.remove(path.size() - 1);
+    }
+
+    // https://www.interviewbit.com/problems/max-depth-of-binary-tree/
+    static int maxDepth(TreeNode root) {
+        // empty node
+        if (root == null)
+            return 0;
+
+        // max depth at this point is max of the left and right depths + 1
+        return Math.max(maxDepth(root.left), maxDepth(root.right)) + 1;
+    }
+
+    // https://www.interviewbit.com/problems/min-depth-of-binary-tree/
+    static int minDepth(TreeNode root) {
+        // empty node
+        if (root == null)
+            return Integer.MAX_VALUE;
+
+        // leaf node
+        if (root.left == null && root.right == null)
+            return 1;
+        // only right child present
+        if (root.left == null)
+            return minDepth(root.right) + 1;
+        // only left child present
+        if (root.right == null)
+            return minDepth(root.left) + 1;
+
+        // min depth at this is min of the left and right depths + 1
+        return Math.min(minDepth(root.left), minDepth(root.right)) + 1;
+    }
+
+    // https://www.interviewbit.com/problems/sum-root-to-leaf-numbers/
+    private static int pathCumSum;
+
+    static int sumRootToLeafNumbers(TreeNode root) {
+        int p = 1003;
+        // init cumulative sum path
+        pathCumSum = 0;
+        // recursively traverse all paths
+        sumRootToLeafNumbersUtil(root, 0, p);
+
+        return pathCumSum;
+    }
+
+    // util to form number from digits on the path and update cumulative path sum
+    private static void sumRootToLeafNumbersUtil(TreeNode root, int curr, int p) {
+        // empty node
+        if (root == null)
+            return;
+
+        // update current number
+        curr = (curr * 10 + root.val) % p;
+        // if leaf node, update cumulative path sum
+        if (root.left == null && root.right == null) {
+            pathCumSum = (pathCumSum + curr) % p;
+            return;
+        }
+
+        // recursively find path sum of digits in left and right direction
+        sumRootToLeafNumbersUtil(root.left, curr, p);
+        sumRootToLeafNumbersUtil(root.right, curr, p);
     }
 
     // https://www.interviewbit.com/problems/merge-two-binary-tree/

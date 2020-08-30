@@ -406,14 +406,14 @@ class Hashing {
         long q = num / den;
         res.append(q);
 
+        // remainder. Use long to avoid negative numbers in modulo
+        long rem = num % den;
         // if perfect division
-        if (num % den == 0)
+        if (rem == 0)
             return res.toString();
 
         // decimal point
         res.append('.');
-        // remainder. Use long to avoid negative numbers in modulo
-        long rem = num % den;
         // map to keep track of remainders
         Map<Long, Integer> map = new HashMap<>();
 
@@ -639,8 +639,7 @@ class Hashing {
     }
 
     // https://www.interviewbit.com/problems/two-out-of-three/
-    static ArrayList<Integer> twoOutOfThree
-    (ArrayList<Integer> A, ArrayList<Integer> B, ArrayList<Integer> C) {
+    static ArrayList<Integer> twoOutOfThree(ArrayList<Integer> A, ArrayList<Integer> B, ArrayList<Integer> C) {
         // create sets from arrays
         Set<Integer> s1 = new HashSet<>(A), s2 = new HashSet<>(B), s3 = new HashSet<>(C);
         Map<Integer, Integer> map = new HashMap<>();
