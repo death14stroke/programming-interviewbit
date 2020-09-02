@@ -613,13 +613,11 @@ class Hashing {
     // https://www.interviewbit.com/problems/subarray-with-given-xor/
     @SuppressWarnings("ForLoopReplaceableByForEach")
     static int subarrayWithXor(int[] A, int B) {
-        int n = A.length, xor = 0;
-        int res = 0;
-
+        int xor = 0, res = 0;
         Map<Integer, Integer> map = new HashMap<>();
 
         // calculate running xor from A[0, i]
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < A.length; i++) {
             xor ^= A[i];
 
             int temp = xor ^ B;
@@ -667,9 +665,9 @@ class Hashing {
 
     // https://www.interviewbit.com/problems/subarray-with-b-odd-numbers/
     static int subarrayWithOdd(int[] A, int B) {
-        int n = A.length, res = 0, odd = 0;
+        int res = 0, odd = 0;
         // maintain count of prefix arrays with i odd numbers
-        int[] count = new int[n + 1];
+        int[] count = new int[A.length + 1];
 
         for (int val : A) {
             // increase count of prefix arrays with i odd numbers
@@ -708,7 +706,7 @@ class Hashing {
 
         // initialize count with all prefixes having diff = 0
         int res = map.getOrDefault(0, 0);
-        // select any two of same non-zero diff so that the subarray formed from their difference will have diff 0
+        // select any two of same zero or non-zero diff so that the subarray formed from their difference will have diff 0
         for (int val : map.values())
             res += val * (val - 1) / 2;
 
@@ -717,11 +715,11 @@ class Hashing {
 
     // https://www.interviewbit.com/problems/longest-subarray-length/
     static int longestSubarray(int[] A) {
-        int n = A.length, sum = 0, res = 0;
+        int sum = 0, res = 0;
         // map each sum to its position
         Map<Integer, Integer> map = new HashMap<>();
 
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < A.length; i++) {
             // count difference between number of 1s and 0s at this position
             sum += (A[i] == 0 ? -1 : 1);
 
@@ -733,8 +731,7 @@ class Hashing {
                 res = Math.max(res, i - map.get(sum - 1));
 
             // mark first occurrence of sum to position
-            if (!map.containsKey(sum))
-                map.put(sum, i);
+            map.putIfAbsent(sum, i);
         }
 
         return res;
@@ -753,6 +750,33 @@ class Hashing {
                 // else mark current element as seen
             else
                 set.add(A[i]);
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/longest-consecutive-sequence/
+    static int longestConsecutiveSequence(final int[] A) {
+        // add all numbers to the set
+        Set<Integer> set = new HashSet<>();
+        for (int val : A)
+            set.add(val);
+
+        int res = 1;
+        for (int val : A) {
+            // if (val - 1) is present, sequence containing val has already been checked
+            if (set.contains(val - 1))
+                continue;
+
+            int cnt = 0;
+            // keep checking for consecutive sequence starting from val
+            while (set.contains(val)) {
+                cnt++;
+                val++;
+            }
+
+            // update longest sequence length
+            res = Math.max(res, cnt);
         }
 
         return res;

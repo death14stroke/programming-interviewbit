@@ -241,6 +241,7 @@ Interview bit problems topic wise
 - [Subarray with equal occurences!](https://www.interviewbit.com/problems/subarray-with-equal-occurences/)
 - [Longest Subarray Length](https://www.interviewbit.com/problems/longest-subarray-length/)
 - [First Repeating element](https://www.interviewbit.com/problems/first-repeating-element/)
+- [Longest Consecutive Sequence](https://www.interviewbit.com/problems/longest-consecutive-sequence/)
 
 ## Heaps And Maps
 
@@ -262,8 +263,10 @@ Interview bit problems topic wise
 - [Kth Smallest Element In Tree](https://www.interviewbit.com/problems/kth-smallest-element-in-tree/)
 - [2-Sum Binary Tree](https://www.interviewbit.com/problems/2sum-binary-tree/)
 - [BST Iterator](https://www.interviewbit.com/problems/bst-iterator/)
+- [Recover Binary Search Tree](https://www.interviewbit.com/problems/recover-binary-search-tree/)
 - [Remove Half Nodes](https://www.interviewbit.com/problems/remove-half-nodes/)
 - [Path to Given Node](https://www.interviewbit.com/problems/path-to-given-node/)
+- [Balanced Binary Tree](https://www.interviewbit.com/problems/balanced-binary-tree/)
 - [Vertical Order traversal of Binary Tree](https://www.interviewbit.com/problems/vertical-order-traversal-of-binary-tree/)
 - [Diagonal Traversal](https://www.interviewbit.com/problems/diagonal-traversal/)
 - [Inorder Traversal](https://www.interviewbit.com/problems/inorder-traversal/)
@@ -272,6 +275,7 @@ Interview bit problems topic wise
 - [ZigZag Level Order Traversal BT](https://www.interviewbit.com/problems/zigzag-level-order-traversal-bt/)
 - [Hotel Reviews](https://www.interviewbit.com/problems/hotel-reviews/)
 - [Shortest Unique Prefix](https://www.interviewbit.com/problems/shortest-unique-prefix/)
+- [Identical Binary Trees](https://www.interviewbit.com/problems/identical-binary-trees/)
 - [Invert the Binary Tree](https://www.interviewbit.com/problems/invert-the-binary-tree/)
 - [Path Sum](https://www.interviewbit.com/problems/path-sum/)
 - [Root to Leaf Paths With Sum](https://www.interviewbit.com/problems/root-to-leaf-paths-with-sum/)

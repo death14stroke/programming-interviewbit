@@ -217,6 +217,44 @@ class Trees {
         }
     }
 
+    // https://www.interviewbit.com/problems/recover-binary-search-tree/
+    private static TreeNode first, second, prev;
+
+    static int[] recoverBST(TreeNode root) {
+        // initialize
+        first = second = prev = null;
+
+        // check by performing inorder traversal
+        recoverBSTUtil(root);
+
+        // if tree was not correct, return nodes to be corrected
+        if (first != null && second != null)
+            return new int[]{second.val, first.val};
+        // tree was already correct
+        return new int[0];
+    }
+
+    // util to check if BST is correct by inorder traversal
+    private static void recoverBSTUtil(TreeNode root) {
+        if (root == null)
+            return;
+
+        // check if left subtree is correct BST
+        recoverBSTUtil(root.left);
+        // if previous node is greater than current in inorder traversal
+        if (prev != null && prev.val > root.val) {
+            // if not found first node to swap
+            if (first == null)
+                first = prev;
+            // update second node to swap (can be adjacent node or a far away node)
+            second = root;
+        }
+
+        // check if right subtree is correct BST
+        prev = root;
+        recoverBSTUtil(root.right);
+    }
+
     // https://www.interviewbit.com/problems/remove-half-nodes/
     static TreeNode removeHalfNodes(TreeNode root) {
         if (root == null)
@@ -269,6 +307,31 @@ class Trees {
         res.remove(res.size() - 1);
 
         return false;
+    }
+
+    // https://www.interviewbit.com/problems/balanced-binary-tree/
+    static int isBalancedTree(TreeNode root) {
+        // recursive util to calculate max height and check balancing
+        return isBalancedTreeUtil(root) == -1 ? 0 : 1;
+    }
+
+    // util which returns -1 if not balanced else returns max of the left and right height
+    private static int isBalancedTreeUtil(TreeNode root) {
+        if (root == null)
+            return 0;
+
+        // calculate left and right heights
+        int lHeight = isBalancedTreeUtil(root.left);
+        int rHeight = isBalancedTreeUtil(root.right);
+
+        // if either subtree is not balanced
+        if (lHeight == -1 || rHeight == -1)
+            return -1;
+        // if current node is not balanced
+        if (Math.abs(lHeight - rHeight) >= 2)
+            return -1;
+        // return max height at this node
+        return Math.max(lHeight, rHeight) + 1;
     }
 
     // https://www.interviewbit.com/problems/vertical-order-traversal-of-binary-tree/
@@ -651,6 +714,18 @@ class Trees {
             isEnd = false;
             cnt = 0;
         }
+    }
+
+    // https://www.interviewbit.com/problems/identical-binary-trees/
+    static int isSameTree(TreeNode root1, TreeNode root2) {
+        // both nodes are null
+        if (root1 == null && root2 == null)
+            return 1;
+        // either node is null or the values of nodes are not equal
+        if (root1 == null || root2 == null || root1.val != root2.val)
+            return 0;
+        // current nodes are equal. Check recursively if left and right subtrees are equal or not
+        return isSameTree(root1.left, root2.left) & isSameTree(root1.right, root2.right);
     }
 
     // https://www.interviewbit.com/problems/invert-the-binary-tree/
