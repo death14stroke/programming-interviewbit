@@ -432,6 +432,65 @@ class Trees {
         return res;
     }
 
+    // https://www.interviewbit.com/problems/postorder-traversal/
+    static ArrayList<Integer> postorderTraversal(TreeNode root) {
+        ArrayList<Integer> res = new ArrayList<>();
+        // empty tree
+        if (root == null)
+            return res;
+
+        // push nodes with 0(left child), 1(right child) or 2(node) as pair
+        Stack<Pair<TreeNode, Integer>> s = new Stack<>();
+        s.push(new Pair<>(root, 0));
+
+        while (!s.empty()) {
+            Pair<TreeNode, Integer> top = s.pop();
+
+            switch (top.second) {
+                case 0:
+                    s.push(new Pair<>(top.first, 1));
+                    if (top.first.left != null)
+                        s.push(new Pair<>(top.first.left, 0));
+                    break;
+                case 1:
+                    s.push(new Pair<>(top.first, 2));
+                    if (top.first.right != null)
+                        s.push(new Pair<>(top.first.right, 0));
+                    break;
+                // add to result
+                case 2:
+                    res.add(top.first.val);
+            }
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/preorder-traversal/
+    static ArrayList<Integer> preorderTraversal(TreeNode root) {
+        ArrayList<Integer> res = new ArrayList<>();
+        // empty tree
+        if (root == null)
+            return res;
+
+        Stack<TreeNode> s = new Stack<>();
+        s.push(root);
+
+        while (!s.empty()) {
+            TreeNode top = s.pop();
+            // add root node to output
+            res.add(top.val);
+
+            // push right child first so that left child comes first in output
+            if (top.right != null)
+                s.push(top.right);
+            if (top.left != null)
+                s.push(top.left);
+        }
+
+        return res;
+    }
+
     // https://www.interviewbit.com/problems/cousins-in-binary-tree/
     @SuppressWarnings("ConstantConditions")
     static ArrayList<Integer> cousins(TreeNode root, int B) {
@@ -859,6 +918,102 @@ class Trees {
         // recursively find path sum of digits in left and right direction
         sumRootToLeafNumbersUtil(root.left, curr, p);
         sumRootToLeafNumbersUtil(root.right, curr, p);
+    }
+
+    // https://www.interviewbit.com/problems/least-common-ancestor/
+    private static boolean v1, v2;
+
+    static int lca(TreeNode root, int A, int B) {
+        // set found for both nodes as false
+        v1 = v2 = false;
+        // recursively find lca
+        TreeNode lca = lcaUtil(root, A, B);
+
+        // if visited both nodes during lca or if search for other node returns true
+        if (v1 && v2 || v1 && findNode(lca, B) || v2 && findNode(lca, A))
+            return lca.val;
+        // one or more nodes not found
+        return -1;
+    }
+
+    // recursive util to find lca of two nodes at a point
+    private static TreeNode lcaUtil(TreeNode root, int A, int B) {
+        // empty node
+        if (root == null)
+            return null;
+
+        // found node A
+        if (root.val == A) {
+            v1 = true;
+            return root;
+        }
+        // found node B
+        if (root.val == B) {
+            v2 = true;
+            return root;
+        }
+
+        // recursively search in left and right subtrees
+        TreeNode left = lcaUtil(root.left, A, B);
+        TreeNode right = lcaUtil(root.right, A, B);
+
+        // found both nodes in subtrees
+        if (left != null && right != null)
+            return root;
+        // else return the node found
+        return left != null ? left : right;
+    }
+
+    // util to search for a node
+    private static boolean findNode(TreeNode root, int val) {
+        // reached end
+        if (root == null)
+            return false;
+        // found node
+        if (root.val == val)
+            return true;
+        // search recursively in left and right subtrees
+        return findNode(root.left, val) || findNode(root.right, val);
+    }
+
+    // https://www.interviewbit.com/problems/flatten-binary-tree-to-linked-list/
+    private static TreeNode last;
+
+    static TreeNode flattenBinaryTreeToLinkedList(TreeNode root) {
+        // node to keep track of rightmost node
+        last = root;
+        // recursively flatten tree
+        flattenUtil(root);
+
+        return root;
+    }
+
+    // recursive util to flatten tree
+    private static void flattenUtil(TreeNode root) {
+        // reached end
+        if (root == null)
+            return;
+
+        // save left and right subtree roots
+        TreeNode left = root.left, right = root.right;
+
+        // if this is not the last node in tree
+        if (last != root) {
+            // shift current subtree to right child of last node
+            last.right = root;
+            // make left child null
+            last.left = null;
+            // move ahead in the newly appended linked-list
+            last = last.right;
+        }
+
+        // recursively flatten left and right subtrees
+        flattenUtil(left);
+        flattenUtil(right);
+
+        // if leaf node, this is last node
+        if (left == null && right == null)
+            last = root;
     }
 
     // https://www.interviewbit.com/problems/merge-two-binary-tree/
