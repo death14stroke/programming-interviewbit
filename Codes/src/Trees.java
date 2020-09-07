@@ -617,6 +617,75 @@ class Trees {
         return res;
     }
 
+    // https://www.interviewbit.com/problems/populate-next-right-pointers-tree/
+    static class TreeLinkNode {
+        int val;
+        TreeLinkNode left, right, next;
+
+        TreeLinkNode(int val) {
+            left = right = next = null;
+            this.val = val;
+        }
+    }
+
+    static void rightNextPointers(TreeLinkNode root) {
+        // empty tree
+        if (root == null)
+            return;
+
+        TreeLinkNode level = root;
+        // root's next will be null
+        level.next = null;
+
+        // traverse each level
+        while (level != null) {
+            TreeLinkNode curr = level;
+
+            // move next along the level
+            while (curr != null) {
+                if (curr.left != null) {
+                    // left child's next pointer will be right child
+                    if (curr.right != null)
+                        curr.left.next = curr.right;
+                        // else find the next node in the level
+                    else
+                        curr.left.next = getNextNode(curr);
+                }
+
+                // make right child point to next node in the level
+                if (curr.right != null)
+                    curr.right.next = getNextNode(curr);
+
+                curr = curr.next;
+            }
+
+            // move to next level
+            if (level.left != null)
+                level = level.left;
+            else if (level.right != null)
+                level = level.right;
+            else
+                level = getNextNode(level);
+        }
+    }
+
+    // get the next node for current node's right child (or left child if right is absent)
+    private static TreeLinkNode getNextNode(TreeLinkNode root) {
+        TreeLinkNode temp = root.next;
+
+        // keep moving in current level till node is not a leaf
+        while (temp != null) {
+            if (temp.left != null)
+                return temp.left;
+            if (temp.right != null)
+                return temp.right;
+            temp = temp.next;
+        }
+
+        // all nodes are leaves in the parent level
+        return null;
+    }
+
     // https://www.interviewbit.com/problems/hotel-reviews/
     static int[] hotelReviews(String A, String[] B) {
         Trie trie = new Trie();
@@ -785,6 +854,27 @@ class Trees {
             return 0;
         // current nodes are equal. Check recursively if left and right subtrees are equal or not
         return isSameTree(root1.left, root2.left) & isSameTree(root1.right, root2.right);
+    }
+
+    // https://www.interviewbit.com/problems/symmetric-binary-tree/
+    static int isSymmetric(TreeNode root) {
+        // check if tree is mirror with self or not
+        return isMirror(root, root) ? 1 : 0;
+    }
+
+    // util to check if two trees are mirror image of each other
+    private static boolean isMirror(TreeNode root1, TreeNode root2) {
+        // both nodes null so mirror image
+        if (root1 == null && root2 == null)
+            return true;
+
+        // one node is null, trees are not mirror image
+        if (root1 == null || root2 == null)
+            return false;
+
+        // trees are mirror image if the values at current nodes are same and
+        // left and right subtrees of tree-1 are mirror with right and left subtrees of tree-2 respectively
+        return root1.val == root2.val && isMirror(root1.left, root2.right) && isMirror(root1.right, root2.left);
     }
 
     // https://www.interviewbit.com/problems/invert-the-binary-tree/

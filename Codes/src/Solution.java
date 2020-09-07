@@ -1,19 +1,30 @@
 public class Solution {
     public static void main(String[] args) {
-        Trees.TreeNode root = new Trees.TreeNode(1);
-        root.left = new Trees.TreeNode(2);
-        root.right = new Trees.TreeNode(5);
-        root.left.left = new Trees.TreeNode(3);
-        root.left.right = new Trees.TreeNode(4);
-        root.right.right = new Trees.TreeNode(6);
+        Trees.TreeLinkNode root = new Trees.TreeLinkNode(1);
+        root.left = new Trees.TreeLinkNode(2);
+        root.right = new Trees.TreeLinkNode(3);
+        root.left.left = new Trees.TreeLinkNode(4);
+        root.left.right = new Trees.TreeLinkNode(5);
+        root.right.left = new Trees.TreeLinkNode(6);
+        root.right.right = new Trees.TreeLinkNode(7);
 
-        System.out.println(Trees.preorderTraversal(root));
+        Trees.rightNextPointers(root);
 
-        Trees.TreeNode curr = Trees.flattenBinaryTreeToLinkedList(root);
-        while (curr != null) {
-            System.out.print(curr.val + " -> ");
-            curr = curr.right;
+        Trees.TreeLinkNode p = root;
+        while (p != null) {
+            Trees.TreeLinkNode q = p;
+            while (q != null) {
+                System.out.print(q.val + " -> ");
+                q = q.next;
+            }
+            System.out.print("null\n");
+
+            if (p.left != null)
+                p = p.left;
+            else if (p.right != null)
+                p = p.right;
+            else
+                p = null;
         }
-        System.out.print("null");
     }
 }
