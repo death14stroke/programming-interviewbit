@@ -1152,6 +1152,54 @@ class Trees {
         return res;
     }
 
+    // https://www.interviewbit.com/problems/maximum-edge-removal/
+    private static int res;
+
+    @SuppressWarnings("unchecked")
+    static int maxEdgeRemoval(int A, int[][] B) {
+        List<Integer>[] adj = new List[A + 1];
+        for (int i = 1; i <= A; i++)
+            adj[i] = new ArrayList<>();
+
+        // prepare adjacency list representation for the graph
+        for (int[] edge : B) {
+            int u = edge[0], v = edge[1];
+            adj[u].add(v);
+        }
+
+        boolean[] visited = new boolean[A + 1];
+        res = 0;
+        // perform dfs to find no of nodes in current component
+        dfs(1, adj, visited);
+
+        return res;
+    }
+
+    // recursive util to perform dfs
+    private static int dfs(int u, List<Integer>[] adj, boolean[] visited) {
+        int noOfNodes = 0;
+        // mark current node as visited
+        visited[u] = true;
+
+        // for each neighbour
+        for (int v : adj[u]) {
+            if (visited[v])
+                continue;
+
+            // get number of nodes connected to this unvisited number
+            int subComponentNodes = dfs(v, adj, visited);
+            // if this neighbour has even number of nodes, detach it from current
+            if (subComponentNodes % 2 == 0)
+                res++;
+                // else don't remove this edge. Let it remain part of current component
+            else
+                noOfNodes += subComponentNodes;
+        }
+
+        // #nodes in current component = #nodes visited by neighbours + 1(current node)
+        return noOfNodes + 1;
+    }
+
     // https://www.interviewbit.com/problems/maximum-level-sum/
     @SuppressWarnings("ConstantConditions")
     static int maxLevelSum(TreeNode root) {
@@ -1181,5 +1229,147 @@ class Trees {
         }
 
         return maxSum;
+    }
+
+    // https://www.interviewbit.com/problems/xor-between-two-arrays/
+    static int maxXor(int[] A, int[] B) {
+        BinaryTrie trie = new BinaryTrie();
+        // add all elements of A into binary trie
+        for (int val : A)
+            trie.add(val);
+
+        int res = 0;
+        // for each value in B, find max xor
+        for (int val : B)
+            res = Math.max(res, maxXorUtil(trie.root, val));
+
+        return res;
+    }
+
+    // util to find xor with number differing in most positions in trie
+    private static int maxXorUtil(BinaryTrieNode root, int x) {
+        // res is the number differing from x in most bit positions
+        int res = 0;
+        BinaryTrieNode curr = root;
+
+        // for each bit pos
+        for (int i = 31; i >= 0; i--) {
+            int bit = (x & (1 << i)) == 0 ? 0 : 1;
+
+            // if opposite bit present
+            if (curr.child[1 - bit] != null) {
+                res = (res << 1) + (1 - bit);
+                curr = curr.child[1 - bit];
+            }
+            // else have to traverse same bit
+            else {
+                res = (res << 1) + bit;
+                curr = curr.child[bit];
+            }
+        }
+
+        // return max xor value
+        return res ^ x;
+    }
+
+    // binary trie
+    static class BinaryTrie {
+        BinaryTrieNode root;
+
+        BinaryTrie() {
+            root = new BinaryTrieNode();
+        }
+
+        void add(int x) {
+            BinaryTrieNode curr = root;
+
+            // add all bit positions from MSB to trie
+            for (int i = 31; i >= 0; i--) {
+                int bit = (x & (1 << i)) == 0 ? 0 : 1;
+
+                if (curr.child[bit] == null)
+                    curr.child[bit] = new BinaryTrieNode();
+                curr = curr.child[bit];
+            }
+        }
+    }
+
+    // binary trie node
+    static class BinaryTrieNode {
+        BinaryTrieNode[] child;
+
+        BinaryTrieNode() {
+            child = new BinaryTrieNode[2];
+        }
+    }
+
+    // https://www.interviewbit.com/problems/burn-a-tree/
+    private static int time;
+
+    static int burnTree(TreeNode root, int x) {
+        // time taken to burn the whole tree
+        time = 0;
+        // recursively burn tree from leaf node
+        burnTreeUtil(root, new Data(), x);
+
+        return time;
+    }
+
+    // util to burn a subtree and update time
+    private static void burnTreeUtil(TreeNode root, Data data, int x) {
+        // empty node
+        if (root == null)
+            return;
+
+        // leaf node
+        if (root.left == null && root.right == null) {
+            // found leaf to be burnt first
+            if (root.val == x) {
+                data.time = 0;
+                data.contains = true;
+            }
+            return;
+        }
+
+        // recursively burn left subtree
+        Data lData = new Data();
+        burnTreeUtil(root.left, lData, x);
+
+        // recursively burn right subtree
+        Data rData = new Data();
+        burnTreeUtil(root.right, rData, x);
+
+        // whether current subtree contains target leaf
+        data.contains = lData.contains || rData.contains;
+
+        // update time taken to burn subtree from leaf to current node
+        data.time = lData.contains ? 1 + lData.time : -1;
+        if (data.time == -1)
+            data.time = rData.contains ? 1 + rData.time : -1;
+
+        // update left and right depth for current node
+        data.lDepth = (root.left == null) ? 0 : 1 + Math.max(lData.lDepth, lData.rDepth);
+        data.rDepth = (root.right == null) ? 0 : 1 + Math.max(rData.lDepth, rData.rDepth);
+
+        // if current subtree contains target leaf, update global time
+        if (data.contains) {
+            if (lData.contains)
+                time = Math.max(time, data.time + data.rDepth);
+            else
+                time = Math.max(time, data.time + data.lDepth);
+        }
+    }
+
+    // data class to store node left and right depth, time to burn and
+    // whether its subtree contains target leaf or not
+    static class Data {
+        int lDepth, rDepth, time;
+        boolean contains;
+
+        Data() {
+            lDepth = rDepth = 0;
+            time = -1;
+            contains = false;
+        }
     }
 }

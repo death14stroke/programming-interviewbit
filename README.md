@@ -290,4 +290,7 @@ Interview bit problems topic wise
 - [Flatten Binary Tree to Linked List](https://www.interviewbit.com/problems/flatten-binary-tree-to-linked-list/)
 - [Merge two Binary Tree](https://www.interviewbit.com/problems/merge-two-binary-tree/)
 - [Reverse Level Order](https://www.interviewbit.com/problems/reverse-level-order/)
+- [Maximum Edge Removal](https://www.interviewbit.com/problems/maximum-edge-removal/)
 - [Maximum level sum](https://www.interviewbit.com/problems/maximum-level-sum/)
+- [Xor Between Two Arrays!](https://www.interviewbit.com/problems/xor-between-two-arrays/)
+- [Burn a Tree](https://www.interviewbit.com/problems/burn-a-tree/)
