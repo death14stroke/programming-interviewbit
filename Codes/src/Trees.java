@@ -877,6 +877,111 @@ class Trees {
         return root1.val == root2.val && isMirror(root1.left, root2.right) && isMirror(root1.right, root2.left);
     }
 
+    // https://www.interviewbit.com/problems/sorted-array-to-balanced-bst/
+    static TreeNode buildBalancedBST(List<Integer> A) {
+        return buildBalancedBSTUtil(A, 0, A.size() - 1);
+    }
+
+    // util to build balanced BST recursively
+    private static TreeNode buildBalancedBSTUtil(List<Integer> A, int l, int r) {
+        // reached end
+        if (l > r)
+            return null;
+
+        // root will be the middle node in sorted array
+        int mid = l + (r - l) / 2;
+        TreeNode root = new TreeNode(A.get(mid));
+
+        // leaf node
+        if (l == r)
+            return root;
+
+        // recursively build left and right subtree
+        root.left = buildBalancedBSTUtil(A, l, mid - 1);
+        root.right = buildBalancedBSTUtil(A, mid + 1, r);
+
+        return root;
+    }
+
+    // https://www.interviewbit.com/problems/binary-tree-from-inorder-and-postorder/
+    private static int postorderPos;
+
+    static TreeNode constructTreeFromInAndPost(int[] inorder, int[] postorder) {
+        int n = inorder.length;
+        // map inorder elements to position for O(1) searching
+        Map<Integer, Integer> inorderMap = new HashMap<>();
+        for (int i = 0; i < n; i++)
+            inorderMap.put(inorder[i], i);
+
+        // last node in postorder is root
+        postorderPos = n - 1;
+        // recursively construct tree
+        return constructFromInAndPostUtil(postorder, 0, n - 1, inorderMap);
+    }
+
+    // util to construct tree node from inorder and postorder traversal
+    private static TreeNode constructFromInAndPostUtil(int[] postorder, int inStart, int inEnd,
+                                                       Map<Integer, Integer> inorderMap) {
+        // reached end of traversal
+        if (inStart > inEnd)
+            return null;
+
+        // create current node
+        int val = postorder[postorderPos--];
+        TreeNode root = new TreeNode(val);
+
+        // leaf node
+        if (inStart == inEnd)
+            return root;
+
+        // search for element in inorder
+        int inorderPos = inorderMap.get(val);
+        // recursively create right and left subtrees
+        root.right = constructFromInAndPostUtil(postorder, inorderPos + 1, inEnd, inorderMap);
+        root.left = constructFromInAndPostUtil(postorder, inStart, inorderPos - 1, inorderMap);
+
+        return root;
+    }
+
+    // https://www.interviewbit.com/problems/construct-binary-tree-from-inorder-and-preorder/
+    private static int preorderPos;
+
+    static TreeNode constructFromInAndPreUtil(int[] preorder, int[] inorder) {
+        int n = inorder.length;
+        // map inorder elements to position for O(1) searching
+        Map<Integer, Integer> inorderMap = new HashMap<>();
+        for (int i = 0; i < n; i++)
+            inorderMap.put(inorder[i], i);
+
+        // first node in preorder is root
+        preorderPos = 0;
+        // recursively construct tree
+        return constructFromInAndPreUtil(preorder, 0, n - 1, inorderMap);
+    }
+
+    // util to construct tree node from inorder and preorder traversal
+    private static TreeNode constructFromInAndPreUtil(int[] preorder, int inStart, int inEnd, Map<Integer, Integer> inorderMap) {
+        // reached end of traversal
+        if (inStart > inEnd)
+            return null;
+
+        // create current node
+        int val = preorder[preorderPos++];
+        TreeNode root = new TreeNode(val);
+
+        // leaf node
+        if (inStart == inEnd)
+            return root;
+
+        // search for element in inorder
+        int inorderPos = inorderMap.get(val);
+        // recursively create left and right subtrees
+        root.left = constructFromInAndPreUtil(preorder, inStart, inorderPos - 1, inorderMap);
+        root.right = constructFromInAndPreUtil(preorder, inorderPos + 1, inEnd, inorderMap);
+
+        return root;
+    }
+
     // https://www.interviewbit.com/problems/invert-the-binary-tree/
     static TreeNode invertTree(TreeNode root) {
         // empty node
