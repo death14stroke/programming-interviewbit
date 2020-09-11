@@ -280,6 +280,7 @@ Interview bit problems topic wise
 - [Shortest Unique Prefix](https://www.interviewbit.com/problems/shortest-unique-prefix/)
 - [Identical Binary Trees](https://www.interviewbit.com/problems/identical-binary-trees/)
 - [Symmetric Binary Tree](https://www.interviewbit.com/problems/symmetric-binary-tree/)
+- [Inorder Traversal of Cartesian Tree](https://www.interviewbit.com/problems/inorder-traversal-of-cartesian-tree/)
 - [Sorted Array To Balanced BST](https://www.interviewbit.com/problems/sorted-array-to-balanced-bst/)
 - [Binary Tree From Inorder And Postorder](https://www.interviewbit.com/problems/binary-tree-from-inorder-and-postorder/)
 - [Construct Binary Tree From Inorder And Preorder](https://www.interviewbit.com/problems/construct-binary-tree-from-inorder-and-preorder/)

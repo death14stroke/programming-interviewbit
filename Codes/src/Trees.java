@@ -877,6 +877,96 @@ class Trees {
         return root1.val == root2.val && isMirror(root1.left, root2.right) && isMirror(root1.right, root2.left);
     }
 
+    // https://www.interviewbit.com/problems/inorder-traversal-of-cartesian-tree/
+    private static int[] st;
+
+    static TreeNode buildCartesianTree(int[] inorder) {
+        int n = inorder.length;
+
+        // height of segment tree
+        int height = (int) Math.ceil(Math.log(2 * n) / Math.log(2));
+        // size of segment tree array
+        int size = (int) (2 * Math.pow(2, height) - 1);
+
+        // segment tree array
+        st = new int[size];
+        Arrays.fill(st, -1);
+
+        // build segment tree for range maximum queries
+        buildSegmentTree(0, 0, n - 1, inorder);
+
+        // build cartesian tree recursively
+        return buildCartesianTreeUtil(inorder, 0, inorder.length - 1);
+    }
+
+    // util to build segment tree recursively
+    private static int buildSegmentTree(int si, int l, int r, int[] arr) {
+        // leaf node
+        if (l == r) {
+            st[si] = l;
+            return l;
+        }
+
+        int mid = l + (r - l) / 2;
+        // get left and right range maximum indices
+        int l1 = buildSegmentTree(2 * si + 1, l, mid, arr);
+        int r1 = buildSegmentTree(2 * si + 2, mid + 1, r, arr);
+
+        // update current range maximum number index
+        if (arr[l1] > arr[r1])
+            st[si] = l1;
+        else
+            st[si] = r1;
+
+        return st[si];
+    }
+
+    // util to perform range maximum queries
+    private static int rangeMax(int si, int sl, int sr, int l, int r, int[] arr) {
+        // no overlap
+        if (sr < l || r < sl)
+            return -1;
+
+        // total overlap
+        if (l <= sl && sr <= r)
+            return st[si];
+
+        int mid = sl + (sr - sl) / 2;
+
+        // find left and right range maximum element indexes
+        int l1 = rangeMax(2 * si + 1, sl, mid, l, r, arr);
+        int r1 = rangeMax(2 * si + 2, mid + 1, sr, l, r, arr);
+
+        // left range not exists
+        if (l1 == -1)
+            return r1;
+        // right range not exists
+        if (r1 == -1)
+            return l1;
+
+        // calculate maximum element index from left and right maximums
+        if (arr[l1] > arr[r1])
+            return l1;
+        else
+            return r1;
+    }
+
+    private static TreeNode buildCartesianTreeUtil(int[] inorder, int l, int r) {
+        // empty node
+        if (l > r)
+            return null;
+
+        // root is the maximum node in the inorder traversal
+        int m = rangeMax(0, 0, inorder.length - 1, l, r, inorder);
+        TreeNode root = new TreeNode(inorder[m]);
+
+        // recursively build left and right subtrees
+        root.left = buildCartesianTreeUtil(inorder, l, m - 1);
+        root.right = buildCartesianTreeUtil(inorder, m + 1, r);
+
+        return root;
+    }
+
     // https://www.interviewbit.com/problems/sorted-array-to-balanced-bst/
     static TreeNode buildBalancedBST(List<Integer> A) {
         return buildBalancedBSTUtil(A, 0, A.size() - 1);
