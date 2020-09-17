@@ -125,7 +125,7 @@ class Trees {
             // if should perform inorder traversal
             if (!done1) {
                 // keep moving left till possible
-                while (curr1.left != null) {
+                while (curr1 != null) {
                     s1.push(curr1);
                     curr1 = curr1.left;
                 }
@@ -144,7 +144,7 @@ class Trees {
             // if should perform reverse inorder traversal
             if (!done2) {
                 // keep moving right till possible
-                while (curr2.right != null) {
+                while (curr2 != null) {
                     s2.push(curr2);
                     curr2 = curr2.right;
                 }
@@ -1050,7 +1050,8 @@ class Trees {
     }
 
     // util to construct tree node from inorder and preorder traversal
-    private static TreeNode constructFromInAndPreUtil(int[] preorder, int inStart, int inEnd, Map<Integer, Integer> inorderMap) {
+    private static TreeNode constructFromInAndPreUtil(int[] preorder, int inStart, int inEnd,
+                                                      Map<Integer, Integer> inorderMap) {
         // reached end of traversal
         if (inStart > inEnd)
             return null;
@@ -1299,6 +1300,118 @@ class Trees {
         // if leaf node, this is last node
         if (left == null && right == null)
             last = root;
+    }
+
+    // https://www.interviewbit.com/problems/order-of-people-heights/
+    static int[] orderOfHeights(int[] heights, int[] inFronts) {
+        int n = heights.length;
+        // create array of pair of each person's height and count of people in front
+        Person[] people = new Person[n];
+        for (int i = 0; i < n; i++)
+            people[i] = new Person(heights[i], inFronts[i]);
+
+        // sort by height increasing first then by no of people increasing
+        Arrays.sort(people, (p1, p2) -> {
+            if (p1.height == p2.height)
+                return p1.inFront - p2.inFront;
+            return p1.height - p2.height;
+        });
+
+        // build index sum segment tree with each leaf node as 1
+        SumSegmentTree st = new SumSegmentTree(n);
+        st.buildSegmentTree(0, 0, n - 1);
+
+        int[] res = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            // find (people[i].inFront + 1)th empty position using segment tree in O(log n)
+            int index = st.query(people[i].inFront + 1, 0, 0, n - 1);
+            // place the person at found index
+            res[index] = people[i].height;
+            // update segment tree by making found index as unavailable
+            st.update(0, 0, n - 1, index, -1);
+        }
+
+        return res;
+    }
+
+    // segment tree for range sum with leaf nodes as 1
+    static class SumSegmentTree {
+        int[] st;
+
+        SumSegmentTree(int n) {
+            // height of segment tree
+            int height = (int) Math.ceil(Math.log(2 * n) / Math.log(2));
+            // size of array
+            int size = (int) (2 * Math.pow(2, height) - 1);
+
+            // create segment tree and initialize
+            st = new int[size];
+            Arrays.fill(st, -1);
+        }
+
+        // recursively build segment tree
+        public int buildSegmentTree(int si, int l, int r) {
+            // leaf node
+            if (l == r) {
+                st[si] = 1;
+                return 1;
+            }
+
+            int mid = l + (r - l) / 2;
+            // compute current range using left range and right range
+            st[si] = buildSegmentTree(2 * si + 1, l, mid) +
+                    buildSegmentTree(2 * si + 2, mid + 1, r);
+
+            return st[si];
+        }
+
+        // query index segment tree for index x
+        public int query(int x, int si, int l, int r) {
+            // invalid range
+            if (l > r)
+                return -1;
+            // leaf node
+            if (l == r)
+                return l;
+
+            int leftSum = st[2 * si + 1];
+            int mid = l + (r - l) / 2;
+
+            // query index is in left range
+            if (leftSum >= x)
+                return query(x, 2 * si + 1, l, mid);
+                // query index is in right range
+            else
+                return query(x - leftSum, 2 * si + 2, mid + 1, r);
+        }
+
+        // update segment tree
+        public void update(int si, int sl, int sr, int pos, int diff) {
+            // invalid range
+            if (sl > pos || sr < pos)
+                return;
+
+            // update current range node
+            st[si] += diff;
+
+            // if not leaf, recursively update left and right range nodes
+            if (sl != sr) {
+                int mid = sl + (sr - sl) / 2;
+                update(2 * si + 1, sl, mid, pos, diff);
+                update(2 * si + 2, mid + 1, sr, pos, diff);
+            }
+        }
+    }
+
+    // data class for person with height and no of above desired in front
+    static class Person {
+        int height, inFront;
+
+        Person(int height, int inFront) {
+            this.height = height;
+            this.inFront = inFront;
+        }
     }
 
     // https://www.interviewbit.com/problems/merge-two-binary-tree/
@@ -1566,5 +1679,61 @@ class Trees {
             time = -1;
             contains = false;
         }
+    }
+
+    // https://www.interviewbit.com/problems/inversions/
+    static int countInversions(int[] A) {
+        int n = A.length;
+        return mergeSortAndCount(A, 0, n - 1);
+    }
+
+    // recursively merge sort and count number of swaps
+    private static int mergeSortAndCount(int[] A, int l, int r) {
+        // swaps count for current range
+        int count = 0;
+
+        if (l < r) {
+            int mid = l + (r - l) / 2;
+            // merge sort left half and add its swaps
+            count += mergeSortAndCount(A, l, mid);
+            // merge sort right half and add its swaps
+            count += mergeSortAndCount(A, mid + 1, r);
+            // merge both the halves and add their swaps
+            count += mergeAndCount(A, l, mid, r);
+        }
+
+        return count;
+    }
+
+    // merge util that counts number of swaps
+    private static int mergeAndCount(int[] A, int l, int mid, int r) {
+        // left and right halves
+        int[] left = Arrays.copyOfRange(A, l, mid + 1);
+        int[] right = Arrays.copyOfRange(A, mid + 1, r + 1);
+
+        int i = 0, j = 0, k = l, swaps = 0;
+
+        // merge both the halves
+        while (i < left.length && j < right.length) {
+            // no swap needed
+            if (left[i] <= right[j])
+                A[k++] = left[i++];
+                // swap needed from right half to left half
+            else {
+                A[k++] = right[j++];
+                // swaps += (size of first half - last position filled previously in first half)
+                swaps += (mid + 1) - (l + i);
+            }
+        }
+
+        // merge remaining left half
+        while (i < left.length)
+            A[k++] = left[i++];
+
+        // merge remaining right half
+        while (j < right.length)
+            A[k++] = right[j++];
+
+        return swaps;
     }
 }
