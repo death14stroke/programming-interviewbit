@@ -269,8 +269,8 @@ class HeapsMaps {
 
         // util to shift a node at the end
         private void shiftNodeToEnd(Node curr) {
-            // if one node or current node itself is tail
-            if (head == tail || curr == tail)
+            // if current node itself is tail
+            if (curr == tail)
                 return;
 
             // link next node's prev to current's prev

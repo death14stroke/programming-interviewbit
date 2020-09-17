@@ -300,3 +300,4 @@ Interview bit problems topic wise
 - [Xor Between Two Arrays!](https://www.interviewbit.com/problems/xor-between-two-arrays/)
 - [Burn a Tree](https://www.interviewbit.com/problems/burn-a-tree/)
 - [INVERSIONS](https://www.interviewbit.com/problems/inversions/)
+- [Next Pointer Binary Tree](https://www.interviewbit.com/problems/next-pointer-binary-tree/)

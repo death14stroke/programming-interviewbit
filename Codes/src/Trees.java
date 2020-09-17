@@ -618,6 +618,7 @@ class Trees {
     }
 
     // https://www.interviewbit.com/problems/populate-next-right-pointers-tree/
+    // https://www.interviewbit.com/problems/next-pointer-binary-tree/
     static class TreeLinkNode {
         int val;
         TreeLinkNode left, right, next;
