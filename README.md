@@ -301,3 +301,7 @@ Interview bit problems topic wise
 - [Burn a Tree](https://www.interviewbit.com/problems/burn-a-tree/)
 - [INVERSIONS](https://www.interviewbit.com/problems/inversions/)
 - [Next Pointer Binary Tree](https://www.interviewbit.com/problems/next-pointer-binary-tree/)
+
+## Dynamic Programming
+
+- [Longest Common Subsequence](https://www.interviewbit.com/problems/longest-common-subsequence/)
