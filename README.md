@@ -305,3 +305,5 @@ Interview bit problems topic wise
 ## Dynamic Programming
 
 - [Longest Common Subsequence](https://www.interviewbit.com/problems/longest-common-subsequence/)
+- [Longest Palindromic Subsequence](https://www.interviewbit.com/problems/longest-palindromic-subsequence/)
+- [Edit Distance](https://www.interviewbit.com/problems/edit-distance/)
