@@ -307,3 +307,7 @@ Interview bit problems topic wise
 - [Longest Common Subsequence](https://www.interviewbit.com/problems/longest-common-subsequence/)
 - [Longest Palindromic Subsequence](https://www.interviewbit.com/problems/longest-palindromic-subsequence/)
 - [Edit Distance](https://www.interviewbit.com/problems/edit-distance/)
+- [Repeating Sub-Sequence](https://www.interviewbit.com/problems/repeating-subsequence/)
+- [Distinct Subsequences](https://www.interviewbit.com/problems/distinct-subsequences/)
+- [Interleaving Strings](https://www.interviewbit.com/problems/interleaving-strings/)
+- [Regular Expression Match](https://www.interviewbit.com/problems/regular-expression-match/)
