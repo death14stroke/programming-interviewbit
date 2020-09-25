@@ -1,8 +1,8 @@
 public class Solution {
     public static void main(String[] args) {
-        String A = "aab";
-        String B = "c*a*b";
+        String A = "ABCDE";
+        String B = "CAEBD";
 
-        System.out.println(DP.regex(A, B));
+        System.out.println(DP.scrambleString(A, B));
     }
 }

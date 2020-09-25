@@ -311,3 +311,5 @@ Interview bit problems topic wise
 - [Distinct Subsequences](https://www.interviewbit.com/problems/distinct-subsequences/)
 - [Interleaving Strings](https://www.interviewbit.com/problems/interleaving-strings/)
 - [Regular Expression Match](https://www.interviewbit.com/problems/regular-expression-match/)
+- [Regular Expression II](https://www.interviewbit.com/problems/regular-expression-ii/)
+- [Scramble String](https://www.interviewbit.com/problems/scramble-string/)
