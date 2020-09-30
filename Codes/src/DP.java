@@ -310,4 +310,43 @@ class DP {
         // all character frequencies are equal
         return true;
     }
+
+    // https://www.interviewbit.com/problems/length-of-longest-subsequence/
+    static int longestBitonicSubsequence(final int[] A) {
+        int n = A.length;
+        // base cases
+        if (n <= 2)
+            return n;
+
+        // compute longest increasing subsequence from 0 to i for each i
+        int[] lis = new int[n];
+        Arrays.fill(lis, 1);
+
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < i; j++) {
+                // if can extend current lis
+                if (A[i] > A[j] && lis[i] < lis[j] + 1)
+                    lis[i] = lis[j] + 1;
+            }
+        }
+
+        // compute longest decreasing subsequence from i to n for each i
+        int[] lds = new int[n];
+        Arrays.fill(lds, 1);
+
+        for (int i = n - 2; i >= 0; i--) {
+            for (int j = n - 1; j > i; j--) {
+                // if can extend current lds
+                if (A[i] > A[j] && lds[i] < lds[j] + 1)
+                    lds[i] = lds[j] + 1;
+            }
+        }
+
+        // check for max (lis + lds - the common point) at each position
+        int res = lis[0] + lds[0] - 1;
+        for (int i = 1; i < n; i++)
+            res = Math.max(res, lis[i] + lds[i] - 1);
+
+        return res;
+    }
 }
