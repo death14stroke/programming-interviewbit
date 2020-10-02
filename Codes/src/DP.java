@@ -1,5 +1,6 @@
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 class DP {
@@ -346,6 +347,35 @@ class DP {
         int res = lis[0] + lds[0] - 1;
         for (int i = 1; i < n; i++)
             res = Math.max(res, lis[i] + lds[i] - 1);
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/smallest-sequence-with-given-primes/
+    static int[] smallestSequence(int A, int B, int C, int D) {
+        // similar to ugly numbers
+        int[] res = new int[D];
+
+        int i1 = -1, i2 = -1, i3 = -1;
+        // first multiples of each number
+        int next1 = A, next2 = B, next3 = C;
+
+        // merge all three sequences one by one
+        for (int i = 0; i < D; i++) {
+            // minimum among the tree
+            int next = Math.min(next1, Math.min(next2, next3));
+            res[i] = next;
+
+            // update next multiple of first sequence
+            if (next == next1)
+                next1 = res[++i1] * A;
+            // update next multiple of second sequence
+            if (next == next2)
+                next2 = res[++i2] * B;
+            // update next multiple of third sequence
+            if (next == next3)
+                next3 = res[++i3] * C;
+        }
 
         return res;
     }

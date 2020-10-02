@@ -314,3 +314,4 @@ Interview bit problems topic wise
 - [Regular Expression II](https://www.interviewbit.com/problems/regular-expression-ii/)
 - [Scramble String](https://www.interviewbit.com/problems/scramble-string/)
 - [Length of Longest Subsequence](https://www.interviewbit.com/problems/length-of-longest-subsequence/)
+- [Smallest sequence with given Primes](https://www.interviewbit.com/problems/smallest-sequence-with-given-primes/)

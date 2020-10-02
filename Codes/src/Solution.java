@@ -1,7 +1,9 @@
+import java.util.Arrays;
+
 public class Solution {
     public static void main(String[] args) {
-        int[] A = {1, 2, 3, 4, 5};
+        int A = 2, B = 3, C = 5, D = 7;
 
-        System.out.println(DP.longestBitonicSubsequence(A));
+        System.out.println(Arrays.toString(DP.smallestSequence(A, B, C, D)));
     }
 }
