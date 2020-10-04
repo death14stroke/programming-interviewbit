@@ -1,6 +1,5 @@
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 class DP {
@@ -378,5 +377,54 @@ class DP {
         }
 
         return res;
+    }
+
+    // https://www.interviewbit.com/problems/ways-to-decode/
+    static int waysToDecode(String A) {
+        int n = A.length(), p = 1000000007;
+        // mapping starts from 1
+        if (A.charAt(0) == '0')
+            return 0;
+
+        int[] dp = new int[n + 1];
+        // empty string
+        dp[0] = 1;
+        // single digit which is not zero
+        dp[1] = 1;
+
+        // check for each 1 digit and 2 digit pairs
+        for (int i = 2; i <= n; i++) {
+            // if last digit is not 0
+            if (A.charAt(i - 1) != '0')
+                dp[i] = dp[i - 1] % p;
+
+            // if last 2 digits form a number between 10 to 26
+            if (A.charAt(i - 2) == '1' || (A.charAt(i - 2) == '2' && A.charAt(i - 1) <= '6'))
+                dp[i] = (dp[i] + dp[i - 2]) % p;
+        }
+
+        return dp[n];
+    }
+
+    // https://www.interviewbit.com/problems/stairs/
+    static int stairs(int n) {
+        // 1 or 2 stairs
+        if (n <= 2)
+            return n;
+
+        // steps required where last step is 2 jump and 1 jump respectively
+        int step2 = 1, step1 = 2;
+        int ans = 0;
+
+        for (int i = 3; i <= n; i++) {
+            // total steps at this point is either last step is 2 jump or 1 jump
+            ans = step2 + step1;
+
+            // update steps variables
+            step2 = step1;
+            step1 = ans;
+        }
+
+        return ans;
     }
 }
