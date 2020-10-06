@@ -317,3 +317,5 @@ Interview bit problems topic wise
 - [Smallest sequence with given Primes](https://www.interviewbit.com/problems/smallest-sequence-with-given-primes/)
 - [Ways to Decode](https://www.interviewbit.com/problems/ways-to-decode/)
 - [Stairs](https://www.interviewbit.com/problems/stairs/)
+- [Jump Game Array](https://www.interviewbit.com/problems/jump-game-array/)
+- [Min Jumps Array](https://www.interviewbit.com/problems/min-jumps-array/)
