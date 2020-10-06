@@ -427,4 +427,62 @@ class DP {
 
         return ans;
     }
+
+    // https://www.interviewbit.com/problems/jump-game-array/
+    static int canJump(int[] A) {
+        // set current target as the last position
+        int n = A.length, target = n - 1;
+
+        // loop from the second last position
+        for (int i = n - 2; i >= 0; i--) {
+            // if can jump from current to target, update target to current
+            if (i + A[i] >= target)
+                target = i;
+        }
+
+        // if target at the end of loop is start, success
+        return target == 0 ? 1 : 0;
+    }
+
+    // https://www.interviewbit.com/problems/min-jumps-array/
+    static int jump(int[] A) {
+        int n = A.length;
+        // base case: 0 or 1 positions total
+        if (n <= 1)
+            return 0;
+
+        // 2 or more points in array, starting point max jumps is 0
+        if (A[0] == 0)
+            return -1;
+
+        // initialize for the starting point
+        int jumps = 1, maxReach = A[0], steps = A[0];
+
+        // check from the 1st position
+        for (int i = 1; i < n; i++) {
+            // reached destination
+            if (i == n - 1)
+                return jumps;
+
+            // update maximum reachable position
+            maxReach = Math.max(maxReach, i + A[i]);
+            // use a step
+            steps--;
+
+            // if no steps remaining
+            if (steps == 0) {
+                // perform a jump
+                jumps++;
+
+                // if this is the farthest we can reach
+                if (i >= maxReach)
+                    return -1;
+
+                // re-initialize steps remaining to take
+                steps = maxReach - i;
+            }
+        }
+
+        return -1;
+    }
 }
