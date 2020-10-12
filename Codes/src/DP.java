@@ -428,6 +428,53 @@ class DP {
         return ans;
     }
 
+    // https://www.interviewbit.com/problems/longest-increasing-subsequence/
+    static int lis(final int[] A) {
+        int n = A.length;
+
+        // construct lis in a table
+        int[] tailTable = new int[n];
+        // len of longest lis
+        int len;
+
+        // initialize
+        tailTable[0] = A[0];
+        len = 1;
+
+        for (int i = 1; i < n; i++) {
+            // new element is smallest element till now. Create new lis
+            if (A[i] < tailTable[0])
+                tailTable[0] = A[i];
+                // new element is largest element till now. Append to current lis and update max length
+            else if (A[i] > tailTable[len - 1])
+                tailTable[len++] = A[i];
+                // find appropriate position for new element in current lis
+            else
+                tailTable[ceilIndex(tailTable, 0, len - 1, A[i])] = A[i];
+        }
+
+        return len;
+    }
+
+    // util to find ceiling index for an element in sorted array
+    @SuppressWarnings("SameParameterValue")
+    private static int ceilIndex(int[] A, int l, int r, int x) {
+        int ans = -1;
+
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+
+            if (x > A[mid])
+                l = mid + 1;
+            else {
+                ans = mid;
+                r = mid - 1;
+            }
+        }
+
+        return ans;
+    }
+
     // https://www.interviewbit.com/problems/jump-game-array/
     static int canJump(int[] A) {
         // set current target as the last position
