@@ -320,3 +320,5 @@ Interview bit problems topic wise
 - [Longest Increasing Subsequence](https://www.interviewbit.com/problems/longest-increasing-subsequence/)
 - [Jump Game Array](https://www.interviewbit.com/problems/jump-game-array/)
 - [Min Jumps Array](https://www.interviewbit.com/problems/min-jumps-array/)
+- [Longest Arithmetic Progression](https://www.interviewbit.com/problems/longest-arithmetic-progression/)
+- [Ways to color a 3xN Board](https://www.interviewbit.com/problems/ways-to-color-a-3xn-board/)

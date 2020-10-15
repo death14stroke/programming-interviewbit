@@ -1,6 +1,4 @@
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 class DP {
     // https://www.interviewbit.com/problems/longest-common-subsequence/
@@ -531,5 +529,58 @@ class DP {
         }
 
         return -1;
+    }
+
+    // https://www.interviewbit.com/problems/longest-arithmetic-progression/
+    @SuppressWarnings("unchecked")
+    static int longestAP(final int[] A) {
+        int n = A.length;
+        // base cases
+        if (n <= 2)
+            return n;
+
+        int res = 2;
+        // diff map for each position in the array
+        HashMap<Integer, Integer>[] dp = new HashMap[n];
+        for (int i = 0; i < n; i++)
+            dp[i] = new HashMap<>();
+
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < i; j++) {
+                int diff = A[i] - A[j];
+
+                // if AP exists at index j with difference "diff", extend it
+                if (dp[j].containsKey(diff))
+                    dp[i].put(diff, dp[j].get(diff) + 1);
+                    // else create new AP at index i with difference 2
+                else
+                    dp[i].put(diff, 2);
+
+                // update final result
+                res = Math.max(res, dp[i].get(diff));
+            }
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/ways-to-color-a-3xn-board/
+    static int color3NBoard(int A) {
+        int p = 1000000007;
+        // base case: A = 1 can select C(4, 3) * 3! + C(4, 2) * 2 ways
+        long color3 = 24, color2 = 12;
+
+        // W(n+1) = 10*Y(n)+11*W(n) where W(n+1) is # of 3 color combinations with (n+1) cols
+        // Y(n+1) = 7*Y(n)+5*W(n) where Y(n+1) is # of 2 color combinations with (n+1) cols
+        for (int i = 2; i <= A; i++) {
+            long temp = color3;
+
+            // update 2 color and 3 color combinations count
+            color3 = (10 * color2 + 11 * color3) % p;
+            color2 = (7 * color2 + 5 * temp) % p;
+        }
+
+        // result will be the sum of 2 color and 3 color combinations
+        return (int) ((color2 + color3) % p);
     }
 }
