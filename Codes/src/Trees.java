@@ -334,6 +334,58 @@ class Trees {
         return Math.max(lHeight, rHeight) + 1;
     }
 
+    // https://www.interviewbit.com/problems/merge-two-binary-tree/
+    static TreeNode mergeBinaryTrees(TreeNode root1, TreeNode root2) {
+        // if one node is null, return the other
+        if (root1 == null)
+            return root2;
+        if (root2 == null)
+            return root1;
+
+        // update value of current node as it overlaps
+        root1.val += root2.val;
+
+        // recursively create left and right subtrees
+        root1.left = mergeBinaryTrees(root1.left, root2.left);
+        root1.right = mergeBinaryTrees(root1.right, root2.right);
+
+        // return updated tree 1
+        return root1;
+    }
+
+    // https://www.interviewbit.com/problems/identical-binary-trees/
+    static int isSameTree(TreeNode root1, TreeNode root2) {
+        // both nodes are null
+        if (root1 == null && root2 == null)
+            return 1;
+        // either node is null or the values of nodes are not equal
+        if (root1 == null || root2 == null || root1.val != root2.val)
+            return 0;
+        // current nodes are equal. Check recursively if left and right subtrees are equal or not
+        return isSameTree(root1.left, root2.left) & isSameTree(root1.right, root2.right);
+    }
+
+    // https://www.interviewbit.com/problems/symmetric-binary-tree/
+    static int isSymmetric(TreeNode root) {
+        // check if tree is mirror with self or not
+        return isMirror(root, root) ? 1 : 0;
+    }
+
+    // util to check if two trees are mirror image of each other
+    private static boolean isMirror(TreeNode root1, TreeNode root2) {
+        // both nodes null so mirror image
+        if (root1 == null && root2 == null)
+            return true;
+
+        // one node is null, trees are not mirror image
+        if (root1 == null || root2 == null)
+            return false;
+
+        // trees are mirror image if the values at current nodes are same and
+        // left and right subtrees of tree-1 are mirror with right and left subtrees of tree-2 respectively
+        return root1.val == root2.val && isMirror(root1.left, root2.right) && isMirror(root1.right, root2.left);
+    }
+
     // https://www.interviewbit.com/problems/vertical-order-traversal-of-binary-tree/
     static ArrayList<ArrayList<Integer>> verticalOrderTraversal(TreeNode root) {
         ArrayList<ArrayList<Integer>> res = new ArrayList<>();
@@ -843,39 +895,6 @@ class Trees {
             isEnd = false;
             cnt = 0;
         }
-    }
-
-    // https://www.interviewbit.com/problems/identical-binary-trees/
-    static int isSameTree(TreeNode root1, TreeNode root2) {
-        // both nodes are null
-        if (root1 == null && root2 == null)
-            return 1;
-        // either node is null or the values of nodes are not equal
-        if (root1 == null || root2 == null || root1.val != root2.val)
-            return 0;
-        // current nodes are equal. Check recursively if left and right subtrees are equal or not
-        return isSameTree(root1.left, root2.left) & isSameTree(root1.right, root2.right);
-    }
-
-    // https://www.interviewbit.com/problems/symmetric-binary-tree/
-    static int isSymmetric(TreeNode root) {
-        // check if tree is mirror with self or not
-        return isMirror(root, root) ? 1 : 0;
-    }
-
-    // util to check if two trees are mirror image of each other
-    private static boolean isMirror(TreeNode root1, TreeNode root2) {
-        // both nodes null so mirror image
-        if (root1 == null && root2 == null)
-            return true;
-
-        // one node is null, trees are not mirror image
-        if (root1 == null || root2 == null)
-            return false;
-
-        // trees are mirror image if the values at current nodes are same and
-        // left and right subtrees of tree-1 are mirror with right and left subtrees of tree-2 respectively
-        return root1.val == root2.val && isMirror(root1.left, root2.right) && isMirror(root1.right, root2.left);
     }
 
     // https://www.interviewbit.com/problems/inorder-traversal-of-cartesian-tree/
@@ -1413,25 +1432,6 @@ class Trees {
             this.height = height;
             this.inFront = inFront;
         }
-    }
-
-    // https://www.interviewbit.com/problems/merge-two-binary-tree/
-    static TreeNode mergeBinaryTrees(TreeNode root1, TreeNode root2) {
-        // if one node is null, return the other
-        if (root1 == null)
-            return root2;
-        if (root2 == null)
-            return root1;
-
-        // update value of current node as it overlaps
-        root1.val += root2.val;
-
-        // recursively create left and right subtrees
-        root1.left = mergeBinaryTrees(root1.left, root2.left);
-        root1.right = mergeBinaryTrees(root1.right, root2.right);
-
-        // return updated tree 1
-        return root1;
     }
 
     // https://www.interviewbit.com/problems/reverse-level-order/
