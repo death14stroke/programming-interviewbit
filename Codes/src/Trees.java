@@ -916,7 +916,7 @@ class Trees {
         buildSegmentTree(0, 0, n - 1, inorder);
 
         // build cartesian tree recursively
-        return buildCartesianTreeUtil(inorder, 0, inorder.length - 1);
+        return buildCartesianTreeUtil(inorder, 0, n - 1);
     }
 
     // util to build segment tree recursively
@@ -1002,10 +1002,6 @@ class Trees {
         int mid = l + (r - l) / 2;
         TreeNode root = new TreeNode(A.get(mid));
 
-        // leaf node
-        if (l == r)
-            return root;
-
         // recursively build left and right subtree
         root.left = buildBalancedBSTUtil(A, l, mid - 1);
         root.right = buildBalancedBSTUtil(A, mid + 1, r);
@@ -1056,7 +1052,7 @@ class Trees {
     // https://www.interviewbit.com/problems/construct-binary-tree-from-inorder-and-preorder/
     private static int preorderPos;
 
-    static TreeNode constructFromInAndPreUtil(int[] preorder, int[] inorder) {
+    static TreeNode constructTreeFromInAndPre(int[] preorder, int[] inorder) {
         int n = inorder.length;
         // map inorder elements to position for O(1) searching
         Map<Integer, Integer> inorderMap = new HashMap<>();
@@ -1183,12 +1179,6 @@ class Trees {
         // leaf node
         if (root.left == null && root.right == null)
             return 1;
-        // only right child present
-        if (root.left == null)
-            return minDepth(root.right) + 1;
-        // only left child present
-        if (root.right == null)
-            return minDepth(root.left) + 1;
 
         // min depth at this is min of the left and right depths + 1
         return Math.min(minDepth(root.left), minDepth(root.right)) + 1;
@@ -1436,16 +1426,16 @@ class Trees {
 
     // https://www.interviewbit.com/problems/reverse-level-order/
     static ArrayList<Integer> reverseLevelOrder(TreeNode root) {
-        // stack to save last level last node on top
-        Stack<TreeNode> s = new Stack<>();
+        ArrayList<Integer> res = new ArrayList<>();
+
         Queue<TreeNode> q = new LinkedList<>();
         q.add(root);
 
         // perform level order traversal
         while (!q.isEmpty()) {
             TreeNode front = q.poll();
-            // push front to stack
-            s.push(front);
+            // add front node to level order result
+            res.add(front.val);
 
             // reverse: take right child first then left for level order
             if (front.right != null)
@@ -1454,9 +1444,9 @@ class Trees {
                 q.add(front.left);
         }
 
-        ArrayList<Integer> res = new ArrayList<>();
-        while (!s.empty())
-            res.add(s.pop().val);
+        // reverse the current level order traversal to get last level at top and
+        // left nodes in each level before right nodes
+        Collections.reverse(res);
 
         return res;
     }
@@ -1567,12 +1557,12 @@ class Trees {
 
             // if opposite bit present
             if (curr.child[1 - bit] != null) {
-                res = (res << 1) + (1 - bit);
+                res = (res << 1) | (1 - bit);
                 curr = curr.child[1 - bit];
             }
             // else have to traverse same bit
             else {
-                res = (res << 1) + bit;
+                res = (res << 1) | bit;
                 curr = curr.child[bit];
             }
         }
