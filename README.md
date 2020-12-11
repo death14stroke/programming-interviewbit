@@ -305,6 +305,7 @@ Interview bit problems topic wise
 ## Graph Data Structure & Algorithms
 
 - [Region in BinaryMatrix](https://www.interviewbit.com/problems/region-in-binarymatrix/)
+- [Snake Ladder Problem!](https://www.interviewbit.com/problems/snake-ladder-problem/)  
 - [Level Order](https://www.interviewbit.com/problems/level-order/)
 
 ## Dynamic Programming
