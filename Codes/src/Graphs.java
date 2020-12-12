@@ -206,4 +206,39 @@ class Graphs {
             this.prev = prev;
         }
     }
+
+    // https://www.interviewbit.com/problems/path-in-directed-graph/
+    @SuppressWarnings("unchecked")
+    static int isPath(int A, int[][] B) {
+        // create adjacency list for the graph
+        List<Integer>[] adj = new List[A + 1];
+        for (int i = 1; i <= A; i++)
+            adj[i] = new ArrayList<>();
+
+        for (int[] edge : B)
+            adj[edge[0]].add(edge[1]);
+
+        // perform DFS till the last node is reached starting from 1
+        return isPathUtil(1, A, adj, new boolean[A + 1]) ? 1 : 0;
+    }
+
+    // util to check if node A is reached or not using DFS
+    private static boolean isPathUtil(int u, int A, List<Integer>[] adj, boolean[] visited) {
+        // reached end
+        if (u == A)
+            return true;
+
+        // mark current node as visited
+        visited[u] = true;
+
+        // for each neighbour
+        for (int v : adj[u]) {
+            // if unvisited and has a path to node A, return true
+            if (!visited[v] && isPathUtil(v, A, adj, visited))
+                return true;
+        }
+
+        // no path found to node A
+        return false;
+    }
 }
