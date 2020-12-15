@@ -8,6 +8,6 @@ public class Solution {
                 {4, 5}
         };
 
-        System.out.print(Graphs.isPath(A, B));
+        System.out.print(Graphs.isDirectedCycle(A, B));
     }
 }

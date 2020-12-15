@@ -307,6 +307,10 @@ Interview bit problems topic wise
 - [Region in BinaryMatrix](https://www.interviewbit.com/problems/region-in-binarymatrix/)
 - [Snake Ladder Problem!](https://www.interviewbit.com/problems/snake-ladder-problem/)  
 - [Level Order](https://www.interviewbit.com/problems/level-order/)
+- [Min Cost Path](https://www.interviewbit.com/problems/min-cost-path/)
+- [Possibility of finishing all courses given pre-requisites](https://www.interviewbit.com/problems/possibility-of-finishing-all-courses-given-prerequisites/)
+- [Cycle in Undirected Graph](https://www.interviewbit.com/problems/cycle-in-undirected-graph/)
+- [Cycle in Directed Graph](https://www.interviewbit.com/problems/cycle-in-directed-graph/)
 - [Path in Directed Graph](https://www.interviewbit.com/problems/path-in-directed-graph/)
 
 ## Dynamic Programming

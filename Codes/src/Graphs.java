@@ -207,6 +207,195 @@ class Graphs {
         }
     }
 
+    // https://www.interviewbit.com/problems/min-cost-path/
+    static int minCostPath(int A, int B, String[] C) {
+        // deque for 0-1 BFS
+        Deque<MatrixNode> q = new LinkedList<>();
+        // start with (0, 0)
+        q.addLast(new MatrixNode(0, 0));
+
+        // distance from (0, 0) to each node
+        int[][] distance = new int[A][B];
+        // initialize with max distance
+        for (int[] d : distance)
+            Arrays.fill(d, Integer.MAX_VALUE);
+        // source to source distance is 0
+        distance[0][0] = 0;
+
+        // visited array for BFS
+        boolean[][] visited = new boolean[A][B];
+
+        // perform BFS
+        while (!q.isEmpty()) {
+            MatrixNode front = q.pollFirst();
+
+            // four directions and their char representations
+            int[][] dirs = {{-1, 0}, {0, 1}, {0, -1}, {1, 0}};
+            char[] dirChars = {'U', 'R', 'L', 'D'};
+
+            // mark current node as visited
+            visited[front.x][front.y] = true;
+
+            // for each direction (edge)
+            for (int i = 0; i < 4; i++) {
+                int x = front.x + dirs[i][0], y = front.y + dirs[i][1];
+                // out of bounds or already visited
+                if (x < 0 || x >= A || y < 0 || y >= B || visited[x][y])
+                    continue;
+
+                // if direction is same as the entry in matrix, weight of edge is 0 else it is 1
+                int w = dirChars[i] == C[front.x].charAt(front.y) ? 0 : 1;
+
+                // relax current edge
+                if (distance[x][y] > distance[front.x][front.y] + w)
+                    distance[x][y] = distance[front.x][front.y] + w;
+
+                // if weight is 0, add to front of deque
+                if (w == 0)
+                    q.addFirst(new MatrixNode(x, y));
+                    // else add to end of deque
+                else
+                    q.addLast(new MatrixNode(x, y));
+            }
+        }
+
+        // distance from (0, 0) to (A - 1, B - 1)
+        return distance[A - 1][B - 1];
+    }
+
+    // data class for each position in the matrix
+    static class MatrixNode {
+        int x, y;
+
+        MatrixNode(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    // https://www.interviewbit.com/problems/possibility-of-finishing-all-courses-given-prerequisites/
+    @SuppressWarnings("unchecked")
+    static int canFinishCourses(int A, int[] B, int[] C) {
+        // create adjacency list for the graph
+        List<Integer>[] adj = new List[A + 1];
+        for (int i = 1; i <= A; i++)
+            adj[i] = new LinkedList<>();
+
+        for (int i = 0; i < B.length; i++)
+            adj[B[i]].add(C[i]);
+
+        // boolean array to keep track of visited nodes
+        boolean[] visited = new boolean[A + 1];
+        // boolean array to keep track of nodes currently in DFS path stack
+        boolean[] recStack = new boolean[A + 1];
+
+        for (int i = 1; i <= A; i++) {
+            // perform DFS for each connected component. If cycle, cannot complete courses
+            if (!visited[i] && isDirectedCyclicUtil(i, adj, visited, recStack))
+                return 0;
+        }
+
+        // no cycles. Can complete all courses in a topological order
+        return 1;
+    }
+
+    // util to check for cycle in directed graph using DFS
+    private static boolean isDirectedCyclicUtil(int u, List<Integer>[] adj, boolean[] visited, boolean[] recStack) {
+        // mark current node as visited
+        visited[u] = true;
+        // mark current node as part of stack
+        recStack[u] = true;
+
+        // for each neighbour
+        for (int v : adj[u]) {
+            // if node already in stack, there is cycle
+            if (recStack[v])
+                return true;
+
+            // if node is unvisited and it forms cycle
+            if (!visited[v] && isDirectedCyclicUtil(v, adj, visited, recStack))
+                return true;
+        }
+
+        // pop current node from stack
+        recStack[u] = false;
+
+        // no cycles starting from current node
+        return false;
+    }
+
+    // https://www.interviewbit.com/problems/cycle-in-undirected-graph/
+    @SuppressWarnings("unchecked")
+    static int isUndirectedCycle(int A, int[][] B) {
+        // create adjacency list for graph
+        List<Integer>[] adj = new List[A + 1];
+        for (int i = 1; i <= A; i++)
+            adj[i] = new LinkedList<>();
+
+        for (int[] edge : B) {
+            int u = edge[0], v = edge[1];
+            adj[u].add(v);
+            adj[v].add(u);
+        }
+
+        // visited array for DFS
+        boolean[] visited = new boolean[A + 1];
+        // perform DFS for each connected component and check if cycle found
+        for (int i = 1; i <= A; i++) {
+            if (!visited[i] && isUndirectedCycleUtil(i, adj, visited, -1))
+                return 1;
+        }
+
+        // no cycles found
+        return 0;
+    }
+
+    // util to check cycle in undirected graph using DFS
+    private static boolean isUndirectedCycleUtil(int u, List<Integer>[] adj, boolean[] visited, int parent) {
+        // mark current node as visited
+        visited[u] = true;
+
+        // for each neighbour
+        for (int v : adj[u]) {
+            // if visited node and is not the parent of the current node, cycle found
+            if (visited[v] && v != parent)
+                return true;
+
+            // if unvisited node and forms cycle
+            if (!visited[v] && isUndirectedCycleUtil(v, adj, visited, u))
+                return true;
+        }
+
+        // no cycles formed by any neighbours
+        return false;
+    }
+
+    // https://www.interviewbit.com/problems/cycle-in-directed-graph/
+    @SuppressWarnings("unchecked")
+    static int isDirectedCycle(int A, int[][] B) {
+        // create adjacency list
+        List<Integer>[] adj = new List[A + 1];
+        for (int i = 1; i <= A; i++)
+            adj[i] = new LinkedList<>();
+
+        for (int[] edge : B)
+            adj[edge[0]].add(edge[1]);
+
+        // boolean array to keep track of visited nodes
+        boolean[] visited = new boolean[A + 1];
+        // boolean array to keep track of nodes currently in DFS path stack
+        boolean[] recStack = new boolean[A + 1];
+
+        for (int i = 1; i <= A; i++) {
+            // perform DFS for each connected component to check for cycle
+            if (!visited[i] && isDirectedCyclicUtil(i, adj, visited, recStack))
+                return 1;
+        }
+
+        // no cycles found
+        return 0;
+    }
+
     // https://www.interviewbit.com/problems/path-in-directed-graph/
     @SuppressWarnings("unchecked")
     static int isPath(int A, int[][] B) {
