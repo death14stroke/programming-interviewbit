@@ -273,6 +273,42 @@ class Graphs {
         }
     }
 
+    // https://www.interviewbit.com/problems/commutable-islands/
+    static int minCostBridges(int A, int[][] B) {
+        int res = 0;
+        // no of edges required for MST
+        int reqNoOfEdges = A - 1;
+
+        // union-find parent array
+        int[] parent = new int[A + 1];
+        Arrays.fill(parent, -1);
+
+        // sort the edges in increasing order of weight
+        Arrays.sort(B, Comparator.comparingInt(e -> e[2]));
+
+        // for each edge
+        for (int[] edge : B) {
+            int u = edge[0], v = edge[1], weight = edge[2];
+
+            // if both points are in same set, adding edge will form cycle
+            if (find(parent, u) == find(parent, v))
+                continue;
+
+            // update minimum cost
+            res += weight;
+            // update no of edges remaining
+            reqNoOfEdges--;
+            // MST is complete
+            if (reqNoOfEdges == 0)
+                break;
+
+            // add both endpoints to the same set
+            union(parent, u, v);
+        }
+
+        return res;
+    }
+
     // https://www.interviewbit.com/problems/possibility-of-finishing-all-courses-given-prerequisites/
     @SuppressWarnings("unchecked")
     static int canFinishCourses(int A, int[] B, int[] C) {
@@ -325,6 +361,7 @@ class Graphs {
     }
 
     // https://www.interviewbit.com/problems/cycle-in-undirected-graph/
+    // Approach 1 - using DFS (T.C O(V + E))
     @SuppressWarnings("unchecked")
     static int isUndirectedCycle(int A, int[][] B) {
         // create adjacency list for graph
@@ -370,6 +407,93 @@ class Graphs {
         return false;
     }
 
+    // https://www.interviewbit.com/problems/cycle-in-undirected-graph/
+    // Approach 2 - using union find (T.C: O(E log V))
+    static int isUndirectedCycleUnionFind(int A, int[][] B) {
+        // initialize parent array for all nodes
+        int[] parent = new int[A + 1];
+        Arrays.fill(parent, -1);
+
+        // for each edge
+        for (int[] edge : B) {
+            // find parents of both end points
+            int x = find(parent, edge[0]);
+            int y = find(parent, edge[1]);
+
+            // if in same subset, cycle exists
+            if (x == y)
+                return 1;
+
+            // perform union of both parents
+            union(parent, x, y);
+        }
+
+        // no cycles found
+        return 0;
+    }
+
+    // util to perform find operation in disjoint set
+    private static int find(int[] parent, int i) {
+        // find the root node of the set
+        while (parent[i] != -1)
+            i = parent[i];
+
+        return i;
+    }
+
+    // util to perform union operation in disjoint set
+    private static void union(int[] parent, int x, int y) {
+        // find parents of both nodes
+        x = find(parent, x);
+        y = find(parent, y);
+
+        // make either node as parent of other node
+        parent[x] = y;
+    }
+
+    // https://www.interviewbit.com/problems/black-shapes/
+    static int blackShapes(String[] A) {
+        int m = A.length, n = A[0].length();
+        // no of connected components
+        int res = 0;
+
+        boolean[][] visited = new boolean[m][n];
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                // if character is 'X' and not visited
+                if (A[i].charAt(j) == 'X' && !visited[i][j]) {
+                    // update count
+                    res++;
+                    // perform DFS
+                    blackShapesUtil(i, j, m, n, A, visited);
+                }
+            }
+        }
+
+        return res;
+    }
+
+    // util to perform DFS for each connected component
+    private static void blackShapesUtil(int i, int j, int m, int n, String[] A, boolean[][] visited) {
+        // mark current position as visited
+        visited[i][j] = true;
+
+        int[][] dirs = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+
+        // for all 4 directions
+        for (int[] dir : dirs) {
+            int x = i + dir[0], y = j + dir[1];
+
+            // if no path or character is 'O' or already visited
+            if (x < 0 || x >= m || y < 0 || y >= n || A[x].charAt(y) == 'O' || visited[x][y])
+                continue;
+
+            // perform DFS
+            blackShapesUtil(x, y, m, n, A, visited);
+        }
+    }
+
     // https://www.interviewbit.com/problems/cycle-in-directed-graph/
     @SuppressWarnings("unchecked")
     static int isDirectedCycle(int A, int[][] B) {
@@ -394,6 +518,63 @@ class Graphs {
 
         // no cycles found
         return 0;
+    }
+
+    // https://www.interviewbit.com/problems/two-teams/
+    @SuppressWarnings("unchecked")
+    static int twoTeams(int A, int[][] B) {
+        // adjacency list for the undirected graph
+        List<Integer>[] adj = new List[A + 1];
+        for (int i = 1; i <= A; i++)
+            adj[i] = new LinkedList<>();
+
+        for (int[] edge : B) {
+            adj[edge[0]].add(edge[1]);
+            adj[edge[1]].add(edge[0]);
+        }
+
+        // color array for bipartite partitioning - (0, 1) are the colors
+        int[] color = new int[A + 1];
+        Arrays.fill(color, -1);
+
+        for (int i = 1; i <= A; i++) {
+            // if any connected component is not bipartite, cannot form 2 teams
+            if (color[i] == -1 && !isBipartiteUtil(i, adj, color))
+                return 0;
+        }
+
+        // graph is bipartite - can form 2 teams
+        return 1;
+    }
+
+    // util to check if connected component is bipartite or not using BFS
+    private static boolean isBipartiteUtil(int src, List<Integer>[] adj, int[] color) {
+        // queue for BFS
+        Queue<Integer> q = new LinkedList<>();
+        q.add(src);
+
+        // color source vertex as 0
+        color[src] = 0;
+
+        while (!q.isEmpty()) {
+            int u = q.poll();
+
+            // for each neighbour of u
+            for (int v : adj[u]) {
+                // if same color, graph is not bipartite
+                if (color[v] == color[u])
+                    return false;
+
+                // if not colored, color with opposite color and add to queue for BFS
+                if (color[v] == -1) {
+                    color[v] = 1 - color[u];
+                    q.add(v);
+                }
+            }
+        }
+
+        // graph is bipartite
+        return true;
     }
 
     // https://www.interviewbit.com/problems/path-in-directed-graph/

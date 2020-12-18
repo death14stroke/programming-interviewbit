@@ -308,9 +308,12 @@ Interview bit problems topic wise
 - [Snake Ladder Problem!](https://www.interviewbit.com/problems/snake-ladder-problem/)  
 - [Level Order](https://www.interviewbit.com/problems/level-order/)
 - [Min Cost Path](https://www.interviewbit.com/problems/min-cost-path/)
+- [Commutable Islands](https://www.interviewbit.com/problems/commutable-islands/)
 - [Possibility of finishing all courses given pre-requisites](https://www.interviewbit.com/problems/possibility-of-finishing-all-courses-given-prerequisites/)
 - [Cycle in Undirected Graph](https://www.interviewbit.com/problems/cycle-in-undirected-graph/)
+- [Black Shapes](https://www.interviewbit.com/problems/black-shapes/)
 - [Cycle in Directed Graph](https://www.interviewbit.com/problems/cycle-in-directed-graph/)
+- [Two teams?](https://www.interviewbit.com/problems/two-teams/)
 - [Path in Directed Graph](https://www.interviewbit.com/problems/path-in-directed-graph/)
 
 ## Dynamic Programming
