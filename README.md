@@ -305,8 +305,10 @@ Interview bit problems topic wise
 ## Graph Data Structure & Algorithms
 
 - [Region in BinaryMatrix](https://www.interviewbit.com/problems/region-in-binarymatrix/)
-- [Snake Ladder Problem!](https://www.interviewbit.com/problems/snake-ladder-problem/)  
+- [Snake Ladder Problem!](https://www.interviewbit.com/problems/snake-ladder-problem/)
 - [Level Order](https://www.interviewbit.com/problems/level-order/)
+- [Smallest Multiple With 0 and 1](https://www.interviewbit.com/problems/smallest-multiple-with-0-and-1/)
+- [Permutation Swaps!](https://www.interviewbit.com/problems/permutation-swaps/)
 - [Min Cost Path](https://www.interviewbit.com/problems/min-cost-path/)
 - [Commutable Islands](https://www.interviewbit.com/problems/commutable-islands/)
 - [Possibility of finishing all courses given pre-requisites](https://www.interviewbit.com/problems/possibility-of-finishing-all-courses-given-prerequisites/)

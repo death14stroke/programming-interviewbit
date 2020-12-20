@@ -207,6 +207,77 @@ class Graphs {
         }
     }
 
+    // https://www.interviewbit.com/problems/permutation-swaps/
+    static int permutationSwaps(int[] A, int[] B, int[][] C) {
+        int n = A.length;
+
+        // subsets array for union find with rank and path compression
+        Subset[] subsets = new Subset[n + 1];
+        for (int i = 1; i <= n; i++)
+            subsets[i] = new Subset(0, i);
+
+        // take union of end points for each edge
+        for (int[] edge : C) {
+            int i1 = edge[0] - 1, i2 = edge[1] - 1;
+            unionRank(subsets, A[i1], A[i2]);
+        }
+
+        // for each index
+        for (int i = 0; i < n; i++) {
+            if (A[i] != B[i]) {
+                // if values not equal and don't have same subset, cannot swap them
+                if (findRank(subsets, A[i]) != findRank(subsets, B[i]))
+                    return 0;
+            }
+        }
+
+        // can make swaps to get output permutation
+        return 1;
+    }
+
+    // util for find operation with rank and path compression
+    private static int findRank(Subset[] subsets, int i) {
+        // if not reached parent
+        if (subsets[i].parent != i)
+            // recursively find parent of parent and also compress the path for current node
+            subsets[i].parent = findRank(subsets, subsets[i].parent);
+
+        // return the compressed path parent for current node
+        return subsets[i].parent;
+    }
+
+    // util for union operation with rank and path compression
+    private static void unionRank(Subset[] subsets, int x, int y) {
+        // find parents of both nodes
+        int xFind = findRank(subsets, x);
+        int yFind = findRank(subsets, y);
+
+        // if parent(y) has higher rank, append parent(x) to parent(y)
+        if (subsets[xFind].rank < subsets[yFind].rank)
+            subsets[xFind].parent = yFind;
+            // else if parent(x) has higher rank, append parent(y) to parent(x)
+        else if (subsets[yFind].rank < subsets[xFind].rank)
+            subsets[yFind].parent = xFind;
+            // else equal ranks - append to any and increment its rank
+        else {
+            subsets[xFind].parent = yFind;
+            subsets[yFind].rank++;
+        }
+    }
+
+    // data class for union find with rank and path compression on disjoint sets
+    static class Subset {
+        // rank of the node
+        int rank;
+        // parent of the node
+        int parent;
+
+        Subset(int rank, int parent) {
+            this.rank = rank;
+            this.parent = parent;
+        }
+    }
+
     // https://www.interviewbit.com/problems/min-cost-path/
     static int minCostPath(int A, int B, String[] C) {
         // deque for 0-1 BFS
