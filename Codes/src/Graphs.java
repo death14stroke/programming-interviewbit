@@ -577,6 +577,148 @@ class Graphs {
         return true;
     }
 
+    // https://www.interviewbit.com/problems/word-search-board/
+    static int wordSearch(String[] board, String word) {
+        int m = board.length, n = board[0].length();
+
+        // for each cell on board
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                // if word can start with current cell, check if word found
+                if (board[i].charAt(j) == word.charAt(0) && wordSearchUtil(i, j, 0, word, board))
+                    return 1;
+            }
+        }
+
+        // word not found on board
+        return 0;
+    }
+
+    // util to check for word on board using DFS with repeated cells in path
+    private static boolean wordSearchUtil(int i, int j, int pos, String word, String[] board) {
+        int[][] dirs = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+        int m = board.length, n = board[0].length();
+
+        // reached last character in the word
+        if (pos == word.length() - 1)
+            return true;
+
+        // move to next character
+        pos++;
+
+        // for each direction
+        for (int[] dir : dirs) {
+            int x = i + dir[0], y = j + dir[1];
+
+            // if out of bounds or character doesn't word
+            if (x < 0 || x >= m || y < 0 || y >= n || word.charAt(pos) != board[x].charAt(y))
+                continue;
+
+            // recursively check if remaining word found in this direction
+            if (wordSearchUtil(x, y, pos, word, board))
+                return true;
+        }
+
+        // word not found
+        return false;
+    }
+
+    // https://www.interviewbit.com/problems/convert-sorted-list-to-binary-search-tree/
+    static Trees.TreeNode sortedListToBST(LinkedLists.ListNode head) {
+        // empty linked list
+        if (head == null)
+            return null;
+
+        // only one node in linked list
+        if (head.next == null)
+            return new Trees.TreeNode(head.val);
+
+        // prev - previous node of the middle node
+        LinkedLists.ListNode prev = null, slow = head, fast = head.next;
+
+        // tortoise and hare method to find middle node of linked-list
+        while (fast != null && fast.next != null) {
+            prev = slow;
+
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        // head of the second half of linked list
+        LinkedLists.ListNode head2 = slow.next;
+        // partition first half
+        if (prev != null)
+            prev.next = null;
+
+        // create new tree node
+        Trees.TreeNode node = new Trees.TreeNode(slow.val);
+
+        // if left half is null
+        if (slow == head)
+            node.left = null;
+            // else recursively build left subtree
+        else
+            node.left = sortedListToBST(head);
+
+        // recursively build right subtree
+        node.right = sortedListToBST(head2);
+
+        return node;
+    }
+
+    // https://www.interviewbit.com/problems/knight-on-chess-board/
+    static int minMovesForKnight(int A, int B, int C, int D, int E, int F) {
+        // 8 directions for the knight
+        int[][] dirs = {{2, 1}, {-2, 1}, {2, -1}, {-2, -1}, {1, 2}, {1, -2}, {-1, 2}, {-1, -2}};
+
+        // queue for BFS
+        Queue<ChessNode> q = new LinkedList<>();
+        q.add(new ChessNode(C, D, 0));
+
+        // visited array for BFS
+        boolean[][] visited = new boolean[A + 1][B + 1];
+        visited[C][D] = true;
+
+        // perform BFS
+        while (!q.isEmpty()) {
+            ChessNode front = q.poll();
+
+            // reached destination - return the distance to reach here
+            if (front.x == E && front.y == F)
+                return front.dist;
+
+            // for each direction
+            for (int[] dir : dirs) {
+                int x = front.x + dir[0], y = front.y + dir[1];
+
+                // if out of bounds or already visited
+                if (x < 1 || x > A || y < 1 || y > B || visited[x][y])
+                    continue;
+
+                // add new point to queue with incremented distance and mark as visited
+                q.add(new ChessNode(x, y, front.dist + 1));
+                visited[x][y] = true;
+            }
+        }
+
+        // cannot reach destination
+        return -1;
+    }
+
+    // data class for Node on chess board
+    static class ChessNode {
+        // x, y coordinates on the board
+        int x, y;
+        // distance to reach this node from source node
+        int dist;
+
+        ChessNode(int x, int y, int dist) {
+            this.x = x;
+            this.y = y;
+            this.dist = dist;
+        }
+    }
+
     // https://www.interviewbit.com/problems/path-in-directed-graph/
     @SuppressWarnings("unchecked")
     static int isPath(int A, int[][] B) {
