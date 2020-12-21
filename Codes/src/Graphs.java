@@ -870,6 +870,108 @@ class Graphs {
         return true;
     }
 
+    // https://www.interviewbit.com/problems/stepping-numbers/
+    static ArrayList<Integer> steppingNumbers(int A, int B) {
+        ArrayList<Integer> res = new ArrayList<>();
+
+        // queue for BFS
+        Queue<Integer> q = new LinkedList<>();
+        // 0 to 9 will be the first 10 stepping numbers
+        for (int i = 0; i <= 9; i++)
+            q.add(i);
+
+        // for each number in queue
+        while (!q.isEmpty()) {
+            int num = q.poll();
+
+            // if in range, add to result
+            if (num >= A && num <= B)
+                res.add(num);
+
+            // if 0, cannot form new numbers or if out of range, no use in forming new numbers
+            if (num == 0 || num > B)
+                continue;
+
+            // last digit in current number
+            int digit = num % 10;
+            // new number with unit's digit one less than current number
+            int num1 = num * 10 + (digit - 1);
+            // new number with unit's digit one more than current number
+            int num2 = num * 10 + (digit + 1);
+
+            // for 0, can only add one
+            if (digit == 0)
+                q.add(num2);
+                // for 9, can only subtract one
+            else if (digit == 9)
+                q.add(num1);
+                // subtract one and add one to the last digit
+            else {
+                q.add(num1);
+                q.add(num2);
+            }
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/capture-regions-on-board/
+    @SuppressWarnings("ForLoopReplaceableByForEach")
+    static void captureRegions(ArrayList<ArrayList<Character>> A) {
+        int m = A.size(), n = A.get(0).size();
+
+        // mark each 'O' as '-'
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (A.get(i).get(j) == 'O')
+                    A.get(i).set(j, '-');
+            }
+        }
+
+        // start BFS from each '-' on the four boundaries and mark them as 'O' again
+        for (int i = 0; i < m; i++) {
+            if (A.get(i).get(0) == '-')
+                captureRegionsUtil(i, 0, A, m, n);
+            if (A.get(i).get(n - 1) == '-')
+                captureRegionsUtil(i, n - 1, A, m, n);
+        }
+
+        for (int j = 0; j < n; j++) {
+            if (A.get(0).get(j) == '-')
+                captureRegionsUtil(0, j, A, m, n);
+            if (A.get(m - 1).get(j) == '-')
+                captureRegionsUtil(m - 1, j, A, m, n);
+        }
+
+        // mark all remaining '-' in the middle as 'X' - captured regions
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (A.get(i).get(j) == '-')
+                    A.get(i).set(j, 'X');
+            }
+        }
+    }
+
+    // util to mark '-' as 'O' on board using BFS
+    private static void captureRegionsUtil(int i, int j, ArrayList<ArrayList<Character>> A, int m, int n) {
+        // mark current position as 'O'
+        A.get(i).set(j, 'O');
+
+        int[][] dirs = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+
+        // for each direction
+        for (int[] dir : dirs) {
+            int x = i + dir[0], y = j + dir[1];
+
+            // if out of bounds or not '-'
+            if (x < 0 || x >= m || y < 0 || y >= n || A.get(x).get(y) != '-')
+                continue;
+
+            // recursively mark as 'O'
+            captureRegionsUtil(x, y, A, m, n);
+        }
+    }
+
     // https://www.interviewbit.com/problems/word-search-board/
     static int wordSearch(String[] board, String word) {
         int m = board.length, n = board[0].length();

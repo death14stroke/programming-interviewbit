@@ -1,10 +1,23 @@
+import java.util.ArrayList;
+
 public class Solution {
     public static void main(String[] args) {
-        int[] A = {11, 12};
-        int[][] B = {
-                {1, 2}
+        char[][] A = {
+                {'X', 'O', 'X'},
+                {'X', 'O', 'X'},
+                {'X', 'O', 'X'}
         };
 
-        System.out.println(Graphs.deleteEdge(A, B));
+        ArrayList<ArrayList<Character>> A1 = new ArrayList<>();
+        for (char[] c : A) {
+            ArrayList<Character> list = new ArrayList<>();
+            for (char c1 : c)
+                list.add(c1);
+            A1.add(list);
+        }
+
+        Graphs.captureRegions(A1);
+
+        System.out.println(A1);
     }
 }

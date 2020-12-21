@@ -319,6 +319,8 @@ Interview bit problems topic wise
 - [Delete Edge!](https://www.interviewbit.com/problems/delete-edge/)
 - [Cycle in Directed Graph](https://www.interviewbit.com/problems/cycle-in-directed-graph/)
 - [Two teams?](https://www.interviewbit.com/problems/two-teams/)
+- [Stepping Numbers](https://www.interviewbit.com/problems/stepping-numbers/)
+- [Capture Regions on Board](https://www.interviewbit.com/problems/capture-regions-on-board/)
 - [Word Search Board](https://www.interviewbit.com/problems/word-search-board/)
 - [Convert Sorted List to Binary Search Tree](https://www.interviewbit.com/problems/convert-sorted-list-to-binary-search-tree/)
 - [Knight On Chess Board](https://www.interviewbit.com/problems/knight-on-chess-board/)
