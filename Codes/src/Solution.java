@@ -1,11 +1,10 @@
 public class Solution {
     public static void main(String[] args) {
-        int[] A = {1, 3, 2, 4};
-        int[] B = {1, 4, 2, 3};
-        int[][] C = {
-                {2, 4}
+        int[] A = {11, 12};
+        int[][] B = {
+                {1, 2}
         };
 
-        System.out.println(Graphs.permutationSwaps(A, B, C));
+        System.out.println(Graphs.deleteEdge(A, B));
     }
 }

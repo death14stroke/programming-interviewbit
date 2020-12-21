@@ -1,6 +1,67 @@
 import java.util.*;
 
 class Graphs {
+    // https://www.interviewbit.com/problems/valid-path/
+    // problem statement wrong: (0, 0) is top left and (x, y) is bottom right
+    static String validPath(int x, int y, int N, int R, int[] A, int[] B) {
+        // visited array for BFS
+        boolean[][] visited = new boolean[x + 1][y + 1];
+
+        // for each point (i, j)
+        for (int i = 0; i <= x; i++) {
+            for (int j = 0; j <= y; j++) {
+                // for each circle
+                for (int k = 0; k < N; k++) {
+                    int x0 = A[k], y0 = B[k];
+
+                    // if (i, j) is in circle, mark (i, j) as visited
+                    if (isInCircle(i, j, x0, y0, R))
+                        visited[i][j] = true;
+                }
+            }
+        }
+
+        // queue for BFS
+        Queue<MatrixNode> q = new LinkedList<>();
+        // start with (0, 0)
+        q.add(new MatrixNode(0, 0));
+        visited[0][0] = true;
+
+        // 8 directions
+        int[][] dirs = {{0, 1}, {0, -1}, {-1, 0}, {1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+
+        // perform BFS
+        while (!q.isEmpty()) {
+            MatrixNode front = q.poll();
+
+            // reached destination
+            if (front.x == x && front.y == y)
+                return "YES";
+
+            // for each direction
+            for (int[] dir : dirs) {
+                int x1 = front.x + dir[0], y1 = front.y + dir[1];
+
+                // if out of bounds or already visited
+                if (x1 < 0 || x1 > x || y1 < 0 || y1 > y || visited[x1][y1])
+                    continue;
+
+                // add to queue for BFS
+                q.add(new MatrixNode(x1, y1));
+                // mark as visited
+                visited[x1][y1] = true;
+            }
+        }
+
+        // cannot reach destination
+        return "NO";
+    }
+
+    // util to check if (x, y) is in or on circle with center (x0, y0) and radius R
+    static boolean isInCircle(int x, int y, int x0, int y0, int R) {
+        return Math.pow(x - x0, 2) + Math.pow(y - y0, 2) <= R * R;
+    }
+
     // https://www.interviewbit.com/problems/region-in-binarymatrix/
     static int largestRegion(int[][] A) {
         int m = A.length, n = A[0].length;
@@ -563,6 +624,167 @@ class Graphs {
             // perform DFS
             blackShapesUtil(x, y, m, n, A, visited);
         }
+    }
+
+    // https://www.interviewbit.com/problems/largest-distance-between-nodes-of-a-tree/
+    @SuppressWarnings("unchecked")
+    static int largestDistance(int[] A) {
+        int n = A.length;
+
+        // create adjacency list
+        List<Integer>[] adj = new List[n];
+        for (int i = 0; i < n; i++)
+            adj[i] = new LinkedList<>();
+
+        // root of the tree
+        int root = 0;
+
+        for (int i = 0; i < n; i++) {
+            // add undirected edge to the graph
+            if (A[i] != -1) {
+                adj[i].add(A[i]);
+                adj[A[i]].add(i);
+            }
+            // mark root node
+            else {
+                root = i;
+            }
+        }
+
+        // find the last visited node in BFS starting from root node
+        int lastNode = findLastNode(root, adj);
+
+        // calculate the distance of last visited node in BFS starting from the previous result
+        return farthestNode(lastNode, adj);
+    }
+
+    // util to find the last visited node in BFS
+    private static int findLastNode(int root, List<Integer>[] adj) {
+        // last visited node
+        int lastNode = root;
+
+        // queue for BFS
+        Queue<Integer> q = new LinkedList<>();
+        q.add(root);
+
+        // visited array
+        boolean[] visited = new boolean[adj.length];
+        visited[root] = true;
+
+        // perform BFS
+        while (!q.isEmpty()) {
+            lastNode = q.poll();
+
+            // for each neighbour
+            for (int v : adj[lastNode]) {
+                // if not visited, mark visited and add to queue
+                if (!visited[v]) {
+                    visited[v] = true;
+                    q.add(v);
+                }
+            }
+        }
+
+        return lastNode;
+    }
+
+    // util to find the distance to the farthest node in BFS
+    private static int farthestNode(int start, List<Integer>[] adj) {
+        // farthest node
+        BFSNode front = new BFSNode(start, 0);
+
+        // queue for BFS
+        Queue<BFSNode> queue = new LinkedList<>();
+        queue.add(front);
+
+        // visited array
+        boolean[] visited = new boolean[adj.length];
+        visited[start] = true;
+
+        // perform BFS
+        while (!queue.isEmpty()) {
+            front = queue.poll();
+
+            // for each neighbour
+            for (int v : adj[front.label]) {
+                // if not visited, mark visited, update distance and add to queue
+                if (!visited[v]) {
+                    visited[v] = true;
+                    queue.add(new BFSNode(v, front.dist + 1));
+                }
+            }
+        }
+
+        // distance to the last node
+        return front.dist;
+    }
+
+    // data class for BFS node
+    static class BFSNode {
+        // label of the node
+        int label;
+        // distance from the root node
+        int dist;
+
+        BFSNode(int label, int dist) {
+            this.label = label;
+            this.dist = dist;
+        }
+    }
+
+    // https://www.interviewbit.com/problems/delete-edge/
+    private static int maxProduct;
+    private static final int p = 1000000007;
+
+    @SuppressWarnings("unchecked")
+    static int deleteEdge(int[] A, int[][] B) {
+        int n = A.length;
+
+        // create adjacency list for undirected tree
+        List<Integer>[] adj = new List[n + 1];
+        for (int i = 1; i <= n; i++)
+            adj[i] = new LinkedList<>();
+
+        for (int[] edge : B) {
+            int u = edge[0], v = edge[1];
+            adj[u].add(v);
+            adj[v].add(u);
+        }
+
+        // calculate total sum of all node weights
+        long sum = 0;
+        for (int w : A)
+            sum += w;
+
+        // maximum product of sum of two subtrees
+        maxProduct = 0;
+
+        // DFS util to calculate subtree sum at each node
+        deleteEdgeUtil(1, -1, adj, sum, A);
+
+        return maxProduct;
+    }
+
+    // util to calculate subtree sum at each node and maximize result
+    private static void deleteEdgeUtil(int u, int parent, List<Integer>[] adj, long sum, int[] A) {
+        // initialize current subtree sum
+        int x = A[u - 1];
+
+        // for each neighbour
+        for (int v : adj[u]) {
+            // if not parent node, recursively calculate subtree sum and append the sum to current node
+            if (v != parent) {
+                deleteEdgeUtil(v, u, adj, sum, A);
+                x += A[v - 1];
+            }
+        }
+
+        // update subtree sum for current node
+        A[u - 1] = x;
+
+        // if not root node, update result
+        if (u != 1)
+            maxProduct = (int) Math.max(maxProduct, (x * (sum - x)) % p);
     }
 
     // https://www.interviewbit.com/problems/cycle-in-directed-graph/

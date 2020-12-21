@@ -304,6 +304,7 @@ Interview bit problems topic wise
 
 ## Graph Data Structure & Algorithms
 
+- [Valid Path](https://www.interviewbit.com/problems/valid-path/)
 - [Region in BinaryMatrix](https://www.interviewbit.com/problems/region-in-binarymatrix/)
 - [Snake Ladder Problem!](https://www.interviewbit.com/problems/snake-ladder-problem/)
 - [Level Order](https://www.interviewbit.com/problems/level-order/)
@@ -314,6 +315,8 @@ Interview bit problems topic wise
 - [Possibility of finishing all courses given pre-requisites](https://www.interviewbit.com/problems/possibility-of-finishing-all-courses-given-prerequisites/)
 - [Cycle in Undirected Graph](https://www.interviewbit.com/problems/cycle-in-undirected-graph/)
 - [Black Shapes](https://www.interviewbit.com/problems/black-shapes/)
+- [Largest Distance between nodes of a Tree](https://www.interviewbit.com/problems/largest-distance-between-nodes-of-a-tree/)
+- [Delete Edge!](https://www.interviewbit.com/problems/delete-edge/)
 - [Cycle in Directed Graph](https://www.interviewbit.com/problems/cycle-in-directed-graph/)
 - [Two teams?](https://www.interviewbit.com/problems/two-teams/)
 - [Word Search Board](https://www.interviewbit.com/problems/word-search-board/)
