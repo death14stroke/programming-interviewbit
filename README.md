@@ -323,7 +323,10 @@ Interview bit problems topic wise
 - [Capture Regions on Board](https://www.interviewbit.com/problems/capture-regions-on-board/)
 - [Word Search Board](https://www.interviewbit.com/problems/word-search-board/)
 - [Convert Sorted List to Binary Search Tree](https://www.interviewbit.com/problems/convert-sorted-list-to-binary-search-tree/)
+- [Sum Of Fibonacci Numbers](https://www.interviewbit.com/problems/sum-of-fibonacci-numbers/)
+- [Useful Extra Edges](https://www.interviewbit.com/problems/useful-extra-edges/)
 - [Knight On Chess Board](https://www.interviewbit.com/problems/knight-on-chess-board/)
+- [Clone Graph](https://www.interviewbit.com/problems/clone-graph/)
 - [Path in Directed Graph](https://www.interviewbit.com/problems/path-in-directed-graph/)
 
 ## Dynamic Programming

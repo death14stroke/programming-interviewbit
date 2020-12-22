@@ -1061,6 +1061,54 @@ class Graphs {
         return node;
     }
 
+    // https://www.interviewbit.com/problems/sum-of-fibonacci-numbers/
+    static int sumOfFibonacci(int n) {
+        // base case
+        if (n == 1)
+            return 1;
+
+        // get all fibonacci numbers <= n
+        List<Integer> fib = fibNumbersLessThanEqual(n);
+
+        // minimum fibonacci numbers required
+        int cnt = 0;
+        // greedily start from largest possible fib number
+        int pos = fib.size() - 1;
+
+        // while the sum is not satisfied
+        while (n > 0) {
+            // update count
+            cnt += (n / fib.get(pos));
+            // update remaining sum
+            n %= fib.get(pos);
+            // take next largest fib number
+            pos--;
+        }
+
+        return cnt;
+    }
+
+    // util to get all fibonacci numbers less than equal to n
+    private static List<Integer> fibNumbersLessThanEqual(int n) {
+        List<Integer> fib = new ArrayList<>();
+        // first 2 fib numbers
+        fib.add(1);
+        fib.add(1);
+
+        int t1, t2 = 1, t3 = 2;
+
+        // keep adding fib numbers till they are <= n
+        while (t3 <= n) {
+            fib.add(t3);
+
+            t1 = t2;
+            t2 = t3;
+            t3 = t1 + t2;
+        }
+
+        return fib;
+    }
+
     // https://www.interviewbit.com/problems/knight-on-chess-board/
     static int minMovesForKnight(int A, int B, int C, int D, int E, int F) {
         // 8 directions for the knight
@@ -1111,6 +1159,143 @@ class Graphs {
             this.x = x;
             this.y = y;
             this.dist = dist;
+        }
+    }
+
+    // https://www.interviewbit.com/problems/useful-extra-edges/
+    @SuppressWarnings("unchecked")
+    static int usefulExtraEdges(int A, int[][] B, int C, int D, int[][] E) {
+        // create adjacency list for directed graph
+        LinkedList<Node>[] adj = new LinkedList[A + 1];
+        for (int i = 1; i <= A; i++)
+            adj[i] = new LinkedList<>();
+
+        for (int[] edge : B) {
+            int u = edge[0], v = edge[1], w = edge[2];
+            adj[u].add(new Node(v, w));
+        }
+
+        // calculate shortest distance without any edges from E
+        int minDistance = shortestPathDistance(A, C, D, adj);
+
+        // for each edge in E
+        for (int[] edge : E) {
+            int u = edge[0], v = edge[1], w = edge[2];
+
+            if (u < 1 || u > A || v < 1 || v > A)
+                continue;
+
+            // if valid edge, add to graph as undirected edge
+            adj[u].add(new Node(v, w));
+            adj[v].add(new Node(u, w));
+
+            // recalculate shortest distance and update result
+            minDistance = Math.min(minDistance, shortestPathDistance(A, C, D, adj));
+
+            // remove this edge from graph
+            adj[u].removeLast();
+            adj[v].removeLast();
+        }
+
+        // return min distance if found else -1
+        return minDistance == Integer.MAX_VALUE ? -1 : minDistance;
+    }
+
+    // util to calculate shortest distance using Dijkstra
+    private static int shortestPathDistance(int A, int src, int dest, LinkedList<Node>[] adj) {
+        // priority queue for getting nearest node
+        PriorityQueue<Node> pq = new PriorityQueue<>(Comparator.comparingInt(p -> p.weight));
+        pq.add(new Node(src, 0));
+
+        // distance array initialize with infinite
+        int[] dist = new int[A + 1];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        // source to source distance is 0
+        dist[src] = 0;
+
+        // set to keep track of visited nodes
+        Set<Integer> set = new HashSet<>();
+
+        // loop till all nodes not visited and queue is not empty
+        while (set.size() != A && !pq.isEmpty()) {
+            Node front = pq.poll();
+            int u = front.label;
+
+            // add current node to visited set
+            set.add(u);
+
+            // for each neighbour
+            for (Node node : adj[u]) {
+                int v = node.label;
+                // if visited already
+                if (set.contains(v))
+                    continue;
+
+                // relax current edge
+                if (dist[v] > dist[u] + node.weight)
+                    dist[v] = dist[u] + node.weight;
+
+                // add updated node to priority queue
+                pq.add(new Node(v, dist[v]));
+            }
+        }
+
+        // distance from src to dest
+        return dist[dest];
+    }
+
+    // util class node for shortest path
+    static class Node {
+        // label of the node
+        int label;
+        // weight of the edge connecting
+        int weight;
+
+        Node(int label, int weight) {
+            this.label = label;
+            this.weight = weight;
+        }
+    }
+
+    // https://www.interviewbit.com/problems/clone-graph/
+    static UndirectedGraphNode cloneGraph(UndirectedGraphNode src) {
+        // map for mapping original nodes to cloned nodes
+        Map<UndirectedGraphNode, UndirectedGraphNode> map = new HashMap<>();
+        map.put(src, new UndirectedGraphNode(src.label));
+
+        // queue for BFS
+        Queue<UndirectedGraphNode> q = new LinkedList<>();
+        q.add(src);
+
+        // perform BFS
+        while (!q.isEmpty()) {
+            UndirectedGraphNode front = q.poll();
+
+            // for each neighbor
+            for (UndirectedGraphNode node : front.neighbors) {
+                // if node not cloned before, clone it and add original node to queue for BFS
+                if (!map.containsKey(node)) {
+                    map.put(node, new UndirectedGraphNode(node.label));
+                    q.add(node);
+                }
+
+                // update neighbors of cloned front node
+                map.get(front).neighbors.add(map.get(node));
+            }
+        }
+
+        // clone of the src node
+        return map.get(src);
+    }
+
+    // data class for undirected graph node
+    static class UndirectedGraphNode {
+        int label;
+        List<UndirectedGraphNode> neighbors;
+
+        UndirectedGraphNode(int label) {
+            this.label = label;
+            neighbors = new LinkedList<>();
         }
     }
 

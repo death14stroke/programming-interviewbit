@@ -1,23 +1,16 @@
-import java.util.ArrayList;
-
 public class Solution {
     public static void main(String[] args) {
-        char[][] A = {
-                {'X', 'O', 'X'},
-                {'X', 'O', 'X'},
-                {'X', 'O', 'X'}
+        int A = 4;
+        int[][] B = {
+                {1, 2, 1},
+                {2, 3, 2},
+                {3, 1, 4}
+        };
+        int C = 1, D = 4;
+        int[][] E = {
+                {1, 3, 2}
         };
 
-        ArrayList<ArrayList<Character>> A1 = new ArrayList<>();
-        for (char[] c : A) {
-            ArrayList<Character> list = new ArrayList<>();
-            for (char c1 : c)
-                list.add(c1);
-            A1.add(list);
-        }
-
-        Graphs.captureRegions(A1);
-
-        System.out.println(A1);
+        System.out.println(Graphs.usefulExtraEdges(A, B, C, D, E));
     }
 }
