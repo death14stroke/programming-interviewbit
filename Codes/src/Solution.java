@@ -1,16 +1,13 @@
 public class Solution {
     public static void main(String[] args) {
-        int A = 4;
-        int[][] B = {
-                {1, 2, 1},
-                {2, 3, 2},
-                {3, 1, 4}
-        };
-        int C = 1, D = 4;
-        int[][] E = {
-                {1, 3, 2}
+        int[][] A = {
+                {1, 2, 2, 3, 5},
+                {3, 2, 3, 4, 4},
+                {2, 4, 5, 3, 1},
+                {6, 7, 1, 4, 5},
+                {5, 1, 1, 2, 4}
         };
 
-        System.out.println(Graphs.usefulExtraEdges(A, B, C, D, E));
+        System.out.println(Graphs.waterFlow(A));
     }
 }

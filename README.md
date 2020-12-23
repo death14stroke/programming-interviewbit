@@ -328,6 +328,8 @@ Interview bit problems topic wise
 - [Knight On Chess Board](https://www.interviewbit.com/problems/knight-on-chess-board/)
 - [Clone Graph](https://www.interviewbit.com/problems/clone-graph/)
 - [Path in Directed Graph](https://www.interviewbit.com/problems/path-in-directed-graph/)
+- [Path with good nodes!](https://www.interviewbit.com/problems/path-with-good-nodes/)
+- [Water Flow](https://www.interviewbit.com/problems/water-flow/)
 
 ## Dynamic Programming
 

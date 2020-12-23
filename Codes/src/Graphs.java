@@ -1333,4 +1333,137 @@ class Graphs {
         // no path found to node A
         return false;
     }
+
+    // https://www.interviewbit.com/problems/path-with-good-nodes/
+    private static int goodPaths;
+
+    @SuppressWarnings("unchecked")
+    static int pathWithGoodNodes(int[] A, int[][] B, int C) {
+        int n = A.length;
+
+        // create adjacency list for undirected tree
+        List<Integer>[] adj = new List[n + 1];
+        for (int i = 1; i <= n; i++)
+            adj[i] = new LinkedList<>();
+
+        for (int[] edge : B) {
+            int u = edge[0], v = edge[1];
+            adj[u].add(v);
+            adj[v].add(u);
+        }
+
+        // number of good paths found
+        goodPaths = 0;
+
+        // start DFS from root (1) to count good paths
+        pathWithGoodNodesUtil(1, -1, adj, A, C);
+
+        return goodPaths;
+    }
+
+    // util to check for good root to leaf paths using DFS
+    private static void pathWithGoodNodesUtil(int u, int parent, List<Integer>[] adj, int[] A, int goodNodes) {
+        // good node - update count
+        if (A[u - 1] == 1)
+            goodNodes--;
+
+        // exhausted all good nodes
+        if (goodNodes < 0)
+            return;
+
+        // if leaf node, update good paths count
+        if (adj[u].size() == 1 && adj[u].get(0) == parent) {
+            goodPaths++;
+            return;
+        }
+
+        // for each neighbour
+        for (int v : adj[u]) {
+            // if not parent, recursively perform DFS to find good paths
+            if (v != parent)
+                pathWithGoodNodesUtil(v, u, adj, A, goodNodes);
+        }
+    }
+
+    // https://www.interviewbit.com/problems/water-flow/
+    // wrong problem statement - river flows to another cell in opposite direction,
+    // i.e if value >= current in new cell
+    static int waterFlow(int[][] A) {
+        int m = A.length, n = A[0].length;
+        // visited array for both rivers:
+        // 0 - not visited, 1 - river1, 2 - river2, 3 - both rivers
+        int[][] vis = new int[m][n];
+
+        // top row is river 1
+        for (int j = 0; j < n; j++) {
+            // perform BFS if cell not visited already
+            if (vis[0][j] == 0)
+                waterFlowUtil(0, j, A, vis, 1);
+        }
+
+        // left row is river 1
+        for (int i = 0; i < m; i++) {
+            // perform BFS if cell not visited already
+            if (vis[i][0] == 0)
+                waterFlowUtil(i, 0, A, vis, 1);
+        }
+
+        // bottom row is river 2
+        for (int j = 0; j < n; j++) {
+            // perform BFS if cell not visited or only river 1 visited
+            if (vis[m - 1][j] <= 1)
+                waterFlowUtil(m - 1, j, A, vis, 2);
+        }
+
+        // right row is river 2
+        for (int i = 0; i < m; i++) {
+            // perform BFS if cell not visited or only river 1 visited
+            if (vis[i][n - 1] <= 1)
+                waterFlowUtil(i, n - 1, A, vis, 2);
+        }
+
+        int res = 0;
+
+        // for each cell
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                // if visited by both rivers, update result count
+                if (vis[i][j] == 3)
+                    res++;
+            }
+        }
+
+        return res;
+    }
+
+    // util to visit cells by river using BFS
+    private static void waterFlowUtil(int i, int j, int[][] A, int[][] vis, int river) {
+        int m = A.length, n = A[0].length;
+        int[][] dirs = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+
+        // queue for BFS
+        Queue<MatrixNode> q = new LinkedList<>();
+        q.add(new MatrixNode(i, j));
+
+        // mark current cell as visited by river
+        vis[i][j] += river;
+
+        while (!q.isEmpty()) {
+            MatrixNode front = q.poll();
+
+            // for each direction
+            for (int[] dir : dirs) {
+                int x = front.x + dir[0], y = front.y + dir[1];
+
+                // if out of bounds or flow is less than current flow or already visited by current river
+                if (x < 0 || x >= m || y < 0 || y >= n || A[x][y] < A[front.x][front.y] || vis[x][y] >= river)
+                    continue;
+
+                // add to queue for BFS
+                q.add(new MatrixNode(x, y));
+                // mark as visited by river
+                vis[x][y] += river;
+            }
+        }
+    }
 }
