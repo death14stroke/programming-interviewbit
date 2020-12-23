@@ -203,7 +203,7 @@ class Graphs {
     }
 
     // data class for each position on the board
-    static class GameNode {
+    private static class GameNode {
         // vertex on the board
         int v;
         // distance currently travelled
@@ -253,7 +253,7 @@ class Graphs {
     }
 
     /// data class for BFS node
-    static class StringNode {
+    private static class StringNode {
         // current character in the result string
         char c;
         // remainder of the string formed till now
@@ -327,7 +327,7 @@ class Graphs {
     }
 
     // data class for union find with rank and path compression on disjoint sets
-    static class Subset {
+    private static class Subset {
         // rank of the node
         int rank;
         // parent of the node
@@ -396,7 +396,7 @@ class Graphs {
     }
 
     // data class for each position in the matrix
-    static class MatrixNode {
+    private static class MatrixNode {
         int x, y;
 
         MatrixNode(int x, int y) {
@@ -720,7 +720,7 @@ class Graphs {
     }
 
     // data class for BFS node
-    static class BFSNode {
+    private static class BFSNode {
         // label of the node
         int label;
         // distance from the root node
@@ -1149,7 +1149,7 @@ class Graphs {
     }
 
     // data class for Node on chess board
-    static class ChessNode {
+    private static class ChessNode {
         // x, y coordinates on the board
         int x, y;
         // distance to reach this node from source node
@@ -1245,7 +1245,7 @@ class Graphs {
     }
 
     // util class node for shortest path
-    static class Node {
+    private static class Node {
         // label of the node
         int label;
         // weight of the edge connecting
@@ -1257,7 +1257,215 @@ class Graphs {
         }
     }
 
+    // https://www.interviewbit.com/problems/word-ladder-i/
+    static int wordLadder1(String A, String B, String[] C) {
+        // same source and destination (initial distance is 1 - question requirement)
+        if (A.equals(B))
+            return 1;
+
+        // word length
+        int n = A.length();
+        // map for storing each intermediate string and
+        // list of original strings from which it can be reached in one step
+        Map<String, List<String>> map = new HashMap<>();
+
+        // for source string
+        mapIntermediateStrings(A, map);
+        // for destination string
+        mapIntermediateStrings(B, map);
+        // for each string in dictionary
+        for (String str : C)
+            mapIntermediateStrings(str, map);
+
+        // visited set for string
+        Set<String> visited = new HashSet<>();
+        // mark source as visited
+        visited.add(A);
+
+        // queue for BFS. Take initial distance as 1 (question requirement)
+        Queue<WordNode> q = new LinkedList<>();
+        q.add(new WordNode(A, 1));
+
+        // perform BFS
+        while (!q.isEmpty()) {
+            WordNode front = q.poll();
+            // reached destination
+            if (front.word.equals(B))
+                return front.dist;
+
+            StringBuilder builder = new StringBuilder(front.word);
+            // for the current string
+            for (int i = 0; i < n; i++) {
+                // generate intermediate string at position i
+                builder.setCharAt(i, '*');
+
+                String key = builder.toString();
+                // for each original string mapped to this intermediate string
+                for (String str : map.getOrDefault(key, new LinkedList<>())) {
+                    // if not visited, mark visited and add to queue for BFS
+                    if (!visited.contains(str)) {
+                        q.add(new WordNode(str, front.dist + 1));
+                        visited.add(str);
+                    }
+                }
+
+                builder.setCharAt(i, front.word.charAt(i));
+            }
+        }
+
+        // could not transform A to B
+        return 0;
+    }
+
+    // util to map intermediate strings of str to str
+    private static void mapIntermediateStrings(String str, Map<String, List<String>> map) {
+        StringBuilder builder = new StringBuilder(str);
+
+        for (int i = 0; i < str.length(); i++) {
+            // generate intermediate string at position i
+            builder.setCharAt(i, '*');
+
+            String key = builder.toString();
+            // add to map of intermediate string and its list of original strings
+            map.putIfAbsent(key, new LinkedList<>());
+            map.get(key).add(str);
+
+            builder.setCharAt(i, str.charAt(i));
+        }
+    }
+
+    // util class for storing word and its distance
+    private static class WordNode {
+        String word;
+        int dist;
+
+        WordNode(String word, int dist) {
+            this.word = word;
+            this.dist = dist;
+        }
+    }
+
+    // https://www.interviewbit.com/problems/word-ladder-ii/
+    static ArrayList<ArrayList<String>> wordLadder2(String start, String end, ArrayList<String> dict) {
+        // length of each string
+        int n = start.length();
+        // map for storing each intermediate string and
+        // list of original strings from which it can be reached in one step
+        Map<String, List<String>> map = new HashMap<>();
+
+        // dictionary set as words can repeat in dictionary
+        Set<String> dictSet = new HashSet<>(dict);
+        for (String str : dictSet)
+            mapIntermediateStrings(str, map);
+
+        // visited strings set
+        Set<String> visited = new HashSet<>();
+        visited.add(start);
+
+        // shortest path distance to end
+        int distance = -1;
+
+        // queue for BFS
+        Queue<WordNode> q = new LinkedList<>();
+        q.add(new WordNode(start, 0));
+
+        while (!q.isEmpty()) {
+            WordNode front = q.poll();
+            // reached end
+            if (front.word.equals(end)) {
+                distance = front.dist;
+                break;
+            }
+
+            StringBuilder builder = new StringBuilder(front.word);
+            // for each intermediate string formed from current word
+            for (int i = 0; i < n; i++) {
+                builder.setCharAt(i, '*');
+
+                String key = builder.toString();
+                // for each original string that can form this intermediate string
+                for (String str : map.getOrDefault(key, new LinkedList<>())) {
+                    // if not visited, mark visited and add to queue for BFS
+                    if (!visited.contains(str)) {
+                        visited.add(str);
+                        q.add(new WordNode(str, front.dist + 1));
+                    }
+                }
+
+                builder.setCharAt(i, front.word.charAt(i));
+            }
+        }
+
+        ArrayList<ArrayList<String>> res = new ArrayList<>();
+        // if cannot transform start to end
+        if (distance == -1)
+            return res;
+
+        // clear visited set
+        visited.clear();
+        // perform DFS till depth = distance to get all possible shortest paths
+        wordLadder2Util(start, end, distance, map, visited, new ArrayList<>(), res);
+
+        return res;
+    }
+
+    // util to find all paths to end upto depth = distance using DFS
+    private static void wordLadder2Util(String word, String dest, int distance,
+                                        Map<String, List<String>> map, Set<String> visited,
+                                        ArrayList<String> curr, ArrayList<ArrayList<String>> res) {
+        // add current word to path
+        curr.add(word);
+
+        // reached end - add current path to result and backtrack
+        if (word.equals(dest)) {
+            res.add(new ArrayList<>(curr));
+            curr.remove(curr.size() - 1);
+            return;
+        }
+
+        // update distance
+        distance--;
+        // if depth exhausted, backtrack
+        if (distance < 0) {
+            curr.remove(curr.size() - 1);
+            return;
+        }
+
+        // mark current word as visited
+        visited.add(word);
+
+        StringBuilder builder = new StringBuilder(word);
+        // for each intermediate string formed from current word
+        for (int i = 0; i < word.length(); i++) {
+            builder.setCharAt(i, '*');
+
+            String key = builder.toString();
+            // for each original string that can form this intermediate string
+            for (String str : map.getOrDefault(key, new LinkedList<>())) {
+                // if not visited, explore using DFS
+                if (!visited.contains(str))
+                    wordLadder2Util(str, dest, distance, map, visited, curr, res);
+            }
+
+            builder.setCharAt(i, word.charAt(i));
+        }
+
+        // path not found, backtrack
+        curr.remove(curr.size() - 1);
+        visited.remove(word);
+    }
+
     // https://www.interviewbit.com/problems/clone-graph/
+    static class UndirectedGraphNode {
+        int label;
+        List<UndirectedGraphNode> neighbors;
+
+        UndirectedGraphNode(int label) {
+            this.label = label;
+            neighbors = new LinkedList<>();
+        }
+    }
+
     static UndirectedGraphNode cloneGraph(UndirectedGraphNode src) {
         // map for mapping original nodes to cloned nodes
         Map<UndirectedGraphNode, UndirectedGraphNode> map = new HashMap<>();
@@ -1286,17 +1494,6 @@ class Graphs {
 
         // clone of the src node
         return map.get(src);
-    }
-
-    // data class for undirected graph node
-    static class UndirectedGraphNode {
-        int label;
-        List<UndirectedGraphNode> neighbors;
-
-        UndirectedGraphNode(int label) {
-            this.label = label;
-            neighbors = new LinkedList<>();
-        }
     }
 
     // https://www.interviewbit.com/problems/path-in-directed-graph/

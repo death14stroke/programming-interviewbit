@@ -1,13 +1,15 @@
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class Solution {
     public static void main(String[] args) {
-        int[][] A = {
-                {1, 2, 2, 3, 5},
-                {3, 2, 3, 4, 4},
-                {2, 4, 5, 3, 1},
-                {6, 7, 1, 4, 5},
-                {5, 1, 1, 2, 4}
-        };
+        String A = "hit";
+        String B = "cog";
+        String[] C1 = {"hot", "dot", "dog", "lot", "log"};
 
-        System.out.println(Graphs.waterFlow(A));
+        ArrayList<String> C = new ArrayList<>();
+        Collections.addAll(C, C1);
+
+        System.out.println(Graphs.wordLadder2(A, B, C));
     }
 }
