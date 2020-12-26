@@ -15,8 +15,10 @@ class Graphs {
                     int x0 = A[k], y0 = B[k];
 
                     // if (i, j) is in circle, mark (i, j) as visited
-                    if (isInCircle(i, j, x0, y0, R))
+                    if (isInCircle(i, j, x0, y0, R)) {
                         visited[i][j] = true;
+                        break;
+                    }
                 }
             }
         }
@@ -57,6 +59,16 @@ class Graphs {
         return "NO";
     }
 
+    // data class for each position in the matrix
+    private static class MatrixNode {
+        int x, y;
+
+        MatrixNode(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
     // util to check if (x, y) is in or on circle with center (x0, y0) and radius R
     static boolean isInCircle(int x, int y, int x0, int y0, int R) {
         return Math.pow(x - x0, 2) + Math.pow(y - y0, 2) <= R * R;
@@ -81,10 +93,6 @@ class Graphs {
 
     // util to count no of nodes traversed in dfs
     private static int dfs(int i, int j, int[][] A) {
-        // already visited node
-        if (A[i][j] == 0)
-            return 0;
-
         // mark current node as visited
         A[i][j] = 0;
 
@@ -98,7 +106,7 @@ class Graphs {
         for (int[] dir : dirs) {
             int x = i + dir[0], y = j + dir[1];
             // if path does not exist
-            if (x < 0 || x >= m || y < 0 || y >= n)
+            if (x < 0 || x >= m || y < 0 || y >= n || A[x][y] == 0)
                 continue;
 
             // add no of nodes traversed in this direction to total
@@ -106,6 +114,72 @@ class Graphs {
         }
 
         return noOfNodes;
+    }
+
+    // https://www.interviewbit.com/problems/snake-ladder-problem/
+    static int snakesAndLadders(int[][] A, int[][] B) {
+        // create edge map for all the ladders and snakes
+        int[] edges = new int[101];
+        for (int[] ladder : A)
+            edges[ladder[0]] = ladder[1];
+        for (int[] snake : B)
+            edges[snake[0]] = snake[1];
+
+        // visited array for BFS
+        boolean[] visited = new boolean[101];
+        // queue for BFS
+        Queue<GameNode> q = new LinkedList<>();
+
+        // start from 1
+        q.add(new GameNode(1, 0));
+        visited[1] = true;
+
+        // since in the board game all edges will have equal weight, BFS will give us the shortest path
+        while (!q.isEmpty()) {
+            GameNode front = q.poll();
+            int v = front.v;
+            // reached end
+            if (v == 100)
+                return front.dist;
+
+            // try all 6 possible numbers on dice
+            for (int i = 1; i <= 6; i++) {
+                int j = v + i;
+                // not valid roll
+                if (j > 100)
+                    break;
+                // already visited
+                if (visited[j])
+                    continue;
+
+                // mark current node as visited
+                visited[j] = true;
+
+                // if any ladder or snake present, move up/down along that and mark visited
+                if (edges[j] != 0) {
+                    j = edges[j];
+                    visited[j] = true;
+                }
+
+                q.add(new GameNode(j, front.dist + 1));
+            }
+        }
+
+        // solution not found
+        return -1;
+    }
+
+    // data class for each position on the board
+    private static class GameNode {
+        // vertex on the board
+        int v;
+        // distance currently travelled
+        int dist;
+
+        GameNode(int v, int dist) {
+            this.v = v;
+            this.dist = dist;
+        }
     }
 
     // https://www.interviewbit.com/problems/level-order/
@@ -143,78 +217,13 @@ class Graphs {
         return res;
     }
 
-    // https://www.interviewbit.com/problems/snake-ladder-problem/
-    static int snakesAndLadders(int[][] A, int[][] B) {
-        // create edge map for all the ladders and snakes
-        int[] edges = new int[101];
-        for (int[] ladder : A)
-            edges[ladder[0]] = ladder[1];
-        for (int[] snake : B)
-            edges[snake[0]] = snake[1];
-
-        // visited array for BFS
-        boolean[] visited = new boolean[101];
-        // queue for BFS
-        Queue<GameNode> q = new LinkedList<>();
-        // flag to check whether solution was found or not
-        boolean isValid = false;
-
-        // start from 1
-        GameNode front = new GameNode();
-        front.v = 1;
-        front.dist = 0;
-
-        visited[1] = true;
-        q.add(front);
-
-        // since in the board game all edges will have equal weight, BFS will give us the shortest path
-        while (!q.isEmpty()) {
-            front = q.poll();
-            int v = front.v;
-
-            // reached end. Mark valid flag as true and return
-            if (v == 100) {
-                isValid = true;
-                break;
-            }
-
-            // try all 6 possible numbers on dice
-            for (int j = v + 1; j <= (v + 6) && j <= 100; j++) {
-                if (visited[j])
-                    continue;
-
-                // visit new node
-                GameNode node = new GameNode();
-                node.dist = front.dist + 1;
-                visited[j] = true;
-
-                // if any ladder or snake present, move up/down along that
-                if (edges[j] != 0)
-                    node.v = edges[j];
-                else
-                    node.v = j;
-
-                q.add(node);
-            }
-        }
-
-        // if solution not found return -1
-        return isValid ? front.dist : -1;
-    }
-
-    // data class for each position on the board
-    private static class GameNode {
-        // vertex on the board
-        int v;
-        // distance currently travelled
-        int dist;
-    }
-
     // https://www.interviewbit.com/problems/smallest-multiple-with-0-and-1/
     static String smallestMultiple(int n) {
-        // base case
+        // base cases
         if (n == 0)
             return "0";
+        if (n == 1)
+            return "1";
 
         // start BFS from "1"
         Queue<StringNode> q = new LinkedList<>();
@@ -222,6 +231,7 @@ class Graphs {
         // set to check if remainder is seen or not. A smaller string with same remainder will generate
         // all the possible remainders that can be generated by a larger string with same remainder
         boolean[] remainderSet = new boolean[n];
+        remainderSet[1] = true;
         // last digit in the result string
         StringNode head = null;
 
@@ -235,10 +245,15 @@ class Graphs {
             }
 
             // if remainder not seen before, perform BFS
-            if (!remainderSet[front.remainder]) {
-                remainderSet[front.remainder] = true;
-                q.add(new StringNode('0', (front.remainder * 10) % n, front));
-                q.add(new StringNode('1', (front.remainder * 10 + 1) % n, front));
+            int rem1 = (front.remainder * 10) % n, rem2 = (front.remainder * 10 + 1) % n;
+            if (!remainderSet[rem1]) {
+                remainderSet[rem1] = true;
+                q.add(new StringNode('0', rem1, front));
+            }
+
+            if (!remainderSet[rem2]) {
+                remainderSet[rem2] = true;
+                q.add(new StringNode('1', rem2, front));
             }
         }
 
@@ -252,7 +267,7 @@ class Graphs {
         return builder.reverse().toString();
     }
 
-    /// data class for BFS node
+    // data class for BFS node
     private static class StringNode {
         // current character in the result string
         char c;
@@ -357,13 +372,13 @@ class Graphs {
         // visited array for BFS
         boolean[][] visited = new boolean[A][B];
 
+        // four directions and their char representations
+        int[][] dirs = {{-1, 0}, {0, 1}, {0, -1}, {1, 0}};
+        char[] dirChars = {'U', 'R', 'L', 'D'};
+
         // perform BFS
         while (!q.isEmpty()) {
             MatrixNode front = q.pollFirst();
-
-            // four directions and their char representations
-            int[][] dirs = {{-1, 0}, {0, 1}, {0, -1}, {1, 0}};
-            char[] dirChars = {'U', 'R', 'L', 'D'};
 
             // mark current node as visited
             visited[front.x][front.y] = true;
@@ -393,16 +408,6 @@ class Graphs {
 
         // distance from (0, 0) to (A - 1, B - 1)
         return distance[A - 1][B - 1];
-    }
-
-    // data class for each position in the matrix
-    private static class MatrixNode {
-        int x, y;
-
-        MatrixNode(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
     }
 
     // https://www.interviewbit.com/problems/commutable-islands/
@@ -439,6 +444,25 @@ class Graphs {
         }
 
         return res;
+    }
+
+    // util to perform find operation in disjoint set
+    private static int find(int[] parent, int i) {
+        // find the root node of the set
+        while (parent[i] != -1)
+            i = parent[i];
+
+        return i;
+    }
+
+    // util to perform union operation in disjoint set
+    private static void union(int[] parent, int x, int y) {
+        // find parents of both nodes
+        x = find(parent, x);
+        y = find(parent, y);
+
+        // make either node as parent of other node
+        parent[x] = y;
     }
 
     // https://www.interviewbit.com/problems/possibility-of-finishing-all-courses-given-prerequisites/
@@ -562,25 +586,6 @@ class Graphs {
 
         // no cycles found
         return 0;
-    }
-
-    // util to perform find operation in disjoint set
-    private static int find(int[] parent, int i) {
-        // find the root node of the set
-        while (parent[i] != -1)
-            i = parent[i];
-
-        return i;
-    }
-
-    // util to perform union operation in disjoint set
-    private static void union(int[] parent, int x, int y) {
-        // find parents of both nodes
-        x = find(parent, x);
-        y = find(parent, y);
-
-        // make either node as parent of other node
-        parent[x] = y;
     }
 
     // https://www.interviewbit.com/problems/black-shapes/
