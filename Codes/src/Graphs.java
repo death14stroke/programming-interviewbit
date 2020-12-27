@@ -957,7 +957,7 @@ class Graphs {
         }
     }
 
-    // util to mark '-' as 'O' on board using BFS
+    // util to mark '-' as 'O' on board using DFS
     private static void captureRegionsUtil(int i, int j, ArrayList<ArrayList<Character>> A, int m, int n) {
         // mark current position as 'O'
         A.get(i).set(j, 'O');
@@ -996,9 +996,6 @@ class Graphs {
 
     // util to check for word on board using DFS with repeated cells in path
     private static boolean wordSearchUtil(int i, int j, int pos, String word, String[] board) {
-        int[][] dirs = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
-        int m = board.length, n = board[0].length();
-
         // reached last character in the word
         if (pos == word.length() - 1)
             return true;
@@ -1006,11 +1003,14 @@ class Graphs {
         // move to next character
         pos++;
 
+        int[][] dirs = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+        int m = board.length, n = board[0].length();
+
         // for each direction
         for (int[] dir : dirs) {
             int x = i + dir[0], y = j + dir[1];
 
-            // if out of bounds or character doesn't word
+            // if out of bounds or character doesn't match to word position
             if (x < 0 || x >= m || y < 0 || y >= n || word.charAt(pos) != board[x].charAt(y))
                 continue;
 
@@ -1272,6 +1272,7 @@ class Graphs {
         int n = A.length();
         // map for storing each intermediate string and
         // list of original strings from which it can be reached in one step
+        // (adjacency list for the graph)
         Map<String, List<String>> map = new HashMap<>();
 
         // for source string
@@ -1356,9 +1357,11 @@ class Graphs {
         int n = start.length();
         // map for storing each intermediate string and
         // list of original strings from which it can be reached in one step
+        // (adjacency list for the graph)
         Map<String, List<String>> map = new HashMap<>();
 
         // dictionary set as words can repeat in dictionary
+        // (dictionary already contains start and end strings)
         Set<String> dictSet = new HashSet<>(dict);
         for (String str : dictSet)
             mapIntermediateStrings(str, map);

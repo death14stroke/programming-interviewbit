@@ -303,7 +303,7 @@ Interview bit problems topic wise
 - [INVERSIONS](https://www.interviewbit.com/problems/inversions/)
 - [Next Pointer Binary Tree](https://www.interviewbit.com/problems/next-pointer-binary-tree/)
 
-## Graph Data Structure & Algorithms
+## Graph Data Structure & Algorithms (28)
 
 - [Valid Path](https://www.interviewbit.com/problems/valid-path/)
 - [Region in BinaryMatrix](https://www.interviewbit.com/problems/region-in-binarymatrix/)
