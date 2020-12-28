@@ -1,6 +1,3 @@
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.*;
 
 public class Array {
@@ -22,6 +19,7 @@ public class Array {
                         out[k] = a[t][i];
                         k++;
                     }
+
                     t++;
                     dir = 1;
                     break;
@@ -31,6 +29,7 @@ public class Array {
                         out[k] = a[i][r];
                         k++;
                     }
+
                     r--;
                     dir = 2;
                     break;
@@ -49,10 +48,12 @@ public class Array {
                         out[k] = a[i][l];
                         k++;
                     }
+
                     l++;
                     dir = 0;
             }
         }
+
         return out;
     }
 
@@ -78,45 +79,38 @@ public class Array {
 
     // https://www.interviewbit.com/tutorial/merge-sort-algorithm/
     static void mergeSort(int[] a, int l, int r) {
-        if (l != r) {
-            int m = (l + r) / 2;
+        // out of bounds
+        if (l > r)
+            return;
 
-            mergeSort(a, l, m);
-            mergeSort(a, m + 1, r);
-
-            merge(a, l, m, r);
-        }
+        int mid = l + (r - l) / 2;
+        // recursively sort two subarrays
+        mergeSort(a, l, mid);
+        mergeSort(a, mid + 1, r);
+        // merge the sorted subarrays
+        merge(a, l, mid, r);
     }
 
+    // util to merge two subarrays
     private static void merge(int[] a, int l, int m, int r) {
         int[] temp = new int[r - l + 1];
         int i = l, j = m + 1, k = 0;
 
         // merge the two sub-arrays
         while (i <= m && j <= r) {
-            if (a[i] < a[j]) {
-                temp[k] = a[i];
-                i++;
-            } else {
-                temp[k] = a[j];
-                j++;
-            }
-            k++;
+            if (a[i] <= a[j])
+                temp[k++] = a[i++];
+            else
+                temp[k++] = a[j++];
         }
 
         // append remaining of left sub-array
-        while (i <= m) {
-            temp[k] = a[i];
-            i++;
-            k++;
-        }
+        while (i <= m)
+            temp[k++] = a[i++];
 
         // else append remaining of right sub-array
-        while (j <= r) {
-            temp[k] = a[j];
-            j++;
-            k++;
-        }
+        while (j <= r)
+            temp[k++] = a[j++];
 
         // copy temp array into original array
         for (i = 0; i < temp.length; i++)
@@ -125,14 +119,16 @@ public class Array {
 
     // https://www.interviewbit.com/tutorial/quicksort-algorithm/
     static void quickSort(int[] a, int l, int r) {
-        if (l != r) {
-            // pi is partitioning index, arr[pi] is now at right place
-            int pi = partition(a, l, r);
+        // out of bounds
+        if (l > r)
+            return;
 
-            // Recursively sort elements before partition and after partition
-            quickSort(a, l, pi - 1);
-            quickSort(a, pi + 1, r);
-        }
+        // pi is partitioning index, arr[pi] is now at right place
+        int pi = partition(a, l, r);
+
+        // Recursively sort elements before partition and after partition
+        quickSort(a, l, pi - 1);
+        quickSort(a, pi + 1, r);
     }
 
     /* This function takes last element as pivot, places the pivot element at its correct position in sorted array,
@@ -144,21 +140,22 @@ public class Array {
         for (int i = l; i < r; i++) {
             // if current element is smaller than or equal to pivot
             if (a[i] <= pivot) {
-                // swap arr[i] and arr[j]
-                int temp = a[i];
-                a[i] = a[pi];
-                a[pi] = temp;
-
+                // swap arr[i] and arr[pi]
+                swap(a, i, pi);
                 pi++;
             }
         }
 
-        // swap arr[i+1] and arr[high] (or pivot)
-        int temp = a[r];
-        a[r] = a[pi];
-        a[pi] = temp;
+        // swap arr[pi] and arr[high] (or pivot)
+        swap(a, pi, r);
 
         return pi;
+    }
+
+    private static void swap(int[] a, int i, int j) {
+        int temp = a[i];
+        a[i] = a[j];
+        a[j] = temp;
     }
 
     // https://www.interviewbit.com/tutorial/selection-sort/
@@ -168,11 +165,8 @@ public class Array {
         for (int i = 0; i < n; i++) {
             int pos = findMinIndex(a, i, n);
 
-            if (i != pos) {
-                int temp = a[i];
-                a[i] = a[pos];
-                a[pos] = temp;
-            }
+            if (i != pos)
+                swap(a, i, pos);
         }
     }
 
@@ -200,10 +194,7 @@ public class Array {
             // push larger element to the end of the array
             for (int i = 0; i < n - 1; i++) {
                 if (a[i] > a[i + 1]) {
-                    int temp = a[i];
-                    a[i] = a[i + 1];
-                    a[i + 1] = temp;
-
+                    swap(a, i, i + 1);
                     swap = true;
                 }
             }
@@ -213,17 +204,84 @@ public class Array {
         }
     }
 
-    // https://www.interviewbit.com/problems/max-sum-contiguous-subarray/
-    static int maxSubArray(int[] a) {
-        int max_so_far = a[0], curr_max = a[0];
+    // https://www.interviewbit.com/problems/max-non-negative-subarray/
+    static int[] maxset(final int[] a) {
+        // finding the largest positive sum
+        long curr_sum = 0, max_sum = Long.MIN_VALUE;
+        int curr_start = 0, start = -1, end = -1;
 
-        for (int i = 1; i < a.length; i++) {
-            // check if current element is greater than the previous sum
-            curr_max = Math.max(a[i], curr_max + a[i]);
-            // check if sum of the sub-array till now is greater than any other previous sub-arrays
-            max_so_far = Math.max(max_so_far, curr_max);
+        boolean allNeg = true;
+        for (int val : a) {
+            if (val >= 0) {
+                allNeg = false;
+                break;
+            }
         }
-        return max_so_far;
+
+        // all numbers are negative
+        if (allNeg)
+            return new int[0];
+
+        for (int i = 0; i < a.length; i++) {
+            // if negative number comes, reset the sum and sub-array endpoints
+            if (a[i] < 0) {
+                curr_sum = 0;
+                curr_start = i + 1;
+            } else {
+                curr_sum += a[i];
+
+                // sum of current sub-array is more than previous ones OR
+                // sum is equal but current sub-array is larger than the previous one
+                if ((max_sum < curr_sum) || (max_sum == curr_sum && i - curr_start > end - start)) {
+                    start = curr_start;
+                    end = i;
+                    max_sum = curr_sum;
+                }
+            }
+        }
+
+        return Arrays.copyOfRange(a, start, end + 1);
+    }
+
+    // https://www.interviewbit.com/problems/large-factorial/
+    static String largeFactorial(int n) {
+        // digits of output in reverse order
+        int[] res = new int[500];
+        // 0! = 1! = 1
+        res[0] = 1;
+
+        // no of digits in output
+        int res_size = 1;
+
+        // calculate n! = 2 * 3 * ... * n
+        for (int x = 2; x <= n; x++)
+            res_size = multiply(res, x, res_size);
+
+        // build string with output digits
+        StringBuilder builder = new StringBuilder();
+        for (int i = res_size - 1; i >= 0; i--)
+            builder.append(res[i]);
+
+        return builder.toString();
+    }
+
+    // util to multiply digits array with x
+    private static int multiply(int[] res, int x, int res_size) {
+        int carry = 0;
+
+        for (int i = 0; i < res_size; i++) {
+            int prod = res[i] * x + carry;
+
+            res[i] = prod % 10;
+            carry = prod / 10;
+        }
+
+        while (carry != 0) {
+            res[res_size++] = carry % 10;
+            carry /= 10;
+        }
+
+        return res_size;
     }
 
     // https://www.interviewbit.com/problems/min-steps-in-infinite-grid/
@@ -236,7 +294,126 @@ public class Array {
             // max of diagonal distance between both coordinates
             steps += Math.max(Math.abs(a[i] - a[i - 1]), Math.abs(b[i] - b[i - 1]));
         }
+
         return steps;
+    }
+
+    // https://www.interviewbit.com/problems/maximum-sum-triplet/
+    static int maxSumTriplet(int[] A) {
+        int n = A.length;
+
+        // calculate max suffix array such that maxSuffix[i] = max(A[i]...A[n - 1])
+        int[] maxSuffix = new int[n];
+        maxSuffix[n - 1] = A[n - 1];
+
+        for (int i = n - 2; i >= 0; i--)
+            maxSuffix[i] = Math.max(maxSuffix[i + 1], A[i]);
+
+        // use a treeSet to keep track of element just smaller than current
+        TreeSet<Integer> leftMax = new TreeSet<>();
+        leftMax.add(A[0]);
+
+        int maxSum = Integer.MIN_VALUE;
+        // select A[j] one by one and check for corresponding A[i] and A[k]
+        for (int j = 1; j < n - 1; j++) {
+            // choose optimum A[k]
+            int ak = maxSuffix[j + 1];
+            // j < k always so check if A[j] < A[k]
+            if (A[j] < ak) {
+                // get A[i] for A[j]
+                Integer ai = leftMax.lower(A[j]);
+                // if there exists an element just smaller than A[j] on its left
+                if (ai != null)
+                    maxSum = Math.max(maxSum, ai + A[j] + ak);
+
+                // add A[j] to the set for finding just smaller in next iteration
+                leftMax.add(A[j]);
+            }
+        }
+
+        return maxSum;
+    }
+
+    // https://www.interviewbit.com/problems/minimum-lights-to-activate/
+    static int minLights(int[] A, int B) {
+        int n = A.length;
+        // initial start position will be min of range of light and the last position
+        int i = Math.min(B - 1, n - 1), cnt = 0;
+
+        // keep jumping to the end
+        while (i >= 0) {
+            // if there is light
+            if (A[i] == 1) {
+                // turn on the light, mark as on and jump to next unlighted position
+                cnt++;
+                A[i] = 2;
+                i += B;
+
+                // if all positions are covered
+                if (i >= n)
+                    return cnt;
+
+                // jump to minimum of last position of array or position where light should be
+                i = Math.min(n - 1, i + B - 1);
+            }
+            // light was already turned on
+            else if (A[i] == 2)
+                return -1;
+                // no light, move backwards
+            else
+                i--;
+        }
+
+        // some positions are left unlighted (i < n - 1)
+        return -1;
+    }
+
+    // https://www.interviewbit.com/problems/add-one-to-number/
+    static int[] plusOne(int[] a) {
+        int zero_index = 0;
+        // find first non-zero digit of the number
+        while (zero_index < a.length && a[zero_index] == 0)
+            zero_index++;
+
+        // if the number is zero
+        if (zero_index == a.length)
+            return new int[]{1};
+
+        int carry = 1;
+        int[] ans = new int[a.length - zero_index + 1];
+        int j = ans.length - 1;
+
+        // add 1 to last digit and keep adding carry till the first non-zero digit
+        for (int i = a.length - 1; i >= zero_index; i--) {
+            int sum = a[i] + carry;
+
+            ans[j--] = sum % 10;
+            carry = sum / 10;
+        }
+
+        // if no carry left, start from 1st position
+        int start = 1;
+        // if there is carry left add at 0th position of answer array
+        if (carry != 0) {
+            ans[0] = carry;
+            start = 0;
+        }
+
+        return Arrays.copyOfRange(ans, start, ans.length);
+    }
+
+    // https://www.interviewbit.com/problems/max-sum-contiguous-subarray/
+    static int maxSubArray(final int[] a) {
+        int max_so_far = a[0], curr_max = a[0];
+
+        for (int i = 1; i < a.length; i++) {
+            // check if current element is greater than the previous sum
+            curr_max = Math.max(a[i], curr_max + a[i]);
+            // check if sum of the sub-array till now is greater than any other previous sub-arrays
+            max_so_far = Math.max(max_so_far, curr_max);
+        }
+
+        return max_so_far;
     }
 
     // https://www.interviewbit.com/problems/maximum-absolute-difference/
@@ -267,38 +444,396 @@ public class Array {
         return Math.max(max1 - min1, max2 - min2);
     }
 
-    // https://www.interviewbit.com/problems/add-one-to-number/
-    static int[] plusOne(int[] a) {
-        int zero_index = 0;
-        // find first non-zero digit of the number
-        while (zero_index < a.length && a[zero_index] == 0) {
-            zero_index++;
+    // https://www.interviewbit.com/problems/partitions/
+    static int partitions(int n, int[] A) {
+        // calculate total sum
+        int s = 0;
+        for (int val : A)
+            s += val;
+
+        // total sum cannot be divided into 3 parts
+        if (s % 3 != 0)
+            return 0;
+
+        int s1 = s / 3, s2 = 2 * s1;
+        // sum = running sum, cnt = total positions where sum is s1 till now
+        int sum = 0, cnt = 0, ans = 0;
+
+        for (int i = 0; i < n - 1; i++) {
+            sum += A[i];
+
+            // if sum at position i is s2, it can be paired with all prev positions where sum is s1
+            if (sum == s2)
+                ans += cnt;
+            // if sum at position i is s1, increment the count of positions where sum is s1
+            if (sum == s1)
+                cnt++;
         }
 
-        // if the number is zero
-        if (zero_index == a.length) {
-            return new int[]{1};
+        return ans;
+    }
+
+    // https://www.interviewbit.com/problems/maximum-area-of-triangle/
+    static int maxArea(String[] matrix) {
+        int r = matrix.length, c = matrix[0].length();
+        // calculate first and last occurence from top for each color in each column
+        int[][] top = new int[3][c], bottom = new int[3][c];
+        // calculate first and last occurence from left for each color among all columns
+        int[] left = new int[3], right = new int[3];
+
+        for (int i = 0; i < 3; i++) {
+            Arrays.fill(top[i], Integer.MAX_VALUE);
+            Arrays.fill(bottom[i], Integer.MIN_VALUE);
+        }
+        Arrays.fill(left, Integer.MAX_VALUE);
+        Arrays.fill(right, Integer.MIN_VALUE);
+
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                int color = mapColor(matrix[i].charAt(j));
+
+                left[color] = Math.min(left[color], j);
+                right[color] = Math.max(right[color], j);
+
+                top[color][j] = Math.min(top[color][j], i);
+                bottom[color][j] = Math.max(bottom[color][j], i);
+            }
         }
 
-        int carry = 1;
-        int[] ans = new int[a.length - zero_index + 1];
+        double maxArea = 0;
+        // loop for each column
+        for (int i = 0; i < c; i++) {
+            // select color of top vertex of base
+            for (int x = 0; x < 3; x++) {
+                // select color of bottom vertex of base
+                for (int y = 0; y < 3; y++) {
+                    // if color is same or the vertices are not present in the column
+                    if (x == y || top[x][i] == Integer.MAX_VALUE || bottom[y][i] == Integer.MIN_VALUE)
+                        continue;
 
-        // add 1 to last digit and keep adding carry till the first non-zero digit
-        for (int i = a.length - 1; i >= zero_index; i--) {
-            int j = i + (ans.length - a.length);
-            ans[j] = a[i] + carry;
-            carry = ans[j] / 10;
-            ans[j] %= 10;
+                    // calculate base of the triangle
+                    int base = Math.abs(bottom[y][i] - top[x][i]) + 1;
+
+                    // third vertex which forms the height
+                    int z = 3 - x - y;
+                    // check if the third vertex lies on the left of current column
+                    if (left[z] != Integer.MAX_VALUE)
+                        maxArea = Math.max(maxArea, 0.5 * base * Math.abs(i - left[z] + 1));
+
+                    // check if the third vertex lies on the right of current column
+                    if (right[z] != Integer.MIN_VALUE)
+                        maxArea = Math.max(maxArea, 0.5 * base * Math.abs(right[z] - i + 1));
+                }
+            }
         }
-        // if there is carry left add at 0th position of answer array
-        int start = 0;
-        if (carry == 1)
-            ans[0] = carry;
-            // exclude the first zero in answer array
-        else
-            start = 1;
 
-        return Arrays.copyOfRange(ans, start, ans.length);
+        return (int) Math.ceil(maxArea);
+    }
+
+    // util to map 'r', 'g' and 'b' to 0, 1 and 2 resp
+    private static int mapColor(char c) {
+        switch (c) {
+            case 'r':
+                return 0;
+            case 'g':
+                return 1;
+            case 'b':
+                return 2;
+            default:
+                return -1;
+        }
+    }
+
+    // https://www.interviewbit.com/problems/flip/
+    static int[] flip(String a) {
+        // all 1's in the string
+        if (!a.contains("0"))
+            return new int[0];
+
+        // use Kadane's algorithm to find largest sequence of 0's
+        int[] res = new int[2];
+        int start = 0, diff = 0, maxDiff = Integer.MIN_VALUE;
+
+        for (int i = 0; i < a.length(); i++) {
+            // 0 is required hence +1, 1 is not required hence -1
+            diff += (a.charAt(i) == '0') ? 1 : -1;
+
+            // number of 1's is more in the current sequence
+            // so reset starting point to next possible 0
+            if (diff < 0) {
+                diff = 0;
+                start = i + 1;
+            }
+            // this sequence has more 0's than all previous ones
+            else if (maxDiff < diff) {
+                maxDiff = diff;
+                res[0] = start + 1;
+                res[1] = i + 1;
+            }
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/perfect-peak-of-array/
+    static int perfectPeak(int[] A) {
+        int n = A.length;
+
+        // leftMax[i] = max(A[0]...A[i])
+        int[] leftMax = new int[n];
+        leftMax[0] = A[0];
+        for (int i = 1; i < n; i++)
+            leftMax[i] = Math.max(leftMax[i - 1], A[i]);
+
+        // rightMin = min(A[i]...A[n - 1])
+        int rightMin = A[n - 1];
+
+        // check for all middle positions from end
+        for (int i = n - 2; i >= 1; i--) {
+            // if A[i] is greater than max of all lefts and less than min of all rights
+            if (leftMax[i - 1] < A[i] && A[i] < rightMin)
+                return 1;
+
+            // add current position in rightMin calculation
+            rightMin = Math.min(rightMin, A[i]);
+        }
+
+        return 0;
+    }
+
+    // https://www.interviewbit.com/problems/spiral-order-matrix-ii/
+    static int[][] generateMatrix(int n) {
+        int[][] res = new int[n][n];
+        int k = 1;
+        int l = 0, t = 0, b = n - 1, r = n - 1;
+
+        while (k <= n * n) {
+            // move from left to right in topmost row
+            for (int i = l; i <= r; i++)
+                res[t][i] = k++;
+            t++;
+
+            // move from top to bottom in rightmost row
+            for (int i = t; i <= b; i++)
+                res[i][r] = k++;
+            r--;
+
+            // move from right to left in bottommost row
+            for (int i = r; i >= l; i--)
+                res[b][i] = k++;
+            b--;
+
+            // move from bottom to top in leftmost row
+            for (int i = b; i >= t; i--)
+                res[i][l] = k++;
+            l++;
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/pascal-triangle/
+    static int[][] pascalTriangle(int n) {
+        int[][] res = new int[n][];
+        if (n == 0)
+            return res;
+
+        // first row
+        res[0] = new int[]{1};
+        if (n == 1)
+            return res;
+
+        // second row
+        res[1] = new int[]{1, 1};
+        if (n == 2)
+            return res;
+
+        for (int i = 3; i <= n; i++) {
+            res[i - 1] = new int[i];
+
+            // first and last elements of the row are 1
+            res[i - 1][0] = 1;
+            res[i - 1][i - 1] = 1;
+
+            // middle ones are the sum of the upper row entries
+            for (int j = 1; j < i - 1; j++)
+                res[i - 1][j] = res[i - 2][j - 1] + res[i - 2][j];
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/kth-row-of-pascals-triangle/
+    static int[] kthRowOfPascal(int k) {
+        int[] res = new int[k + 1];
+
+        // kth row is C(k, 0) to C(k, k)
+        for (int i = 0; i <= k; i++)
+            res[i] = (int) C(k, i);
+
+        return res;
+    }
+
+    // util to calculate combination function
+    private static long C(int n, int k) {
+        // C(n, k) = C(n, n - k)
+        if (k > n / 2)
+            return C(n, n - k);
+
+        long num = 1, den = 1;
+
+        for (int i = 0; i < k; i++) {
+            num *= (n - i);
+            den *= (k - i);
+        }
+
+        return num / den;
+    }
+
+    // https://www.interviewbit.com/problems/anti-diagonals/
+    static int[][] antiDiagonals(int[][] a) {
+        int n = a.length;
+
+        int[][] res = new int[2 * n - 1][];
+        int pos = 0;
+
+        // upper half of the matrix
+        for (int k = 0; k < n; k++) {
+            int i = 0, j = k, cnt = 0;
+
+            res[pos] = new int[k + 1];
+
+            // traversing the row
+            while (i < n && j >= 0)
+                res[pos][cnt++] = a[i++][j--];
+
+            pos++;
+        }
+
+        // lower half of the matrix
+        for (int k = 1; k < n; k++) {
+            int i = k, j = n - 1, cnt = 0;
+
+            res[pos] = new int[n - k];
+
+            // traversing the row
+            while (i < n && j >= 0)
+                res[pos][cnt++] = a[i++][j--];
+
+            pos++;
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/triplets-with-sum-between-given-range/
+    static int tripletsInRange(String[] a) {
+        // take first three numbers
+        float x = Float.parseFloat(a[0]), y = Float.parseFloat(a[1]), z = Float.parseFloat(a[2]);
+
+        for (int i = 3; i < a.length; i++) {
+            // if satisfy condition, return
+            if (x + y + z > 1 && x + y + z < 2)
+                return 1;
+
+            // if sum is greater, replace the largest element in the triplet
+            if (x + y + z >= 2) {
+                if (x > y && x > z)
+                    x = Float.parseFloat(a[i]);
+                else if (y > x && y > z)
+                    y = Float.parseFloat(a[i]);
+                else
+                    z = Float.parseFloat(a[i]);
+            }
+            // sum is smaller, replace the smallest element in the triplet
+            else {
+                if (x < y && x < z)
+                    x = Float.parseFloat(a[i]);
+                else if (y < x & y < z)
+                    y = Float.parseFloat(a[i]);
+                else
+                    z = Float.parseFloat(a[i]);
+            }
+        }
+
+        // if satisfy condition
+        if (x + y + z > 1 && x + y + z < 2)
+            return 1;
+        return 0;
+    }
+
+    // https://www.interviewbit.com/problems/find-duplicate-in-array/
+    static int multiRepeatedNumber(final int[] a) {
+        // consider array as linked list. The point of cycle will be the duplicate number
+        int slow = a[0], fast = a[a[0]];
+
+        // keep moving fast pointer at double rate till both meet
+        while (slow != fast) {
+            slow = a[slow];
+            fast = a[a[fast]];
+        }
+
+        // set one pointer at start
+        slow = a[0];
+
+        // move both pointer at same speed
+        while (slow != fast) {
+            slow = a[slow];
+            fast = a[fast];
+        }
+
+        return slow;
+    }
+
+    // https://www.interviewbit.com/problems/maximum-consecutive-gap/
+    static int unsortedMaximumGap(final int[] a) {
+        int n = a.length;
+        // less than 2 elements
+        if (n <= 1)
+            return 0;
+
+        // maximum and minimum of the array
+        int max = a[0], min = a[0];
+        for (int i = 1; i < n; i++) {
+            max = Math.max(max, a[i]);
+            min = Math.min(min, a[i]);
+        }
+
+        // max and min values for each bucket
+        int[] maxBucket = new int[n];
+        int[] minBucket = new int[n];
+
+        Arrays.fill(maxBucket, Integer.MIN_VALUE);
+        Arrays.fill(minBucket, Integer.MAX_VALUE);
+
+        // average gap between buckets
+        float delta = (float) (max - min) / (float) (n - 1);
+
+        // for each value in array
+        for (int val : a) {
+            // find index of bucket
+            int index = Math.round((val - min) / delta);
+
+            // update maximum and minimum for the bucket
+            maxBucket[index] = Math.max(maxBucket[index], val);
+            minBucket[index] = Math.min(minBucket[index], val);
+        }
+
+        int prev = maxBucket[0];
+        // maximum gap is the max of difference between minimum value of current bucket
+        // and maximum value of previous bucket
+        int maxGap = 0;
+
+        for (int i = 1; i < n; i++) {
+            if (minBucket[i] == Integer.MAX_VALUE)
+                continue;
+
+            // update maxGap
+            maxGap = Math.max(maxGap, minBucket[i] - prev);
+            prev = maxBucket[i];
+        }
+
+        return maxGap;
     }
 
     // https://www.interviewbit.com/problems/repeat-and-missing-number-array/
@@ -333,214 +868,6 @@ public class Array {
         return new int[]{repeat, missing};
     }
 
-    // https://www.interviewbit.com/problems/flip/
-    static int[] flip(String a) {
-        // all 1's in the string
-        if (!a.contains("0"))
-            return new int[0];
-
-        // use Kadane's algorithm to find largest sequence of 0's
-        int[] res = new int[2];
-        int start = 0, diff = 0, maxDiff = Integer.MIN_VALUE;
-
-        for (int i = 0; i < a.length(); i++) {
-            // 0 is required hence +1, 1 is not required hence -1
-            diff += (a.charAt(i) == '0') ? 1 : -1;
-
-            // number of 1's is more in the current sequence
-            // so reset starting point to next possible 0
-            if (diff < 0) {
-                diff = 0;
-                start = (a.charAt(i) == '0') ? i : i + 1;
-            }
-            // this sequence has more 0's than all previous ones
-            else if (maxDiff < diff) {
-                maxDiff = diff;
-                res[0] = start + 1;
-                res[1] = i + 1;
-            }
-        }
-
-        return res;
-    }
-
-    // https://www.interviewbit.com/problems/max-non-negative-subarray/
-    static int[] maxset(final int[] a) {
-        // finding the largest positive sum
-        long curr_sum = 0, max_sum = Long.MIN_VALUE;
-        int curr_start = 0, curr_end = 0, start = -1, end = -1;
-
-        boolean allNeg = true;
-        for (int val : a) {
-            if (val >= 0) {
-                allNeg = false;
-                break;
-            }
-        }
-
-        // all numbers are negative
-        if (allNeg)
-            return new int[0];
-
-        for (int i = 0; i < a.length; i++) {
-            // if negative number comes, reset the sum and sub-array endpoints
-            if (a[i] < 0) {
-                curr_sum = 0;
-                curr_start = i + 1;
-                curr_end = i + 1;
-            } else {
-                curr_sum += a[i];
-
-                // sum of current sub-array is more than previous ones OR
-                // sum is equal but current sub-array is larger than the previous one
-                if ((max_sum < curr_sum) || (max_sum == curr_sum && curr_end - curr_start > end - start)) {
-                    start = curr_start;
-                    end = i;
-                    max_sum = curr_sum;
-                }
-
-                curr_end++;
-            }
-        }
-
-        return Arrays.copyOfRange(a, start, end + 1);
-    }
-
-    // https://www.interviewbit.com/problems/spiral-order-matrix-ii/
-    static int[][] generateMatrix(int n) {
-        int[][] res = new int[n][n];
-        int k = 1;
-        int l = 0, t = 0, b = n - 1, r = n - 1;
-
-        while (k <= n * n) {
-            // move from left to right in topmost row
-            for (int i = l; i <= r; i++) {
-                res[t][i] = k;
-                k++;
-            }
-            t++;
-
-            // move from top to bottom in rightmost row
-            for (int i = t; i <= b; i++) {
-                res[i][r] = k;
-                k++;
-            }
-            r--;
-
-            // move from right to left in bottommost row
-            for (int i = r; i >= l; i--) {
-                res[b][i] = k;
-                k++;
-            }
-            b--;
-
-            // move from bottom to top in leftmost row
-            for (int i = b; i >= t; i--) {
-                res[i][l] = k;
-                k++;
-            }
-            l++;
-        }
-
-        return res;
-    }
-
-    // https://www.interviewbit.com/problems/pascal-triangle/
-    static int[][] solve(int n) {
-        int[][] res = new int[n][];
-
-        for (int i = 1; i <= n; i++) {
-            // first row
-            if (i == 1)
-                res[i - 1] = new int[]{1};
-                // second row
-            else if (i == 2)
-                res[i - 1] = new int[]{1, 1};
-            else {
-                res[i - 1] = new int[i];
-
-                // first and last elements of the row are 1
-                res[i - 1][0] = 1;
-                res[i - 1][i - 1] = 1;
-
-                // middle ones are the sum of the upper row entries
-                for (int j = 1; j < i - 1; j++)
-                    res[i - 1][j] = res[i - 2][j - 1] + res[i - 2][j];
-            }
-        }
-
-        return res;
-    }
-
-    // https://www.interviewbit.com/problems/kth-row-of-pascals-triangle/
-    static int[] getRow(int k) {
-        int[] res = new int[k + 1];
-
-        // kth row is C(k, 0) to C(k, k)
-        for (int i = 0; i <= k; i++)
-            res[i] = (int) C(k, i);
-
-        return res;
-    }
-
-    private static long C(int n, int k) {
-        long ans, num = 1, den = 1;
-
-        // C(n, k) = C(n, n-k)
-        if (k > n / 2)
-            k = n - k;
-
-        for (int i = 0; i < k; i++) {
-            num *= (n - i);
-            den *= (k - i);
-        }
-
-        ans = num / den;
-        return ans;
-    }
-
-    // https://www.interviewbit.com/problems/anti-diagonals/
-    static int[][] diagonal(int[][] a) {
-        int n = a.length;
-
-        int[][] res = new int[2 * n - 1][];
-        int pos = 0;
-
-        // upper half of the matrix
-        for (int k = 0; k < n; k++) {
-            int i = 0, j = k, cnt = 0;
-            res[pos] = new int[k + 1];
-
-            // traversing the row
-            while (i < n && j >= 0) {
-                res[pos][cnt] = a[i][j];
-                i++;
-                j--;
-                cnt++;
-            }
-
-            pos++;
-        }
-
-        // lower half of the matrix
-        for (int k = 1; k < n; k++) {
-            int i = k, j = n - 1, cnt = 0;
-            res[pos] = new int[n - k];
-
-            // traversing the row
-            while (i < n && j >= 0) {
-                res[pos][cnt] = a[i][j];
-                i++;
-                j--;
-                cnt++;
-            }
-
-            pos++;
-        }
-
-        return res;
-    }
-
     // https://www.interviewbit.com/problems/noble-integer/
     static int solve(int[] a) {
         int n = a.length;
@@ -562,43 +889,6 @@ public class Array {
             i = k;
         }
         return -1;
-    }
-
-    // https://www.interviewbit.com/problems/triplets-with-sum-between-given-range/
-    static int solve(String[] a) {
-        // take first three numbers
-        float x = Float.parseFloat(a[0]), y = Float.parseFloat(a[1]), z = Float.parseFloat(a[2]);
-
-        for (int i = 3; i < a.length; i++) {
-            // if satisfy condition, return
-            if (x + y + z > 1 && x + y + z < 2)
-                return 1;
-
-                // if sum is greater, replace the largest element in the triplet
-            else if (x + y + z > 2) {
-                if (x > y && x > z)
-                    x = Float.parseFloat(a[i]);
-                else if (y > x && y > z)
-                    y = Float.parseFloat(a[i]);
-                else
-                    z = Float.parseFloat(a[i]);
-            }
-
-            // sum is smaller, replace the smallest element in the triplet
-            else {
-                if (x < y && x < z)
-                    x = Float.parseFloat(a[i]);
-                else if (y < x & y < z)
-                    y = Float.parseFloat(a[i]);
-                else
-                    z = Float.parseFloat(a[i]);
-            }
-        }
-
-        // if satisfy condition
-        if (x + y + z > 1 && x + y + z < 2)
-            return 1;
-        return 0;
     }
 
     // https://www.interviewbit.com/problems/largest-number/
@@ -748,41 +1038,6 @@ public class Array {
         positions.add(end);
 
         return positions;
-    }
-
-    // https://www.interviewbit.com/problems/find-duplicate-in-array/
-    static int multiRepeatedNumber(final int[] a) {
-        int n = a.length;
-
-        for (int i = 0; i < n; i++) {
-            int pos = Math.abs(a[i]);
-
-            // encountered this number before
-            if (a[pos] < 0)
-                return pos;
-
-            // mark as visited (negative)
-            a[pos] = -a[pos];
-        }
-
-        // no duplicates
-        return -1;
-    }
-
-    // https://www.interviewbit.com/problems/maximum-consecutive-gap/
-    static int unsortedMaximumGap(final int[] a) {
-        if (a.length < 2)
-            return 0;
-
-        Arrays.sort(a);
-
-        int max_diff = 0;
-
-        for (int i = 1; i < a.length; i++) {
-            max_diff = Math.max(max_diff, a[i] - a[i - 1]);
-        }
-
-        return max_diff;
     }
 
     // https://www.interviewbit.com/problems/next-permutation/
@@ -1209,75 +1464,6 @@ public class Array {
         return out;
     }
 
-    // https://www.interviewbit.com/problems/minimum-lights-to-activate/
-    static int minLights(int[] A, int B) {
-        int n = A.length;
-        // initial start position will be min of range of light and the last position
-        int i = Math.min(B - 1, n - 1), cnt = 0;
-
-        // keep jumping to the end
-        while (i >= 0) {
-            // if there is light
-            if (A[i] == 1) {
-                // turn on the light, mark as on and jump to next unlighted position
-                cnt++;
-                A[i] = 2;
-                i += B;
-
-                // if all positions are covered
-                if (i >= n)
-                    return cnt;
-
-                // jump to minimum of last position of array or position where light should be
-                i = Math.min(n - 1, i + B - 1);
-            }
-            // light was already turned on
-            else if (A[i] == 2)
-                return -1;
-                // no light, move backwards
-            else
-                i--;
-        }
-
-        // some positions are left unlighted (i < n - 1)
-        return -1;
-    }
-
-    // https://www.interviewbit.com/problems/maximum-sum-triplet/
-    static int maxSumTriplet(ArrayList<Integer> A) {
-        int n = A.size();
-
-        // calculate max suffix array such that maxSuffix[i] = max(A[i]...A[n - 1])
-        int[] maxSuffix = new int[n];
-        maxSuffix[n - 1] = A.get(n - 1);
-        for (int i = n - 2; i >= 0; i--)
-            maxSuffix[i] = Math.max(maxSuffix[i + 1], A.get(i));
-
-        // use a treeSet to keep track of element just smaller than current
-        TreeSet<Integer> leftMax = new TreeSet<>();
-        leftMax.add(A.get(0));
-
-        int maxSum = Integer.MIN_VALUE;
-        // select A[j] one by one and check for corresponding A[i] and A[k]
-        for (int j = 1; j < n - 1; j++) {
-            // choose optimum A[k]
-            int ak = maxSuffix[j + 1];
-            // j < k always so check if A[j] < A[k]
-            if (A.get(j) < ak) {
-                // get A[i] for A[j]
-                Integer ai = leftMax.lower(A.get(j));
-                // if there exists an element just smaller than A[j] on its left
-                if (ai != null)
-                    maxSum = Math.max(maxSum, ai + A.get(j) + ak);
-
-                // add A[i] to the set for finding just smaller in next iteration
-                leftMax.add(A.get(j));
-            }
-        }
-
-        return maxSum;
-    }
-
     // https://www.interviewbit.com/problems/maximum-sum-square-submatrix/
     static int maxSumSquareSubmatrix(int[][] A, int B) {
         int n = A.length;
@@ -1311,32 +1497,6 @@ public class Array {
         }
 
         return maxSum;
-    }
-
-    // https://www.interviewbit.com/problems/perfect-peak-of-array/
-    static int perfectPeak(int[] A) {
-        int n = A.length;
-
-        // leftMax[i] = max(A[0]...A[i])
-        int[] leftMax = new int[n];
-        leftMax[0] = A[0];
-        for (int i = 1; i < n; i++)
-            leftMax[i] = Math.max(leftMax[i - 1], A[i]);
-
-        // rightMin = min(A[i]...A[n - 1])
-        int rightMin = A[n - 1];
-
-        // check for all middle positions from end
-        for (int i = n - 2; i >= 1; i--) {
-            // if A[i] is greater than max of all lefts and less than min of all rights
-            if (leftMax[i - 1] < A[i] && A[i] < rightMin)
-                return 1;
-
-            // add current position in rightMin calculation
-            rightMin = Math.min(rightMin, A[i]);
-        }
-
-        return 0;
     }
 
     // https://www.interviewbit.com/problems/leaders-in-an-array/
@@ -1383,35 +1543,6 @@ public class Array {
         return maxSum;
     }
 
-    // https://www.interviewbit.com/problems/partitions/
-    static int partitions(int n, int[] A) {
-        // calculate total sum
-        int s = 0;
-        for (int val : A)
-            s += val;
-
-        // total sum cannot be divided into 3 parts
-        if (s % 3 != 0)
-            return 0;
-
-        int s1 = s / 3, s2 = 2 * s1;
-        // sum = running sum, cnt = total positions where sum is s1 till now
-        int sum = 0, cnt = 0, ans = 0;
-
-        for (int i = 0; i < n - 1; i++) {
-            sum += A[i];
-
-            // if sum at position i is s2, it can be paired with all prev positions where sum is s1
-            if (sum == s2)
-                ans += cnt;
-            // if sum at position i is s1, increment the count of positions where sum is s1
-            if (sum == s1)
-                cnt++;
-        }
-
-        return ans;
-    }
-
     // https://www.interviewbit.com/problems/balance-array/
     static int balanceArray(int[] A) {
         int n = A.length;
@@ -1448,75 +1579,5 @@ public class Array {
         }
 
         return cnt;
-    }
-
-    // https://www.interviewbit.com/problems/maximum-area-of-triangle/
-    static int maxArea(String[] matrix) {
-        int r = matrix.length, c = matrix[0].length();
-        // calculate first and last occurence from top for each color in each column
-        int[][] top = new int[3][c], bottom = new int[3][c];
-        // calculate first and last occurence from left for each color among all columns
-        int[] left = new int[3], right = new int[3];
-
-        for (int i = 0; i < 3; i++) {
-            Arrays.fill(top[i], Integer.MAX_VALUE);
-            Arrays.fill(bottom[i], Integer.MIN_VALUE);
-        }
-        Arrays.fill(left, Integer.MAX_VALUE);
-        Arrays.fill(right, Integer.MIN_VALUE);
-
-        for (int i = 0; i < r; i++) {
-            for (int j = 0; j < c; j++) {
-                int color = mapColor(matrix[i].charAt(j));
-
-                left[color] = Math.min(left[color], j);
-                right[color] = Math.max(right[color], j);
-                top[color][j] = Math.min(top[color][j], i);
-                bottom[color][j] = Math.max(bottom[color][j], i);
-            }
-        }
-
-        double maxArea = 0;
-        // loop for each column
-        for (int i = 0; i < c; i++) {
-            // select color of top vertex of base
-            for (int x = 0; x < 3; x++) {
-                // select color of bottom vertex of base
-                for (int y = 0; y < 3; y++) {
-                    // if color is same or the vertices are not present in the column
-                    if (x == y || top[x][i] == Integer.MAX_VALUE || bottom[y][i] == Integer.MIN_VALUE)
-                        continue;
-
-                    // calculate base of the triangle
-                    int base = Math.abs(bottom[y][i] - top[x][i]) + 1;
-
-                    // third vertex which forms the height
-                    int z = 3 - x - y;
-                    // check if the third vertex lies on the left of current column
-                    if (left[z] != Integer.MAX_VALUE)
-                        maxArea = Math.max(maxArea, 0.5 * base * Math.abs(i - left[z] + 1));
-
-                    // check if the third vertex lies on the right of current column
-                    if (right[z] != Integer.MIN_VALUE)
-                        maxArea = Math.max(maxArea, 0.5 * base * Math.abs(right[z] - i + 1));
-                }
-            }
-        }
-
-        return (int) maxArea;
-    }
-
-    // util to map 'r', 'g' and 'b' to 0, 1 and 2 resp
-    private static int mapColor(char c) {
-        switch (c) {
-            case 'r':
-                return 0;
-            case 'g':
-                return 1;
-            case 'b':
-                return 2;
-            default:
-                return -1;
-        }
     }
 }
