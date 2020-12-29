@@ -836,106 +836,36 @@ public class Array {
         return maxGap;
     }
 
-    // https://www.interviewbit.com/problems/repeat-and-missing-number-array/
-    static int[] repeatedNumber(final int[] a) {
-        int n = a.length;
-        long sum = 0, sum2 = 0;
-
-        // sum of 1st n numbers
-        long n_sum = (long) n * (long) (n + 1) / (long) 2;
-        // sum of squares of 1st n numbers
-        long n2_sum = (long) n * (long) (n + 1) * (long) (2 * n + 1) / (long) 6;
-
-        // sum and square sum of all numbers in the array
-        // sum = n_sum + x - y
-        // sum2 = n2_sum + x^2 - y^2 ,
-        // where x is the repeating number and y is the missing number
-        for (int value : a) {
-            sum += value;
-            sum2 += (long) Math.pow(value, 2);
-        }
-
-        // x - y
-        long diff_repeat_miss = sum - n_sum;
-        // x + y = (x^2 - y^2)/(x - y)
-        long sum_repeat_miss = (sum2 - n2_sum) / diff_repeat_miss;
-
-        // x = (x - y + x + y) / 2
-        int repeat = (int) (diff_repeat_miss + sum_repeat_miss) / 2;
-        // substitute x in x + y equation
-        int missing = (int) sum_repeat_miss - repeat;
-
-        return new int[]{repeat, missing};
-    }
-
     // https://www.interviewbit.com/problems/noble-integer/
-    static int solve(int[] a) {
-        int n = a.length;
+    static int nobleInteger(int[] a) {
+        int i = 0, n = a.length;
 
         Arrays.sort(a);
 
-        for (int i = 0; i < n; i++) {
-            int k = i + 1;
-
+        while (i < n) {
             // skip elements equal to current number
-            while (k < n && a[k] == a[i])
-                k++;
-            k--;
+            while (i + 1 < n && a[i + 1] == a[i])
+                i++;
 
             // number of elements greater than this number is equal to the number
-            if (n - 1 - k == a[i])
+            if (n - 1 - i == a[i])
                 return 1;
 
-            i = k;
+            i++;
         }
+
+        // noble integer not found
         return -1;
-    }
-
-    // https://www.interviewbit.com/problems/largest-number/
-    static String largestNumber(final int[] a) {
-        String[] arr = new String[a.length];
-        for (int i = 0; i < a.length; i++)
-            arr[i] = String.valueOf(a[i]);
-
-        // sort array with custom comparator
-        Arrays.sort(arr, new Comparator<>() {
-            @Override
-            public int compare(String s1, String s2) {
-                String ab = s1 + s2, ba = s2 + s1;
-                return ba.compareTo(ab);
-            }
-        });
-
-        // construct string from array and remove leading zeroes
-        boolean isLeadingZero = true;
-        StringBuilder builder = new StringBuilder();
-        for (String str : arr) {
-            if (isLeadingZero && str.charAt(0) == '0')
-                isLeadingZero = true;
-            else {
-                isLeadingZero = false;
-                builder.append(str);
-            }
-        }
-
-        // if all are zeroes
-        if (builder.toString().isEmpty())
-            return "0";
-        return builder.toString();
     }
 
     // https://www.interviewbit.com/problems/wave-array/
     static int[] wave(int[] a) {
         Arrays.sort(a);
 
-        int i = 0;
-
-        // sort and swap alternate numbers
-        while (i + 1 < a.length) {
-            int temp = a[i];
-            a[i] = a[i + 1];
-            a[i + 1] = temp;
-
+        int i = 1;
+        // swap odd indices with their previous
+        while (i < a.length) {
+            swap(a, i, i - 1);
             i += 2;
         }
 
@@ -957,7 +887,6 @@ public class Array {
                 cnt++;
                 i++;
             }
-
             // previous guest left, empty his room, wait for next guest to leave
             else {
                 cnt--;
@@ -972,72 +901,114 @@ public class Array {
         return true;
     }
 
-    // https://www.interviewbit.com/problems/max-distance/
-    static int maximumGap(final int[] a) {
-        int n = a.length;
+    // https://www.interviewbit.com/problems/maximum-unsorted-subarray/
+    static int[] subUnsort(int[] A) {
+        int n = A.length;
+        // running maximum and minimum of array
+        int max = Integer.MIN_VALUE, min = Integer.MAX_VALUE;
+        // start and end indices for result
+        int start = -1, end = -1;
 
-        // find left minimums and right maximums
-        int[] lMins = new int[n], rMaxs = new int[n];
-
-        lMins[0] = a[0];
-        rMaxs[n - 1] = a[n - 1];
-
-        for (int i = 1; i < n; i++) {
-            // lMins[i] = min(a[0..i])
-            lMins[i] = Math.min(a[i], lMins[i - 1]);
-            // rMaxs[i] = max(a[i..n-1])
-            rMaxs[n - 1 - i] = Math.max(a[n - 1 - i], rMaxs[n - i]);
+        // compute running maximum from start
+        for (int i = 0; i < n; i++) {
+            max = Math.max(max, A[i]);
+            // if maximum != current element, update end boundary
+            if (max != A[i])
+                end = i;
         }
 
-        int i = 0, j = 0, maxGap = 0;
+        // if no end boundary computed, array is already sorted
+        if (end == -1)
+            return new int[]{-1};
 
+        // compute running minimum from the end
+        for (int i = n - 1; i >= 0; i--) {
+            min = Math.min(min, A[i]);
+            // if minimum != current element, update start boundary
+            if (min != A[i])
+                start = i;
+        }
+
+        // found unsorted interval
+        return new int[]{start, end};
+    }
+
+    // https://www.interviewbit.com/problems/max-distance/
+    static int maximumGap(final int[] A) {
+        int n = A.length;
+
+        // right maximums for each position
+        int[] rMax = new int[n];
+        rMax[n - 1] = A[n - 1];
+        // rMax[i] = max(A[i..n-1])
+        for (int i = n - 2; i >= 0; i--)
+            rMax[i] = Math.max(rMax[i + 1], A[i]);
+
+        int i = 0, j = 0, maxGap = 0;
         // traverse both arrays from left to right and maximize j-i
         while (i < n && j < n) {
-            if (lMins[i] <= rMaxs[j]) {
+            // update max gap and check for further j
+            if (A[i] <= rMax[j]) {
                 maxGap = Math.max(maxGap, j - i);
                 j++;
-            } else
+            }
+            // try another i which might have a smaller value in array
+            else {
                 i++;
+            }
         }
 
         return maxGap;
     }
 
-    // https://www.interviewbit.com/problems/maximum-unsorted-subarray/
-    static ArrayList<Integer> subUnsort(ArrayList<Integer> a) {
+    // https://www.interviewbit.com/problems/largest-number/
+    static String largestNumber(final int[] a) {
+        int n = a.length;
+        // convert to string array for sorting
+        String[] arr = new String[n];
+        for (int i = 0; i < n; i++)
+            arr[i] = String.valueOf(a[i]);
+
+        // sort array with custom comparator
+        Arrays.sort(arr, (s1, s2) -> {
+            String ab = s1 + s2, ba = s2 + s1;
+            // greater string combination should come first
+            return ba.compareTo(ab);
+        });
+
+        // skip leading zeroes
+        int i = 0;
+        while (i < n && arr[i].equals("0"))
+            i++;
+
+        // if all are zeroes
+        if (i == n)
+            return "0";
+
+        // append remaining numbers to string
+        StringBuilder builder = new StringBuilder();
+        for (; i < n; i++)
+            builder.append(arr[i]);
+
+        return builder.toString();
+    }
+
+    // https://www.interviewbit.com/problems/rotate-matrix/
+    @SuppressWarnings("SuspiciousNameCombination")
+    static void rotate(ArrayList<ArrayList<Integer>> a) {
         int n = a.size();
-        int[] mins = new int[n], maxs = new int[n];
 
-        mins[n - 1] = a.get(n - 1);
-        maxs[0] = a.get(0);
+        // compute for 4 x 4 matrix on paper to get the idea
+        for (int x = 0; x < n / 2; x++) {
+            for (int y = x; y < n - 1 - x; y++) {
+                int temp = a.get(x).get(y);
 
-        for (int i = 1; i < n; i++) {
-            // maxs[i] = max from 0 to i
-            maxs[i] = Math.max(maxs[i - 1], a.get(i));
-            // mins[i] = min from n-1 down to i
-            mins[n - i - 1] = Math.min(mins[n - i], a.get(n - i - 1));
+                a.get(x).set(y, a.get(n - 1 - y).get(x));
+                a.get(n - 1 - y).set(x, a.get(n - 1 - x).get(n - 1 - y));
+                a.get(n - 1 - x).set(n - 1 - y, a.get(y).get(n - 1 - x));
+                a.get(y).set(n - 1 - x, temp);
+            }
         }
-
-        int start = 0, end = n - 1;
-        ArrayList<Integer> positions = new ArrayList<>();
-
-        // if array is sorted mins = maxs = original array
-        while (start < n && mins[start] == a.get(start))
-            start++;
-
-        // array is completely sorted
-        if (start == n) {
-            positions.add(-1);
-            return positions;
-        }
-
-        while (end >= 0 && maxs[end] == a.get(end))
-            end--;
-
-        positions.add(start);
-        positions.add(end);
-
-        return positions;
     }
 
     // https://www.interviewbit.com/problems/next-permutation/
@@ -1058,16 +1029,15 @@ public class Array {
         int nextPos = findRightMostSuccessor(a, last + 1, n, a[last]);
 
         // swap a[last] with its successor
-        int temp = a[last];
-        a[last] = a[nextPos];
-        a[nextPos] = temp;
-
+        swap(a, last, nextPos);
         // reverse the array from last + 1 till end
         reverseArray(a, last + 1, n - 1);
 
         return a;
     }
 
+    // util to find next greatest element (this half will be decreasingly sorted
+    // so can find linearly or in O(log n))
     private static int findRightMostSuccessor(int[] a, int start, int n, int k) {
         for (int i = n - 1; i >= start; i--) {
             if (a[i] > k)
@@ -1077,36 +1047,196 @@ public class Array {
         return n - 1;
     }
 
+    // util to reverse part of array
     private static void reverseArray(int[] a, int start, int end) {
         while (start < end) {
-            int temp = a[start];
-            a[start] = a[end];
-            a[end] = temp;
-
+            swap(a, start, end);
             start++;
             end--;
         }
     }
 
+    // https://www.interviewbit.com/problems/find-permutation/
+    static ArrayList<Integer> findPerm(final String s, int n) {
+        ArrayList<Integer> out = new ArrayList<>();
+        // dual end pointers for deque of numbers 1..n
+        int min = 1, max = n;
+
+        // if I is encountered then add the smallest element remaining in output
+        // else add the largest element remaining in output
+        for (char c : s.toCharArray()) {
+            if (c == 'I') {
+                out.add(min);
+                min++;
+            } else {
+                out.add(max);
+                max--;
+            }
+        }
+
+        // add the last remaining element
+        out.add(max);
+
+        return out;
+    }
+
+    // https://www.interviewbit.com/problems/merge-intervals/
+    private static class Interval {
+        int start = 0, end = 0;
+    }
+
+    static ArrayList<Interval> insertInterval(ArrayList<Interval> intervals, Interval newInterval) {
+        // rearrange new interval
+        if (newInterval.start > newInterval.end) {
+            int temp = newInterval.start;
+            newInterval.start = newInterval.end;
+            newInterval.end = temp;
+        }
+
+        int n = intervals.size();
+        // given list is empty
+        if (n == 0) {
+            ArrayList<Interval> ans = new ArrayList<>();
+            ans.add(newInterval);
+            return ans;
+        }
+
+        // Case-1: new interval is at the first position
+        if (newInterval.end < intervals.get(0).start) {
+            intervals.add(0, newInterval);
+            return intervals;
+        }
+
+        // Case-2: new interval is at the last position
+        if (newInterval.start > intervals.get(n - 1).end) {
+            intervals.add(newInterval);
+            return intervals;
+        }
+
+        // Case-3: new interval overlaps all intervals
+        if (newInterval.start <= intervals.get(0).start && newInterval.end >= intervals.get(n - 1).end) {
+            ArrayList<Interval> ans = new ArrayList<>();
+            ans.add(newInterval);
+            return ans;
+        }
+
+        // Case 4-5: new interval fits between other intervals or is overlapping
+        ArrayList<Interval> ans = new ArrayList<>();
+        int i = 0;
+
+        while (i < n) {
+            boolean overlap = doesOverlap(newInterval, intervals.get(i));
+
+            if (!overlap) {
+                ans.add(intervals.get(i));
+                // Case-4: new interval lies between two intervals
+                if (newInterval.start > intervals.get(i).end && newInterval.end < intervals.get(i + 1).start)
+                    ans.add(newInterval);
+
+                i++;
+                continue;
+            }
+
+            // Case-5: merge overlapping intervals
+            Interval temp = new Interval();
+            temp.start = Math.min(newInterval.start, intervals.get(i).start);
+
+            // traverse until intervals are overlapping
+            while (i < n && overlap) {
+                temp.end = Math.max(newInterval.end, intervals.get(i).end);
+
+                if (i == n - 1)
+                    overlap = false;
+                else
+                    overlap = doesOverlap(newInterval, intervals.get(i + 1));
+
+                i++;
+            }
+
+            ans.add(temp);
+        }
+
+        return ans;
+    }
+
+    // util to check if two intervals overlap
+    private static boolean doesOverlap(Interval a, Interval b) {
+        return Math.min(a.end, b.end) >= Math.max(a.start, b.start);
+    }
+
+    // https://www.interviewbit.com/problems/merge-overlapping-intervals/
+    static ArrayList<Interval> merge(ArrayList<Interval> intervals) {
+        // sort all intervals by start time
+        intervals.sort(Comparator.comparingInt(a -> a.start));
+
+        ArrayList<Interval> res = new ArrayList<>();
+        res.add(intervals.get(0));
+
+        for (int i = 1; i < intervals.size(); i++) {
+            Interval top = res.get(res.size() - 1), curr = intervals.get(i);
+            // does not overlap
+            if (top.end < curr.start)
+                res.add(curr);
+            else
+                top.end = Math.max(top.end, curr.end);
+        }
+
+        return res;
+    }
+
     // https://www.interviewbit.com/problems/set-matrix-zeros/
+    @SuppressWarnings("ForLoopReplaceableByForEach")
     static void setZeroes(ArrayList<ArrayList<Integer>> a) {
         int m = a.size(), n = a.get(0).size();
-        boolean[] rows = new boolean[m], columns = new boolean[n];
+        // whether first column and first row need to be converted
+        boolean firstCol = false, firstRow = false;
 
+        // check if first column contains 0
         for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
+            if (a.get(i).get(0) == 0) {
+                firstCol = true;
+                break;
+            }
+        }
+
+        // check if first row contains 0
+        for (int j = 0; j < n; j++) {
+            if (a.get(0).get(j) == 0) {
+                firstRow = true;
+                break;
+            }
+        }
+
+        // check remaining matrix
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                // if a[i][j] is 0, mark its row and column heads (a[i][0] and a[0][j]) as 0
                 if (a.get(i).get(j) == 0) {
-                    rows[i] = true;
-                    columns[j] = true;
+                    a.get(i).set(0, 0);
+                    a.get(0).set(j, 0);
                 }
             }
         }
 
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                if (rows[i] || columns[j])
+        // for each cell in remaining matrix
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                // if row or column header is 0, convert whole row or column to 0
+                if (a.get(i).get(0) == 0 || a.get(0).get(j) == 0)
                     a.get(i).set(j, 0);
             }
+        }
+
+        // if first column needs to be converted
+        if (firstCol) {
+            for (int i = 0; i < m; i++)
+                a.get(i).set(0, 0);
+        }
+
+        // if first row needs to be converted
+        if (firstRow) {
+            for (int j = 0; j < n; j++)
+                a.get(0).set(j, 0);
         }
     }
 
@@ -1133,335 +1263,19 @@ public class Array {
         return pi + 1;
     }
 
+    // util to partition array with positives on the left
     private static int partitionPositives(int[] a) {
         int pi = 0, pivot = 0;
 
         for (int i = 0; i < a.length; i++) {
+            // move a[i] to left half and update partition index
             if (a[i] > pivot) {
-                int temp = a[i];
-                a[i] = a[pi];
-                a[pi] = temp;
-
+                swap(a, i, pi);
                 pi++;
             }
         }
 
         return pi;
-    }
-
-    // https://www.interviewbit.com/problems/merge-intervals/
-    static ArrayList<Interval> insert(ArrayList<Interval> intervals, Interval newInterval) {
-        // rearrange new interval
-        if (newInterval.start > newInterval.end) {
-            int temp = newInterval.start;
-            newInterval.start = newInterval.end;
-            newInterval.end = temp;
-        }
-
-        int n = intervals.size();
-
-        // given list is empty
-        if (n == 0) {
-            ArrayList<Interval> ans = new ArrayList<>();
-            ans.add(newInterval);
-
-            return ans;
-        }
-
-        // Case-1: new interval is at the first position
-        if (newInterval.end < intervals.get(0).start) {
-            intervals.add(0, newInterval);
-            return intervals;
-        }
-
-        // Case-2: new interval is at the last position
-        if (newInterval.start > intervals.get(n - 1).end) {
-            intervals.add(newInterval);
-            return intervals;
-        }
-
-        // Case-3: new interval overlaps all intervals
-        if (newInterval.start <= intervals.get(0).start &&
-                newInterval.end >= intervals.get(n - 1).end) {
-            ArrayList<Interval> ans = new ArrayList<>();
-            ans.add(newInterval);
-
-            return ans;
-        }
-
-        // Case 4-5: new interval fits between other intervals or is overlapping
-        boolean overlap;
-        ArrayList<Interval> ans = new ArrayList<>();
-
-        for (int i = 0; i < n; i++) {
-            overlap = doesOverlap(newInterval, intervals.get(i));
-
-            if (!overlap) {
-                ans.add(intervals.get(i));
-
-                // Case-4: new interval lies between two intervals
-                if (newInterval.start > intervals.get(i).end && newInterval.end < intervals.get(i + 1).start)
-                    ans.add(newInterval);
-
-                continue;
-            }
-
-            // Case-5: merge overlapping intervals
-            Interval temp = new Interval();
-            temp.start = Math.min(newInterval.start, intervals.get(i).start);
-
-            // traverse until intervals are overlapping
-            while (i < n && overlap) {
-                temp.end = Math.max(newInterval.end, intervals.get(i).end);
-
-                if (i == n - 1)
-                    overlap = false;
-                else
-                    overlap = doesOverlap(intervals.get(i + 1), newInterval);
-
-                i++;
-            }
-
-            i--;
-            ans.add(temp);
-        }
-
-        return ans;
-    }
-
-    private static boolean doesOverlap(Interval a, Interval b) {
-        return Math.min(a.end, b.end) >= Math.max(a.start, b.start);
-    }
-
-    // https://www.interviewbit.com/problems/merge-overlapping-intervals/
-    static ArrayList<Interval> merge(ArrayList<Interval> intervals) {
-        intervals.sort((a, b) -> a.start - b.start);
-
-        Stack<Interval> s = new Stack<>();
-        s.push(intervals.get(0));
-
-        int pos = 1;
-
-        while (pos != intervals.size()) {
-            Interval top = s.peek(), curr = intervals.get(pos);
-
-            if (top.end < curr.start)
-                s.push(curr);
-            else
-                top.end = Math.max(top.end, curr.end);
-
-            pos++;
-        }
-
-        return new ArrayList<>(s);
-    }
-
-    private static class Interval {
-        int start;
-        int end;
-
-        Interval() {
-            start = 0;
-            end = 0;
-        }
-
-        Interval(int s, int e) {
-            start = s;
-            end = e;
-        }
-    }
-
-    // TODO: wrong answer
-    // https://www.interviewbit.com/problems/simple-queries/
-    static ArrayList<Integer> solve(ArrayList<Integer> a, ArrayList<Integer> b) {
-        int n = a.size();
-        Collections.sort(a);
-
-        for (int i = 0; i < n; i++) {
-            a.set(i, productOfFactors(a.get(i)));
-        }
-
-        long[] sum = new long[n];
-        sum[0] = 1;
-
-        for (int i = 1; i < n; i++) {
-            sum[i] = sum[i - 1] + (int) Math.pow(2, i);
-        }
-
-        for (long val : sum)
-            System.out.print(val + " ");
-        System.out.println();
-
-        long last = (long) Math.pow(2, n - 1);
-        for (int i = 0; i < b.size(); i++) {
-            int k = b.get(i);
-            b.set(i, a.get(binarySearch(sum, (int) (last - k))));
-        }
-
-        return b;
-    }
-
-    private static int binarySearch(long[] a, int k) {
-        int res = 0;
-        int l = 0, r = a.length - 1;
-
-        while (l <= r) {
-            int mid = (l + r) / 2;
-            if (k < a[mid]) {
-                res = mid;
-                r = mid - 1;
-            } else
-                l = mid + 1;
-        }
-
-        return res;
-    }
-
-    private static int productOfFactors(int x) {
-        int cnt = countFactors(x), p = 1000000007;
-
-        int ans = moduloPower(x, cnt / 2, p);
-        if (cnt % 2 == 1)
-            ans = (ans * (int) Math.sqrt(x)) % p;
-
-        return ans;
-    }
-
-    private static int countFactors(int x) {
-        int cnt = 0;
-
-        for (int i = 1; i * i <= x; i++) {
-            if (x % i == 0) {
-                if (i == x / i)
-                    cnt++;
-                else
-                    cnt += 2;
-            }
-        }
-
-        return cnt;
-    }
-
-    private static int moduloPower(int x, int y, int p) {
-        int res = 1;
-
-        while (y > 0) {
-            if (y % 2 == 1)
-                res = (res * x) % p;
-
-            y = (y / 2) % p;
-            x = (x * x) % p;
-        }
-
-        return res;
-    }
-
-    // https://www.interviewbit.com/problems/n3-repeat-number/
-    static int repeatedNumber(final List<Integer> a) {
-        int n = a.size();
-
-        // empty list, no repeating number
-        if (n == 0)
-            return -1;
-
-        // single element
-        if (n == 1)
-            return a.get(0);
-
-        // Moore's voting algorithm variant. Use two candidates
-        int first = Integer.MIN_VALUE, second = Integer.MAX_VALUE;
-        int count1 = 0, count2 = 0;
-
-        for (int val : a) {
-            // first candidate repeating
-            if (val == first)
-                count1++;
-
-                // second candidate repeating
-            else if (val == second)
-                count2++;
-
-                // change first candidate
-            else if (count1 == 0) {
-                count1 = 1;
-                first = val;
-            }
-
-            // change second candidate
-            else if (count2 == 0) {
-                count2 = 1;
-                second = val;
-            }
-
-            // number is not equal to both first and second
-            else {
-                count1--;
-                count2--;
-            }
-        }
-
-        count1 = 0;
-        count2 = 0;
-
-        // count actual frequencies of first and second
-        for (int val : a) {
-            if (val == first)
-                count1++;
-            else if (val == second)
-                count2++;
-        }
-
-        // first is the answer
-        if (count1 > n / 3)
-            return first;
-
-        // second is the anwser
-        if (count2 > n / 3)
-            return second;
-
-        // no n/3 repeating found
-        return -1;
-    }
-
-    // https://www.interviewbit.com/problems/rotate-matrix/
-    static void rotate(ArrayList<ArrayList<Integer>> a) {
-        int n = a.size();
-
-        for (int level = 0; level < n / 2; level++) {
-            for (int y = level; y < n - level - 1; y++) {
-                int temp = a.get(level).get(y);
-
-                a.get(level).set(y, a.get(n - y - 1).get(level));
-                a.get(n - y - 1).set(level, a.get(n - level - 1).get(n - y - 1));
-                a.get(n - level - 1).set(n - y - 1, a.get(y).get(n - level - 1));
-                a.get(y).set(n - level - 1, temp);
-            }
-        }
-    }
-
-    // https://www.interviewbit.com/problems/find-permutation/
-    static ArrayList<Integer> findPerm(final String s, int n) {
-        ArrayList<Integer> out = new ArrayList<>();
-
-        // dual end pointers for deque of numbers 1..n
-        int min = 1, max = n;
-
-        // if I is encountered then add the smallest element remaining in output
-        // else add the largest element remaining in output
-        for (char c : s.toCharArray()) {
-            if (c == 'I') {
-                out.add(min);
-                min++;
-            } else {
-                out.add(max);
-                max--;
-            }
-        }
-
-        // add the last remaining element
-        out.add(max);
-
-        return out;
     }
 
     // https://www.interviewbit.com/problems/maximum-sum-square-submatrix/
@@ -1499,6 +1313,99 @@ public class Array {
         return maxSum;
     }
 
+    // https://www.interviewbit.com/problems/repeat-and-missing-number-array/
+    static int[] repeatedNumber(final int[] a) {
+        long n = a.length;
+        long sum = 0, sum2 = 0;
+
+        // sum of 1st n numbers
+        long n_sum = n * (n + 1L) / 2L;
+        // sum of squares of 1st n numbers
+        long n2_sum = n * (n + 1L) * (2L * n + 1L) / 6L;
+
+        // sum and square sum of all numbers in the array
+        // sum = n_sum + x - y
+        // sum2 = n2_sum + x^2 - y^2 ,
+        // where x is the repeating number and y is the missing number
+        for (int value : a) {
+            sum += value;
+            sum2 += (long) Math.pow(value, 2);
+        }
+
+        // x - y
+        long diff_repeat_miss = sum - n_sum;
+        // x + y = (x^2 - y^2)/(x - y)
+        long sum_repeat_miss = (sum2 - n2_sum) / diff_repeat_miss;
+
+        // x = (x - y + x + y) / 2
+        int repeat = (int) (diff_repeat_miss + sum_repeat_miss) / 2;
+        // substitute x in x + y equation
+        int missing = (int) sum_repeat_miss - repeat;
+
+        return new int[]{repeat, missing};
+    }
+
+    // https://www.interviewbit.com/problems/n3-repeat-number/
+    static int repeatedNumber(final List<Integer> a) {
+        int n = a.size();
+        // empty list, no repeating number
+        if (n == 0)
+            return -1;
+        // single element
+        if (n == 1)
+            return a.get(0);
+
+        // Moore's voting algorithm variant. Use two candidates
+        int first = Integer.MIN_VALUE, second = Integer.MAX_VALUE;
+        int count1 = 0, count2 = 0;
+
+        for (int val : a) {
+            // first candidate repeating
+            if (val == first) {
+                count1++;
+            }
+            // second candidate repeating
+            else if (val == second) {
+                count2++;
+            }
+            // change first candidate
+            else if (count1 == 0) {
+                count1 = 1;
+                first = val;
+            }
+            // change second candidate
+            else if (count2 == 0) {
+                count2 = 1;
+                second = val;
+            }
+            // number is not equal to both first and second
+            else {
+                count1--;
+                count2--;
+            }
+        }
+
+        count1 = 0;
+        count2 = 0;
+
+        // count actual frequencies of first and second
+        for (int val : a) {
+            if (val == first)
+                count1++;
+            else if (val == second)
+                count2++;
+        }
+
+        // first is the answer
+        if (count1 > n / 3)
+            return first;
+        // second is the answer
+        if (count2 > n / 3)
+            return second;
+        // no n/3 repeating found
+        return -1;
+    }
+
     // https://www.interviewbit.com/problems/leaders-in-an-array/
     static ArrayList<Integer> leadersInArray(ArrayList<Integer> A) {
         ArrayList<Integer> res = new ArrayList<>();
@@ -1524,6 +1431,7 @@ public class Array {
     }
 
     // https://www.interviewbit.com/problems/pick-from-both-sides/
+    // consider e.g [-1 100 .... 1 2 3] with B = 2
     static int pickFromBothSides(int[] A, int B) {
         int n = A.length;
         // calculate prefix and suffix sum
@@ -1579,5 +1487,115 @@ public class Array {
         }
 
         return cnt;
+    }
+
+    // https://www.interviewbit.com/problems/max-min-05542f2f-69aa-4253-9cc7-84eb7bf739c4/
+    // two methods: this and Tournament method (https://www.geeksforgeeks.org/maximum-and-minimum-in-an-array/)
+    static int maxMin(int[] A) {
+        int n = A.length;
+        // minimum and maximum for the array
+        int min, max;
+        // starting index
+        int i;
+
+        // if array length is odd, same min-max and start from 1
+        if (n % 2 == 1) {
+            min = A[0];
+            max = A[0];
+            i = 1;
+        }
+        // else one comparison to find initial min-max and start from 2
+        else {
+            if (A[0] < A[1]) {
+                min = A[0];
+                max = A[1];
+            } else {
+                min = A[1];
+                max = A[0];
+            }
+
+            i = 2;
+        }
+
+        // take elements in pairs - compare larger of them with max and smaller with min and update global max-min
+        while (i + 1 < n) {
+            if (A[i] > A[i + 1]) {
+                if (A[i] > max)
+                    max = A[i];
+                if (A[i + 1] < min)
+                    min = A[i + 1];
+            } else {
+                if (A[i + 1] > max)
+                    max = A[i + 1];
+                if (A[i] < min)
+                    min = A[i];
+            }
+
+            // skip 2 since taking elements in pairs
+            i += 2;
+        }
+
+        return min + max;
+    }
+
+    // https://www.interviewbit.com/problems/sort-array-with-squares/
+    static int[] sortArrayWithSquares(int[] A) {
+        int n = A.length;
+        // index of first positive number in array
+        int pi = findFirstPositiveIndex(A);
+        // output array
+        int[] res = new int[n];
+        int k = 0;
+
+        // i - start of negative half, j - start of positive half
+        int i = pi - 1, j = pi;
+        // traverse both halves
+        while (i >= 0 && j < n) {
+            // square of negative number will come first
+            if (Math.abs(A[i]) < Math.abs(A[j])) {
+                res[k++] = A[i] * A[i];
+                i--;
+            }
+            // square of positive number will come first
+            else {
+                res[k++] = A[j] * A[j];
+                j++;
+            }
+        }
+
+        // traverse remaining of negative half
+        while (i >= 0) {
+            res[k++] = A[i] * A[i];
+            i--;
+        }
+
+        // traverse remaining of positive half
+        while (j < n) {
+            res[k++] = A[j] * A[j];
+            j++;
+        }
+
+        return res;
+    }
+
+    // util to find index of first positive number in array
+    private static int findFirstPositiveIndex(int[] A) {
+        int n = A.length;
+        int l = 0, r = n - 1, pi = -1;
+        // binary search for first positive number
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            // if negative, search in 2nd half
+            if (A[mid] < 0) {
+                l = mid + 1;
+            }
+            // update answer and search in 1st half
+            else {
+                pi = mid;
+                r = mid - 1;
+            }
+        }
+
+        return pi;
     }
 }

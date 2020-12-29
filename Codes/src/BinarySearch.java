@@ -533,4 +533,89 @@ public class BinarySearch {
         // not found
         return -1;
     }
+
+    // TODO: wrong answer
+    // https://www.interviewbit.com/problems/simple-queries/
+    static ArrayList<Integer> solve(ArrayList<Integer> a, ArrayList<Integer> b) {
+        int n = a.size();
+        Collections.sort(a);
+
+        for (int i = 0; i < n; i++) {
+            a.set(i, productOfFactors(a.get(i)));
+        }
+
+        long[] sum = new long[n];
+        sum[0] = 1;
+
+        for (int i = 1; i < n; i++) {
+            sum[i] = sum[i - 1] + (int) Math.pow(2, i);
+        }
+
+        for (long val : sum)
+            System.out.print(val + " ");
+        System.out.println();
+
+        long last = (long) Math.pow(2, n - 1);
+        for (int i = 0; i < b.size(); i++) {
+            int k = b.get(i);
+            b.set(i, a.get(binarySearch(sum, (int) (last - k))));
+        }
+
+        return b;
+    }
+
+    private static int binarySearch(long[] a, int k) {
+        int res = 0;
+        int l = 0, r = a.length - 1;
+
+        while (l <= r) {
+            int mid = (l + r) / 2;
+            if (k < a[mid]) {
+                res = mid;
+                r = mid - 1;
+            } else
+                l = mid + 1;
+        }
+
+        return res;
+    }
+
+    private static int productOfFactors(int x) {
+        int cnt = countFactors(x), p = 1000000007;
+
+        int ans = moduloPower(x, cnt / 2, p);
+        if (cnt % 2 == 1)
+            ans = (ans * (int) Math.sqrt(x)) % p;
+
+        return ans;
+    }
+
+    private static int countFactors(int x) {
+        int cnt = 0;
+
+        for (int i = 1; i * i <= x; i++) {
+            if (x % i == 0) {
+                if (i == x / i)
+                    cnt++;
+                else
+                    cnt += 2;
+            }
+        }
+
+        return cnt;
+    }
+
+    private static int moduloPower(int x, int y, int p) {
+        int res = 1;
+
+        while (y > 0) {
+            if (y % 2 == 1)
+                res = (res * x) % p;
+
+            y = (y / 2) % p;
+            x = (x * x) % p;
+        }
+
+        return res;
+    }
 }
