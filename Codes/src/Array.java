@@ -1406,42 +1406,17 @@ public class Array {
         return -1;
     }
 
-    // https://www.interviewbit.com/problems/leaders-in-an-array/
-    static ArrayList<Integer> leadersInArray(ArrayList<Integer> A) {
-        ArrayList<Integer> res = new ArrayList<>();
-        int n = A.size();
-        if (n == 0)
-            return res;
-
-        // keep track of max elements to the right of A[i]
-        int maxRight = A.get(n - 1);
-        // right most is always leader
-        res.add(maxRight);
-
-        // check for each element from the end
-        for (int i = n - 2; i >= 0; i--) {
-            // A[i] is a leader. Add to result and update maxRight
-            if (A.get(i) > maxRight) {
-                res.add(A.get(i));
-                maxRight = A.get(i);
-            }
-        }
-
-        return res;
-    }
-
     // https://www.interviewbit.com/problems/pick-from-both-sides/
     // consider e.g [-1 100 .... 1 2 3] with B = 2
     static int pickFromBothSides(int[] A, int B) {
         int n = A.length;
         // calculate prefix and suffix sum
         int[] prefixSum = new int[n + 1], suffixSum = new int[n + 1];
-        for (int i = 1; i < n; i++) {
+
+        for (int i = 1; i <= n; i++) {
             prefixSum[i] = A[i - 1] + prefixSum[i - 1];
             suffixSum[n - i] = A[n - i] + suffixSum[n - i + 1];
         }
-        prefixSum[n] = A[n - 1] + prefixSum[n - 1];
-        suffixSum[0] = A[0] + suffixSum[1];
 
         // find max of (prefix[i] + suffix[n-(B - i)])
         int maxSum = Integer.MIN_VALUE;
@@ -1449,6 +1424,67 @@ public class Array {
             maxSum = Math.max(maxSum, prefixSum[i] + suffixSum[n - (B - i)]);
 
         return maxSum;
+    }
+
+    // https://www.interviewbit.com/problems/sort-array-with-squares/
+    static int[] sortArrayWithSquares(int[] A) {
+        int n = A.length;
+        // index of first positive number in array
+        int pi = findFirstPositiveIndex(A);
+        // output array
+        int[] res = new int[n];
+        int k = 0;
+
+        // i - start of negative half, j - start of positive half
+        int i = pi - 1, j = pi;
+        // traverse both halves
+        while (i >= 0 && j < n) {
+            // square of negative number will come first
+            if (Math.abs(A[i]) < Math.abs(A[j])) {
+                res[k++] = A[i] * A[i];
+                i--;
+            }
+            // square of positive number will come first
+            else {
+                res[k++] = A[j] * A[j];
+                j++;
+            }
+        }
+
+        // traverse remaining of negative half
+        while (i >= 0) {
+            res[k++] = A[i] * A[i];
+            i--;
+        }
+
+        // traverse remaining of positive half
+        while (j < n) {
+            res[k++] = A[j] * A[j];
+            j++;
+        }
+
+        return res;
+    }
+
+    // util to find index of first positive number in array
+    private static int findFirstPositiveIndex(int[] A) {
+        int n = A.length;
+        int l = 0, r = n - 1, pi = -1;
+        // binary search for first positive number
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            // if negative, search in 2nd half
+            if (A[mid] < 0) {
+                l = mid + 1;
+            }
+            // update answer and search in 1st half
+            else {
+                pi = mid;
+                r = mid - 1;
+            }
+        }
+
+        return pi;
     }
 
     // https://www.interviewbit.com/problems/balance-array/
@@ -1538,64 +1574,27 @@ public class Array {
         return min + max;
     }
 
-    // https://www.interviewbit.com/problems/sort-array-with-squares/
-    static int[] sortArrayWithSquares(int[] A) {
-        int n = A.length;
-        // index of first positive number in array
-        int pi = findFirstPositiveIndex(A);
-        // output array
-        int[] res = new int[n];
-        int k = 0;
+    // https://www.interviewbit.com/problems/leaders-in-an-array/
+    static ArrayList<Integer> leadersInArray(ArrayList<Integer> A) {
+        ArrayList<Integer> res = new ArrayList<>();
+        int n = A.size();
+        if (n == 0)
+            return res;
 
-        // i - start of negative half, j - start of positive half
-        int i = pi - 1, j = pi;
-        // traverse both halves
-        while (i >= 0 && j < n) {
-            // square of negative number will come first
-            if (Math.abs(A[i]) < Math.abs(A[j])) {
-                res[k++] = A[i] * A[i];
-                i--;
+        // keep track of max elements to the right of A[i]
+        int maxRight = A.get(n - 1);
+        // right most is always leader
+        res.add(maxRight);
+
+        // check for each element from the end
+        for (int i = n - 2; i >= 0; i--) {
+            // A[i] is a leader. Add to result and update maxRight
+            if (A.get(i) > maxRight) {
+                res.add(A.get(i));
+                maxRight = A.get(i);
             }
-            // square of positive number will come first
-            else {
-                res[k++] = A[j] * A[j];
-                j++;
-            }
-        }
-
-        // traverse remaining of negative half
-        while (i >= 0) {
-            res[k++] = A[i] * A[i];
-            i--;
-        }
-
-        // traverse remaining of positive half
-        while (j < n) {
-            res[k++] = A[j] * A[j];
-            j++;
         }
 
         return res;
-    }
-
-    // util to find index of first positive number in array
-    private static int findFirstPositiveIndex(int[] A) {
-        int n = A.length;
-        int l = 0, r = n - 1, pi = -1;
-        // binary search for first positive number
-        while (l <= r) {
-            int mid = l + (r - l) / 2;
-            // if negative, search in 2nd half
-            if (A[mid] < 0) {
-                l = mid + 1;
-            }
-            // update answer and search in 1st half
-            else {
-                pi = mid;
-                r = mid - 1;
-            }
-        }
-
-        return pi;
     }
 }

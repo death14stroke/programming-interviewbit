@@ -2,7 +2,7 @@
 
 Interview bit problems topic wise
 
-## Arrays
+## Arrays (46)
 
 - [Spiral Order Matrix I](https://www.interviewbit.com/problems/spiral-order-matrix-i/)
 - [Insertion Sort](https://www.interviewbit.com/tutorial/insertion-sort-algorithm/)
@@ -45,11 +45,11 @@ Interview bit problems topic wise
 - [Maximum Sum Square SubMatrix](https://www.interviewbit.com/problems/maximum-sum-square-submatrix/)
 - [Repeat and Missing Number Array](https://www.interviewbit.com/problems/repeat-and-missing-number-array/)
 - [N/3 Repeat Number](https://www.interviewbit.com/problems/n3-repeat-number/)
-- [Leaders in an array](https://www.interviewbit.com/problems/leaders-in-an-array/)
 - [Pick from both sides!](https://www.interviewbit.com/problems/pick-from-both-sides/)
+- [Sort array with squares!](https://www.interviewbit.com/problems/sort-array-with-squares/)
 - [Balance Array](https://www.interviewbit.com/problems/balance-array/)
 - [Max Min](https://www.interviewbit.com/problems/max-min-05542f2f-69aa-4253-9cc7-84eb7bf739c4/)
-- [Sort array with squares!](https://www.interviewbit.com/problems/sort-array-with-squares/)
+- [Leaders in an array](https://www.interviewbit.com/problems/leaders-in-an-array/)
 
 ## Math
 
