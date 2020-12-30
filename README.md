@@ -60,12 +60,14 @@ Interview bit problems topic wise
 - [Prime Sum](https://www.interviewbit.com/problems/prime-sum/)
 - [Sum of pairwise Hamming Distance](https://www.interviewbit.com/problems/sum-of-pairwise-hamming-distance/)
 - [FizzBuzz](https://www.interviewbit.com/problems/fizzbuzz/)
+- [Is Rectangle?](https://www.interviewbit.com/problems/is-rectangle/)
 - [Power Of Two Integers](https://www.interviewbit.com/problems/power-of-two-integers/)
 - [Excel Column Number](https://www.interviewbit.com/problems/excel-column-number/)
 - [Excel Column Title](https://www.interviewbit.com/problems/excel-column-title/)
 - [Palindrome Integer](https://www.interviewbit.com/problems/palindrome-integer/)
 - [Reverse integer](https://www.interviewbit.com/problems/reverse-integer/)
 - [Greatest Common Divisor](https://www.interviewbit.com/problems/greatest-common-divisor/)
+- [Find Nth Fibonacci](https://www.interviewbit.com/problems/find-nth-fibonacci/)
 - [Trailing Zeros in Factorial](https://www.interviewbit.com/problems/trailing-zeros-in-factorial/)
 - [Sorted Permutation Rank](https://www.interviewbit.com/problems/sorted-permutation-rank/)
 - [Largest Coprime Divisor](https://www.interviewbit.com/problems/largest-coprime-divisor/)
@@ -75,10 +77,10 @@ Interview bit problems topic wise
 - [Grid Unique Paths](https://www.interviewbit.com/problems/grid-unique-paths/)
 - [PRETTYPRINT](https://www.interviewbit.com/problems/prettyprint/)
 - [Next Similar Number](https://www.interviewbit.com/problems/next-similar-number/)
-- [Is Rectangle?](https://www.interviewbit.com/problems/is-rectangle/)
-- [Find Nth Fibonacci](https://www.interviewbit.com/problems/find-nth-fibonacci/)
 - [Step by Step](https://www.interviewbit.com/problems/step-by-step/)
 - [Distribute in Circle!](https://www.interviewbit.com/problems/distribute-in-circle/)
+- [Total Moves For Bishop!](https://www.interviewbit.com/problems/total-moves-for-bishop/)
+- [Next Smallest Palindrome!](https://www.interviewbit.com/problems/next-smallest-palindrome/)
 
 ## Binary Search
 
