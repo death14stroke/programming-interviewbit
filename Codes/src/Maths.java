@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Maths {
@@ -439,14 +440,88 @@ public class Maths {
         return res;
     }
 
+    // https://www.interviewbit.com/problems/next-similar-number/
+    // similar to finding next permutation for a number
+    static String nextSimilarNumber(String A) {
+        int n = A.length();
+        // only one digit in string
+        if (n == 1)
+            return "-1";
+
+        int i = n - 2;
+        // find the last increasing pair
+        while (i >= 0 && A.charAt(i) >= A.charAt(i + 1))
+            i--;
+
+        // whole string is in non-increasing order
+        if (i < 0)
+            return "-1";
+
+        // find successor of first digit of the increasing pair
+        int nextPos = findSuccessor(A, i + 1, n - 1, A.charAt(i));
+        // swap first digit of pair with its successor
+        StringBuilder builder = new StringBuilder(A);
+        builder.setCharAt(i, A.charAt(nextPos));
+        builder.setCharAt(nextPos, A.charAt(i));
+
+        // reverse the remaining half of the string
+        int start = i + 1, end = n - 1;
+        while (start < end) {
+            char temp = builder.charAt(start);
+            builder.setCharAt(start, builder.charAt(end));
+            builder.setCharAt(end, temp);
+
+            start++;
+            end--;
+        }
+
+        return builder.toString();
+    }
+
+    // util to find next successor in reverse sorted string using binary search
+    private static int findSuccessor(String A, int l, int r, char x) {
+        int res = -1;
+
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            // reverse array - hence search in left half for greater char
+            if (A.charAt(mid) <= x) {
+                r = mid - 1;
+            }
+            // mark as potential result and search in right half for a smaller char
+            else {
+                res = mid;
+                l = mid + 1;
+            }
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/rearrange-array/
+    static void arrange(ArrayList<Integer> a) {
+        // if x = a + bn where a is old value and b is new value then
+        // old value = x % n and new value = x / n
+        int n = a.size();
+
+        // add new value b to old value a of each element (a + bn)
+        for (int i = 0; i < n; i++) {
+            int x = a.get(i) % n, y = a.get(x) % n;
+            a.set(i, x + y * n);
+        }
+
+        // retrieve new value b from the a + bn sum
+        for (int i = 0; i < n; i++)
+            a.set(i, a.get(i) / n);
+    }
+
     // https://www.interviewbit.com/problems/numbers-of-length-n-and-value-less-than-k/
     static int solve(ArrayList<Integer> a, int b, int c) {
         int MAX_DIG = 10;
         List<Integer> digits = getDigitsFromNumber(c);
 
         int n = a.size(), d = digits.size();
-
-        // CASE-1: no digits in set or output digits < limit number's digits
+        // CASE-1: no digits in set or output digits > limit number's digits
         if (n == 0 || b > d)
             return 0;
 
@@ -460,42 +535,42 @@ public class Maths {
 
         // CASE-3: output digits == limit number's digits
         int[] lower = new int[MAX_DIG + 1];
-
         // initialize lower for the digits in list a
         for (int dig : a)
             lower[dig + 1] = 1;
-
         // cumulative count
         for (int i = 1; i <= MAX_DIG; i++)
             lower[i] += lower[i - 1];
 
-        // number of digits lower than digit[i] excluding 0
-        int d2;
-        // if a digit in c has equal digit in list a and
-        // no other such digits are present to its left
-        boolean eqFlag = true;
+        // if limit is single digit number
+        if (b == 1)
+            return lower[digits.get(0)];
 
+        // dp[i] = #of numbers that can be formed with first i digits of A
+        // that is less than first i digits of C
         int[] dp = new int[b + 1];
         dp[0] = 0;
 
-        for (int i = 1; i <= b; i++) {
-            // for digits lower than digit[i-2]
-            // we can place all the digits in list a after them
+        // first digit can be all digits less than first digit of C except 0
+        dp[1] = lower[digits.get(0)];
+        if (a.get(0) == 0)
+            dp[1]--;
+
+        // if the first (i - 2) digits of C are present in A
+        boolean eqFlag = true;
+
+        for (int i = 2; i <= b; i++) {
+            // for digits lower than digit[i - 2]
+            // we can place all the digits in list A after them
             dp[i] = dp[i - 1] * n;
 
-            d2 = lower[digits.get(i - 1)];
-
-            // if list a contains 0 and output is not 1 digit number
-            if (i == 1 && b != 1 && a.get(0) == 0)
-                d2--;
-
-            // if prev digit was a digit from the list
+            // update the flag by checking if digit[i - 2] (previous) is present in A
+            int prevDigit = digits.get(i - 2), currDigit = digits.get(i - 1);
+            eqFlag = (eqFlag && (lower[prevDigit + 1] - lower[prevDigit]) == 1);
+            // if first (i - 2) digits present, pos i can have digits only lower than digit[i - 1] (current)
+            // for the equal first half case
             if (eqFlag)
-                dp[i] += d2;
-
-            // flag is true if digit[i-1] is present in list a and
-            // is first such digit from the left
-            eqFlag = (eqFlag && lower[digits.get(i - 1) + 1] - lower[digits.get(i - 1)] == 1);
+                dp[i] += lower[currDigit];
         }
 
         return dp[b];
@@ -503,35 +578,22 @@ public class Maths {
 
     private static List<Integer> getDigitsFromNumber(int n) {
         List<Integer> digits = new ArrayList<>();
+        // if n == 0
+        if (n == 0) {
+            digits.add(0);
+            return digits;
+        }
 
-        // add new digit at the front
+        // add new digit
         while (n > 0) {
-            digits.add(0, n % 10);
+            digits.add(n % 10);
             n /= 10;
         }
 
-        // if n == 0
-        if (digits.size() == 0)
-            digits.add(0);
+        // reverse the digits list
+        Collections.reverse(digits);
 
         return digits;
-    }
-
-    // https://www.interviewbit.com/problems/rearrange-array/
-    static void arrange(ArrayList<Integer> a) {
-        // if x = a + bn where a is old value and b is new value then
-        // old value = x % n and new value = x / n
-        int n = a.size();
-
-        // add new value b to old value a of each element (a + bn)
-        for (int i = 0; i < n; i++) {
-            int x = a.get(i), y = a.get(x) % n;
-            a.set(i, x + y * n);
-        }
-
-        // retrieve new value b from the a + bn sum
-        for (int i = 0; i < n; i++)
-            a.set(i, a.get(i) / n);
     }
 
     // https://www.interviewbit.com/problems/grid-unique-paths/
@@ -544,7 +606,7 @@ public class Maths {
 
     private static int C(int n, int r) {
         if (r > n / 2)
-            r = n - r;
+            return C(n, n - r);
 
         long num = 1, den = 1;
 
@@ -556,102 +618,6 @@ public class Maths {
         return (int) (num / den);
     }
 
-    // Jump to LEVEL-3 code
-    // https://www.interviewbit.com/problems/prettyprint/
-    static ArrayList<ArrayList<Integer>> prettyPrint(int n) {
-        int len = 2 * n - 1;
-        ArrayList<ArrayList<Integer>> out = new ArrayList<>(len);
-
-        ArrayList<Integer> list = new ArrayList<>(len);
-        for (int i = 0; i < len; i++)
-            list.add(0);
-        for (int i = 0; i < len; i++)
-            out.add(new ArrayList<>(list));
-
-        int start = 0, end = len - 1;
-
-        while (start <= end) {
-            for (int i = start; i <= end; i++) {
-                out.get(i).set(start, n);
-                out.get(i).set(end, n);
-                out.get(start).set(i, n);
-                out.get(end).set(i, n);
-            }
-
-            n--;
-            start++;
-            end--;
-        }
-
-        return out;
-    }
-
-    // https://www.interviewbit.com/problems/next-similar-number/
-    static String nextSimilarNumber(String A) {
-        int n = A.length(), i = n - 1;
-        // find the first increasing pair from the end
-        while (i - 1 >= 0 && A.charAt(i - 1) >= A.charAt(i))
-            i--;
-
-        // if no increasing pair, no higher next permutation
-        if (i == 0)
-            return "-1";
-
-        // append the substring before i to result
-        StringBuilder res = new StringBuilder(A.substring(0, i));
-        // search for next greater pos for A[i - 1]
-        int nextPos = binarySearchRev(A, i, n - 1, A.charAt(i - 1));
-
-        // swap next greater of A[i - 1] at i - 1
-        char temp = res.charAt(i - 1);
-        res.setCharAt(i - 1, A.charAt(nextPos));
-
-        int j = n - 1;
-        // merge two sorted lists one of size 1 (temp) and other from n - 1 to nextPos
-        while (j > nextPos && temp != '#') {
-            if (temp <= A.charAt(j)) {
-                res.append(temp);
-                // mark temp as added to list
-                temp = '#';
-            } else {
-                res.append(A.charAt(j));
-                j--;
-            }
-        }
-
-        // if temp is the last position
-        if (temp != '#')
-            res.append(temp);
-
-        // if temp is added by merging, add the remaining part of subList 1
-        while (j > nextPos) {
-            res.append(A.charAt(j));
-            j--;
-        }
-
-        j = nextPos - 1;
-        // add the second part from nextPos - 1 to i
-        while (j >= i) {
-            res.append(A.charAt(j));
-            j--;
-        }
-
-        return res.toString();
-    }
-
-    // util to binary search next greater of x in a reverse sorted string
-    private static int binarySearchRev(String A, int l, int r, char x) {
-        while (l <= r) {
-            int mid = l + (r - l) / 2;
-            if (A.charAt(mid) > x)
-                l = mid + 1;
-            else
-                r = mid - 1;
-        }
-
-        return r;
-    }
-
     // https://www.interviewbit.com/problems/step-by-step/
     static int stepByStep(int A) {
         // moving in either side is symmetric
@@ -659,7 +625,7 @@ public class Maths {
         int sum = 0, steps = 0;
 
         // keep moving forward till either destination is reached or
-        // the difference between target and destination is odd
+        // the difference between target and destination is not even
         while (sum < A || (sum - A) % 2 != 0) {
             steps++;
             sum += steps;
@@ -670,32 +636,13 @@ public class Maths {
         return steps;
     }
 
-    // https://www.interviewbit.com/problems/distribute-in-circle/
-    static int distributeInCircle(int A, int B, int C) {
-        // A: item pos in queue
-        // C: position in circle starting from 1
-        // B: size of circle
-        return (A + C - 1) % B;
-    }
-
-    // https://www.interviewbit.com/problems/total-moves-for-bishop/
-    static int movesForBishop(int A, int B) {
-        // calculate moves possible in all 4 directions
-        int topLeft = Math.min(A, B) - 1;
-        int topRight = Math.min(A, 9 - B) - 1;
-        int bottomLeft = 8 - Math.max(A, 9 - B);
-        int bottomRight = 8 - Math.max(A, B);
-
-        return topLeft + topRight + bottomLeft + bottomRight;
-    }
-
     // https://www.interviewbit.com/problems/next-smallest-palindrome/
     static String nextSmallestPalindrome(String A) {
         int n = A.length();
 
         // Case 1: All '9's in the string
         if (allNines(A))
-            return "1" + "0".repeat(Math.max(0, n - 1)) + "1";
+            return "1" + "0".repeat(n - 1) + "1";
 
         int mid = n / 2;
         // start from mid two elements (if even) or the two elements surrounding mid element (if odd)
@@ -710,8 +657,8 @@ public class Maths {
 
         // flag to check if only copying left half to right will not work
         boolean leftSmaller = (i < 0) || (A.charAt(i) < A.charAt(j));
-        StringBuilder builder = new StringBuilder(A);
 
+        StringBuilder builder = new StringBuilder(A);
         // copy left half to right half
         while (i >= 0) {
             builder.setCharAt(j, A.charAt(i));
@@ -766,5 +713,60 @@ public class Maths {
         }
 
         return true;
+    }
+
+    // https://www.interviewbit.com/problems/distribute-in-circle/
+    static int distributeInCircle(int A, int B, int C) {
+        // A: item pos in queue
+        // C: position in circle starting from 1
+        // B: size of circle
+        return (A + C - 1) % B;
+    }
+
+    // https://www.interviewbit.com/problems/total-moves-for-bishop/
+    static int movesForBishop(int A, int B) {
+        // calculate moves possible in all 4 directions
+        int topLeft = Math.min(A, B) - 1;
+        int topRight = Math.min(A, 9 - B) - 1;
+        int bottomLeft = 8 - Math.max(A, 9 - B);
+        int bottomRight = 8 - Math.max(A, B);
+
+        return topLeft + topRight + bottomLeft + bottomRight;
+    }
+
+    // Jump to LEVEL-3 code
+    // https://www.interviewbit.com/problems/prettyprint/
+    static int[][] prettyPrint(int n) {
+        int len = 2 * n - 1;
+        int[][] res = new int[len][len];
+
+        // traverse in fashion similar to spiral matrix problem
+        int t = 0, b = len - 1, l = 0, r = len - 1;
+        while (n > 0) {
+            // move towards right in topmost row
+            for (int i = l; i <= r; i++)
+                res[t][i] = n;
+            t++;
+
+            // move towards bottom in rightmost row
+            for (int i = t; i <= b; i++)
+                res[i][r] = n;
+            r--;
+
+            // move towards left in bottommost row
+            for (int i = r; i >= l; i--)
+                res[b][i] = n;
+            b--;
+
+            // move towards top in leftmost row
+            for (int i = b; i >= t; i--)
+                res[i][l] = n;
+            l++;
+
+            // update the number to be filled
+            n--;
+        }
+
+        return res;
     }
 }

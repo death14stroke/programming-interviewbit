@@ -51,7 +51,7 @@ Interview bit problems topic wise
 - [Max Min](https://www.interviewbit.com/problems/max-min-05542f2f-69aa-4253-9cc7-84eb7bf739c4/)
 - [Leaders in an array](https://www.interviewbit.com/problems/leaders-in-an-array/)
 
-## Math
+## Math (28)
 
 - [All Factors](https://www.interviewbit.com/problems/all-factors/)
 - [Verify Prime](https://www.interviewbit.com/problems/verify-prime/)
@@ -72,15 +72,15 @@ Interview bit problems topic wise
 - [Sorted Permutation Rank](https://www.interviewbit.com/problems/sorted-permutation-rank/)
 - [Largest Coprime Divisor](https://www.interviewbit.com/problems/largest-coprime-divisor/)
 - [Sorted Permutation Rank with Repeats](https://www.interviewbit.com/problems/sorted-permutation-rank-with-repeats/)
-- [Numbers of length N and value less than K](https://www.interviewbit.com/problems/numbers-of-length-n-and-value-less-than-k/)
-- [Rearrange Array](https://www.interviewbit.com/problems/rearrange-array/)
-- [Grid Unique Paths](https://www.interviewbit.com/problems/grid-unique-paths/)
-- [PRETTYPRINT](https://www.interviewbit.com/problems/prettyprint/)
 - [Next Similar Number](https://www.interviewbit.com/problems/next-similar-number/)
+- [Rearrange Array](https://www.interviewbit.com/problems/rearrange-array/)
+- [Numbers of length N and value less than K](https://www.interviewbit.com/problems/numbers-of-length-n-and-value-less-than-k/)
+- [Grid Unique Paths](https://www.interviewbit.com/problems/grid-unique-paths/)
 - [Step by Step](https://www.interviewbit.com/problems/step-by-step/)
+- [Next Smallest Palindrome!](https://www.interviewbit.com/problems/next-smallest-palindrome/)
 - [Distribute in Circle!](https://www.interviewbit.com/problems/distribute-in-circle/)
 - [Total Moves For Bishop!](https://www.interviewbit.com/problems/total-moves-for-bishop/)
-- [Next Smallest Palindrome!](https://www.interviewbit.com/problems/next-smallest-palindrome/)
+- [PRETTYPRINT](https://www.interviewbit.com/problems/prettyprint/)
 
 ## Binary Search
 
