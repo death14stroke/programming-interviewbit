@@ -82,21 +82,23 @@ Interview bit problems topic wise
 - [Total Moves For Bishop!](https://www.interviewbit.com/problems/total-moves-for-bishop/)
 - [PRETTYPRINT](https://www.interviewbit.com/problems/prettyprint/)
 
-## Binary Search
+## Binary Search (16)
 
 - [Count Element Occurence](https://www.interviewbit.com/problems/count-element-occurence/)
 - [Rotated Array](https://www.interviewbit.com/problems/rotated-array/)
-- [Matrix Median](https://www.interviewbit.com/problems/matrix-median/)
 - [Square Root of Integer](https://www.interviewbit.com/problems/square-root-of-integer/)
-- [Painter's Partition Problem](https://www.interviewbit.com/problems/painters-partition-problem/)
-- [Allocate Books](https://www.interviewbit.com/problems/allocate-books/)
+- [Smaller or equal elements](https://www.interviewbit.com/problems/smaller-or-equal-elements/)
+- [WoodCutting Made Easy!](https://www.interviewbit.com/problems/woodcutting-made-easy/)
 - [Matrix Search](https://www.interviewbit.com/problems/matrix-search/)
 - [Search for a Range](https://www.interviewbit.com/problems/search-for-a-range/)
 - [Sorted Insert Position](https://www.interviewbit.com/problems/sorted-insert-position/)
+- [Matrix Median](https://www.interviewbit.com/problems/matrix-median/)
+- [Painter's Partition Problem](https://www.interviewbit.com/problems/painters-partition-problem/)
+- [Allocate Books](https://www.interviewbit.com/problems/allocate-books/)
 - [Implement Power Function](https://www.interviewbit.com/problems/implement-power-function/)
+- [Simple Queries](https://www.interviewbit.com/problems/simple-queries/)
 - [Rotated Sorted Array Search](https://www.interviewbit.com/problems/rotated-sorted-array-search/)
 - [Median of Array](https://www.interviewbit.com/problems/median-of-array/)
-- [WoodCutting Made Easy!](https://www.interviewbit.com/problems/woodcutting-made-easy/)
 - [Search in Bitonic Array!](https://www.interviewbit.com/problems/search-in-bitonic-array/)
 
 ## Strings
