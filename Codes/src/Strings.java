@@ -1,7 +1,7 @@
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class Strings {
@@ -11,8 +11,7 @@ public class Strings {
         int l = 0, r = n - 1;
 
         while (l < r) {
-            // convert left and right char to lowerCase
-            // if any of them is not alphanumeric, skip it
+            // convert left and right char to lowerCase. If any of them is not alphanumeric, skip it
             char c1 = Character.toLowerCase(A.charAt(l));
             if (!Character.isLetterOrDigit(c1)) {
                 l++;
@@ -37,8 +36,59 @@ public class Strings {
         return 1;
     }
 
+    // https://www.interviewbit.com/problems/vowel-and-consonant-substrings/
+    static int vowelAndConsonantSubstr(String A) {
+        int n = A.length(), p = 1000000007;
+        // #vowels and consonants in the string
+        int vo = 0, co = 0;
+
+        for (char c : A.toCharArray()) {
+            if (isVowelLowerCase(c))
+                vo++;
+            else
+                co++;
+        }
+
+        // #total substrings that can be formed
+        long totalSubstr = (n * (n - 1L) / 2) % p;
+        // #substrings starting and ending with vowels
+        long voSubstr = (vo * (vo - 1L) / 2) % p;
+        // #substrings starting and ending with consonants
+        long coSubstr = (co * (co - 1L) / 2) % p;
+
+        // total substrings - substrings not valid (starting and ending with both vowels or consonants)
+        return (int) ((totalSubstr - voSubstr - coSubstr) % p);
+    }
+
+    private static boolean isVowelLowerCase(char c) {
+        return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
+    }
+
+    // https://www.interviewbit.com/problems/remove-consecutive-characters/
+    static String removeConsecutive(String A, int B) {
+        StringBuilder res = new StringBuilder();
+
+        int n = A.length(), i = 0;
+        while (i < n) {
+            int j = i + 1;
+            // skip consecutive duplicate characters
+            while (j < n && A.charAt(j) == A.charAt(i))
+                j++;
+
+            // if count of consecutive duplicates is not exactly B, add all duplicate characters
+            if (j - i != B)
+                res.append(A, i, j);
+
+            // check for next char after skipping duplicates
+            i = j;
+        }
+
+        return res.toString();
+    }
+
     // https://www.interviewbit.com/problems/longest-common-prefix/
-    static String longestCommonPrefix(ArrayList<String> A) {
+    static String longestCommonPrefix(String[] A) {
+        int n = A.length;
         // find the length of shortest string
         int minLength = Integer.MAX_VALUE;
         for (String s : A)
@@ -46,35 +96,29 @@ public class Strings {
 
         // position till which prefix characters match for all
         int endIndex = 0;
-
         // check for all character positions till minLength
         for (int i = 0; i < minLength; i++) {
-            char c = A.get(0).charAt(i);
-            int j;
-
+            char c = A[0].charAt(i);
+            int j = 1;
             // compare the character at each position till j for all strings
-            for (j = 1; j < A.size(); j++) {
-                if (c != A.get(j).charAt(i))
-                    break;
-            }
-
-            // if all strings match at pos, prefix length will be incremented
-            if (j == A.size())
-                endIndex++;
-                // else mismatch
-            else
+            while (j < n && c == A[j].charAt(i))
+                j++;
+            // if all strings do not match at pos, break
+            if (j != n)
                 break;
+            // prefix length will be incremented
+            endIndex++;
         }
 
         // prefix of length endIndex
-        return A.get(0).substring(0, endIndex);
+        return A[0].substring(0, endIndex);
     }
 
     // https://www.interviewbit.com/problems/count-and-say/
     static String countAndSay(int n) {
         // for n = 1 sequence is 1
         if (n == 1)
-            return String.valueOf(1);
+            return "1";
 
         StringBuilder res = new StringBuilder("1");
         for (int i = 2; i <= n; i++) {
@@ -105,27 +149,28 @@ public class Strings {
     }
 
     // https://www.interviewbit.com/problems/amazing-subarrays/
-    static int solve(String A) {
+    static int amazingSubarrays(String A) {
         int n = A.length(), p = 10003;
         int cnt = 0;
 
-        // if a vowel is found at pos i, then
-        // substrings = strings each of length 1 to n - i starting at i
+        // if a vowel is found at pos i, then # substrings = strings each of length 1 to n - i starting at i
         // hence cnt = cnt + (n - i)
         for (int i = 0; i < n; i++) {
-            char c = Character.toLowerCase(A.charAt(i));
-
-            if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u')
+            if (isVowel(A.charAt(i)))
                 cnt = (cnt + (n - i)) % p;
         }
 
         return cnt;
     }
 
+    private static boolean isVowel(char c) {
+        return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ||
+                c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
+    }
+
     // https://www.interviewbit.com/problems/implement-strstr/
     static int strStr(final String str, final String pat) {
         int n = str.length(), m = pat.length();
-
         // if haystack (str) or needle(pat) is empty
         if (n == 0 || m == 0)
             return -1;
@@ -133,7 +178,7 @@ public class Strings {
         int[] lps = computeLpsArray(pat);
         int i = 0, j = 0;
 
-        while (i < n && j < m) {
+        while (i < n) {
             if (str.charAt(i) == pat.charAt(j)) {
                 i++;
                 j++;
@@ -158,7 +203,6 @@ public class Strings {
     private static int[] computeLpsArray(String pat) {
         int m = pat.length();
         int[] lps = new int[m];
-
         int i = 1, j = 0;
 
         while (i < m) {
@@ -169,17 +213,113 @@ public class Strings {
                 j++;
             } else {
                 // search for lps with next char after pat[i]
-                if (j == 0) {
-                    lps[i] = 0;
+                if (j == 0)
                     i++;
-                }
-                // lps[j-1] must be matching, compare chars after that
+                    // lps[j-1] must be matching, compare chars after that
                 else
                     j = lps[j - 1];
             }
         }
 
         return lps;
+    }
+
+    // https://www.interviewbit.com/problems/stringoholics/
+    static int stringoholics(String[] A) {
+        final int p = 1000000007;
+        // minimum time for each string to get back to original value after rotations
+        ArrayList<Integer> times = new ArrayList<>();
+
+        // for each string
+        for (String str : A) {
+            // find maximum lps length
+            int maxLen = computeMaxLps(str);
+            int n = str.length();
+
+            // can use this lps length as string will return to original string before n*(n+1)/2 time
+            if (n % (n - maxLen) == 0)
+                n -= maxLen;
+
+            long sum = 1;
+            int i = 2;
+            // find i*(i+1)/2 which will be divisible by length of original string (or lps removed string)
+            // a string will always return back to original at n * x rotations
+            while (sum % n != 0) {
+                sum += i;
+                i++;
+            }
+
+            // add minimum time found to list
+            times.add(i - 1);
+        }
+
+        // return lcm of all minimum times
+        return (int) lcm(times, p);
+    }
+
+    // util to compute maximum lps length of a pattern
+    private static int computeMaxLps(String pat) {
+        int n = pat.length();
+        int[] lps = new int[n];
+        int i = 1, j = 0, max = 0;
+
+        while (i < n) {
+            // pat[i] forms a part of previous lps (or new lps)
+            if (pat.charAt(i) == pat.charAt(j)) {
+                lps[i] = lps[j + 1];
+                max = Math.max(max, lps[i]);
+
+                i++;
+                j++;
+            } else {
+                // search for lps with next char after pat[i]
+                if (j == 0)
+                    i++;
+                    // lps[j-1] must be matching, compare chars after that
+                else
+                    j = lps[j - 1];
+            }
+        }
+
+        return max;
+    }
+
+    // util to update map of all factors and its powers in a num
+    private static void updatePowersMap(int num, Map<Integer, Integer> powersMap) {
+        // for all factors from 2 to num
+        for (int i = 2; i <= num; i++) {
+            int cnt = 0;
+            // compute the power of i in factorization
+            while (num % i == 0) {
+                cnt++;
+                num /= i;
+            }
+
+            // if i is a factor, update max(prevCount, cnt) in the map
+            if (cnt != 0)
+                powersMap.put(i, Math.max(cnt, powersMap.getOrDefault(i, 0)));
+        }
+    }
+
+    // util to calculate lcm of multiple numbers
+    @SuppressWarnings("SameParameterValue")
+    private static long lcm(ArrayList<Integer> A, int p) {
+        // map for each factor and its maximum power in factorization of all numbers
+        Map<Integer, Integer> powersMap = new HashMap<>();
+
+        // update powersMap for each number in A
+        for (int num : A)
+            updatePowersMap(num, powersMap);
+
+        long lcm = 1;
+        // multiply each factor raised to its maximum power to get LCM (school-method)
+        for (Map.Entry<Integer, Integer> e : powersMap.entrySet()) {
+            int fact = e.getKey(), cnt = e.getValue();
+            long prod = BinarySearch.pow(fact, cnt, p);
+            lcm = (lcm * prod) % p;
+        }
+
+        return lcm;
     }
 
     // https://www.interviewbit.com/problems/minimum-characters-required-to-make-a-string-palindromic/
@@ -189,6 +329,75 @@ public class Strings {
         int[] lps = computeLpsArray(str);
 
         // min insertions req = strlen(A) - lps[appended str last pos]
+        return A.length() - lps[str.length() - 1];
+    }
+
+    // https://www.interviewbit.com/problems/minimum-parantheses/
+    static int minParenthesis(String A) {
+        int open = 0, cnt = 0;
+        // check each parenthesis and maintain the balance count
+        for (char c : A.toCharArray()) {
+            if (c == '(')
+                open++;
+            else
+                open--;
+            // if number of closing parenthesis is greater than open so far
+            // add open parenthesis at beginning to balance
+            if (open < 0) {
+                cnt++;
+                open = 0;
+            }
+        }
+
+        // add closing parenthesis at end for extra open ones
+        cnt += open;
+
+        return cnt;
+    }
+
+    // https://www.interviewbit.com/problems/convert-to-palindrome/
+    static int convertToPalindrome(String A) {
+        int start = 0, end = A.length() - 1;
+        // skip the palindromic characters at the ends
+        while (start < end && A.charAt(start) == A.charAt(end)) {
+            start++;
+            end--;
+        }
+
+        // odd length palindrome or substring by removing first non-matching or last-non matching char is palindrome
+        if (start == end || isPalindrome(A, start + 1, end) || isPalindrome(A, start, end - 1))
+            return 1;
+
+        // not possible to make palindrome by removing exactly one char
+        return 0;
+    }
+
+    // util to check if string is palindrome or not
+    private static boolean isPalindrome(String A, int start, int end) {
+        while (start <= end) {
+            // not palindrome
+            if (A.charAt(start) != A.charAt(end))
+                return false;
+
+            // check for next positions
+            start++;
+            end--;
+        }
+
+        return true;
+    }
+
+    // https://www.interviewbit.com/problems/minimum-appends-for-palindrome/
+    static int minAppendsForPalindrome(String A) {
+        // create string rev(A) + "$" + A and compute lps
+        String str = new StringBuilder(A)
+                .reverse()
+                .append('$')
+                .append(A)
+                .toString();
+        int[] lps = computeLpsArray(str);
+
+        // characters needed at end = len(A) - lps(last pos of str)
         return A.length() - lps[str.length() - 1];
     }
 
@@ -248,24 +457,21 @@ public class Strings {
         int n = A.length();
         int start = n - 1, end = n - 1;
         StringBuilder res = new StringBuilder();
-
         // one-pass algorithm: iterate the string in reverse and keep track of start and end for each word
         // skip extra white spaces at the end or middle if any
-        while (start >= 0 && start <= end) {
+        while (start >= 0) {
             // remove extra white spaces
             while (end >= 0 && A.charAt(end) == ' ')
                 end--;
 
             start = end;
-
             // find starting point of word
             while (start >= 0 && A.charAt(start) != ' ')
                 start--;
 
             // append word with one blank space
             res.append(A, start + 1, end + 1);
-            res.append(" ");
-
+            res.append(' ');
             // check for next word from the right
             end = start;
         }
@@ -281,16 +487,14 @@ public class Strings {
         ArrayList<String> s2 = new ArrayList<>(Arrays.asList(pattern.split(B)));
 
         // make both list equal. Add empty strings to compensate
-        int i = 0;
         while (s1.size() < s2.size())
             s1.add("");
         while (s2.size() < s1.size())
             s2.add("");
 
         // loop for all the version parts
-        while (i < s1.size()) {
+        for (int i = 0; i < s1.size(); i++) {
             String a = s1.get(i), b = s2.get(i);
-
             // remove leading zeroes for both strings
             int x = 0, y = 0;
             while (x < a.length() && a.charAt(x) == '0')
@@ -306,7 +510,7 @@ public class Strings {
                 return 1;
                 // else compare digit by digit
             else {
-                while (x < a.length() && y < b.length()) {
+                while (x < a.length()) {
                     // s1[i] is smaller
                     if (a.charAt(x) < b.charAt(y))
                         return -1;
@@ -319,9 +523,6 @@ public class Strings {
                     }
                 }
             }
-
-            // check next section
-            i++;
         }
 
         // both versions are equal
@@ -330,18 +531,17 @@ public class Strings {
 
     // https://www.interviewbit.com/problems/atoi/
     static int atoi(final String A) {
+        int n = A.length();
         // empty string
-        if (A.length() == 0)
+        if (n == 0)
             return 0;
 
-        long ans = 0;
         int i = 0;
-        boolean neg = false;
-
         // remove leading white spaces
-        while (i < A.length() && A.charAt(i) == ' ')
+        while (i < n && A.charAt(i) == ' ')
             i++;
 
+        boolean neg = false;
         // check for + or - sign at beginning
         if (A.charAt(i) == '+') {
             i++;
@@ -350,9 +550,10 @@ public class Strings {
             i++;
         }
 
-        while (i < A.length()) {
-            char c = A.charAt(i);
+        long ans = 0;
 
+        for (; i < n; i++) {
+            char c = A.charAt(i);
             // not a digit
             if (c < '0' || c > '9')
                 break;
@@ -365,14 +566,11 @@ public class Strings {
                     return Integer.MIN_VALUE;
                 return Integer.MAX_VALUE;
             }
-
-            i++;
         }
 
         // if - sign encountered at beginning
         if (neg)
-            ans = -ans;
-
+            return (int) -ans;
         return (int) ans;
     }
 
@@ -390,11 +588,11 @@ public class Strings {
         // all were spaces
         if (l == n)
             return 0;
-        while (r >= l && A.charAt(r) == ' ')
+        while (r > l && A.charAt(r) == ' ')
             r--;
 
         char[] c = A.substring(l, r + 1).toCharArray();
-        // if processed string is empty or the only char is not digit
+        // if the only char is not digit
         if (c.length == 1 && !Character.isDigit(c[0]))
             return 0;
 
@@ -412,7 +610,6 @@ public class Strings {
                 // if exp or dot has already occurred
                 if (exp || dot)
                     return 0;
-
                 // if dot is last char or next char is not digit
                 if (i + 1 >= n || !Character.isDigit(c[i + 1]))
                     return 0;
@@ -422,11 +619,9 @@ public class Strings {
                 // if exp has already occurred
                 if (exp)
                     return 0;
-
                 // if prev char is not digit
                 if (!Character.isDigit(c[i - 1]))
                     return 0;
-
                 // if exp is last char or next char is not sign or digit
                 if (i + 1 >= n || (c[i + 1] != '-' && c[i + 1] != '+' && !Character.isDigit(c[i + 1])))
                     return 0;
@@ -478,7 +673,6 @@ public class Strings {
     // https://www.interviewbit.com/problems/roman-to-integer/
     static int romanToInt(String A) {
         int n = A.length();
-
         // map each Roman char to its value
         HashMap<Character, Integer> map = new HashMap<>();
         map.put('I', 1);
@@ -528,15 +722,11 @@ public class Strings {
 
         // loop from end till both strings have bits
         while (i >= 0 && j >= 0) {
-            char a = A.charAt(i), b = B.charAt(j);
+            int a = A.charAt(i) - '0', b = B.charAt(j) - '0';
+            int sum = a + b + carry;
             // add A, B and carry at pos i (=j)
-            res.append(carry ^ (a - '0') ^ (b - '0'));
-
-            // if any two of the three bits are 1, carry will be 1 again
-            if ((a == '1' && b == '1') || (carry == 1 && (a == '1' || b == '1')))
-                carry = 1;
-            else
-                carry = 0;
+            res.append(sum % 2);
+            carry = sum / 2;
 
             i--;
             j--;
@@ -544,19 +734,23 @@ public class Strings {
 
         // loop for remaining bits in string A
         while (i >= 0) {
-            char a = A.charAt(i);
-            res.append(carry ^ (a - '0'));
+            int a = A.charAt(i) - '0';
+            int sum = a + carry;
 
-            carry = carry & (a - '0');
+            res.append(sum % 2);
+            carry = sum / 2;
+
             i--;
         }
 
         // else loop for remaining bits in string B
         while (j >= 0) {
-            char b = B.charAt(j);
-            res.append(carry ^ (b - '0'));
+            int b = B.charAt(j) - '0';
+            int sum = b + carry;
 
-            carry = carry & (b - '0');
+            res.append(sum % 2);
+            carry = sum / 2;
+
             j--;
         }
 
@@ -570,19 +764,62 @@ public class Strings {
 
     // https://www.interviewbit.com/problems/power-of-2/
     static int power(String A) {
-        BigInteger n = new BigInteger(A);
-        // if n < 2 not power of 2
-        if (n.compareTo(BigInteger.valueOf(2)) < 0)
+        // remove leading zeroes
+        A = removeLeadingZeroes(A);
+        // if A is 0 or 1 - not power of 2
+        if (A.equals("") || A.equals("1"))
             return 0;
 
-        // if # set bits is 1, then it is power of 2
-        if (n.bitCount() == 1)
+        // keep dividing A by 2 till it is divisible
+        while ((A.charAt(A.length() - 1) - '0') % 2 == 0) {
+            A = divideBy2(A);
+            A = removeLeadingZeroes(A);
+        }
+
+        // A is power of 2
+        if (A.equals("1"))
             return 1;
         return 0;
     }
 
+    // util to divide string number A by 2
+    private static String divideBy2(String A) {
+        StringBuilder res = new StringBuilder();
+        int n = A.length(), rem = 0;
+
+        // school division - take down digits one by one and update remainder
+        for (int i = 0; i < n; i++) {
+            rem = rem * 10 + (A.charAt(i) - '0');
+
+            if (rem < 2 && i + 1 < n) {
+                res.append(0);
+                continue;
+            }
+
+            res.append(rem / 2);
+            rem = rem % 2;
+        }
+
+        return res.toString();
+    }
+
+    // util to remove leading zeroes
+    private static String removeLeadingZeroes(String A) {
+        int i = 0;
+        while (i < A.length() && A.charAt(i) == '0')
+            i++;
+
+        return A.substring(i);
+    }
+
     // https://www.interviewbit.com/problems/multiply-strings/
     static String multiply(String A, String B) {
+        A = removeLeadingZeroes(A);
+        B = removeLeadingZeroes(B);
+
+        if (A.equals("") || B.equals(""))
+            return "0";
+
         int m = A.length(), n = B.length();
         String res = "";
 
@@ -616,20 +853,11 @@ public class Strings {
             res = add(res, tmp.toString());
         }
 
-        // remove leading zeroes
-        int start = 0;
-        while (start < res.length() && res.charAt(start) == '0')
-            start++;
-
-        return res.substring(start);
+        return res;
     }
 
     // util for adding two strings
     private static String add(String A, String B) {
-        // ensure A is the larger string
-        if (A.length() < B.length())
-            return add(B, A);
-
         int m = A.length(), n = B.length();
         StringBuilder res = new StringBuilder();
 
@@ -655,6 +883,16 @@ public class Strings {
 
             res.append(digit);
             i--;
+        }
+
+        // add the remaining digits in B
+        while (j >= 0) {
+            int sum = (B.charAt(j) - '0') + carry;
+            int digit = sum % 10;
+            carry = sum / 10;
+
+            res.append(digit);
+            j--;
         }
 
         // append carry if exists
@@ -705,7 +943,8 @@ public class Strings {
     }
 
     // util to construct string with equal spaces in middle as per limit
-    private static String constructLineWithSpaces(ArrayList<String> words, int start, int end, int L, int chars, int spaces) {
+    private static String constructLineWithSpaces(ArrayList<String> words, int start, int end, int L,
+                                                  int chars, int spaces) {
         StringBuilder line = new StringBuilder();
         // total white spaces in the string
         int totalSpace = L - chars;
@@ -716,36 +955,39 @@ public class Strings {
         // if there is only one word on the line
         if (spaces == 0) {
             // add all the white spaces at the end
-            line.append(" ".repeat(totalSpace));
+            return line.append(" ".repeat(totalSpace))
+                    .toString();
+        }
 
-            return line.toString();
+        // if this is the last string
+        if (end == words.size()) {
+            for (int i = start + 1; i < end; i++) {
+                // add only one white space after each word
+                line.append(" ");
+                totalSpace--;
+                // append the current word after white space
+                line.append(words.get(i));
+            }
+
+            // add all the remaining white spaces at the end
+            return line.append(" ".repeat(totalSpace))
+                    .toString();
         }
 
         // blanks = # white spaces per word
         int blanks = totalSpace / spaces;
         for (int i = start + 1; i < end; i++) {
-            // if this is the last string, add only one white space after each word
-            if (end == words.size()) {
+            // add the equal amount of white spaces
+            line.append(" ".repeat(blanks));
+
+            // if division is not even give the extra white space if left
+            if (totalSpace % spaces != 0) {
                 line.append(" ");
                 totalSpace--;
-            } else {
-                // add the equal amount of white spaces
-                line.append(" ".repeat(blanks));
-
-                // if division is not even give the extra white space if left
-                if (totalSpace % spaces != 0) {
-                    line.append(" ");
-                    totalSpace--;
-                }
             }
 
             // append the current word after white space
             line.append(words.get(i));
-        }
-
-        // if this is last string add all the remaining white spaces at the end
-        if (end == words.size()) {
-            line.append(" ".repeat(totalSpace));
         }
 
         return line.toString();
@@ -801,16 +1043,16 @@ public class Strings {
 
     // https://www.interviewbit.com/problems/pretty-json/
     static ArrayList<String> prettyJson(String A) {
+        int n = A.length();
         ArrayList<String> res = new ArrayList<>();
-
         // empty string or first char is not open bracket (invalid JSON)
-        if (A.length() == 0 || (A.charAt(0) != '{' && A.charAt(0) != '['))
+        if (n == 0 || (A.charAt(0) != '{' && A.charAt(0) != '['))
             return res;
 
         int tabs = 0;
         StringBuilder line = new StringBuilder();
 
-        for (int i = 0; i < A.length(); i++) {
+        for (int i = 0; i < n; i++) {
             switch (A.charAt(i)) {
                 case '{':
                 case '[':
@@ -820,13 +1062,13 @@ public class Strings {
 
                     // create new line with tabs for current line,
                     // append bracket and add to result
-                    initTabbedLine(line, tabs);
+                    line = initTabbedLine(tabs);
                     line.append(A.charAt(i));
                     res.add(line.toString());
 
                     // increment tabs and create new line with tabs for next line
                     tabs++;
-                    initTabbedLine(line, tabs);
+                    line = initTabbedLine(tabs);
                     break;
 
                 case '}':
@@ -837,12 +1079,12 @@ public class Strings {
 
                     // decrement tab count and create new line with tabs and bracket
                     tabs--;
-                    initTabbedLine(line, tabs);
+                    line = initTabbedLine(tabs);
                     line.append(A.charAt(i));
 
                     // if next char is comma(,) then add it to the same line
                     // skip to char after comma
-                    if (i + 1 < A.length() && A.charAt(i + 1) == ',') {
+                    if (i + 1 < n && A.charAt(i + 1) == ',') {
                         line.append(A.charAt(i + 1));
                         i++;
                     }
@@ -850,7 +1092,7 @@ public class Strings {
                     res.add(line.toString());
 
                     // create new line with tabs for next line
-                    initTabbedLine(line, tabs);
+                    line = initTabbedLine(tabs);
                     break;
 
                 case ',':
@@ -859,7 +1101,7 @@ public class Strings {
                     res.add(line.toString());
 
                     // create new line with tabs for next line
-                    initTabbedLine(line, tabs);
+                    line = initTabbedLine(tabs);
                     break;
 
                 default:
@@ -871,101 +1113,8 @@ public class Strings {
     }
 
     // util for creating tabs at the beginning
-    private static void initTabbedLine(StringBuilder builder, int tabs) {
-        builder.setLength(0);
-        builder.append("\t".repeat(tabs));
-    }
-
-    // https://www.interviewbit.com/problems/convert-to-palindrome/
-    static int convertToPalindrome(String A) {
-        int start = 0, end = A.length() - 1;
-
-        // skip the palindromic characters at the ends
-        while (start < end && A.charAt(start) == A.charAt(end)) {
-            start++;
-            end--;
-        }
-
-        // odd length palindrome or substring by removing first non-matching or last-non matching char is palindrome
-        if (start == end || isPalindrome(A, start + 1, end) || isPalindrome(A, start, end - 1))
-            return 1;
-
-        // not possible to make palindrome by removing exactly one char
-        return 0;
-    }
-
-    // util to check if string is palindrome or not
-    private static boolean isPalindrome(String A, int start, int end) {
-        while (start <= end) {
-            // not palindrome
-            if (A.charAt(start) != A.charAt(end))
-                return false;
-
-            // check for next positions
-            start++;
-            end--;
-        }
-
-        return true;
-    }
-
-    // https://www.interviewbit.com/problems/minimum-appends-for-palindrome/
-    static int minAppendsForPalindrome(String A) {
-        // create string rev(A) + "$" + A and compute lps
-        String str = new StringBuilder(A)
-                .reverse()
-                .append('$')
-                .append(A)
-                .toString();
-        int[] lps = computeLpsArray(str);
-
-        // characters needed at end = len(A) - lps(last pos of str)
-        return A.length() - lps[str.length() - 1];
-    }
-
-    // https://www.interviewbit.com/problems/minimum-parantheses/
-    static int minParenthesis(String A) {
-        int n = 0, cnt = 0;
-        // check each parenthesis and maintain the balance count
-        for (char c : A.toCharArray()) {
-            if (c == '(')
-                n++;
-            else
-                n--;
-
-            // if number of closing parenthesis is greater than open so far
-            // add open parenthesis at beginning to balance
-            if (n < 0) {
-                cnt += Math.abs(n);
-                n = 0;
-            }
-        }
-
-        // add closing parenthesis at end for extra open ones
-        cnt += Math.abs(n);
-
-        return cnt;
-    }
-
-    // https://www.interviewbit.com/problems/remove-consecutive-characters/
-    static String removeConsecutive(String A, int B) {
-        StringBuilder res = new StringBuilder();
-
-        int n = A.length(), i = 0;
-        while (i < n) {
-            int j = i + 1;
-            // skip consecutive duplicate characters
-            while (j < n && A.charAt(j) == A.charAt(i))
-                j++;
-
-            // if count of consecutive duplicates is not exactly B, add A[i]
-            if (j - i != B)
-                res.append(A.charAt(i));
-
-            // check for next char after skipping duplicates
-            i = j;
-        }
-
-        return res.toString();
+    private static StringBuilder initTabbedLine(int tabs) {
+        return new StringBuilder()
+                .append("\t".repeat(tabs));
     }
 }

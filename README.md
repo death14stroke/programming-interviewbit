@@ -101,21 +101,27 @@ Interview bit problems topic wise
 - [Median of Array](https://www.interviewbit.com/problems/median-of-array/)
 - [Search in Bitonic Array!](https://www.interviewbit.com/problems/search-in-bitonic-array/)
 
-## Strings
+## Strings (27)
 
 - [Palindrome String](https://www.interviewbit.com/problems/palindrome-string/)
+- [Vowel and Consonant Substrings!](https://www.interviewbit.com/problems/vowel-and-consonant-substrings/)
+- [Remove Consecutive Characters](https://www.interviewbit.com/problems/remove-consecutive-characters/)
 - [Longest Common Prefix](https://www.interviewbit.com/problems/longest-common-prefix/)
 - [Count And Say](https://www.interviewbit.com/problems/count-and-say/)
 - [Amazing Subarrays](https://www.interviewbit.com/problems/amazing-subarrays/)
-- [Minimum Characters required to make a String Palindromic](https://www.interviewbit.com/problems/minimum-characters-required-to-make-a-string-palindromic/)
-- [Longest Palindromic Substring](https://www.interviewbit.com/problems/longest-palindromic-substring/)
 - [Implement StrStr](https://www.interviewbit.com/problems/implement-strstr/)
+- [Stringoholics](https://www.interviewbit.com/problems/stringoholics/)
+- [Minimum Characters required to make a String Palindromic](https://www.interviewbit.com/problems/minimum-characters-required-to-make-a-string-palindromic/)
+- [Minimum Parantheses!](https://www.interviewbit.com/problems/minimum-parantheses/)
+- [Convert to Palindrome](https://www.interviewbit.com/problems/convert-to-palindrome/)
+- [Minimum Appends for Palindrome!](https://www.interviewbit.com/problems/minimum-appends-for-palindrome/)
+- [Longest Palindromic Substring](https://www.interviewbit.com/problems/longest-palindromic-substring/)
+- [Length of Last Word](https://www.interviewbit.com/problems/length-of-last-word/)
+- [Reverse the String](https://www.interviewbit.com/problems/reverse-the-string/)
 - [Compare Version Numbers](https://www.interviewbit.com/problems/compare-version-numbers/)
 - [Atoi](https://www.interviewbit.com/problems/atoi/)
 - [Valid Number](https://www.interviewbit.com/problems/valid-number/)
 - [Valid Ip Addresses](https://www.interviewbit.com/problems/valid-ip-addresses/)
-- [Length of Last Word](https://www.interviewbit.com/problems/length-of-last-word/)
-- [Reverse the String](https://www.interviewbit.com/problems/reverse-the-string/)
 - [Roman To Integer](https://www.interviewbit.com/problems/roman-to-integer/)
 - [Integer To Roman](https://www.interviewbit.com/problems/integer-to-roman/)
 - [Add Binary Strings](https://www.interviewbit.com/problems/add-binary-strings/)
@@ -124,10 +130,6 @@ Interview bit problems topic wise
 - [Justified Text](https://www.interviewbit.com/problems/justified-text/)
 - [Zigzag String](https://www.interviewbit.com/problems/zigzag-string/)
 - [Pretty Json](https://www.interviewbit.com/problems/pretty-json/)
-- [Convert to Palindrome](https://www.interviewbit.com/problems/convert-to-palindrome/)
-- [Minimum Appends for Palindrome!](https://www.interviewbit.com/problems/minimum-appends-for-palindrome/)
-- [Minimum Parantheses!](https://www.interviewbit.com/problems/minimum-parantheses/)
-- [Remove Consecutive Characters](https://www.interviewbit.com/problems/remove-consecutive-characters/)
 
 ## Bit Manipulation
 
