@@ -1,7 +1,7 @@
 public class Solution {
     public static void main(String[] args) {
-        String[] A = {"a", "ababa", "aba"};
+        int A = 9;
 
-        System.out.println(Strings.stringoholics(A));
+        System.out.println(BitManipulation.palindromicBinary(A));
     }
 }
