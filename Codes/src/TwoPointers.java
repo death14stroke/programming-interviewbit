@@ -1,82 +1,33 @@
 import java.util.*;
 
 public class TwoPointers {
-    // https://www.interviewbit.com/problems/merge-two-sorted-lists-ii/
-    static void merge(ArrayList<Integer> A, ArrayList<Integer> B) {
-        int m = A.size(), n = B.size();
-        int i = m - 1, j = n - 1, pos = m + n - 1;
+    // https://www.interviewbit.com/problems/pair-with-given-difference/
+    static int solve(int[] A, int B) {
+        Set<Integer> set = new HashSet<>();
+        // for each element val, check if there is an element with diff +B or -B with val
+        for (int val : A) {
+            if (set.contains(val - B) || set.contains(val + B))
+                return 1;
 
-        // increase size of A
-        for (int k = 0; k < n; k++)
-            A.add(0);
-
-        // traverse both list in reverse. Set the greater element at end of list A
-        while (i >= 0 && j >= 0) {
-            if (A.get(i) > B.get(j)) {
-                A.set(pos, A.get(i));
-                i--;
-            } else {
-                A.set(pos, B.get(j));
-                j--;
-            }
-
-            pos--;
+            set.add(val);
         }
-
-        // add remaining elements of list A
-        while (i >= 0) {
-            A.set(pos, A.get(i));
-            i--;
-            pos--;
-        }
-
-        // else add remaining elements of list B
-        while (j >= 0) {
-            A.set(pos, B.get(j));
-            j--;
-            pos--;
-        }
-    }
-
-    // https://www.interviewbit.com/problems/intersection-of-sorted-arrays/
-    static ArrayList<Integer> intersect(final List<Integer> A, final List<Integer> B) {
-        ArrayList<Integer> res = new ArrayList<>();
-        int m = A.size(), n = B.size();
-        int i = 0, j = 0;
-
-        while (i < m && j < n) {
-            // compare B with larger element in A
-            if (A.get(i) < B.get(j))
-                i++;
-                // compare A with larger element in B
-            else if (A.get(i) > B.get(j))
-                j++;
-                // intersection point. Check next elements in both lists
-            else {
-                res.add(A.get(i));
-                i++;
-                j++;
-            }
-        }
-
-        return res;
+        // no such pair exists
+        return 0;
     }
 
     // https://www.interviewbit.com/problems/3-sum/
-    static int threeSumClosest(ArrayList<Integer> A, int target) {
-        int n = A.size();
-        Collections.sort(A);
+    static int threeSumClosest(int[] A, int target) {
+        int n = A.length;
+        Arrays.sort(A);
 
         // initialize with sum of first three numbers
-        int closestSum = A.get(0) + A.get(1) + A.get(2);
+        int closestSum = A[0] + A[1] + A[2];
         // take first pointer at start, second at one pos after start and third at the end
         for (int i = 0; i < n - 2; i++) {
             int j = i + 1, k = n - 1;
-
             // keep adding the three numbers and update the sum based on difference
             while (j < k) {
-                int sum = A.get(i) + A.get(j) + A.get(k);
-
+                int sum = A[i] + A[j] + A[k];
                 // move second pointer right if sum is lesser
                 if (sum < target)
                     j++;
@@ -88,7 +39,7 @@ public class TwoPointers {
                     return sum;
 
                 // if this sum is closer to target than previous sum
-                if (Math.abs(target - sum) <= Math.abs(target - closestSum))
+                if (Math.abs(target - sum) < Math.abs(target - closestSum))
                     closestSum = sum;
             }
         }
@@ -146,20 +97,19 @@ public class TwoPointers {
     }
 
     // https://www.interviewbit.com/problems/counting-triangles/
-    static int nTriang(ArrayList<Integer> A) {
-        int p = 1000000007, n = A.size();
+    static int nTriang(int[] A) {
+        int p = 1000000007, n = A.length;
         long ans = 0;
 
-        Collections.sort(A);
+        Arrays.sort(A);
 
         // choose the largest side
         for (int k = 2; k < n; k++) {
             int i = 0, j = k - 1;
-
             // keep checking for first and second sides
             while (i < j) {
                 // if sum is less, increase the smallest side
-                if (A.get(i) + A.get(j) <= A.get(k))
+                if (A[i] + A[j] <= A[k])
                     i++;
                     // found a triangle, all triangles with smallest side greater than A[i] will also form a triangle
                     // decrement the second side and check again
@@ -174,15 +124,15 @@ public class TwoPointers {
     }
 
     // https://www.interviewbit.com/problems/diffk/
-    static int diffK(ArrayList<Integer> A, int k) {
-        int n = A.size(), i = 0, j = 1;
+    static int diffK(int[] A, int k) {
+        int n = A.length, i = 0, j = 1;
         // check from the first pair
         while (i <= j && j < n) {
             // found the difference
-            if (A.get(j) - A.get(i) == k && i != j)
+            if (A[j] - A[i] == k && i != j)
                 return 1;
             // difference is higher, move left pointer
-            if (A.get(j) - A.get(i) > k)
+            if (A[j] - A[i] > k)
                 i++;
                 // diff is lower or both elements are same, move right pointer
             else
@@ -192,28 +142,193 @@ public class TwoPointers {
         return 0;
     }
 
-    // https://www.interviewbit.com/problems/remove-duplicates-from-sorted-array/
-    static int removeDuplicates(ArrayList<Integer> A) {
-        int n = A.size(), i = 1;
+    // https://www.interviewbit.com/problems/maximum-ones-after-modification/
+    static int maxOnesLength(int[] A, int B) {
+        // current window
+        int wL = 0, wR = 0;
+        // best window
+        int bestWindow = 0;
+        // number of zeroes in current window
+        int cnt = 0;
 
-        // find the first repeating element (position which to remove)
-        while (i < n && !A.get(i).equals(A.get(i - 1)))
-            i++;
+        // keep sliding window till end
+        while (wR < A.length) {
+            // if window can contain more zeroes, expand on right
+            if (cnt <= B) {
+                if (A[wR] == 0)
+                    cnt++;
+                wR++;
+            }
+            // shrink window from the left to remove extra zeroes
+            else {
+                if (A[wL] == 0)
+                    cnt--;
+                wL++;
+            }
 
-        // check for all elements after that
-        for (int j = i + 1; j < n; j++) {
-            // if A[j] is unique, replace it with the position to be removed and update the position
-            // (i - 1) is the first occurence of duplicate/next element
-            if (!A.get(j).equals(A.get(i - 1))) {
-                A.set(i, A.get(j));
-                i++;
+            // if number of zeroes in current window is below limit and
+            // this window is larger than the previous best window
+            if (cnt <= B && bestWindow < wR - wL)
+                bestWindow = wR - wL;
+        }
+
+        return bestWindow;
+    }
+
+    // https://www.interviewbit.com/problems/max-continuous-series-of-1s/
+    static int[] maxone(int[] A, int M) {
+        // current window
+        int wL = 0, wR = 0;
+        // best window
+        int bestL = 0, bestWindow = 0;
+        // number of zeroes in current window
+        int cnt = 0;
+
+        // keep sliding window till end
+        while (wR < A.length) {
+            // if window can contain more zeroes, expand on right
+            if (cnt <= M) {
+                if (A[wR] == 0)
+                    cnt++;
+                wR++;
+            }
+            // shrink window from the left to remove extra zeroes
+            else {
+                if (A[wL] == 0)
+                    cnt--;
+                wL++;
+            }
+
+            // if number of zeroes in current window is below limit and
+            // this window is larger than the previous best window
+            if (cnt <= M && bestWindow < wR - wL) {
+                bestWindow = wR - wL;
+                bestL = wL;
             }
         }
 
+        // result array with all indices of the best window
+        int[] res = new int[bestWindow];
+        for (int i = 0; i < bestWindow; i++)
+            res[i] = bestL + i;
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/array-3-pointers/
+    static int minimize(final int[] A, final int[] B, final int[] C) {
+        int i = 0, j = 0, k = 0;
+        // max(abs(A[i] - B[j]), abs(B[j] - C[k]), abs(C[k] - A[i])) = difference between max and min of the three
+        int diff = Integer.MAX_VALUE;
+
+        while (i < A.length && j < B.length && k < C.length) {
+            int max = Math.max(A[i], Math.max(B[j], C[k]));
+            int min = Math.min(A[i], Math.min(B[j], C[k]));
+            // update the minimum difference
+            diff = Math.min(diff, max - min);
+            // increase the index of minimum element among all to get lower difference next time
+            if (min == A[i])
+                i++;
+            else if (min == B[j])
+                j++;
+            else
+                k++;
+        }
+
+        return diff;
+    }
+
+    // https://www.interviewbit.com/problems/container-with-most-water/
+    static int maxArea(int[] A) {
+        int n = A.length;
+        int l = 0, r = n - 1;
+        int maxArea = 0;
+
+        // take the widest container and then keep shrinking it
+        while (l < r) {
+            maxArea = Math.max(maxArea, Math.min(A[l], A[r]) * (r - l));
+            // if left side is smaller, shrink on left side
+            if (A[l] < A[r])
+                l++;
+                // shrink on right side
+            else
+                r--;
+        }
+
+        return maxArea;
+    }
+
+    // https://www.interviewbit.com/problems/merge-two-sorted-lists-ii/
+    static void merge(ArrayList<Integer> A, ArrayList<Integer> B) {
+        int m = A.size(), n = B.size();
+        int i = m - 1, j = n - 1, pos = m + n - 1;
+
+        // increase size of A
+        for (int k = 0; k < n; k++)
+            A.add(0);
+
+        // traverse both list in reverse. Set the greater element at end of list A
+        while (i >= 0 && j >= 0) {
+            if (A.get(i) > B.get(j))
+                A.set(pos--, A.get(i--));
+            else
+                A.set(pos--, B.get(j--));
+        }
+
+        // add remaining elements of list A
+        while (i >= 0)
+            A.set(pos--, A.get(i--));
+
+        // else add remaining elements of list B
+        while (j >= 0)
+            A.set(pos--, B.get(j--));
+    }
+
+    // https://www.interviewbit.com/problems/intersection-of-sorted-arrays/
+    static ArrayList<Integer> intersect(final List<Integer> A, final List<Integer> B) {
+        ArrayList<Integer> res = new ArrayList<>();
+        int m = A.size(), n = B.size();
+        int i = 0, j = 0;
+
+        while (i < m && j < n) {
+            // compare B with larger element in A
+            if (A.get(i) < B.get(j))
+                i++;
+                // compare A with larger element in B
+            else if (A.get(i) > B.get(j))
+                j++;
+                // intersection point. Check next elements in both lists
+            else {
+                res.add(A.get(i));
+                i++;
+                j++;
+            }
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/remove-duplicates-from-sorted-array/
+    static int removeDuplicates(ArrayList<Integer> A) {
+        int n = A.size();
+        // 0th element is always unique. Start from 1st position
+        int i = 1, pos = 1;
+        // loop till end
+        while (i < n) {
+            // skip duplicate elements
+            while (i < n && A.get(i).equals(A.get(pos - 1)))
+                i++;
+            // reached end
+            if (i == n)
+                break;
+            // set current unique element after last unique element
+            A.set(pos++, A.get(i++));
+        }
+
         // remove the end of the list
-        A.subList(i, n).clear();
+        A.subList(pos, n).clear();
         // return the length of new list
-        return i;
+        return pos;
     }
 
     // https://www.interviewbit.com/problems/remove-duplicates-from-sorted-array-ii/
@@ -223,46 +338,39 @@ public class TwoPointers {
         if (n <= atMost)
             return n;
 
-        // find first position which is to be deleted (repeating more than atMost times)
-        int i = atMost;
-        while (i < n && !A.get(i).equals(A.get(i - atMost)))
-            i++;
-
-        // check for all elements after that
-        for (int j = i + 1; j < n; j++) {
-            // if A[j] is not repeating more than atMost times, replace it with the position to be removed
-            // and update the position
-            // (i - atMost) is the first occurence of duplicate/next element
-            if (!A.get(j).equals(A.get(i - atMost))) {
-                A.set(i, A.get(j));
+        // start from (atMost)th position
+        int i = atMost, pos = atMost;
+        // loop till end
+        while (i < n) {
+            // skip extra elements
+            while (i < n && A.get(i).equals(A.get(pos - atMost)))
                 i++;
-            }
+            // reached end
+            if (i == n)
+                break;
+            // set current element after last allowed element
+            A.set(pos++, A.get(i++));
         }
 
         // remove the end of the list
-        A.subList(i, n).clear();
+        A.subList(pos, n).clear();
         // return the length of new list
-        return i;
+        return pos;
     }
 
     // https://www.interviewbit.com/problems/remove-element-from-array/
     static int removeElement(ArrayList<Integer> A, int k) {
-        int n = A.size(), i = 0;
-        // find first occurence of k
-        while (i < n && A.get(i) != k)
-            i++;
-
+        int n = A.size();
+        int pos = 0;
         // keep replacing values at positions to be removed
-        for (int j = i + 1; j < n; j++) {
-            // if not target, shift it to the left
-            if (A.get(j) != k) {
-                A.set(i, A.get(j));
-                i++;
-            }
+        for (int i = 0; i < n; i++) {
+            // if not target, add value at pos pointer and update
+            if (A.get(i) != k)
+                A.set(pos++, A.get(i));
         }
 
         // length of new array
-        return i;
+        return pos;
     }
 
     // https://www.interviewbit.com/problems/sort-by-color/
@@ -304,141 +412,6 @@ public class TwoPointers {
         A.set(j, temp);
     }
 
-    // https://www.interviewbit.com/problems/max-continuous-series-of-1s/
-    static ArrayList<Integer> maxone(ArrayList<Integer> A, int M) {
-        // current window
-        int wL = 0, wR = 0;
-        // best window
-        int bestL = 0, bestWindow = 0;
-        // number of zeroes in current window
-        int cnt = 0;
-
-        // keep sliding window till end
-        while (wR < A.size()) {
-            // if window can contain more zeroes, expand on right
-            if (cnt <= M) {
-                if (A.get(wR) == 0)
-                    cnt++;
-                wR++;
-            }
-            // shrink window from the left to remove extra zeroes
-            else {
-                if (A.get(wL) == 0)
-                    cnt--;
-                wL++;
-            }
-
-            // if number of zeroes in current window is below limit and
-            // this window is larger than the previous best window
-            if (cnt <= M && bestWindow < wR - wL) {
-                bestWindow = wR - wL;
-                bestL = wL;
-            }
-        }
-
-        // result list with all indices of the best window
-        ArrayList<Integer> res = new ArrayList<>();
-        for (int i = bestL; i < bestL + bestWindow; i++)
-            res.add(i);
-
-        return res;
-    }
-
-    // https://www.interviewbit.com/problems/array-3-pointers/
-    static int minimize(final List<Integer> A, final List<Integer> B, final List<Integer> C) {
-        int i = 0, j = 0, k = 0;
-        int diff = Integer.MAX_VALUE;
-
-        while (i < A.size() && j < B.size() && k < C.size()) {
-            int max = Math.max(A.get(i), Math.max(B.get(j), C.get(k)));
-            int min = Math.min(A.get(i), Math.min(B.get(j), C.get(k)));
-
-            // if difference of max and min from all three is lower, this is new result
-            if (max - min < diff)
-                diff = max - min;
-
-            // increase the index of minimum element among all to get lower difference next time
-            if (min == A.get(i))
-                i++;
-            else if (min == B.get(j))
-                j++;
-            else
-                k++;
-        }
-
-        return diff;
-    }
-
-    // https://www.interviewbit.com/problems/container-with-most-water/
-    static int maxArea(ArrayList<Integer> A) {
-        int n = A.size();
-        int l = 0, r = n - 1;
-        int maxArea = 0;
-
-        // take the widest container and then keep shrinking it
-        while (l < r) {
-            maxArea = Math.max(maxArea, Math.min(A.get(r), A.get(l)) * (r - l));
-
-            // if left side is smaller, shrink on left side
-            if (A.get(l) < A.get(r))
-                l++;
-                // shrink on right side
-            else
-                r--;
-        }
-
-        return maxArea;
-    }
-
-    // https://www.interviewbit.com/problems/pair-with-given-difference/
-    static int solve(ArrayList<Integer> A, int B) {
-        HashSet<Integer> set = new HashSet<>();
-
-        // for each element val, check if there is an element with diff +B or -B with val
-        for (int val : A) {
-            if (set.contains(val - B) || set.contains(val + B))
-                return 1;
-
-            set.add(val);
-        }
-
-        // no such pair exists
-        return 0;
-    }
-
-    // https://www.interviewbit.com/problems/maximum-ones-after-modification/
-    static int maxOnesLength(ArrayList<Integer> A, int B) {
-        // current window
-        int wL = 0, wR = 0;
-        // best window
-        int bestWindow = 0;
-        // number of zeroes in current window
-        int cnt = 0;
-
-        // keep sliding window till end
-        while (wR < A.size()) {
-            // if window can contain more zeroes, expand on right
-            if (cnt <= B) {
-                if (A.get(wR) == 0)
-                    cnt++;
-                wR++;
-            }
-            // shrink window from the left to remove extra zeroes
-            else {
-                if (A.get(wL) == 0)
-                    cnt--;
-                wL++;
-            }
-
-            // if number of zeroes in current window is below limit and
-            // this window is larger than the previous best window
-            if (cnt <= B && bestWindow < wR - wL)
-                bestWindow = wR - wL;
-        }
-
-        return bestWindow;
-    }
-
     // https://www.interviewbit.com/problems/counting-subarrays/
     static int countingSubArrays(int[] A, int B) {
         int n = A.length;
@@ -473,9 +446,10 @@ public class TwoPointers {
     // util to get subarray count with at most B distinct elements
     private static int atMostB(int[] A, int B) {
         int n = A.length;
-        HashMap<Integer, Integer> map = new HashMap<>();
         int start = 0, end = 0;
         int cnt = 0;
+
+        Map<Integer, Integer> map = new HashMap<>();
 
         while (end < n) {
             // increment frequency of end pointer value
@@ -513,7 +487,6 @@ public class TwoPointers {
         int l = min, r = max;
         while (l <= r) {
             int mid = l + (r - l) / 2;
-
             // count number of elements less than and less than equal to mid
             int lt = 0, le = 0;
             for (int val : A) {
@@ -552,7 +525,7 @@ public class TwoPointers {
         int sum = 0, cnt = 0;
 
         // sliding window
-        while (start < n && end < n) {
+        while (end < n) {
             // if window can be expanded, expand and add the count of new subarrays possible
             if (sum + A[end] <= k) {
                 sum += A[end];
@@ -563,6 +536,11 @@ public class TwoPointers {
             else {
                 sum -= A[start];
                 start++;
+                // if start moves ahead of end, readjust window end
+                if (start == end + 1) {
+                    sum += A[end];
+                    end++;
+                }
             }
         }
 
