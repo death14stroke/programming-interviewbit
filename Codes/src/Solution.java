@@ -1,7 +1,12 @@
 public class Solution {
     public static void main(String[] args) {
-        int A = 9;
+        int[] A = {1, 2, 3, 4, 5};
+        int k = 2;
 
-        System.out.println(BitManipulation.palindromicBinary(A));
+        LinkedLists.ListNode head = LinkedLists.createLinkedList(A);
+        LinkedLists.print(head);
+
+        head = LinkedLists.rotateRight(head, k);
+        LinkedLists.print(head);
     }
 }

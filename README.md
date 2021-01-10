@@ -145,7 +145,7 @@ Interview bit problems topic wise
 - [Single Number II](https://www.interviewbit.com/problems/single-number-ii/)
 - [XOR-ing the Subarrays!](https://www.interviewbit.com/problems/xor-ing-the-subarrays/)
 
-## Two Pointers
+## Two Pointers (19)
 
 - [Pair With Given Difference](https://www.interviewbit.com/problems/pair-with-given-difference/)
 - [3 Sum](https://www.interviewbit.com/problems/3-sum/)
@@ -167,29 +167,29 @@ Interview bit problems topic wise
 - [Kth Smallest Element in the Array](https://www.interviewbit.com/problems/kth-smallest-element-in-the-array/)
 - [NUMRANGE](https://www.interviewbit.com/problems/numrange/)
 
-## Linked list
+## Linked list (21)
 
 - [Intersection of Linked Lists](https://www.interviewbit.com/problems/intersection-of-linked-lists/)
 - [Reverse Linked List](https://www.interviewbit.com/problems/reverse-linked-list/)
-- [Palindrome List](https://www.interviewbit.com/problems/palindrome-list/)
-- [Remove Duplicates from Sorted List](https://www.interviewbit.com/problems/remove-duplicates-from-sorted-list/)
-- [Remove Duplicates from Sorted List II](https://www.interviewbit.com/problems/remove-duplicates-from-sorted-list-ii/)
-- [Merge Two Sorted Lists](https://www.interviewbit.com/problems/merge-two-sorted-lists/)
-- [Remove Nth Node from List End](https://www.interviewbit.com/problems/remove-nth-node-from-list-end/)
-- [K reverse linked list](https://www.interviewbit.com/problems/k-reverse-linked-list/)
-- [Swap List Nodes in pairs](https://www.interviewbit.com/problems/swap-list-nodes-in-pairs/)
-- [Rotate List](https://www.interviewbit.com/problems/rotate-list/)
-- [Add Two Numbers as Lists](https://www.interviewbit.com/problems/add-two-numbers-as-lists/)
-- [List Cycle](https://www.interviewbit.com/problems/list-cycle/)
+- [Sort Binary Linked List](https://www.interviewbit.com/problems/sort-binary-linked-list/)
 - [Partition List](https://www.interviewbit.com/problems/partition-list/)
 - [Insertion Sort List](https://www.interviewbit.com/problems/insertion-sort-list/)
 - [Sort List](https://www.interviewbit.com/problems/sort-list/)
+- [Merge Two Sorted Lists](https://www.interviewbit.com/problems/merge-two-sorted-lists/)
+- [Palindrome List](https://www.interviewbit.com/problems/palindrome-list/)
+- [Remove Duplicates from Sorted List](https://www.interviewbit.com/problems/remove-duplicates-from-sorted-list/)
+- [Remove Duplicates from Sorted List II](https://www.interviewbit.com/problems/remove-duplicates-from-sorted-list-ii/)
+- [Remove Nth Node from List End](https://www.interviewbit.com/problems/remove-nth-node-from-list-end/)
+- [K reverse linked list](https://www.interviewbit.com/problems/k-reverse-linked-list/)
+- [Even Reverse](https://www.interviewbit.com/problems/even-reverse/)
+- [Swap List Nodes in pairs](https://www.interviewbit.com/problems/swap-list-nodes-in-pairs/)
+- [Rotate List](https://www.interviewbit.com/problems/rotate-list/)
+- [Kth Node From Middle](https://www.interviewbit.com/problems/kth-node-from-middle/)
+- [Reverse Alternate K Nodes](https://www.interviewbit.com/problems/reverse-alternate-k-nodes/)
 - [Reverse Link List II](https://www.interviewbit.com/problems/reverse-link-list-ii/)
 - [Reorder List](https://www.interviewbit.com/problems/reorder-list/)
-- [Reverse Alternate K Nodes](https://www.interviewbit.com/problems/reverse-alternate-k-nodes/)
-- [Kth Node From Middle](https://www.interviewbit.com/problems/kth-node-from-middle/)
-- [Sort Binary Linked List](https://www.interviewbit.com/problems/sort-binary-linked-list/)
-- [Even Reverse](https://www.interviewbit.com/problems/even-reverse/)
+- [Add Two Numbers as Lists](https://www.interviewbit.com/problems/add-two-numbers-as-lists/)
+- [List Cycle](https://www.interviewbit.com/problems/list-cycle/)
 
 ## Stacks And Queues
 
