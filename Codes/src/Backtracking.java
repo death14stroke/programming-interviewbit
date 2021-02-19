@@ -601,7 +601,7 @@ class Backtracking {
         }
 
         // find the 3x3 box and check if any number matches current number
-        int x = (row / 3) * 3, y = (col) / 3 * 3;
+        int x = (row / 3) * 3, y = (col / 3) * 3;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 if (board.get(x + i).get(y + j) == c)

@@ -1,7 +1,21 @@
 import java.util.*;
-import java.util.LinkedList;
 
 class StackQueue {
+    // https://www.interviewbit.com/problems/reverse-string/
+    static String reverse(String A) {
+        // push all characters of string to stack
+        Stack<Character> s = new Stack<>();
+        for (char c : A.toCharArray())
+            s.push(c);
+
+        // append characters from top of stack to result
+        StringBuilder res = new StringBuilder();
+        while (!s.empty())
+            res.append(s.pop());
+
+        return res.toString();
+    }
+
     // https://www.interviewbit.com/problems/generate-all-parentheses/
     static int validMixParantheses(String A) {
         Stack<Character> s = new Stack<>();
@@ -25,94 +39,84 @@ class StackQueue {
         return s.empty() ? 1 : 0;
     }
 
-    // https://www.interviewbit.com/problems/reverse-string/
-    static String reverse(String A) {
-        // push all characters of string to stack
-        Stack<Character> s = new Stack<>();
-        for (char c : A.toCharArray())
-            s.push(c);
-
-        // append characters from top of stack to result
-        StringBuilder res = new StringBuilder();
-        while (!s.empty())
-            res.append(s.pop());
-
-        return res.toString();
-    }
-
     // https://www.interviewbit.com/problems/maxspprod/
-    static int maxSpecialProduct(ArrayList<Integer> a) {
-        int n = a.size();
+    static int maxSpecialProduct(int[] A) {
         long p = 1000000007;
         long ans = -1;
 
-        int[] leftSpecials = new int[n];
-        int[] rightSpecials = new int[n];
-
         // get left and right specials with next greater element logic
-        calculateLeftSpecials(a, leftSpecials, n);
-        calculateRightSpecials(a, rightSpecials, n);
-
+        int[] leftSpecials = calculateLeftSpecials(A);
+        int[] rightSpecials = calculateRightSpecials(A);
         // maximize the product first then take modulo
-        for (int i = 0; i < n; i++)
-            ans = Math.max(ans, (long) leftSpecials[i] * (long) rightSpecials[i]);
+        for (int i = 0; i < A.length; i++)
+            ans = Math.max(ans, (long) leftSpecials[i] * rightSpecials[i]);
 
         return (int) (ans % p);
     }
 
     // util to calculate right special index j such that j > i && A[j] > A[i]
-    private static void calculateRightSpecials(ArrayList<Integer> a, int[] rightSpecials, int n) {
-        // no element on right
-        rightSpecials[n - 1] = 0;
-        Stack<Integer> s = new Stack<>();
+    private static int[] calculateRightSpecials(int[] A) {
+        int n = A.length;
+        int[] nextGreater = new int[n];
 
-        for (int i = 0; i < n; i++) {
-            while (!s.empty() && a.get(i) > a.get(s.peek())) {
-                int top = s.pop();
-                rightSpecials[top] = i;
-            }
+        Stack<Integer> s = new Stack<>();
+        s.push(0);
+
+        for (int i = 1; i < n; i++) {
+            // pop elements from stack and mark next greater as the current element
+            while (!s.empty() && A[s.peek()] < A[i])
+                nextGreater[s.pop()] = i;
 
             s.push(i);
         }
+
+        return nextGreater;
     }
 
     // util to calculate left special index j such that j < i && A[j] > A[i]
-    private static void calculateLeftSpecials(ArrayList<Integer> a, int[] leftSpecials, int n) {
-        // no element on left
-        leftSpecials[0] = 0;
-        Stack<Integer> s = new Stack<>();
+    private static int[] calculateLeftSpecials(int[] A) {
+        int n = A.length;
+        int[] prevGreater = new int[n];
 
-        for (int i = n - 1; i >= 0; i--) {
-            while (!s.empty() && a.get(i) > a.get(s.peek())) {
-                int top = s.pop();
-                leftSpecials[top] = i;
-            }
+        Stack<Integer> s = new Stack<>();
+        s.push(0);
+
+        for (int i = 1; i < n; i++) {
+            // pop elements from stack while stack is not empty and top of stack is smaller than arr[i]
+            // we always have elements in decreasing order in a stack.
+            while (!s.empty() && A[s.peek()] <= A[i])
+                s.pop();
+            // if stack becomes empty, then no element is greater on left side
+            // else top of stack is previous greater
+            if (!s.empty())
+                prevGreater[i] = s.peek();
 
             s.push(i);
         }
+
+        return prevGreater;
     }
 
     // https://www.interviewbit.com/problems/nearest-smaller-element/
     static int[] prevSmaller(int[] A) {
         int n = A.length;
         int[] G = new int[n];
+        Arrays.fill(G, -1);
 
-        int i = n - 1;
         Stack<Integer> s = new Stack<>();
+        s.push(0);
 
-        // traverse the array in reverse
-        while (i >= 0) {
-            // if stack is empty or current element is greater than equal stack top, both can have same previous smaller.
-            // Set prev smaller for index i as default - 1. Push i to stack and move to next
-            if (s.empty() || A[i] >= A[s.peek()]) {
-                G[i] = -1;
-                s.push(i--);
-            }
-            // else pop from stack. Set previous smaller for A[stack top] as A[i]
-            else {
-                int top = s.pop();
-                G[top] = A[i];
-            }
+        for (int i = 1; i < n; i++) {
+            // pop elements from stack while stack is not empty and top of stack is greater than arr[i]
+            // we always have elements in increasing order in a stack.
+            while (!s.empty() && A[s.peek()] >= A[i])
+                s.pop();
+            // if stack becomes empty, then no element is smaller on left side
+            // else top of stack is previous smaller
+            if (!s.empty())
+                G[i] = A[s.peek()];
+
+            s.push(i);
         }
 
         return G;
@@ -121,27 +125,28 @@ class StackQueue {
     // https://www.interviewbit.com/problems/largest-rectangle-in-histogram/
     static int largestRectangleArea(int[] A) {
         int n = A.length;
+        int maxArea = 0;
 
         Stack<Integer> s = new Stack<>();
-        int maxArea = 0, i = 0;
+        s.push(0);
 
-        while (i < n) {
-            // if stack empty or current height is >= stack top, push and move to next
-            if (s.empty() || A[s.peek()] <= A[i])
-                s.push(i++);
-                // else pop top from the stack and compute area with top as height,
-                // i as right position and index of element below current stack top as left position
-            else {
+        for (int i = 1; i < n; i++) {
+            // while bar on stack top is greater than current, pop top from the stack and compute area
+            // with top as height, i as right position and index of element below current stack top as left position
+            while (!s.empty() && A[s.peek()] > A[i]) {
                 int top = s.pop();
                 int areaWithTop = A[top] * (s.empty() ? i : i - s.peek() - 1);
                 maxArea = Math.max(maxArea, areaWithTop);
             }
+
+            // stack is empty or current bar is higher
+            s.push(i);
         }
 
         // check for the remaining sorted bars in stack
         while (!s.empty()) {
             int top = s.pop();
-            int areaWithTop = A[top] * (s.empty() ? i : i - s.peek() - 1);
+            int areaWithTop = A[top] * (s.empty() ? n : n - s.peek() - 1);
             maxArea = Math.max(maxArea, areaWithTop);
         }
 
@@ -177,6 +182,7 @@ class StackQueue {
     }
 
     // https://www.interviewbit.com/problems/sliding-window-maximum/
+    @SuppressWarnings("ConstantConditions")
     static int[] slidingWindowMax(final int[] A, int B) {
         int n = A.length;
         // if window is larger than array, take max of the array
@@ -185,21 +191,17 @@ class StackQueue {
 
         int[] res = new int[n - B + 1];
         Deque<Integer> q = new LinkedList<>();
-
         // for the first window
         for (int i = 0; i < B; i++) {
             // remove all elements smaller than current from the back end of deque
             while (!q.isEmpty() && A[i] >= A[q.peekLast()])
                 q.pollLast();
-
             // add current element to the back end
             q.addLast(i);
         }
 
         // max of first window
-        //noinspection ConstantConditions
         res[0] = A[q.peekFirst()];
-
         // for the remaining windows
         for (int i = B; i < n; i++) {
             // if first element in deque is out of range, remove
@@ -212,9 +214,7 @@ class StackQueue {
 
             // add current element to the back end
             q.addLast(i);
-
             // max of the current window
-            //noinspection ConstantConditions
             res[i - B + 1] = A[q.peekFirst()];
         }
 
@@ -417,10 +417,9 @@ class StackQueue {
 
     // https://www.interviewbit.com/problems/subtract/
     static LinkedLists.ListNode subtract(LinkedLists.ListNode head) {
-        LinkedLists.ListNode slow = head, fast = head;
-
+        LinkedLists.ListNode slow = head, fast = head.next;
         // find middle of the linked list
-        while (fast.next != null && fast.next.next != null) {
+        while (fast != null && fast.next != null) {
             slow = slow.next;
             fast = fast.next.next;
         }
@@ -449,22 +448,17 @@ class StackQueue {
     static int[] nextGreater(int[] A) {
         int n = A.length;
         int[] G = new int[n];
-        Stack<Integer> s = new Stack<>();
+        Arrays.fill(G, -1);
 
-        int i = 0;
-        // traverse the array from left to right
-        while (i < n) {
-            // if stack is empty or current element is <= stack top, both can have same next greater.
-            // Set next greater for index i as default - 1. Push i to stack and move to next
-            if (s.empty() || A[s.peek()] >= A[i]) {
-                G[i] = -1;
-                s.push(i++);
-            }
-            // else pop from stack. Set next greater for A[stack top] as A[i]
-            else {
-                int top = s.pop();
-                G[top] = A[i];
-            }
+        Stack<Integer> s = new Stack<>();
+        s.push(0);
+
+        for (int i = 1; i < n; i++) {
+            // pop elements from stack and mark next greater as the current element
+            while (!s.empty() && A[s.peek()] < A[i])
+                G[s.pop()] = A[i];
+
+            s.push(i);
         }
 
         return G;
