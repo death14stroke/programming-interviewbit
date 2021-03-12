@@ -1,4 +1,7 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 class Backtracking {
     // https://www.interviewbit.com/problems/reverse-link-list-recursion
@@ -24,13 +27,12 @@ class Backtracking {
         // 0 ^ x = 0
         if (A == 0)
             return 0;
-
         // a ^ 0 = 1
         if (B == 0)
             return 1;
 
         // y = A * A
-        int y = (int) (((long) A * (long) A) % C);
+        int y = (int) (((long) A * A) % C);
         long res;
 
         // if B is even, res = Mod(A * A, B / 2, C)
@@ -38,7 +40,7 @@ class Backtracking {
             res = Mod(y, B / 2, C);
             // else res = A * Mod(A * A, B / 2, C)
         else
-            res = ((long) A * (long) Mod(y, B / 2, C)) % C;
+            res = ((long) A * Mod(y, B / 2, C)) % C;
 
         // if res is negative, add C and take mod C to make it positive
         return (int) ((res + C) % C);
@@ -47,7 +49,6 @@ class Backtracking {
     // https://www.interviewbit.com/problems/subset/
     static ArrayList<ArrayList<Integer>> subsets(ArrayList<Integer> A) {
         ArrayList<ArrayList<Integer>> res = new ArrayList<>();
-
         // sort the list to set subsets in lexicographic order
         Collections.sort(A);
         // recursively find subsets with or without current element
@@ -62,10 +63,6 @@ class Backtracking {
         // add current subset to output
         res.add(new ArrayList<>(subset));
 
-        // if all elements have been checked
-        if (pos == A.size())
-            return;
-
         // for all elements remaining
         for (int i = pos; i < A.size(); i++) {
             // add current element and find more subsets containing it
@@ -76,39 +73,9 @@ class Backtracking {
         }
     }
 
-    // https://www.interviewbit.com/problems/combinations/
-    static ArrayList<ArrayList<Integer>> combinations(int n, int k) {
-        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
-
-        // recursively find all the combinations with and without every element
-        combinationsUtil(n, k, 1, new ArrayList<>(), res);
-
-        return res;
-    }
-
-    // recursive util to find all combinations
-    private static void combinationsUtil(int n, int k, int pos, ArrayList<Integer> curr,
-                                         ArrayList<ArrayList<Integer>> res) {
-        // if all k places are filled, add current combination to output
-        if (k == 0) {
-            res.add(new ArrayList<>(curr));
-            return;
-        }
-
-        // for each number from current position till end
-        for (int i = pos; i <= n; i++) {
-            // add current number to combination and complete the current combination with remaining ones
-            curr.add(i);
-            combinationsUtil(n, k - 1, i + 1, curr, res);
-            // remove current number to find more combinations without it
-            curr.remove(curr.size() - 1);
-        }
-    }
-
     // https://www.interviewbit.com/problems/combination-sum/
     static ArrayList<ArrayList<Integer>> combinationSum(ArrayList<Integer> A, int target) {
         ArrayList<ArrayList<Integer>> res = new ArrayList<>();
-
         // sort the list for combinations in non-decreasing order
         Collections.sort(A);
         // recursively find all the combinations with sum = target
@@ -149,7 +116,6 @@ class Backtracking {
     // https://www.interviewbit.com/problems/combination-sum-ii/
     static ArrayList<ArrayList<Integer>> combinationSum2(ArrayList<Integer> A, int target) {
         ArrayList<ArrayList<Integer>> res = new ArrayList<>();
-
         // sort the list for combinations in non-decreasing order
         Collections.sort(A);
         // recursively find all the combinations with sum = target
@@ -187,10 +153,37 @@ class Backtracking {
         }
     }
 
+    // https://www.interviewbit.com/problems/combinations/
+    static ArrayList<ArrayList<Integer>> combinations(int n, int k) {
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        // recursively find all the combinations with and without every element
+        combinationsUtil(n, k, 1, new ArrayList<>(), res);
+
+        return res;
+    }
+
+    // recursive util to find all combinations
+    private static void combinationsUtil(int n, int k, int pos, ArrayList<Integer> curr,
+                                         ArrayList<ArrayList<Integer>> res) {
+        // if all k places are filled, add current combination to output
+        if (k == 0) {
+            res.add(new ArrayList<>(curr));
+            return;
+        }
+
+        // for each number from current position till end
+        for (int i = pos; i <= n; i++) {
+            // add current number to combination and complete the current combination with remaining ones
+            curr.add(i);
+            combinationsUtil(n, k - 1, i + 1, curr, res);
+            // remove current number to find more combinations without it
+            curr.remove(curr.size() - 1);
+        }
+    }
+
     // https://www.interviewbit.com/problems/subsets-ii/
     static ArrayList<ArrayList<Integer>> subsets2(ArrayList<Integer> A) {
         ArrayList<ArrayList<Integer>> res = new ArrayList<>();
-
         // sort the list to set subsets in lexicographic order
         Collections.sort(A);
         // recursively find subsets with or without current element
@@ -204,10 +197,6 @@ class Backtracking {
                                     ArrayList<ArrayList<Integer>> res) {
         // add current subset to output
         res.add(new ArrayList<>(subset));
-
-        // if all elements have been checked
-        if (pos == A.size())
-            return;
 
         int i = pos;
         // for all elements remaining
@@ -241,7 +230,6 @@ class Backtracking {
 
     static ArrayList<String> letterPhone(String A) {
         ArrayList<String> res = new ArrayList<>();
-
         // try all possible characters mapped to each number
         letterPhoneUtil(A, 0, new StringBuilder(), res);
 
@@ -284,13 +272,11 @@ class Backtracking {
         // compute palindromic partitions from the right
         for (int i = n - 1; i >= 0; i--) {
             res[i] = new ArrayList<>();
-
             // for all substrings starting from i
             for (int j = i; j < n; j++) {
                 // if this substring is palindrome
                 if (isPalindrome(A, i, j)) {
                     String str = A.substring(i, j + 1);
-
                     // the palindromic partitions for this substring will be
                     // all the palindromic partitions of the substrings starting from j + 1
                     // with the current substring in all the partitions
@@ -312,7 +298,6 @@ class Backtracking {
     // util to check if A.substring(start, end+1) is palindrome or not with memoization
     private static boolean isPalindrome(String A, int start, int end) {
         int l = start, r = end;
-
         // move two opposite pointers towards each other
         while (l <= r) {
             // if A.substring(l, r+1) is already calculated
@@ -329,8 +314,7 @@ class Backtracking {
             }
             // else mark A.substring(start, end+1) as not palindrome and return
             else {
-                dp[l][r] = 0;
-                dp[start][end] = 0;
+                dp[start][end] = dp[l][r] = 0;
                 return false;
             }
         }
@@ -343,7 +327,6 @@ class Backtracking {
     // https://www.interviewbit.com/problems/generate-all-parentheses-ii/
     static ArrayList<String> generateParenthesis2(int n) {
         ArrayList<String> res = new ArrayList<>();
-
         // call recursive util to generate all parentheses combinations for n > 0
         if (n > 0)
             generateParenthesis2Util(n - 1, n, new StringBuilder("("), res);
@@ -360,12 +343,11 @@ class Backtracking {
         }
 
         // can add more open parenthesis
-        if (open != 0) {
+        if (open > 0) {
             builder.append("(");
             generateParenthesis2Util(open - 1, close, builder, res);
             builder.setLength(builder.length() - 1);
         }
-
         // can add close parenthesis
         if (open < close) {
             builder.append(")");
@@ -414,36 +396,6 @@ class Backtracking {
         A.set(j, temp);
     }
 
-    // https://www.interviewbit.com/problems/gray-code/
-    static ArrayList<Integer> grayCode(int n) {
-        ArrayList<Integer> res = new ArrayList<>();
-        // recursively find gray code sequence for n bits
-        grayCodeUtil(1 << (n - 1), n, res);
-
-        return res;
-    }
-
-    // recursive util to find gray code sequence for n bits
-    private static void grayCodeUtil(int powOf2, int n, ArrayList<Integer> res) {
-        // base case
-        if (n == 1) {
-            res.add(0);
-            res.add(1);
-            return;
-        }
-
-        // find gray code sequence for n - 1 bits
-        grayCodeUtil(powOf2 >> 1, n - 1, res);
-
-        // G(n) = 0G(n-1) + 1R(n-1) where R(n) is the reverse sequence of G(n)
-        int len = res.size();
-        for (int i = len - 1; i >= 0; i--) {
-            // appending 1 as the MSB in the binary representation of the number
-            int val = res.get(i) + powOf2;
-            res.add(val);
-        }
-    }
-
     // https://www.interviewbit.com/problems/kth-permutation-sequence/
     static String kthPermutation(int n, int k) {
         // convert to 0-based ranking
@@ -457,7 +409,10 @@ class Backtracking {
             fact[i] = i * fact[i - 1];
             // as k is in int range and fact[i] is in denominator,
             // any fact[i] greater than INT_MAX will always give 0 in division
-            fact[i] = Math.min(fact[i], Integer.MAX_VALUE);
+            if (fact[i] > Integer.MAX_VALUE) {
+                Arrays.fill(fact, i, n, Integer.MAX_VALUE);
+                break;
+            }
         }
 
         // list of all digits from 1 to n
@@ -482,6 +437,36 @@ class Backtracking {
         }
 
         return res.toString();
+    }
+
+    // https://www.interviewbit.com/problems/gray-code/
+    static ArrayList<Integer> grayCode(int n) {
+        ArrayList<Integer> res = new ArrayList<>();
+        // recursively find gray code sequence for n bits
+        grayCodeUtil(n, res);
+
+        return res;
+    }
+
+    // recursive util to find gray code sequence for n bits
+    private static void grayCodeUtil(int n, ArrayList<Integer> res) {
+        // base case
+        if (n == 1) {
+            res.add(0);
+            res.add(1);
+            return;
+        }
+
+        // find gray code sequence for n - 1 bits
+        grayCodeUtil(n - 1, res);
+
+        // G(n) = 0G(n-1) + 1R(n-1) where R(n) is the reverse sequence of G(n)
+        int len = res.size(), pow = 1 << (n - 1);
+        for (int i = len - 1; i >= 0; i--) {
+            // appending 1 as the MSB in the binary representation of the number
+            int val = res.get(i) | pow;
+            res.add(val);
+        }
     }
 
     // https://www.interviewbit.com/problems/nqueens/
