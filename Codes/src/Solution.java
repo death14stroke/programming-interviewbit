@@ -1,11 +1,7 @@
 public class Solution {
     public static void main(String[] args) {
-        int[] A = {1, 2, 3, 4, 5};
+        int[] A = {0, -1, 3, 100, 70, 50};
 
-        LinkedLists.ListNode head = LinkedLists.createLinkedList(A);
-        LinkedLists.print(head);
-
-        head = StackQueue.subtract(head);
-        LinkedLists.print(head);
+        System.out.println(Greedy.highestProduct(A));
     }
 }

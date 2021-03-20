@@ -344,6 +344,10 @@ Interview bit problems topic wise
 - [Path with good nodes!](https://www.interviewbit.com/problems/path-with-good-nodes/)
 - [Water Flow](https://www.interviewbit.com/problems/water-flow/)
 
+## Greedy Algorithm
+
+- [Highest Product](https://www.interviewbit.com/problems/highest-product/)
+
 ## Dynamic Programming
 
 - [Longest Common Subsequence](https://www.interviewbit.com/problems/longest-common-subsequence/)
