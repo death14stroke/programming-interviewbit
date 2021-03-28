@@ -347,6 +347,9 @@ Interview bit problems topic wise
 ## Greedy Algorithm
 
 - [Highest Product](https://www.interviewbit.com/problems/highest-product/)
+- [Bulbs](https://www.interviewbit.com/problems/interview-questions/)
+- [Meeting rooms](https://www.interviewbit.com/problems/meeting-rooms/)
+- [Distribute Candy](https://www.interviewbit.com/problems/distribute-candy/)
 
 ## Dynamic Programming
 
