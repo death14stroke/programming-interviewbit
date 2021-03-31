@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 class Greedy {
     // https://www.interviewbit.com/problems/highest-product/
@@ -94,5 +96,81 @@ class Greedy {
             total += Math.max(left[i], right[i]);
 
         return total;
+    }
+
+    // https://www.interviewbit.com/problems/seats/
+    static int seats(String A) {
+        int MOD = 10000003, n = A.length();
+        // list with positions of people seated
+        List<Integer> positions = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            if (A.charAt(i) == 'x')
+                positions.add(i);
+        }
+
+        int cnt = positions.size();
+        // if no people seated or all are seated together without spaces
+        if (cnt == 0 || cnt == n)
+            return 0;
+
+        // optimal solution is moving all people around the middle seated person
+        int mid = (cnt - 1) / 2, median = positions.get(mid);
+        int res = 0;
+
+        // move each person to positions around the median person
+        for (int i = 0; i < positions.size(); i++) {
+            // cost = positions[i] - (median position + #positions to left/right of the median)
+            res = (res + Math.abs(positions.get(i) - (median + i - mid)) % MOD) % MOD;
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/assign-mice-to-holes/
+    static int assignMiceToHoles(int[] A, int[] B) {
+        // sort mice and hole positions
+        Arrays.sort(A);
+        Arrays.sort(B);
+
+        int res = 0;
+        // result is the maximum time taken for a mouse to move to the next available hole
+        for (int i = 0; i < A.length; i++)
+            res = Math.max(res, Math.abs(B[i] - A[i]));
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/majority-element/
+    static int majorityElement(int[] A) {
+        int n = A.length;
+        // select first element as possible candidate
+        int first = A[0], count = 1;
+
+        for (int i = 1; i < n; i++) {
+            // increment count if candidate element found again
+            if (A[i] == first)
+                count++;
+            else {
+                count--;
+                // candidate element not in majority till now - select a new candidate
+                if (count == 0) {
+                    count = 1;
+                    first = A[i];
+                }
+            }
+        }
+
+        count = 0;
+        // count number of occurences of candidate element
+        for (int val : A) {
+            if (val == first)
+                count++;
+        }
+
+        // candidate is the actual majority element
+        if (count > Math.floor(n / 2f))
+            return first;
+        // no majority element
+        return -1;
     }
 }

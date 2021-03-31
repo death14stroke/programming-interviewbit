@@ -350,6 +350,9 @@ Interview bit problems topic wise
 - [Bulbs](https://www.interviewbit.com/problems/interview-questions/)
 - [Meeting rooms](https://www.interviewbit.com/problems/meeting-rooms/)
 - [Distribute Candy](https://www.interviewbit.com/problems/distribute-candy/)
+- [Seats](https://www.interviewbit.com/problems/seats/)
+- [Assign Mice to Holes](https://www.interviewbit.com/problems/assign-mice-to-holes/)
+- [Majority Element](https://www.interviewbit.com/problems/majority-element/)
 
 ## Dynamic Programming
 

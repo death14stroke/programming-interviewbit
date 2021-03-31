@@ -1,7 +1,7 @@
 public class Solution {
     public static void main(String[] args) {
-        int[] A = {1, 5, 2, 1};
+        int[] A = {2, 1, 2};
 
-        System.out.println(Greedy.distributeCandy(A));
+        System.out.println(Greedy.majorityElement(A));
     }
 }
