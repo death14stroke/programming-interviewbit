@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 class Greedy {
@@ -141,7 +142,7 @@ class Greedy {
     }
 
     // https://www.interviewbit.com/problems/majority-element/
-    static int majorityElement(int[] A) {
+    static int majorityElement(final int[] A) {
         int n = A.length;
         // select first element as possible candidate
         int first = A[0], count = 1;
@@ -172,5 +173,89 @@ class Greedy {
             return first;
         // no majority element
         return -1;
+    }
+
+    // https://www.interviewbit.com/problems/gas-station/
+    static int gasStation(final int[] A, final int[] B) {
+        int n = A.length;
+        // if only one station
+        if (n == 1)
+            return A[0] - B[0] >= 0 ? 0 : -1;
+
+        // start from position 0
+        int start = 0, end = 1;
+        // current petrol
+        int curr = A[start] - B[start];
+
+        // loop till not completed full circle or not found a solution
+        while (start != end || curr < 0) {
+            // sliding window - remove gas stations from the start and update starting point
+            while (start != end && curr < 0) {
+                curr -= A[start] - B[start];
+                start = (start + 1) % n;
+                // reached position 0 without a solution
+                if (start == 0)
+                    return -1;
+            }
+            // add current gas station to the sliding window
+            curr += A[end] - B[end];
+            end = (end + 1) % n;
+        }
+
+        // solution found
+        return start;
+    }
+
+    // https://www.interviewbit.com/problems/disjoint-intervals/
+    static int disjointIntervals(int[][] A) {
+        // sort the intervals in increasing order of end points
+        Arrays.sort(A, Comparator.comparingInt(i -> i[1]));
+
+        int endTime = A[0][1], cnt = 1;
+        // start with taking the first interval
+        for (int i = 1; i < A.length; i++) {
+            // if current interval is disjoint, add to the result set
+            if (A[i][0] > endTime) {
+                cnt++;
+                endTime = A[i][1];
+            }
+        }
+
+        return cnt;
+    }
+
+    // https://www.interviewbit.com/problems/largest-permutation/
+    static int[] largestPermutation(int[] A, int B) {
+        int n = A.length;
+        // position map for each element in array
+        int[] map = new int[n + 1];
+        for (int i = 0; i < n; i++)
+            map[A[i]] = i;
+
+        // check till the end of array is not reached or swaps limit is not reached
+        for (int i = 0; i < n && B > 0; i++) {
+            int N = n - i;
+            // if the next largest is at current position, no need to swap
+            if (A[i] == N)
+                continue;
+
+            int pos = map[N];
+            // swap current element with next largest
+            swap(A, i, pos);
+            // update positions of the swapped elements in map
+            map[N] = i;
+            map[A[pos]] = pos;
+            // update remaining swaps limit
+            B--;
+        }
+
+        return A;
+    }
+
+    // util to swap two positions in array
+    private static void swap(int[] A, int i, int j) {
+        int temp = A[i];
+        A[i] = A[j];
+        A[j] = temp;
     }
 }

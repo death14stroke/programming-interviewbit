@@ -353,6 +353,9 @@ Interview bit problems topic wise
 - [Seats](https://www.interviewbit.com/problems/seats/)
 - [Assign Mice to Holes](https://www.interviewbit.com/problems/assign-mice-to-holes/)
 - [Majority Element](https://www.interviewbit.com/problems/majority-element/)
+- [Gas Station](https://www.interviewbit.com/problems/gas-station/)
+- [Disjoint Intervals](https://www.interviewbit.com/problems/disjoint-intervals/)
+- [Largest Permutation](https://www.interviewbit.com/problems/largest-permutation/)
 
 ## Dynamic Programming
 
