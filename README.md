@@ -344,18 +344,18 @@ Interview bit problems topic wise
 - [Path with good nodes!](https://www.interviewbit.com/problems/path-with-good-nodes/)
 - [Water Flow](https://www.interviewbit.com/problems/water-flow/)
 
-## Greedy Algorithm
+## Greedy Algorithm (10)
 
 - [Highest Product](https://www.interviewbit.com/problems/highest-product/)
 - [Bulbs](https://www.interviewbit.com/problems/interview-questions/)
+- [Disjoint Intervals](https://www.interviewbit.com/problems/disjoint-intervals/)
+- [Largest Permutation](https://www.interviewbit.com/problems/largest-permutation/)
 - [Meeting rooms](https://www.interviewbit.com/problems/meeting-rooms/)
 - [Distribute Candy](https://www.interviewbit.com/problems/distribute-candy/)
 - [Seats](https://www.interviewbit.com/problems/seats/)
 - [Assign Mice to Holes](https://www.interviewbit.com/problems/assign-mice-to-holes/)
 - [Majority Element](https://www.interviewbit.com/problems/majority-element/)
 - [Gas Station](https://www.interviewbit.com/problems/gas-station/)
-- [Disjoint Intervals](https://www.interviewbit.com/problems/disjoint-intervals/)
-- [Largest Permutation](https://www.interviewbit.com/problems/largest-permutation/)
 
 ## Dynamic Programming
 
