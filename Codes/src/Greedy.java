@@ -105,6 +105,7 @@ class Greedy {
             // new meeting must start - allocate new room
             if (start[i] < end[j]) {
                 curr++;
+                res = Math.max(res, curr);
                 i++;
             }
             // previous meeting over - vacate the room
@@ -112,8 +113,6 @@ class Greedy {
                 curr--;
                 j++;
             }
-
-            res = Math.max(res, curr);
         }
 
         return res;
@@ -124,15 +123,16 @@ class Greedy {
         int n = A.length;
         // #candies received when considering only left or right neighbour
         int[] left = new int[n], right = new int[n];
-        // each child will get at least one candy
-        Arrays.fill(left, 1);
-        Arrays.fill(right, 1);
+        // first and last child
+        left[0] = right[n - 1] = 1;
 
         for (int i = 1; i < n; i++) {
             // if more priority than left neighbour, give one candy more than the neighbour
             // else give only one candy
             if (A[i] > A[i - 1])
                 left[i] = left[i - 1] + 1;
+            else
+                left[i] = 1;
         }
 
         for (int i = n - 2; i >= 0; i--) {
@@ -140,6 +140,8 @@ class Greedy {
             // else give only one candy
             if (A[i] > A[i + 1])
                 right[i] = right[i + 1] + 1;
+            else
+                right[i] = 1;
         }
 
         int total = 0;
@@ -197,7 +199,7 @@ class Greedy {
     // https://www.interviewbit.com/problems/majority-element/
     static int majorityElement(final int[] A) {
         int n = A.length;
-        // select first element as possible candidate
+        // select first element as possible candidate (Moore's Voting Algorithm)
         int first = A[0], count = 1;
 
         for (int i = 1; i < n; i++) {
