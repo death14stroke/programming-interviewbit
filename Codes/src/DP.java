@@ -110,127 +110,6 @@ class DP {
         return dp[m][n];
     }
 
-    // https://www.interviewbit.com/problems/interleaving-strings/
-    static int interleavingStrings(String A, String B, String C) {
-        int m = A.length(), n = B.length();
-        // if total length doesn't match
-        if (m + n != C.length())
-            return 0;
-
-        boolean[][] dp = new boolean[m + 1][n + 1];
-        // both string empty
-        dp[0][0] = true;
-
-        // string B is empty
-        for (int i = 1; i <= m; i++) {
-            if (A.charAt(i - 1) == C.charAt(i - 1))
-                dp[i][0] = true;
-            else
-                break;
-        }
-
-        // string A is empty
-        for (int j = 1; j <= n; j++) {
-            if (B.charAt(j - 1) == C.charAt(j - 1))
-                dp[0][j] = true;
-            else
-                break;
-        }
-
-        for (int i = 1; i <= m; i++) {
-            for (int j = 1; j <= n; j++) {
-                char a = A.charAt(i - 1), b = B.charAt(j - 1), c = C.charAt(i + j - 1);
-
-                // if A's character matches with C
-                if (a == c)
-                    dp[i][j] = dp[i - 1][j];
-                // also check if B's character matches with C
-                if (b == c)
-                    dp[i][j] = dp[i][j] || dp[i][j - 1];
-            }
-        }
-
-        return dp[m][n] ? 1 : 0;
-    }
-
-    // https://www.interviewbit.com/problems/regular-expression-match/
-    static int regex(final String A, final String B) {
-        int m = A.length(), n = B.length();
-
-        // both strings empty
-        if (m == 0 && n == 0)
-            return 1;
-        // input not empty but pattern is empty
-        if (n == 0)
-            return 0;
-
-        boolean[][] dp = new boolean[m + 1][n + 1];
-        dp[0][0] = true;
-
-        // input is empty but pattern is not empty
-        // valid only if pattern is all '*'
-        for (int j = 1; j <= n; j++) {
-            if (B.charAt(j - 1) == '*')
-                dp[0][j] = true;
-            else
-                break;
-        }
-
-        for (int i = 1; i <= m; i++) {
-            for (int j = 1; j <= n; j++) {
-                // if single character matcher in pattern or the characters match
-                if (B.charAt(j - 1) == '?' || A.charAt(i - 1) == B.charAt(j - 1))
-                    dp[i][j] = dp[i - 1][j - 1];
-                    // else if 0 or more characters matcher
-                    // CASE-1: consider *,
-                    // CASE-2: ignore * (match 0 chars)
-                else if (B.charAt(j - 1) == '*')
-                    dp[i][j] = dp[i - 1][j] || dp[i][j - 1];
-            }
-        }
-
-        return dp[m][n] ? 1 : 0;
-    }
-
-    // https://www.interviewbit.com/problems/regular-expression-ii/
-    static int regex2(final String A, final String B) {
-        int m = A.length(), n = B.length();
-
-        // both strings empty
-        if (m == 0 && n == 0)
-            return 1;
-        // input not empty but pattern is empty
-        if (n == 0)
-            return 0;
-
-        boolean[][] dp = new boolean[m + 1][n + 1];
-        dp[0][0] = true;
-
-        // input is empty but pattern is not empty
-        for (int j = 1; j <= n; j++) {
-            if (B.charAt(j - 1) == '*')
-                dp[0][j] = dp[0][j - 2];
-        }
-
-        for (int i = 1; i <= m; i++) {
-            for (int j = 1; j <= n; j++) {
-                // if single character matcher in pattern or the characters match
-                if (B.charAt(j - 1) == '.' || A.charAt(i - 1) == B.charAt(j - 1))
-                    dp[i][j] = dp[i - 1][j - 1];
-                    // else if * operator
-                else if (B.charAt(j - 1) == '*') {
-                    // 0 characters matching of previous character in pattern
-                    dp[i][j] = dp[i][j - 2];
-                    // previous character of pattern is '.' or matches with current
-                    if (A.charAt(i - 1) == B.charAt(j - 2) || B.charAt(j - 2) == '.')
-                        dp[i][j] = dp[i][j] || dp[i - 1][j];
-                }
-            }
-        }
-
-        return dp[m][n] ? 1 : 0;
-    }
-
     // https://www.interviewbit.com/problems/scramble-string/
     private static Map<String, Boolean> map;
 
@@ -296,8 +175,12 @@ class DP {
         for (char c : A.toCharArray())
             freq[c]++;
         // decrement frequency map
-        for (char c : B.toCharArray())
+        for (char c : B.toCharArray()) {
             freq[c]--;
+
+            if (freq[c] < 0)
+                return false;
+        }
 
         for (int val : freq) {
             // if any character is extra is any string
@@ -309,6 +192,127 @@ class DP {
         return true;
     }
 
+    // https://www.interviewbit.com/problems/regular-expression-match/
+    static int regex(final String A, final String B) {
+        int m = A.length(), n = B.length();
+
+        // both strings empty
+        if (m == 0 && n == 0)
+            return 1;
+        // input not empty but pattern is empty
+        if (n == 0)
+            return 0;
+
+        boolean[][] dp = new boolean[m + 1][n + 1];
+        dp[0][0] = true;
+
+        // input is empty but pattern is not empty
+        // valid only if pattern is all '*'
+        for (int j = 1; j <= n; j++) {
+            if (B.charAt(j - 1) == '*')
+                dp[0][j] = true;
+            else
+                break;
+        }
+
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                // if single character matcher in pattern or the characters match
+                if (B.charAt(j - 1) == '?' || A.charAt(i - 1) == B.charAt(j - 1))
+                    dp[i][j] = dp[i - 1][j - 1];
+                    // else if 0 or more characters match
+                    // CASE-1: consider *,
+                    // CASE-2: ignore * (match 0 chars)
+                else if (B.charAt(j - 1) == '*')
+                    dp[i][j] = dp[i - 1][j] || dp[i][j - 1];
+            }
+        }
+
+        return dp[m][n] ? 1 : 0;
+    }
+
+    // https://www.interviewbit.com/problems/regular-expression-ii/
+    static int regex2(final String A, final String B) {
+        int m = A.length(), n = B.length();
+
+        // both strings empty
+        if (m == 0 && n == 0)
+            return 1;
+        // input not empty but pattern is empty
+        if (n == 0)
+            return 0;
+
+        boolean[][] dp = new boolean[m + 1][n + 1];
+        dp[0][0] = true;
+
+        // input is empty but pattern is not empty
+        for (int j = 1; j <= n; j++) {
+            if (B.charAt(j - 1) == '*')
+                dp[0][j] = dp[0][j - 2];
+        }
+
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                // if single character matcher in pattern or the characters match
+                if (B.charAt(j - 1) == '.' || A.charAt(i - 1) == B.charAt(j - 1))
+                    dp[i][j] = dp[i - 1][j - 1];
+                    // else if * operator
+                else if (B.charAt(j - 1) == '*') {
+                    // 0 characters matching of previous character in pattern
+                    dp[i][j] = dp[i][j - 2];
+                    // previous character of pattern is '.' or matches with current
+                    if (A.charAt(i - 1) == B.charAt(j - 2) || B.charAt(j - 2) == '.')
+                        dp[i][j] = dp[i][j] || dp[i - 1][j];
+                }
+            }
+        }
+
+        return dp[m][n] ? 1 : 0;
+    }
+
+    // https://www.interviewbit.com/problems/interleaving-strings/
+    static int interleavingStrings(String A, String B, String C) {
+        int m = A.length(), n = B.length();
+        // if total length doesn't match
+        if (m + n != C.length())
+            return 0;
+
+        boolean[][] dp = new boolean[m + 1][n + 1];
+        // both string empty
+        dp[0][0] = true;
+
+        // string B is empty
+        for (int i = 1; i <= m; i++) {
+            if (A.charAt(i - 1) == C.charAt(i - 1))
+                dp[i][0] = true;
+            else
+                break;
+        }
+
+        // string A is empty
+        for (int j = 1; j <= n; j++) {
+            if (B.charAt(j - 1) == C.charAt(j - 1))
+                dp[0][j] = true;
+            else
+                break;
+        }
+
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                char a = A.charAt(i - 1), b = B.charAt(j - 1), c = C.charAt(i + j - 1);
+
+                // if A's character matches with C
+                if (a == c)
+                    dp[i][j] = dp[i - 1][j];
+                // also check if B's character matches with C
+                if (b == c)
+                    dp[i][j] = dp[i][j] || dp[i][j - 1];
+            }
+        }
+
+        return dp[m][n] ? 1 : 0;
+    }
+
     // https://www.interviewbit.com/problems/length-of-longest-subsequence/
     static int longestBitonicSubsequence(final int[] A) {
         int n = A.length;
@@ -316,7 +320,7 @@ class DP {
         if (n <= 2)
             return n;
 
-        // compute longest increasing subsequence from 0 to i for each i
+        // compute the longest increasing subsequence from 0 to i for each i
         int[] lis = new int[n];
         Arrays.fill(lis, 1);
 
@@ -328,7 +332,7 @@ class DP {
             }
         }
 
-        // compute longest decreasing subsequence from i to n for each i
+        // compute the longest decreasing subsequence from i to n for each i
         int[] lds = new int[n];
         Arrays.fill(lds, 1);
 
@@ -375,6 +379,57 @@ class DP {
         }
 
         return res;
+    }
+
+    // https://www.interviewbit.com/problems/largest-area-of-rectangle-with-permutations/
+    static int largestAreaRectWithPermutation(int[][] A) {
+        int m = A.length, n = A[0].length;
+        // compute connected rectangle size in each column
+        for (int i = 1; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (A[i][j] != 0)
+                    A[i][j] += A[i - 1][j];
+            }
+        }
+
+        // sort each row such that largest rectangle is formed at the last column
+        for (int[] row : A)
+            Arrays.sort(row);
+
+        int res = Integer.MIN_VALUE;
+        // for each row compute max area
+        for (int[] row : A) {
+            // start from the last column to compute max area
+            for (int j = n - 1; j >= 0 && row[j] > 0; j--)
+                res = Math.max(res, row[j] * (n - j));
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/old/problems/tiling-with-dominoes/
+    static int tilingWithDominoes(int A) {
+        // base cases
+        if (A == 1)
+            return 0;
+
+        // A[i] = # ways to form completely filled 3 x i matrix
+        // B[i] = # ways to form top row empty or bottom row empty in last col of 3 x i matrix
+        long a0 = 1, a1 = 0, b0 = 0, b1 = 1, a2 = 0, b2;
+        int MOD = 1_000_000_007;
+
+        for (int i = 2; i <= A; i++) {
+            // see https://www.geeksforgeeks.org/tiling-with-dominoes/ for diagram
+            a2 = (a0 + 2 * b1) % MOD;
+            b2 = (a1 + b0) % MOD;
+
+            a0 = a1;
+            a1 = a2;
+            b0 = b1;
+            b1 = b2;
+        }
+
+        return (int) a2;
     }
 
     // https://www.interviewbit.com/problems/ways-to-decode/
