@@ -320,11 +320,13 @@ class DP {
         if (n <= 2)
             return n;
 
-        // compute the longest increasing subsequence from 0 to i for each i
+        // lis[i] = longest increasing subsequence ending at i
         int[] lis = new int[n];
-        Arrays.fill(lis, 1);
+        lis[0] = 1;
 
         for (int i = 1; i < n; i++) {
+            lis[i] = 1;
+
             for (int j = 0; j < i; j++) {
                 // if can extend current lis
                 if (A[i] > A[j] && lis[i] < lis[j] + 1)
@@ -332,11 +334,13 @@ class DP {
             }
         }
 
-        // compute the longest decreasing subsequence from i to n for each i
+        // lds[i] = longest decreasing subsequence ending at i
         int[] lds = new int[n];
-        Arrays.fill(lds, 1);
+        lds[n - 1] = 1;
 
         for (int i = n - 2; i >= 0; i--) {
+            lds[i] = 1;
+
             for (int j = n - 1; j > i; j--) {
                 // if can extend current lds
                 if (A[i] > A[j] && lds[i] < lds[j] + 1)
@@ -432,9 +436,23 @@ class DP {
         return (int) a2;
     }
 
+    // https://www.interviewbit.com/problems/paint-house/
+    static int paintHouse(int[][] A) {
+        int n = A.length;
+        // dp[i][j] = cost to paint houses till i with color j on the ith house
+        // = cost to paint current house with color j + min of cost to paint previous i - 1 houses with last color as any other than j
+        for (int i = 1; i < n; i++) {
+            A[i][0] += Math.min(A[i - 1][1], A[i - 1][2]);
+            A[i][1] += Math.min(A[i - 1][0], A[i - 1][2]);
+            A[i][2] += Math.min(A[i - 1][0], A[i - 1][1]);
+        }
+
+        return Math.min(A[n - 1][0], Math.min(A[n - 1][1], A[n - 1][2]));
+    }
+
     // https://www.interviewbit.com/problems/ways-to-decode/
     static int waysToDecode(String A) {
-        int n = A.length(), p = 1000000007;
+        int n = A.length(), p = 1_000_000_007;
         // mapping starts from 1
         if (A.charAt(0) == '0')
             return 0;
@@ -447,11 +465,11 @@ class DP {
 
         // check for each 1 digit and 2 digit pairs
         for (int i = 2; i <= n; i++) {
-            // if last digit is not 0
+            // if last digit is between 1 and 9
             if (A.charAt(i - 1) != '0')
-                dp[i] = dp[i - 1] % p;
+                dp[i] = dp[i - 1];
 
-            // if last 2 digits form a number between 10 to 26
+            // if last 2 digits form a number between 10 and 26
             if (A.charAt(i - 2) == '1' || (A.charAt(i - 2) == '2' && A.charAt(i - 1) <= '6'))
                 dp[i] = (dp[i] + dp[i - 2]) % p;
         }
@@ -465,67 +483,63 @@ class DP {
         if (n <= 2)
             return n;
 
-        // steps required where last step is 2 jump and 1 jump respectively
-        int step2 = 1, step1 = 2;
-        int ans = 0;
-
+        // step1 = dp[i - 2], step2 = dp[i - 1]
+        int step1 = 1, step2 = 2, step3 = 0;
+        // dp[i] = dp[i - 1] + dp[i - 2]
         for (int i = 3; i <= n; i++) {
-            // total steps at this point is either last step is 2 jump or 1 jump
-            ans = step2 + step1;
-
+            // total steps at this point is either last step is 1 jump or 2 jump
+            step3 = step2 + step1;
             // update steps variables
-            step2 = step1;
-            step1 = ans;
+            step1 = step2;
+            step2 = step3;
         }
 
-        return ans;
+        return step3;
     }
 
     // https://www.interviewbit.com/problems/longest-increasing-subsequence/
     static int lis(final int[] A) {
-        int n = A.length;
-
-        // construct lis in a table
-        int[] tailTable = new int[n];
-        // len of longest lis
-        int len;
-
-        // initialize
-        tailTable[0] = A[0];
-        len = 1;
+        int n = A.length, res = 1;
+        // lis[i] = longest increasing subsequence ending at i
+        int[] lis = new int[n];
+        lis[0] = 1;
 
         for (int i = 1; i < n; i++) {
-            // new element is smallest element till now. Create new lis
-            if (A[i] < tailTable[0])
-                tailTable[0] = A[i];
-                // new element is largest element till now. Append to current lis and update max length
-            else if (A[i] > tailTable[len - 1])
-                tailTable[len++] = A[i];
-                // find appropriate position for new element in current lis
-            else
-                tailTable[ceilIndex(tailTable, 0, len - 1, A[i])] = A[i];
+            lis[i] = 1;
+
+            for (int j = 0; j < i; j++) {
+                if (A[i] > A[j] && lis[i] < lis[j] + 1)
+                    lis[i] = lis[j] + 1;
+            }
+
+            res = Math.max(res, lis[i]);
         }
 
-        return len;
+        return res;
     }
 
-    // util to find ceiling index for an element in sorted array
-    @SuppressWarnings("SameParameterValue")
-    private static int ceilIndex(int[] A, int l, int r, int x) {
-        int ans = -1;
+    // https://www.interviewbit.com/problems/intersecting-chords-in-a-circle/
+    static int intersectingChords(int A) {
+        // base case
+        if (A == 1)
+            return 1;
 
-        while (l <= r) {
-            int mid = l + (r - l) / 2;
+        int MOD = 1_000_000_007;
+        // dp[i] = # ways possible for i chords
+        long[] dp = new long[A + 1];
+        // base cases
+        dp[0] = 1;
+        dp[1] = 1;
 
-            if (x > A[mid])
-                l = mid + 1;
-            else {
-                ans = mid;
-                r = mid - 1;
-            }
+        // for i chords there are 2 * i points. 1st chord can be either of 1 - 2, 1 - 4, 1 - 6,..., 1 - i.
+        // for chord 1 - 3, there will always remain a point empty in between hence no odd numbered end points
+        for (int i = 2; i <= A; i++) {
+            // for first chord from 1 - (2 * (j + 1)) # ways is the permutation of sol of the both halves formed
+            for (int j = 0; j < i; j++)
+                dp[i] = (dp[i] + dp[j] * dp[i - j - 1]) % MOD;
         }
 
-        return ans;
+        return (int) dp[A];
     }
 
     // https://www.interviewbit.com/problems/jump-game-array/
