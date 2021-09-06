@@ -411,7 +411,7 @@ class DP {
         return res;
     }
 
-    // https://www.interviewbit.com/old/problems/tiling-with-dominoes/
+    // https://www.interviewbit.com/problems/tiling-with-dominoes/
     static int tilingWithDominoes(int A) {
         // base cases
         if (A == 1)
@@ -542,42 +542,83 @@ class DP {
         return (int) dp[A];
     }
 
-    // https://www.interviewbit.com/problems/jump-game-array/
-    static int canJump(int[] A) {
-        // set current target as the last position
-        int n = A.length, target = n - 1;
-
-        // loop from the second last position
-        for (int i = n - 2; i >= 0; i--) {
-            // if can jump from current to target, update target to current
-            if (i + A[i] >= target)
-                target = i;
+    // https://www.interviewbit.com/problems/tushars-birthday-bombs/
+    static int[] birthdayBombs(int A, int[] B) {
+        int n = B.length, min = B[0], minIndex = 0;
+        // find friend with minimum strength
+        for (int i = 1; i < n; i++) {
+            if (B[i] < min) {
+                min = B[i];
+                minIndex = i;
+            }
         }
 
-        // if target at the end of loop is start, success
-        return target == 0 ? 1 : 0;
+        // greedily length of answer will be #kicks by the weakest friend
+        int hits = A / min;
+        // capacity of Tushar full
+        if (A % min == 0) {
+            int[] res = new int[hits];
+            Arrays.fill(res, minIndex);
+            return res;
+        }
+
+        int j = 0;
+        LinkedList<Integer> pos = new LinkedList<>();
+        // if capacity remaining, try substituting 1 weak kick with 1 stronger kick if possible before minIndex
+        while (A >= 0 && j < minIndex) {
+            // this kick will be lexicographically smaller and is possible
+            if (A - B[j] >= min * (hits - 1)) {
+                pos.add(j);
+                A -= B[j];
+                hits--;
+            }
+            // else check for next element
+            else
+                j++;
+        }
+
+        hits = Math.max(hits, 0);
+        // if went over capacity, remove last kick from pos
+        if (A - min * hits < 0)
+            pos.removeLast();
+
+        // copy pos to array
+        int[] res = new int[pos.size() + hits];
+        int i = 0;
+        for (; i < pos.size(); i++)
+            res[i] = pos.get(i);
+        // add positions of the weakest kick
+        for (; i < pos.size() + hits; i++)
+            res[i] = minIndex;
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/jump-game-array/
+    static int canJump(int[] A) {
+        // initial maxReach = A[0]
+        int n = A.length, maxReach = A[0];
+        // keep updating maxReach till we reach destination or get stuck
+        for (int i = 1; i <= maxReach && maxReach < n - 1; i++)
+            maxReach = Math.max(maxReach, i + A[i]);
+
+        return maxReach >= n - 1 ? 1 : 0;
     }
 
     // https://www.interviewbit.com/problems/min-jumps-array/
     static int jump(int[] A) {
         int n = A.length;
-        // base case: 0 or 1 positions total
-        if (n <= 1)
+        // base case
+        if (n == 1)
             return 0;
-
         // 2 or more points in array, starting point max jumps is 0
         if (A[0] == 0)
             return -1;
 
         // initialize for the starting point
-        int jumps = 1, maxReach = A[0], steps = A[0];
-
+        int i = 1, jumps = 1, maxReach = A[0], steps = A[0];
         // check from the 1st position
-        for (int i = 1; i < n; i++) {
-            // reached destination
-            if (i == n - 1)
-                return jumps;
-
+        for (; i < n - 1 && i <= maxReach; i++) {
             // update maximum reachable position
             maxReach = Math.max(maxReach, i + A[i]);
             // use a step
@@ -587,17 +628,13 @@ class DP {
             if (steps == 0) {
                 // perform a jump
                 jumps++;
-
-                // if this is the farthest we can reach
-                if (i >= maxReach)
-                    return -1;
-
                 // re-initialize steps remaining to take
                 steps = maxReach - i;
             }
         }
 
-        return -1;
+        // if reached destination return optimum path length
+        return i == n - 1 ? jumps : -1;
     }
 
     // https://www.interviewbit.com/problems/longest-arithmetic-progression/

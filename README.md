@@ -377,6 +377,7 @@ Interview bit problems topic wise
 - [Stairs](https://www.interviewbit.com/problems/stairs/)
 - [Longest Increasing Subsequence](https://www.interviewbit.com/problems/longest-increasing-subsequence/)
 - [Intersecting Chords In A Circle](https://www.interviewbit.com/problems/intersecting-chords-in-a-circle/)
+- [Tushar's Birthday Bombs](https://www.interviewbit.com/problems/tushars-birthday-bombs/)
 - [Jump Game Array](https://www.interviewbit.com/problems/jump-game-array/)
 - [Min Jumps Array](https://www.interviewbit.com/problems/min-jumps-array/)
 - [Longest Arithmetic Progression](https://www.interviewbit.com/problems/longest-arithmetic-progression/)
