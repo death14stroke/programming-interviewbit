@@ -648,17 +648,18 @@ class DP {
         int res = 2;
         // diff map for each position in the array
         HashMap<Integer, Integer>[] dp = new HashMap[n];
-        for (int i = 0; i < n; i++)
-            dp[i] = new HashMap<>();
+        dp[0] = new HashMap<>();
 
         for (int i = 1; i < n; i++) {
+            dp[i] = new HashMap<>();
+
             for (int j = 0; j < i; j++) {
                 int diff = A[i] - A[j];
 
                 // if AP exists at index j with difference "diff", extend it
                 if (dp[j].containsKey(diff))
                     dp[i].put(diff, dp[j].get(diff) + 1);
-                    // else create new AP at index i with difference 2
+                    // else create new AP at index j with 2 elements
                 else
                     dp[i].put(diff, 2);
 
@@ -668,6 +669,135 @@ class DP {
         }
 
         return res;
+    }
+
+    // https://www.interviewbit.com/problems/n-digit-numbers-with-digit-sum-s-/
+    static int nDigitNumsWithDigitSum(int N, int S) {
+        // alternate solution: https://www.geeksforgeeks.org/count-of-n-digit-numbers-whose-sum-of-digits-equals-to-given-sum/
+        // base case
+        if (N == 1) {
+            // numbers start from 1 hence only sum from 1 to 9 possible for N = 1
+            if (S == 0 || S >= 10)
+                return 0;
+            return 1;
+        }
+
+        int MOD = 1000000007;
+        // dp[i][j] = # i digit numbers whose sum of digits is j
+        int[][] dp = new int[N + 1][S + 1];
+
+        // for N = 1, only sum from 1 to 9 possible
+        for (int i = 1; i <= Math.min(S, 9); i++)
+            dp[1][i] = 1;
+
+        // start filling from 2nd position
+        for (int i = 2; i <= N; i++) {
+            for (int j = 1; j <= S; j++) {
+                // try all numbers from 0 to 9
+                for (int num = 0; num <= 9; num++) {
+                    // if current number is less than sum j include it else stop
+                    if (j - num >= 0)
+                        dp[i][j] = (dp[i][j] + dp[i - 1][j - num]) % MOD;
+                    else
+                        break;
+                }
+            }
+        }
+
+        return dp[N][S];
+    }
+
+    // https://www.interviewbit.com/problems/shortest-common-superstring/
+    // another possible solution is DP with bitmask (see question hint)
+    private static String overlapStrRes;
+
+    static int shortestCommonSuperstring(String[] A) {
+        int n = A.length;
+
+        Set<Integer> subsets = new HashSet<>();
+        // mark strings which are substring of some other string to remove
+        for (int i = 0; i < n - 1; i++) {
+            if (subsets.contains(i))
+                continue;
+
+            for (int j = i + 1; j < n; j++) {
+                if (A[i].length() <= A[j].length() && A[j].contains(A[i]))
+                    subsets.add(i);
+                else if (A[i].contains(A[j]))
+                    subsets.add(j);
+            }
+        }
+
+        int k = 0;
+        // keep pushing the marked strings at the end of the array
+        while (k < n) {
+            if (subsets.contains(k)) {
+                A[k] = A[n - 1];
+                n--;
+            } else {
+                k++;
+            }
+        }
+
+        overlapStrRes = "";
+        // merge the most overlapping strings n - 1 times
+        for (int len = n; len > 1; len--) {
+            int maxOverlap = 0;
+            int l = 0, r = 0;
+            String overlapStr = "";
+            // find maximum overlap among overlaps between each pair of string
+            for (int i = 0; i < len; i++) {
+                for (int j = i + 1; j < len; j++) {
+                    int overlap = findOverlappingPair(A[i], A[j]);
+                    if (maxOverlap < overlap) {
+                        maxOverlap = overlap;
+                        l = i;
+                        r = j;
+                        overlapStr = overlapStrRes;
+                    }
+                }
+            }
+
+            // if no overlap merge last string with first
+            if (maxOverlap == 0)
+                A[0] += A[len - 1];
+            // else replace merged string at one position and swap last string at the other
+            else {
+                A[l] = overlapStr;
+                A[r] = A[len - 1];
+            }
+        }
+
+        return A[0].length();
+    }
+
+    // util to find maximum overlap length
+    private static int findOverlappingPair(String A, String B) {
+        int m = A.length(), n = B.length();
+        int maxOverlap = 0;
+
+        // for all breakpoints of the smaller string
+        for (int i = 1; i <= Math.min(m, n); i++) {
+            // if prefix of A matches with suffix of B, update the overlap
+            if (A.substring(0, i).compareTo(B.substring(n - i)) == 0) {
+                if (maxOverlap < i) {
+                    maxOverlap = i;
+                    overlapStrRes = B + A.substring(i);
+                }
+            }
+        }
+        // for all breakpoints of the smaller string
+        for (int i = 1; i <= Math.min(m, n); i++) {
+            // if suffix of A matches with prefix of B, update the overlap
+            if (A.substring(m - i).compareTo(B.substring(0, i)) == 0) {
+                if (maxOverlap < i) {
+                    maxOverlap = i;
+                    overlapStrRes = A + B.substring(i);
+                }
+            }
+        }
+
+        return maxOverlap;
     }
 
     // https://www.interviewbit.com/problems/ways-to-color-a-3xn-board/

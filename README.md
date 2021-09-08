@@ -357,7 +357,7 @@ Interview bit problems topic wise
 - [Majority Element](https://www.interviewbit.com/problems/majority-element/)
 - [Gas Station](https://www.interviewbit.com/problems/gas-station/)
 
-## Dynamic Programming
+## Dynamic Programming (25)
 
 - [Longest Common Subsequence](https://www.interviewbit.com/problems/longest-common-subsequence/)
 - [Longest Palindromic Subsequence](https://www.interviewbit.com/problems/longest-palindromic-subsequence/)
@@ -381,4 +381,6 @@ Interview bit problems topic wise
 - [Jump Game Array](https://www.interviewbit.com/problems/jump-game-array/)
 - [Min Jumps Array](https://www.interviewbit.com/problems/min-jumps-array/)
 - [Longest Arithmetic Progression](https://www.interviewbit.com/problems/longest-arithmetic-progression/)
+- [N digit numbers with digit sum S](https://www.interviewbit.com/problems/n-digit-numbers-with-digit-sum-s-/)
+- [Shortest Common Superstring](https://www.interviewbit.com/problems/shortest-common-superstring/)
 - [Ways to color a 3xN Board](https://www.interviewbit.com/problems/ways-to-color-a-3xn-board/)
