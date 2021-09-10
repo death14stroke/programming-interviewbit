@@ -746,7 +746,7 @@ class DP {
             int l = 0, r = 0;
             String overlapStr = "";
             // find maximum overlap among overlaps between each pair of string
-            for (int i = 0; i < len; i++) {
+            for (int i = 0; i < len - 1; i++) {
                 for (int j = i + 1; j < len; j++) {
                     int overlap = findOverlappingPair(A[i], A[j]);
                     if (maxOverlap < overlap) {
@@ -761,7 +761,7 @@ class DP {
             // if no overlap merge last string with first
             if (maxOverlap == 0)
                 A[0] += A[len - 1];
-            // else replace merged string at one position and swap last string at the other
+                // else replace merged string at one position and swap last string at the other
             else {
                 A[l] = overlapStr;
                 A[r] = A[len - 1];
@@ -805,9 +805,9 @@ class DP {
         int p = 1000000007;
         // base case: A = 1 can select C(4, 3) * 3! + C(4, 2) * 2 ways
         long color3 = 24, color2 = 12;
-
         // W(n+1) = 10*Y(n)+11*W(n) where W(n+1) is # of 3 color combinations with (n+1) cols
         // Y(n+1) = 7*Y(n)+5*W(n) where Y(n+1) is # of 2 color combinations with (n+1) cols
+        // see https://www.geeksforgeeks.org/ways-color-3n-board-using-4-colors/ for explanation
         for (int i = 2; i <= A; i++) {
             long temp = color3;
 
@@ -818,5 +818,121 @@ class DP {
 
         // result will be the sum of 2 color and 3 color combinations
         return (int) ((color2 + color3) % p);
+    }
+
+    // https://www.interviewbit.com/problems/kth-manhattan-distance-neighbourhood/
+    static int[][] kthManhattanDistance(int[][] A, int K) {
+        // for K = 0 every member is its own maximum
+        if (K == 0)
+            return A;
+
+        int m = A.length, n = A[0].length;
+        int[][] dp = new int[m][n];
+
+        // for d = K we can find the matrix using the solution for d = K - 1
+        for (int d = 1; d <= K; d++) {
+            // for each element
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    // find K = d - 1 sol for top, left, bottom, right
+                    int top = i - 1 >= 0 ? A[i - 1][j] : -1, bottom = i + 1 < m ? A[i + 1][j] : -1;
+                    int left = j - 1 >= 0 ? A[i][j - 1] : -1, right = j + 1 < n ? A[i][j + 1] : -1;
+                    // update sol for K = d
+                    dp[i][j] = Math.max(A[i][j], Math.max(Math.max(top, bottom), Math.max(left, right)));
+                }
+            }
+
+            // swap matrix references such that A = sol for K = d
+            int[][] temp = dp;
+            dp = A;
+            A = temp;
+        }
+
+        return A;
+    }
+
+    // https://www.interviewbit.com/problems/coins-in-a-line/
+    static int coinsInLine(int[] A) {
+        int n = A.length;
+        // dp[i][j] = max score for coins from [i, j]
+        int[][] dp = new int[n][n];
+        // len = 1
+        for (int i = 0; i < n; i++)
+            dp[i][i] = A[i];
+        // for len = 2 and more
+        for (int len = 2; len <= n; len++) {
+            for (int i = 0; i < n - len + 1; i++) {
+                int j = i + len - 1;
+                // player chooses i and opponent chooses i + 1 in next step
+                int x = (i + 2 <= j) ? dp[i + 2][j] : 0;
+                // player chooses i and opponent chooses j in next step or
+                // player chooses j and opponent chooses i in next step
+                int y = (i + 1 <= j - 1) ? dp[i + 1][j - 1] : 0;
+                // player chooses j and opponent chooses j - 1 in next step
+                int z = (i <= j - 2) ? dp[i][j - 2] : 0;
+                // max of player chooses i or player chooses j
+                // opponent will choose such that for player's next turn minimum value can be obtained
+                dp[i][j] = Math.max(A[i] + Math.min(x, y), A[j] + Math.min(y, z));
+            }
+        }
+
+        return dp[0][n - 1];
+    }
+
+    // https://www.interviewbit.com/problems/tushars-birthday-party/
+    static int birthdayParty(final int[] A, final int[] B, final int[] C) {
+        // find the friend with maximum capacity
+        int maxCapacity = A[0];
+        for (int i = 1; i < A.length; i++)
+            maxCapacity = Math.max(maxCapacity, A[i]);
+
+        // use 0-1 knapsack technique for friend with maximum capacity and minimize cost
+        // this will ensure minimum cost for other friends is also calculated
+        int n = B.length;
+        int[][] dp = new int[n + 1][maxCapacity + 1];
+        // use Integer.MAX_VALUE / 2 to avoid overflow
+        for (int[] arr : dp)
+            Arrays.fill(arr, Integer.MAX_VALUE / 2);
+        // base case: capacity = 0
+        for (int i = 0; i <= n; i++)
+            dp[i][0] = 0;
+
+        for (int i = 1; i <= n; i++) {
+            for (int w = 1; w <= maxCapacity; w++) {
+                // if friend can eat current dish, either eat at least one of current dish or don't eat current dish
+                if (w - B[i - 1] >= 0)
+                    dp[i][w] = Math.min(C[i - 1] + dp[i][w - B[i - 1]], dp[i - 1][w]);
+                // else don't eat current dish
+                else
+                    dp[i][w] = dp[i - 1][w];
+            }
+        }
+
+        // compute sum of min cost for each friend
+        int res = 0;
+        for (int c : A)
+            res += dp[n][c];
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/0-1-knapsack/
+    static int knapsack01(int[] A, int[] B, int C) {
+        int n = A.length;
+        // dp[i][j] = max value obtained with first i objects with max capacity = j
+        // dp[i][0] = 0, dp[0][j] = 0
+        int[][] dp = new int[n + 1][C + 1];
+
+        for (int i = 1; i <= n; i++)
+            for (int w = 1; w <= C; w++) {
+                // if we can carry this object, either carry it or don't
+                if (w - B[i - 1] >= 0)
+                    dp[i][w] = Math.max(A[i - 1] + dp[i - 1][w - B[i - 1]],  dp[i - 1][w]);
+                // else don't carry the object
+                else
+                    dp[i][w] = dp[i - 1][w];
+            }
+
+        return dp[n][C];
     }
 }
