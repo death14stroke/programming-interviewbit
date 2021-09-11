@@ -1,9 +1,8 @@
 public class Solution {
     public static void main(String[] args) {
-        int[] A = {2, 3, 1, 5, 4};
-        int[] B = {3, 2, 4, 1};
-        int[] C = {1, 2, 5, 10};
+        int[] A = {3, 34, 4, 12, 5, 2};
+        int B = 30;
 
-        System.out.println(DP.birthdayParty(A, B, C));
+        System.out.println(DP.subsetSum(A, B));
     }
 }

@@ -879,6 +879,159 @@ class DP {
         return dp[0][n - 1];
     }
 
+    // https://www.interviewbit.com/problems/maximum-path-in-triangle/
+    static int maxPathInTriangle(int[][] A) {
+        int n = A.length;
+        // move from bottom to top and calculate max path for going to (i + 1, j) or (i + 1, j + 1)
+        for (int i = n - 2; i >= 0; i--) {
+            for (int j = 0; j <= i; j++)
+                A[i][j] += Math.max(A[i + 1][j], A[i + 1][j + 1]);
+        }
+
+        return A[0][0];
+    }
+
+    // https://www.interviewbit.com/problems/maximum-size-square-sub-matrix/
+    static int maxSquareSubMatrix(int[][] A) {
+        int m = A.length, n = A[0].length;
+        int res = 0;
+        // check for 1 length squares in first col
+        for (int[] row : A) {
+            if (row[0] != 0) {
+                res = 1;
+                break;
+            }
+        }
+        // check for 1 length squares in first row
+        for (int j = 1; j < n; j++) {
+            if (A[0][j] != 0) {
+                res = 1;
+                break;
+            }
+        }
+
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                // check if current position is 0 and its top, left and diagonal neighbours form a square.
+                // If yes, update the square length at current position
+                if (A[i][j] != 0) {
+                    A[i][j] = 1 + Math.min(A[i - 1][j], Math.min(A[i][j - 1], A[i - 1][j - 1]));
+                    res = Math.max(res, A[i][j]);
+                }
+            }
+        }
+        // area = l * l
+        return res * res;
+    }
+
+    // https://www.interviewbit.com/problems/subset-sum-problem/
+    static int subsetSum(int[] A, int B) {
+        int n = A.length;
+        // dp[i][j] = T/F for whether subset sum = j is possible for first i elements
+        boolean[][] dp = new boolean[n + 1][B + 1];
+        // base-case: sum = 0 can be achieved with any number of elements
+        for (int i = 0; i <= n; i++)
+            dp[i][0] = true;
+
+        for (int i = 1; i <= n; i++) {
+            for (int b = 1; b <= B; b++) {
+                // if we can use current element, either use it or don't
+                if (A[i - 1] <= b)
+                    dp[i][b] = dp[i - 1][b - A[i - 1]] || dp[i - 1][b];
+                // else don't use current element
+                else
+                    dp[i][b] = dp[i - 1][b];
+            }
+        }
+
+        return dp[n][B] ? 1 : 0;
+    }
+
+    // https://www.interviewbit.com/problems/unique-paths-in-a-grid/
+    static int uniquePathsInGrid(int[][] A) {
+        int m = A.length, n = A[0].length;
+        // base-case: obstacle at origin
+        if (A[0][0] == 1)
+            return 0;
+
+        // use A[i][j] as dp[i][j] where dp[i][j] = # ways to reach (i, j)
+        int i = 0;
+        // for first col, mark # ways = 1 for each cell till obstacle is not encountered
+        for (; i < m && A[i][0] == 0; i++)
+            A[i][0] = 1;
+        // for all cells after obstacle # ways = 0
+        for (; i < m; i++)
+            A[i][0] = 0;
+
+        int j = 1;
+        // for first row, mark # ways = 1 for each cell till obstacle is not encountered
+        for (; j < n && A[0][j] == 0; j++)
+            A[0][j] = 1;
+        // for all cells after obstacle # ways = 0
+        for (; j < n; j++)
+            A[0][j] = 0;
+
+        for (i = 1; i < m; i++) {
+            for (j = 1; j < n; j++) {
+                // if no obstacle at current cell, # ways = # ways from top + # ways from left
+                if (A[i][j] == 0)
+                    A[i][j] = A[i - 1][j] + A[i][j - 1];
+                else
+                    A[i][j] = 0;
+            }
+        }
+
+        return A[m - 1][n - 1];
+    }
+
+    // https://www.interviewbit.com/problems/min-sum-path-in-matrix/
+    static int minSumPathMatrix(int[][] A) {
+        int m = A.length, n = A[0].length;
+        // for first column can only come from top
+        for (int i = 1; i < m; i++)
+            A[i][0] += A[i - 1][0];
+        // for first row can only come from left
+        for (int j = 1; j < n; j++)
+            A[0][j] += A[0][j - 1];
+        // for each point, min cost = current cost + min(top, left)
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++)
+                A[i][j] += Math.min(A[i - 1][j], A[i][j - 1]);
+        }
+
+        return A[m - 1][n - 1];
+    }
+
+    // https://www.interviewbit.com/problems/min-sum-path-in-triangle/
+    static int minSumPathTriangle(ArrayList<ArrayList<Integer>> A) {
+        int n = A.size();
+        // move from bottom to top and calculate min path for going to (i + 1, j) or (i + 1, j + 1)
+        for (int i = n - 2; i >= 0; i--) {
+            for (int j = 0; j < A.get(i).size(); j++)
+                A.get(i).set(j, A.get(i).get(j) + Math.min(A.get(i + 1).get(j), A.get(i + 1).get(j + 1)));
+        }
+
+        return A.get(0).get(0);
+    }
+
+    // https://www.interviewbit.com/problems/coin-sum-infinite/
+    static int coinSumInfinite(int[] A, int N) {
+        // can also be done using 2D dp and optimized with dp[2][N + 1]
+        int MOD = 1000007;
+        // dp[i] = # ways sum = i can be obtained
+        int[] dp = new int[N + 1];
+        // base case: required sum = 0
+        dp[0] = 1;
+
+        for (int val : A) {
+            // for each sum higher than current coin, select current coin at least once or don't
+            for (int w = val; w <= N; w++)
+                dp[w] = (dp[w - val] + dp[w]) % MOD;
+        }
+
+        return dp[N];
+    }
+
     // https://www.interviewbit.com/problems/tushars-birthday-party/
     static int birthdayParty(final int[] A, final int[] B, final int[] C) {
         // find the friend with maximum capacity
@@ -902,7 +1055,7 @@ class DP {
                 // if friend can eat current dish, either eat at least one of current dish or don't eat current dish
                 if (w - B[i - 1] >= 0)
                     dp[i][w] = Math.min(C[i - 1] + dp[i][w - B[i - 1]], dp[i - 1][w]);
-                // else don't eat current dish
+                    // else don't eat current dish
                 else
                     dp[i][w] = dp[i - 1][w];
             }
@@ -927,8 +1080,8 @@ class DP {
             for (int w = 1; w <= C; w++) {
                 // if we can carry this object, either carry it or don't
                 if (w - B[i - 1] >= 0)
-                    dp[i][w] = Math.max(A[i - 1] + dp[i - 1][w - B[i - 1]],  dp[i - 1][w]);
-                // else don't carry the object
+                    dp[i][w] = Math.max(A[i - 1] + dp[i - 1][w - B[i - 1]], dp[i - 1][w]);
+                    // else don't carry the object
                 else
                     dp[i][w] = dp[i - 1][w];
             }

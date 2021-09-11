@@ -357,7 +357,7 @@ Interview bit problems topic wise
 - [Majority Element](https://www.interviewbit.com/problems/majority-element/)
 - [Gas Station](https://www.interviewbit.com/problems/gas-station/)
 
-## Dynamic Programming (29)
+## Dynamic Programming (36)
 
 - [Longest Common Subsequence](https://www.interviewbit.com/problems/longest-common-subsequence/)
 - [Longest Palindromic Subsequence](https://www.interviewbit.com/problems/longest-palindromic-subsequence/)
@@ -386,5 +386,12 @@ Interview bit problems topic wise
 - [Ways to color a 3xN Board](https://www.interviewbit.com/problems/ways-to-color-a-3xn-board/)
 - [Kth Manhattan Distance Neighbourhood](https://www.interviewbit.com/problems/kth-manhattan-distance-neighbourhood/)
 - [Coins In A Line](https://www.interviewbit.com/problems/coins-in-a-line/)
+- [Maximum Path In Triangle](https://www.interviewbit.com/problems/maximum-path-in-triangle/)
+- [Maximum Size Square Sub Matrix](https://www.interviewbit.com/problems/maximum-size-square-sub-matrix/)
+- [Subset Sum Problem!](https://www.interviewbit.com/problems/subset-sum-problem/)
+- [Unique Paths In A Grid](https://www.interviewbit.com/problems/unique-paths-in-a-grid/)
+- [Min Sum Path In Matrix](https://www.interviewbit.com/problems/min-sum-path-in-matrix/)
+- [Min Sum Path In Triangle](https://www.interviewbit.com/problems/min-sum-path-in-triangle/)
+- [Coin Sum Infinite](https://www.interviewbit.com/problems/coin-sum-infinite/)
 - [Tushar's Birthday Party](https://www.interviewbit.com/problems/tushars-birthday-party/)
 - [0-1 Knapsack](https://www.interviewbit.com/problems/0-1-knapsack/)
