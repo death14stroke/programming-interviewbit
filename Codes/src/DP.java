@@ -924,6 +924,73 @@ class DP {
         return res * res;
     }
 
+    // https://www.interviewbit.com/problems/increasing-path-in-matrix/
+    static int increasingPathMatrix(int[][] A) {
+        int m = A.length, n = A[0].length;
+        // dp[i][j] = T/F for whether there is path to (i, j) or not
+        boolean[][] dp = new boolean[m][n];
+        dp[0][0] = true;
+
+        // check for first column
+        int i = 1;
+        for (; i < m && A[i][0] > A[i - 1][0]; i++)
+            dp[i][0] = true;
+        // check for first row
+        int j = 1;
+        for (; j < n && A[0][j] > A[0][j - 1]; j++)
+            dp[0][j] = true;
+
+        for (i = 1; i < m; i++) {
+            for (j = 1; j < n; j++) {
+                // check if we can arrive current cell from top or left
+                boolean top = A[i][j] > A[i - 1][j] && dp[i - 1][j];
+                boolean left = A[i][j] > A[i][j - 1] && dp[i][j - 1];
+
+                dp[i][j] = top || left;
+            }
+        }
+
+        // if there is a path to (m - 1, n - 1) its length will always be m + n - 1
+        // (when only bottom and right dirs are allowed)
+        return dp[m - 1][n - 1] ? m + n - 1 : -1;
+    }
+
+    // https://www.interviewbit.com/problems/minimum-difference-subsets/
+    static int minDiffSubsets(int[] A) {
+        // calculate total sum
+        int sum = 0;
+        for (int val : A)
+            sum += val;
+
+        int n = A.length;
+        // dp[i][j] = T/F for sum = j can be obtained using subset of first i elements
+        boolean[][] dp = new boolean[n + 1][sum + 1];
+
+        // base-case: sum = 0 can be achieved always
+        for (int i = 0; i <= n; i++)
+            dp[i][0] = true;
+
+        for (int i = 1; i <= n; i++) {
+            for (int s = 1; s <= sum; s++) {
+                // if we can use current element, either use it or don't
+                if (A[i - 1] <= s)
+                    dp[i][s] = dp[i - 1][s - A[i - 1]] || dp[i - 1][s];
+                // else don't use current element
+                else
+                    dp[i][s] = dp[i - 1][s];
+            }
+        }
+
+        // for each subset sum that can be achieved with n elements, minimize difference between the two subsets
+        int res = Integer.MAX_VALUE;
+        for (int j = 0; j <= sum / 2; j++) {
+            if (dp[n][j])
+                res = Math.min(res, sum - 2 * j);
+        }
+
+        return res;
+    }
+
     // https://www.interviewbit.com/problems/subset-sum-problem/
     static int subsetSum(int[] A, int B) {
         int n = A.length;
@@ -1030,6 +1097,59 @@ class DP {
         }
 
         return dp[N];
+    }
+
+    // https://www.interviewbit.com/problems/chain-of-pairs/
+    static int chainOfPairsSubsequence(int[][] A) {
+        int n = A.length;
+        // use LIS(Longest Increasing Subsequence) algorithm
+        // dp[i] = length of the longest increasing pairs subsequence ending at A[i]
+        int[] dp = new int[n];
+        dp[0] = 1;
+        // res = max of the longest increasing pairs subsequence ending at each A[i]
+        int res = 0;
+
+        for (int i = 1; i < n; i++) {
+            // A[i] itself as subsequence
+            dp[i] = 1;
+
+            for (int j = 0; j < i; j++) {
+                int[] p1 = A[j], p2 = A[i];
+                // if we can expand current subsequence at A[j], expand it and optimize
+                if (p1[1] < p2[0])
+                    dp[i] = Math.max(dp[i], 1 + dp[j]);
+            }
+
+            res = Math.max(res, dp[i]);
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/max-sum-without-adjacent-elements/
+    static int maxSumWithoutAdjacent(int[][] A) {
+        int n = A[0].length;
+        // base cases
+        if (n == 1)
+            return Math.max(A[0][0], A[1][0]);
+        if (n == 2)
+            return Math.max(Math.max(A[0][0], A[1][0]), Math.max(A[0][1], A[1][1]));
+
+        // dp[i] = max sum formed with max element from ith col taken or not taken
+        int[] dp = new int[n];
+        // base cases
+        dp[0] = Math.max(A[0][0], A[1][0]);
+        dp[1] = Math.max(dp[0], Math.max(A[0][1], A[1][1]));
+
+        // res = max of dp[]
+        int res = Math.max(dp[0], dp[1]);
+        // for each col, either include max of current col in the sum or don't
+        for (int i = 2; i < n; i++) {
+            dp[i] = Math.max(Math.max(A[0][i], A[1][i]) + dp[i - 2], dp[i - 1]);
+            res = Math.max(res, dp[i]);
+        }
+
+        return res;
     }
 
     // https://www.interviewbit.com/problems/tushars-birthday-party/
