@@ -1099,6 +1099,22 @@ class DP {
         return dp[N];
     }
 
+    // https://www.interviewbit.com/problems/best-time-to-buy-and-sell-stocks-i/
+    static int buyAndSellStocks1(final int[] A) {
+        int minPrice = A[0], profit = 0;
+        // for each day after 1st day
+        for (int i = 1; i < A.length; i++) {
+            // if today price is minimum, buy
+            if (A[i] <= minPrice)
+                minPrice = A[i];
+            // else try selling and maximize profit
+            else
+                profit = Math.max(profit, A[i] - minPrice);
+        }
+
+        return profit;
+    }
+
     // https://www.interviewbit.com/problems/chain-of-pairs/
     static int chainOfPairsSubsequence(int[][] A) {
         int n = A.length;
@@ -1207,5 +1223,19 @@ class DP {
             }
 
         return dp[n][C];
+    }
+
+    // https://www.interviewbit.com/problems/best-time-to-buy-and-sell-stocks-ii/
+    static int buyAndSellStocks2(final int[] A) {
+        int profit = 0;
+
+        for(int i = 1; i < A.length; i++) {
+            // if price is higher today, sell
+            // e.g 1, 2, 9, 3 then 9 - 1 = 2 - 1 + 9 - 2
+            if (A[i] > A[i - 1])
+                profit += A[i] - A[i - 1];
+        }
+
+        return profit;
     }
 }

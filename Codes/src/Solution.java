@@ -1,10 +1,7 @@
 public class Solution {
     public static void main(String[] args) {
-        int[][] A = {
-                {1, 2, 3, 4},
-                {2, 3, 4, 5}
-        };
+        int[] A = {5, 2, 10};
 
-        System.out.println(DP.maxSumWithoutAdjacent(A));
+        System.out.println(DP.buyAndSellStocks2(A));
     }
 }
