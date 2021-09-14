@@ -851,6 +851,39 @@ class DP {
         return A;
     }
 
+    // https://www.interviewbit.com/problems/best-time-to-buy-and-sell-stock-atmost-b-times/
+    static int buyAndSellStocksAtmostBTimes(final int[] A, int B) {
+        int n = A.length;
+        // only one day or 0 transactions allowed
+        if (n == 1 || B == 0)
+            return 0;
+
+        // max transactions that can be done = n / 2. Hence, optimize value of B (MLE thrown)
+        B = Math.min(B, n / 2);
+        // dp[i][k] = max profit obtained by last txn done on ith day with at most k moves
+        int[][] dp = new int[n][2];
+
+        for (int k = 1; k <= B; k++) {
+            // space optimized - compute current index
+            int pos = k % 2;
+
+            for (int i = 1; i < n; i++) {
+                // don't perform transaction today
+                dp[i][pos] = dp[i - 1][pos];
+
+                for (int j = 0; j < i; j++) {
+                    // if we can earn profit today by buying on day j, update maximum profit earned
+                    // dp[i][k] = Math.max(dp[i][k], dp[j][k - 1])
+                    if (A[i] > A[j])
+                        dp[i][pos] = Math.max(dp[i][pos], A[i] - A[j] + dp[j][1 - pos]);
+                }
+            }
+        }
+
+        return dp[n - 1][B % 2];
+
+    }
+
     // https://www.interviewbit.com/problems/coins-in-a-line/
     static int coinsInLine(int[] A) {
         int n = A.length;
@@ -877,6 +910,33 @@ class DP {
         }
 
         return dp[0][n - 1];
+    }
+
+    // https://www.interviewbit.com/problems/best-time-to-buy-and-sell-stocks-iii/
+    static int buyAndSellStocks3(final int[] A) {
+        int n = A.length;
+        // base case
+        if (n == 0)
+            return 0;
+
+        // buy1 = price to buy 1st stock
+        // profit1 = profit earned for 1st stock
+        // buy2 = price to buy 2nd stock including profit of 1st stock
+        // profit2 = profit earned after selling both stocks
+        int buy1 = A[0], profit1 = 0, buy2 = Integer.MAX_VALUE, profit2 = 0;
+
+        for (int i = 1; i < n; i++) {
+            // minimize 1st stock purchase price
+            buy1 = Math.min(buy1, A[i]);
+            // maximize 1st stock profit
+            profit1 = Math.max(profit1, A[i] - buy1);
+            // minimize 2nd stock purchase price including profit earned for 1st stock
+            buy2 = Math.min(buy2, A[i] - profit1);
+            // maximize profit earned from both stocks
+            profit2 = Math.max(profit2, A[i] - buy2);
+        }
+
+        return profit2;
     }
 
     // https://www.interviewbit.com/problems/maximum-path-in-triangle/
@@ -1231,7 +1291,7 @@ class DP {
 
         for(int i = 1; i < A.length; i++) {
             // if price is higher today, sell
-            // e.g 1, 2, 9, 3 then 9 - 1 = 2 - 1 + 9 - 2
+            // e.g 1, 2, 9, 3 then 9 - 1 = 9 - 2 + 2 - 1
             if (A[i] > A[i - 1])
                 profit += A[i] - A[i - 1];
         }

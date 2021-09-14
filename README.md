@@ -357,7 +357,7 @@ Interview bit problems topic wise
 - [Majority Element](https://www.interviewbit.com/problems/majority-element/)
 - [Gas Station](https://www.interviewbit.com/problems/gas-station/)
 
-## Dynamic Programming (42)
+## Dynamic Programming (43)
 
 - [Longest Common Subsequence](https://www.interviewbit.com/problems/longest-common-subsequence/)
 - [Longest Palindromic Subsequence](https://www.interviewbit.com/problems/longest-palindromic-subsequence/)
@@ -385,7 +385,9 @@ Interview bit problems topic wise
 - [Shortest Common Superstring](https://www.interviewbit.com/problems/shortest-common-superstring/)
 - [Ways to color a 3xN Board](https://www.interviewbit.com/problems/ways-to-color-a-3xn-board/)
 - [Kth Manhattan Distance Neighbourhood](https://www.interviewbit.com/problems/kth-manhattan-distance-neighbourhood/)
+- [Best Time To Buy And Sell Stock Atmost B Times](https://www.interviewbit.com/problems/best-time-to-buy-and-sell-stock-atmost-b-times/)
 - [Coins In A Line](https://www.interviewbit.com/problems/coins-in-a-line/)
+- [Best Time To Buy And Sell Stocks III](https://www.interviewbit.com/problems/best-time-to-buy-and-sell-stocks-iii/)
 - [Maximum Path In Triangle](https://www.interviewbit.com/problems/maximum-path-in-triangle/)
 - [Maximum Size Square Sub Matrix](https://www.interviewbit.com/problems/maximum-size-square-sub-matrix/)
 - [Increasing Path In Matrix](https://www.interviewbit.com/problems/increasing-path-in-matrix/)
