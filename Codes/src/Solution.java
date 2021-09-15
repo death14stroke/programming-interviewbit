@@ -1,7 +1,9 @@
 public class Solution {
     public static void main(String[] args) {
-        int[] A = {7, 2, 4, 8, 7};
+        DP.TreeNode root = new DP.TreeNode(-10);
+        root.left = new DP.TreeNode(-20);
+        root.right = new DP.TreeNode(-30);
 
-        System.out.println(DP.buyAndSellStocks3(A));
+        System.out.println(DP.maxSumPathBinaryTree(root));
     }
 }

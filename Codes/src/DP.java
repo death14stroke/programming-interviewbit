@@ -939,6 +939,48 @@ class DP {
         return profit2;
     }
 
+    // https://www.interviewbit.com/problems/max-sum-path-in-binary-tree/
+    static class TreeNode {
+        int val;
+        TreeNode left, right;
+
+        TreeNode(int val) {
+            this.val = val;
+            left = right = null;
+        }
+    }
+
+    private static int maxSum;
+
+    static int maxSumPathBinaryTree (TreeNode root) {
+        // empty tree
+        if (root == null)
+            return 0;
+
+        maxSum = Integer.MIN_VALUE;
+        // max path sum at each node can be found using max path sum from both subtrees by inorder traversal
+        treeSumUtil(root);
+
+        return maxSum;
+    }
+
+    // util for inorder traversal which returns max height at each node
+    private static int treeSumUtil(TreeNode root) {
+        // max path sum in left subtree
+        int leftSum = root.left != null ? treeSumUtil(root.left) : 0;
+        // max path sum in right subtree
+        int rightSum = root.right != null ? treeSumUtil(root.right) : 0;
+
+        // max height = max(root, root + max(l, r))
+        int maxPathFromRoot = Math.max(root.val, root.val + Math.max(leftSum, rightSum));
+        // maxPath = max(maxHeight, complete path)
+        int maxPath = Math.max(maxPathFromRoot, root.val + leftSum + rightSum);
+        // update result
+        maxSum = Math.max(maxSum, maxPath);
+
+        return maxPathFromRoot;
+    }
+
     // https://www.interviewbit.com/problems/maximum-path-in-triangle/
     static int maxPathInTriangle(int[][] A) {
         int n = A.length;
