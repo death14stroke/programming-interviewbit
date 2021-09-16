@@ -952,7 +952,7 @@ class DP {
 
     private static int maxSum;
 
-    static int maxSumPathBinaryTree (TreeNode root) {
+    static int maxSumPathBinaryTree(TreeNode root) {
         // empty tree
         if (root == null)
             return 0;
@@ -1077,7 +1077,7 @@ class DP {
                 // if we can use current element, either use it or don't
                 if (A[i - 1] <= s)
                     dp[i][s] = dp[i - 1][s - A[i - 1]] || dp[i - 1][s];
-                // else don't use current element
+                    // else don't use current element
                 else
                     dp[i][s] = dp[i - 1][s];
             }
@@ -1107,7 +1107,7 @@ class DP {
                 // if we can use current element, either use it or don't
                 if (A[i - 1] <= b)
                     dp[i][b] = dp[i - 1][b - A[i - 1]] || dp[i - 1][b];
-                // else don't use current element
+                    // else don't use current element
                 else
                     dp[i][b] = dp[i - 1][b];
             }
@@ -1209,7 +1209,7 @@ class DP {
             // if today price is minimum, buy
             if (A[i] <= minPrice)
                 minPrice = A[i];
-            // else try selling and maximize profit
+                // else try selling and maximize profit
             else
                 profit = Math.max(profit, A[i] - minPrice);
         }
@@ -1331,7 +1331,7 @@ class DP {
     static int buyAndSellStocks2(final int[] A) {
         int profit = 0;
 
-        for(int i = 1; i < A.length; i++) {
+        for (int i = 1; i < A.length; i++) {
             // if price is higher today, sell
             // e.g 1, 2, 9, 3 then 9 - 1 = 9 - 2 + 2 - 1
             if (A[i] > A[i - 1])
@@ -1339,5 +1339,69 @@ class DP {
         }
 
         return profit;
+    }
+
+    // https://www.interviewbit.com/problems/word-break/
+    static int wordBreak(String A, String[] B) {
+        // create trie of all words in dictionary
+        Trie trie = new Trie();
+        for (String word : B)
+            trie.add(word);
+
+        // recursively check if string can be divided into words of dictionary
+        return wordBreakUtil(A, trie.root) ? 1 : 0;
+    }
+
+    // util to check if string A can be divided into words of dictionary
+    private static boolean wordBreakUtil(String A, TrieNode root) {
+        // base-case: empty string
+        if (A.isEmpty())
+            return true;
+
+        TrieNode curr = root;
+        // keep searching for current string in trie
+        for (int i = 0; i < A.length(); i++) {
+            char c = A.charAt(i);
+            // if prefix so far not found, string cannot be divided into words
+            if (curr.child[c - 'a'] == null)
+                return false;
+
+            curr = curr.child[c - 'a'];
+            // if a match is found, recursively check for the remaining half
+            if (curr.isEnd && wordBreakUtil(A.substring(i + 1), root))
+                return true;
+        }
+
+        return false;
+    }
+
+    static class TrieNode {
+        TrieNode[] child;
+        boolean isEnd;
+
+        TrieNode() {
+            child = new TrieNode[26];
+            isEnd = false;
+        }
+    }
+
+    static class Trie {
+        TrieNode root;
+
+        Trie() {
+            root = new TrieNode();
+        }
+
+        public void add(String word) {
+            TrieNode curr = root;
+
+            for (char c : word.toCharArray()) {
+                if (curr.child[c - 'a'] == null)
+                    curr.child[c - 'a'] = new TrieNode();
+                curr = curr.child[c - 'a'];
+            }
+
+            curr.isEnd = true;
+        }
     }
 }

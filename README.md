@@ -357,7 +357,7 @@ Interview bit problems topic wise
 - [Majority Element](https://www.interviewbit.com/problems/majority-element/)
 - [Gas Station](https://www.interviewbit.com/problems/gas-station/)
 
-## Dynamic Programming (45)
+## Dynamic Programming (46)
 
 - [Longest Common Subsequence](https://www.interviewbit.com/problems/longest-common-subsequence/)
 - [Longest Palindromic Subsequence](https://www.interviewbit.com/problems/longest-palindromic-subsequence/)
@@ -404,3 +404,4 @@ Interview bit problems topic wise
 - [Tushar's Birthday Party](https://www.interviewbit.com/problems/tushars-birthday-party/)
 - [0-1 Knapsack](https://www.interviewbit.com/problems/0-1-knapsack/)
 - [Best Time To Buy And Sell Stocks II](https://www.interviewbit.com/problems/best-time-to-buy-and-sell-stocks-ii/)
+- [Word Break](https://www.interviewbit.com/problems/word-break/)
