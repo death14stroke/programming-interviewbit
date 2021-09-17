@@ -1341,6 +1341,60 @@ class DP {
         return profit;
     }
 
+    // https://www.interviewbit.com/problems/word-break-ii/
+    static List<String> wordBreak2(String A, String[] B) {
+        // create trie of all words in dictionary
+        Trie trie = new Trie();
+        for (String word : B)
+            trie.add(word);
+
+        // dp.get(str) = all strings that can be formed by breaking str into words
+        Map<String, List<String>> dp = new HashMap<>();
+        // recursively compute result for whole string
+        return wordBreak2Util(A, trie.root, dp);
+    }
+
+    // util to form all possible word combinations of string A
+    private static List<String> wordBreak2Util(String A, TrieNode root, Map<String, List<String>> dp) {
+        List<String> res = new LinkedList<>();
+        // base-case: empty string
+        if (A.isEmpty()) {
+            res.add("");
+            return res;
+        }
+        // memoization
+        if (dp.containsKey(A))
+            return dp.get(A);
+
+        TrieNode curr = root;
+        StringBuilder builder = new StringBuilder();
+        // keep matching prefix in trie
+        for (int i = 0; i < A.length(); i++) {
+            char c = A.charAt(i);
+            // if prefix is not a word, no more solutions possible
+            if (curr.child[c - 'a'] == null) {
+                dp.put(A, res);
+                return res;
+            }
+
+            curr = curr.child[c - 'a'];
+            builder.append(c);
+
+            // if current prefix is a word, append all combinations of the suffix by recursively calling the util
+            if (curr.isEnd) {
+                for (String out : wordBreak2Util(A.substring(i + 1), root, dp)) {
+                    if (out.isEmpty())
+                        res.add(builder.toString());
+                    else
+                        res.add(builder + " " + out);
+                }
+            }
+        }
+
+        dp.put(A, res);
+        return res;
+    }
+
     // https://www.interviewbit.com/problems/word-break/
     static int wordBreak(String A, String[] B) {
         // create trie of all words in dictionary

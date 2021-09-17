@@ -1,8 +1,8 @@
 public class Solution {
     public static void main(String[] args) {
-        String A = "ilikesamsung";
-        String[] B = {"i", "like", "sam", "sung", "samsung", "mobile", "ice", "cream", "icecream", "man", "go", "mango"};
+        String A = "catsanddog";
+        String[] B = {"cat", "cats", "and", "sand", "dog"};
 
-        System.out.println(DP.wordBreak(A, B));
+        System.out.println(DP.wordBreak2(A, B));
     }
 }
