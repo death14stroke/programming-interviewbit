@@ -357,7 +357,7 @@ Interview bit problems topic wise
 - [Majority Element](https://www.interviewbit.com/problems/majority-element/)
 - [Gas Station](https://www.interviewbit.com/problems/gas-station/)
 
-## Dynamic Programming (47)
+## Dynamic Programming (49)
 
 - [Longest Common Subsequence](https://www.interviewbit.com/problems/longest-common-subsequence/)
 - [Longest Palindromic Subsequence](https://www.interviewbit.com/problems/longest-palindromic-subsequence/)
@@ -397,6 +397,7 @@ Interview bit problems topic wise
 - [Unique Paths In A Grid](https://www.interviewbit.com/problems/unique-paths-in-a-grid/)
 - [Min Sum Path In Matrix](https://www.interviewbit.com/problems/min-sum-path-in-matrix/)
 - [Min Sum Path In Triangle](https://www.interviewbit.com/problems/min-sum-path-in-triangle/)
+- [Queen Attack](https://www.interviewbit.com/problems/queen-attack/)
 - [Coin Sum Infinite](https://www.interviewbit.com/problems/coin-sum-infinite/)
 - [Best Time To Buy And Sell Stocks I](https://www.interviewbit.com/problems/best-time-to-buy-and-sell-stocks-i/)
 - [Chain Of Pairs](https://www.interviewbit.com/problems/chain-of-pairs/)
@@ -405,4 +406,5 @@ Interview bit problems topic wise
 - [0-1 Knapsack](https://www.interviewbit.com/problems/0-1-knapsack/)
 - [Best Time To Buy And Sell Stocks II](https://www.interviewbit.com/problems/best-time-to-buy-and-sell-stocks-ii/)
 - [Word Break II](https://www.interviewbit.com/problems/word-break-ii/)
+- [Palindrome Partitioning II](https://www.interviewbit.com/problems/palindrome-partitioning-ii/)
 - [Word Break](https://www.interviewbit.com/problems/word-break/)

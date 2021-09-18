@@ -1183,6 +1183,61 @@ class DP {
         return A.get(0).get(0);
     }
 
+    // https://www.interviewbit.com/problems/queen-attack/
+    // all 8 dirs
+    private static final int[][] dir = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+
+    static int[][] queenAttack(String[] A) {
+        int m = A.length, n = A[0].length();
+        // dp[i][j][k] = #queens attacking at (i, j) when considered directions from 0 to k
+        int[][][] dp = new int[m][n][8];
+        for (int[][] arr : dp) {
+            for (int[] a : arr)
+                Arrays.fill(a, -1);
+        }
+
+        int[][] res = new int[m][n];
+
+        // for each direction, traverse each cell and update the result count
+        for (int k = 0; k < 8; k++) {
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++)
+                    res[i][j] += queenAttackUtil(i, j, k, A, dp);
+            }
+        }
+
+        return res;
+    }
+
+    // util to calculate how many queens attack at (i, j) considering only direction = k
+    private static int queenAttackUtil(int i, int j, int k, String[] A, int[][][] dp) {
+        // memoization
+        if (dp[i][j][k] != -1)
+            return dp[i][j][k];
+
+        int m = A.length, n = A[0].length();
+        // move in direction = k
+        int x = i + dir[k][0], y = j + dir[k][1];
+
+        dp[i][j][k] = 0;
+        // if the cell exists
+        if (isValid(x, y, m, n)) {
+            // if there is queen in neighbouring cell, only one queen can attack current cell
+            if (A[x].charAt(y) == '1')
+                dp[i][j][k]++;
+                // else recursively find how many queens are attacking the neighbouring cell from direction = k
+            else
+                dp[i][j][k] += queenAttackUtil(x, y, k, A, dp);
+        }
+
+        return dp[i][j][k];
+    }
+
+    // util to check if point (i, j) is in the bounds
+    private static boolean isValid(int i, int j, int m, int n) {
+        return i >= 0 && i < m && j >= 0 && j < n;
+    }
+
     // https://www.interviewbit.com/problems/coin-sum-infinite/
     static int coinSumInfinite(int[] A, int N) {
         // can also be done using 2D dp and optimized with dp[2][N + 1]
@@ -1342,21 +1397,21 @@ class DP {
     }
 
     // https://www.interviewbit.com/problems/word-break-ii/
-    static List<String> wordBreak2(String A, String[] B) {
+    static ArrayList<String> wordBreak2(String A, String[] B) {
         // create trie of all words in dictionary
         Trie trie = new Trie();
         for (String word : B)
             trie.add(word);
 
         // dp.get(str) = all strings that can be formed by breaking str into words
-        Map<String, List<String>> dp = new HashMap<>();
+        Map<String, ArrayList<String>> dp = new HashMap<>();
         // recursively compute result for whole string
         return wordBreak2Util(A, trie.root, dp);
     }
 
     // util to form all possible word combinations of string A
-    private static List<String> wordBreak2Util(String A, TrieNode root, Map<String, List<String>> dp) {
-        List<String> res = new LinkedList<>();
+    private static ArrayList<String> wordBreak2Util(String A, TrieNode root, Map<String, ArrayList<String>> dp) {
+        ArrayList<String> res = new ArrayList<>();
         // base-case: empty string
         if (A.isEmpty()) {
             res.add("");
@@ -1393,6 +1448,71 @@ class DP {
 
         dp.put(A, res);
         return res;
+    }
+
+    // https://www.interviewbit.com/problems/palindrome-partitioning-ii/
+    static int palindromePartitioning2(String A) {
+        int n = A.length();
+        // isPalindrome[i][j] = A.substring(i, j + 1) is palindrome or not
+        boolean[][] isPalindrome = computePalindromes(A);
+
+        // dp[i] = #cuts for suffix starting at A[i]
+        int[] dp = new int[n];
+        // max cuts string can have is n hence initialize as n + 1 instead of Integer.MAX_VALUE
+        Arrays.fill(dp, 0, n - 1, n + 1);
+        dp[n - 1] = 0;
+
+        return palindromePartitioning2Util(n, 0, isPalindrome, dp);
+    }
+
+    // util to compute palindrome check for all substrings
+    private static boolean[][] computePalindromes(String A) {
+        int n = A.length();
+        boolean[][] isPalindrome = new boolean[n][n];
+        // len = 1 is always palindrome
+        for (int i = 0; i < n; i++)
+            isPalindrome[i][i] = true;
+
+        for (int len = 2; len <= n; len++) {
+            for (int i = 0; i <= n - len; i++) {
+                int j = i + len - 1;
+                // if end characters match
+                if (A.charAt(i) == A.charAt(j)) {
+                    // if len >= 3
+                    if (i + 1 <= j - 1)
+                        isPalindrome[i][j] = isPalindrome[i + 1][j - 1];
+                        // len = 2
+                    else
+                        isPalindrome[i][j] = true;
+                }
+            }
+        }
+
+        return isPalindrome;
+    }
+
+    // util to recursively compute min cuts
+    private static int palindromePartitioning2Util(int n, int l, boolean[][] isPalindrome, int[] dp) {
+        // if memoized
+        if (dp[l] != n + 1)
+            return dp[l];
+        // if palindrome, no cuts required
+        if (isPalindrome[l][n - 1]) {
+            dp[l] = 0;
+            return 0;
+        }
+
+        // max cuts required = cuts at all pos = length
+        int minCuts = n - l + 1;
+        for (int i = l; i < n; i++) {
+            // if prefix is palindrome, optimize cuts as 1 + cuts for the suffix
+            if (isPalindrome[l][i])
+                minCuts = Math.min(minCuts, 1 + palindromePartitioning2Util(n, i + 1, isPalindrome, dp));
+        }
+
+        dp[l] = minCuts;
+
+        return minCuts;
     }
 
     // https://www.interviewbit.com/problems/word-break/
