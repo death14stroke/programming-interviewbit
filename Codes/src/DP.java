@@ -1153,6 +1153,41 @@ class DP {
         return A[m - 1][n - 1];
     }
 
+    // https://www.interviewbit.com/problems/dungeon-princess/
+    static int dungeonPrincess(int[][] A) {
+        int m = A.length, n = A[0].length;
+        // use A[][] as dp[][]
+        // dp[i][j] = min hit-points reached when going from (i, j) to (m - 1, n - 1)
+        // dp[i][j] = min(0, current point hit-points, current hit-points + hit-points of the optimum path)
+        A[m - 1][n - 1] = Math.min(A[m - 1][n - 1], 0);
+        // move up in the last column
+        for (int i = m - 2; i >= 0; i--)
+            A[i][n - 1] = min(0, A[i][n - 1], A[i][n - 1] + A[i + 1][n - 1]);
+        // move up int the last row
+        for (int j = n - 2; j >= 0; j--)
+            A[m - 1][j] = min(0, A[m - 1][j], A[m - 1][j] + A[m - 1][j + 1]);
+
+        for (int i = m - 2; i >= 0; i--) {
+            for (int j = n - 2; j >= 0; j--) {
+                // find the best path with max hit-points gained or min hit-points lost
+                int bestPath = Math.max(A[i + 1][j], A[i][j + 1]);
+                A[i][j] = min(0, A[i][j], A[i][j] + bestPath);
+            }
+        }
+
+        // we need at least 1 hit-point to survive
+        return Math.abs(A[0][0]) + 1;
+    }
+
+    // util to find min of n numbers
+    private static int min(int... values) {
+        int min = values[0];
+        for (int i = 1; i < values.length; i++)
+            min = Math.min(min, values[i]);
+
+        return min;
+    }
+
     // https://www.interviewbit.com/problems/min-sum-path-in-matrix/
     static int minSumPathMatrix(int[][] A) {
         int m = A.length, n = A[0].length;

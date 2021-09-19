@@ -357,7 +357,7 @@ Interview bit problems topic wise
 - [Majority Element](https://www.interviewbit.com/problems/majority-element/)
 - [Gas Station](https://www.interviewbit.com/problems/gas-station/)
 
-## Dynamic Programming (49)
+## Dynamic Programming (50)
 
 - [Longest Common Subsequence](https://www.interviewbit.com/problems/longest-common-subsequence/)
 - [Longest Palindromic Subsequence](https://www.interviewbit.com/problems/longest-palindromic-subsequence/)
@@ -395,6 +395,7 @@ Interview bit problems topic wise
 - [Minimum Difference Subsets!](https://www.interviewbit.com/problems/minimum-difference-subsets/)
 - [Subset Sum Problem!](https://www.interviewbit.com/problems/subset-sum-problem/)
 - [Unique Paths In A Grid](https://www.interviewbit.com/problems/unique-paths-in-a-grid/)
+- [Dungeon Princess](https://www.interviewbit.com/problems/dungeon-princess/)
 - [Min Sum Path In Matrix](https://www.interviewbit.com/problems/min-sum-path-in-matrix/)
 - [Min Sum Path In Triangle](https://www.interviewbit.com/problems/min-sum-path-in-triangle/)
 - [Queen Attack](https://www.interviewbit.com/problems/queen-attack/)

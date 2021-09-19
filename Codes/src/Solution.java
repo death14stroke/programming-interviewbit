@@ -1,13 +1,11 @@
-import java.util.Arrays;
-
 public class Solution {
     public static void main(String[] args) {
-        String[] A = {
-                "010",
-                "100",
-                "001"
+        int[][] A = {
+                {-2, -3, 3},
+                {-5, -10, 1},
+                {10, 30, -5}
         };
 
-        System.out.println(Arrays.deepToString(DP.queenAttack(A)));
+        System.out.println(DP.dungeonPrincess(A));
     }
 }
