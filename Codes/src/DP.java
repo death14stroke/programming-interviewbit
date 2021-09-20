@@ -1218,6 +1218,63 @@ class DP {
         return A.get(0).get(0);
     }
 
+    // https://www.interviewbit.com/problems/rod-cutting/
+    private static int pos;
+
+    static int[] rodCutting(int N, int[] A) {
+        int m = A.length;
+        // add 2 extra cuts - at 0 and at N
+        int[] cuts = new int[m + 2];
+        cuts[0] = 0;
+        System.arraycopy(A, 0, cuts, 1, m);
+        cuts[m + 1] = N;
+
+        // dp[i][j] = min cost by performing cuts from cuts[i + 1] to cuts[j - 1]
+        long[][] dp = new long[m + 2][m + 2];
+        // minCostPos[i][j] = index of the cut which gives min cost
+        int[][] minCostPos = new int[m + 2][m + 2];
+
+        // for all cuts array of size >= 3 (since first and last cut are only for length purpose)
+        for (int len = 3; len <= m + 2; len++) {
+            for (int i = 0; i + len - 1 < m + 2; i++) {
+                int j = i + len - 1;
+                dp[i][j] = Long.MAX_VALUE;
+                // perform each of the middle cut and optimize
+                for (int k = i + 1; k < j; k++) {
+                    // newCost = length + minCost for left half + minCost for right half
+                    long newCost = cuts[j] - cuts[i] + dp[i][k] + dp[k][j];
+                    // if optimum, update min cost and the position of the cut
+                    if (newCost < dp[i][j]) {
+                        dp[i][j] = newCost;
+                        minCostPos[i][j] = k;
+                    }
+                }
+            }
+        }
+
+        // result array for the cuts sequence
+        int[] res = new int[m];
+        pos = 0;
+        // recursively compute cuts sequence for all cuts range
+        computeMinCutSequence(0, m + 1, cuts, minCostPos, res);
+
+        return res;
+    }
+
+    // util to compute the cuts sequence for cuts from cuts[i + 1] to cuts[j - 1]
+    private static void computeMinCutSequence(int i, int j, int[] cuts, int[][] minCost, int[] res) {
+        // length must be >= 3
+        if (i + 1 == j)
+            return;
+
+        int k = minCost[i][j];
+        // add the min cost cut at current position in res
+        res[pos++] = cuts[k];
+        // recursively compute cuts sequence for left half and right half
+        computeMinCutSequence(i, k, cuts, minCost, res);
+        computeMinCutSequence(k, j, cuts, minCost, res);
+    }
+
     // https://www.interviewbit.com/problems/queen-attack/
     // all 8 dirs
     private static final int[][] dir = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};

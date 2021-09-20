@@ -357,7 +357,7 @@ Interview bit problems topic wise
 - [Majority Element](https://www.interviewbit.com/problems/majority-element/)
 - [Gas Station](https://www.interviewbit.com/problems/gas-station/)
 
-## Dynamic Programming (50)
+## Dynamic Programming (51)
 
 - [Longest Common Subsequence](https://www.interviewbit.com/problems/longest-common-subsequence/)
 - [Longest Palindromic Subsequence](https://www.interviewbit.com/problems/longest-palindromic-subsequence/)
@@ -398,6 +398,7 @@ Interview bit problems topic wise
 - [Dungeon Princess](https://www.interviewbit.com/problems/dungeon-princess/)
 - [Min Sum Path In Matrix](https://www.interviewbit.com/problems/min-sum-path-in-matrix/)
 - [Min Sum Path In Triangle](https://www.interviewbit.com/problems/min-sum-path-in-triangle/)
+- [Rod Cutting](https://www.interviewbit.com/problems/rod-cutting/)
 - [Queen Attack](https://www.interviewbit.com/problems/queen-attack/)
 - [Coin Sum Infinite](https://www.interviewbit.com/problems/coin-sum-infinite/)
 - [Best Time To Buy And Sell Stocks I](https://www.interviewbit.com/problems/best-time-to-buy-and-sell-stocks-i/)

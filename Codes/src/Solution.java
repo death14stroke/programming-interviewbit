@@ -1,11 +1,10 @@
+import java.util.Arrays;
+
 public class Solution {
     public static void main(String[] args) {
-        int[][] A = {
-                {-2, -3, 3},
-                {-5, -10, 1},
-                {10, 30, -5}
-        };
+        int N = 6;
+        int[] A = {1, 2, 5};
 
-        System.out.println(DP.dungeonPrincess(A));
+        System.out.println(Arrays.toString(DP.rodCutting(N, A)));
     }
 }
