@@ -1417,6 +1417,41 @@ class DP {
         return res;
     }
 
+    // https://www.interviewbit.com/problems/merge-elements/
+    static int mergeElements(int[] A) {
+        int n = A.length;
+        // use prefix sum to compute sub-array sum in O(1) time
+        int[] prefixSum = new int[n + 1];
+        prefixSum[0] = A[0];
+        for (int i = 1; i < n; i++)
+            prefixSum[i] = prefixSum[i - 1] + A[i];
+
+        // dp[i][j] = cost for merging the sub-array from [i, j]
+        int[][] dp = new int[n][n];
+        dp[0][0] = 0;
+        // base-cases: cost of merging 1 element is 0 and for 2 elements is the sum
+        for (int i = 1; i < n; i++) {
+            dp[i][i] = 0;
+            dp[i - 1][i] = A[i - 1] + A[i];
+        }
+
+        // for len >= 3 sub-arrays
+        for (int len = 3; len <= n; len++) {
+            for (int i = 0; i + len - 1 < n; i++) {
+                int j = i + len - 1;
+                dp[i][j] = Integer.MAX_VALUE;
+                // find the cut where cost would be minimized
+                for (int k = i; k < j; k++) {
+                    // cost = cost of [i, k] + cost of [k + 1, j] + sub-array sum of [i, j]
+                    int cost = dp[i][k] + dp[k + 1][j] + prefixSum[j] - (i > 0 ? prefixSum[i - 1] : 0);
+                    dp[i][j] = Math.min(dp[i][j], cost);
+                }
+            }
+        }
+
+        return dp[0][n - 1];
+    }
+
     // https://www.interviewbit.com/problems/tushars-birthday-party/
     static int birthdayParty(final int[] A, final int[] B, final int[] C) {
         // find the friend with maximum capacity
