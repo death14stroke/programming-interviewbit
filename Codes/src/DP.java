@@ -981,6 +981,36 @@ class DP {
         return maxPathFromRoot;
     }
 
+    // https://www.interviewbit.com/problems/kingdom-war/
+    static int kingdomWar(int[][] A) {
+        int m = A.length, n = A[0].length;
+        // Due to the given property of row and column, the largest entry will always be in the bottom right corner
+        // and will always be part of the solution. Hence, compute matrix sum for all matrices ending at (m - 1, n - 1)
+        // and find maximum sum
+        int res = A[m - 1][n - 1];
+
+        // for rightmost column
+        for (int i = m - 2; i >= 0; i--) {
+            A[i][n - 1] += A[i + 1][n - 1];
+            res = Math.max(res, A[i][n - 1]);
+        }
+        // for bottommost row
+        for (int j = n - 2; j >= 0; j--) {
+            A[m - 1][j] += A[m - 1][j + 1];
+            res = Math.max(res, A[m - 1][j]);
+        }
+
+        for (int i = m - 2; i >= 0; i--) {
+            for (int j = n - 2; j >= 0; j--) {
+                // matrix sum - remove the overlapping area
+                A[i][j] += A[i + 1][j] + A[i][j + 1] - A[i + 1][j + 1];
+                res = Math.max(res, A[i][j]);
+            }
+        }
+
+        return res;
+    }
+
     // https://www.interviewbit.com/problems/maximum-path-in-triangle/
     static int maxPathInTriangle(int[][] A) {
         int n = A.length;
