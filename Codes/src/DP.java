@@ -1248,6 +1248,55 @@ class DP {
         return A.get(0).get(0);
     }
 
+    // https://www.interviewbit.com/problems/max-rectangle-in-binary-matrix/
+    // another solution - https://www.geeksforgeeks.org/maximum-size-sub-matrix-with-all-1s-in-a-binary-matrix/
+    static int maxRectInBinaryMatrix(int[][] A) {
+        int m = A.length, n = A[0].length;
+        int res = 0;
+
+        for (int i = 0; i < m; i++) {
+            // if not first row, update height of the bars with previous row
+            if (i != 0) {
+                for (int j = 0; j < n; j++) {
+                    if (A[i][j] != 0)
+                        A[i][j] += A[i - 1][j];
+                }
+            }
+            // update result with max area in histogram of current row
+            res = Math.max(res, maxAreaInHistogram(A[i]));
+        }
+
+        return res;
+    }
+
+    // util to find max area in histogram
+    private static int maxAreaInHistogram(int[] A) {
+        int maxArea = 0;
+        Stack<Integer> s = new Stack<>();
+
+        int i = 0;
+        while (i < A.length) {
+            // keep pushing to make sure stack has non-decreasing order of elements
+            if (s.empty() || A[s.peek()] <= A[i])
+                s.push(i++);
+            // else calculate area with s.top() as height
+            else {
+                int top = s.pop();
+                int area = A[top] * (s.empty() ? i : i - s.peek() - 1);
+                maxArea = Math.max(maxArea, area);
+            }
+        }
+
+        // calculate area with s.top() as height
+        while (!s.empty()) {
+            int top = s.pop();
+            int area = A[top] * (s.empty() ? i : i - s.peek() - 1);
+            maxArea = Math.max(maxArea, area);
+        }
+
+        return maxArea;
+    }
+
     // https://www.interviewbit.com/problems/rod-cutting/
     private static int pos;
 
