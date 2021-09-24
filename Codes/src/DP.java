@@ -1249,7 +1249,6 @@ class DP {
     }
 
     // https://www.interviewbit.com/problems/max-rectangle-in-binary-matrix/
-    // another solution - https://www.geeksforgeeks.org/maximum-size-sub-matrix-with-all-1s-in-a-binary-matrix/
     static int maxRectInBinaryMatrix(int[][] A) {
         int m = A.length, n = A[0].length;
         int res = 0;
@@ -1279,7 +1278,7 @@ class DP {
             // keep pushing to make sure stack has non-decreasing order of elements
             if (s.empty() || A[s.peek()] <= A[i])
                 s.push(i++);
-            // else calculate area with s.top() as height
+                // else calculate area with s.top() as height
             else {
                 int top = s.pop();
                 int area = A[top] * (s.empty() ? i : i - s.peek() - 1);
@@ -1441,6 +1440,59 @@ class DP {
         }
 
         return profit;
+    }
+
+    // https://www.interviewbit.com/problems/arrange-ii/
+    static int arrange2(String A, int K) {
+        int n = A.length();
+        // #stables > #horses
+        if (K > n)
+            return -1;
+        // #stables = #horses
+        if (K == n)
+            return 0;
+
+        // dp[i][k] = cost for horses from [0, i] with k stables
+        int[][] dp = new int[n][K + 1];
+
+        int white = 0, black = 0;
+        // for k = 1, put all horses in the same stable
+        for (int i = 0; i < n; i++) {
+            if (A.charAt(i) == 'W')
+                white++;
+            else
+                black++;
+
+            dp[i][1] = white * black;
+        }
+
+        for (int k = 2; k <= K; k++) {
+            for (int i = 0; i < n; i++) {
+                // #stables > #horses
+                if (k > i + 1)
+                    dp[i][k] = Integer.MAX_VALUE;
+                    // #stables = #horses
+                else if (k == i + 1)
+                    dp[i][k] = 0;
+                else {
+                    dp[i][k] = Integer.MAX_VALUE;
+                    white = black = 0;
+                    // for each horse j in middle, try putting [0, j] horses in k - 1 stables and [j, i] horses in the kth stable
+                    // and optimize
+                    for (int j = i - 1; j >= 0; j--) {
+                        if (A.charAt(j + 1) == 'W')
+                            white++;
+                        else
+                            black++;
+                        // make sure overflow does not occur
+                        if (dp[j][k - 1] + white * black >= 0)
+                            dp[i][k] = Math.min(dp[i][k], dp[j][k - 1] + white * black);
+                    }
+                }
+            }
+        }
+
+        return dp[n - 1][K];
     }
 
     // https://www.interviewbit.com/problems/chain-of-pairs/
