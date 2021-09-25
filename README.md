@@ -357,7 +357,7 @@ Interview bit problems topic wise
 - [Majority Element](https://www.interviewbit.com/problems/majority-element/)
 - [Gas Station](https://www.interviewbit.com/problems/gas-station/)
 
-## Dynamic Programming (55)
+## Dynamic Programming (58)
 
 - [Longest Common Subsequence](https://www.interviewbit.com/problems/longest-common-subsequence/)
 - [Longest Palindromic Subsequence](https://www.interviewbit.com/problems/longest-palindromic-subsequence/)
@@ -387,7 +387,10 @@ Interview bit problems topic wise
 - [Kth Manhattan Distance Neighbourhood](https://www.interviewbit.com/problems/kth-manhattan-distance-neighbourhood/)
 - [Best Time To Buy And Sell Stock Atmost B Times](https://www.interviewbit.com/problems/best-time-to-buy-and-sell-stock-atmost-b-times/)
 - [Coins In A Line](https://www.interviewbit.com/problems/coins-in-a-line/)
+- [Evaluate Expression To True](https://www.interviewbit.com/problems/evaluate-expression-to-true/)
+- [Egg Drop Problem!](https://www.interviewbit.com/problems/egg-drop-problem/)
 - [Best Time To Buy And Sell Stocks III](https://www.interviewbit.com/problems/best-time-to-buy-and-sell-stocks-iii/)
+- [Longest Valid Parentheses](https://www.interviewbit.com/problems/longest-valid-parentheses/)
 - [Max Sum Path In Binary Tree](https://www.interviewbit.com/problems/max-sum-path-in-binary-tree/)
 - [Kingdom War](https://www.interviewbit.com/problems/kingdom-war/)
 - [Maximum Path In Triangle](https://www.interviewbit.com/problems/maximum-path-in-triangle/)

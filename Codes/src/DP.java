@@ -912,6 +912,111 @@ class DP {
         return dp[0][n - 1];
     }
 
+    // https://www.interviewbit.com/problems/evaluate-expression-to-true/
+    static int evaluateExpToTrue(String A) {
+        int MOD = 1003;
+        int n = A.length();
+        // base-case
+        if (n == 1)
+            return A.charAt(0) == 'T' ? 1 : 0;
+
+        // T[i][j] = #ways to evaluate exp from [i, j] as true
+        // F[i][j] = #ways to evaluate exp from [i, j] as false
+        int[][] T = new int[n][n], F = new int[n][n];
+
+        // base-case: len = 1 (consider only operands hence i += 2)
+        for (int i = 0; i < n; i += 2) {
+            if (A.charAt(i) == 'T') {
+                T[i][i] = 1;
+                F[i][i] = 0;
+            } else {
+                T[i][i] = 0;
+                F[i][i] = 1;
+            }
+        }
+
+        // exp length will be odd i.e len = 3, len = 5,...
+        for (int len = 3; len <= n; len += 2) {
+            // operands will be at even pos hence i += 2
+            for (int i = 0; i + len - 1 < n; i += 2) {
+                int j = i + len - 1;
+                // for each operator in between, parenthesize the halves on both sides
+                for (int k = i + 1; k < j; k += 2) {
+                    // Total[i][k - 1] = T[i][k - 1] + F[i][k - 1]
+                    // Total[k + 1][j] = T[k + 1][j] + F[k + 1][j]
+                    int tik = T[i][k - 1] + F[i][k - 1], tkj = T[k + 1][j] + F[k + 1][j];
+                    // check current operator
+                    switch (A.charAt(k)) {
+                        case '|' -> {
+                            // T[i][j] += Total[i][k - 1] * Total[k + 1][j] - F[i][k - 1] * F[k + 1][j] (all cases except both false)
+                            T[i][j] = (T[i][j] + tik * tkj - F[i][k - 1] * F[k + 1][j]) % MOD;
+                            // F[i][j] += F[i][k - 1] * F[k + 1][j] (both false)
+                            F[i][j] = (F[i][j] + F[i][k - 1] * F[k + 1][j]) % MOD;
+                        }
+                        case '&' -> {
+                            // T[i][j] += T[i][k - 1] * T[k + 1][j] (both true)
+                            T[i][j] = (T[i][j] + T[i][k - 1] * T[k + 1][j]) % MOD;
+                            // F[i][j] += Total[i][k - 1] * Total[k + 1][j] - T[i][k - 1] * T[k + 1][j] (all cases except both true)
+                            F[i][j] = (F[i][j] + tik * tkj - T[i][k - 1] * T[k + 1][j]) % MOD;
+                        }
+                        case '^' -> {
+                            // T[i][j] += T[i][k - 1] * F[k + 1][j] + F[i][k - 1] * T[k + 1][j] (T ^ F = T, F ^ T = T)
+                            T[i][j] = (T[i][j] + T[i][k - 1] * F[k + 1][j] + F[i][k - 1] * T[k + 1][j]) % MOD;
+                            // F[i][j] += T[i][k - 1] * T[k + 1][j] + F[i][k - 1] * F[k + 1][j] (T ^ T = F, F ^ F = F)
+                            F[i][j] = (F[i][j] + T[i][k - 1] * T[k + 1][j] + F[i][k - 1] * F[k + 1][j]) % MOD;
+                        }
+                    }
+                }
+            }
+        }
+
+        return T[0][n - 1];
+    }
+
+    // https://www.interviewbit.com/problems/egg-drop-problem/
+    static int eggDropProblem(int K, int n) {
+        // only 1 egg - start dropping from 1st floor hence worst case drop on all floors
+        if (K == 1)
+            return n;
+        // only 1 floor - drop egg at the only floor
+        if (n == 1)
+            return 1;
+
+        // dp[k][n] = # drops required for k eggs and n floors
+        int[][] dp = new int[K + 1][n + 1];
+        // base-case: 1 egg problem
+        for (int i = 1; i <= n; i++)
+            dp[1][i] = i;
+
+        for (int k = 2; k <= K; k++) {
+            // base-case: 1st floor
+            dp[k][1] = 1;
+
+            for (int i = 2; i <= n; i++) {
+                int l = 1, r = i;
+                // use binary search to find the point where the difference between drops required
+                // for egg breaking and egg not breaking is minimum
+                while (l <= r) {
+                    int mid = l + (r - l) / 2;
+                    // if egg break case has fewer drops than egg not break case, check for a higher floor
+                    if (dp[k - 1][mid - 1] < dp[k][i - mid])
+                        l = mid + 1;
+                        // else check for a lower floor in middle
+                    else
+                        r = mid - 1;
+                }
+
+                // find #drops for both the floors derived
+                int opt1 = Math.max(dp[k - 1][l - 1], dp[k][i - l]);
+                int opt2 = Math.max(dp[k - 1][r - 1], dp[k][i - r]);
+                // dp[k][i] = current drop + min(drops from lth floor, drops from rth floor)
+                dp[k][i] = 1 + Math.min(opt1, opt2);
+            }
+        }
+
+        return dp[K][n];
+    }
+
     // https://www.interviewbit.com/problems/best-time-to-buy-and-sell-stocks-iii/
     static int buyAndSellStocks3(final int[] A) {
         int n = A.length;
@@ -937,6 +1042,37 @@ class DP {
         }
 
         return profit2;
+    }
+
+    // https://www.interviewbit.com/problems/longest-valid-parentheses/
+    // more solutions at https://www.geeksforgeeks.org/length-of-the-longest-valid-substring/
+    static int longestValidParentheses(String A) {
+        int n = A.length();
+        int res = 0;
+        // stack to keep track of '(' indexes
+        Stack<Integer> s = new Stack<>();
+        // push -1 as initial pos
+        s.push(-1);
+
+        for (int i = 0; i < n; i++) {
+            // push index of '(' on stack
+            if (A.charAt(i) == '(')
+                s.push(i);
+                // if ')' encountered
+            else {
+                // pop index of the corresponding '('
+                if (!s.empty())
+                    s.pop();
+                // extend current sequence
+                if (!s.empty())
+                    res = Math.max(res, i - s.peek());
+                    // else start a new sequence from current position
+                else
+                    s.push(i);
+            }
+        }
+
+        return res;
     }
 
     // https://www.interviewbit.com/problems/max-sum-path-in-binary-tree/
