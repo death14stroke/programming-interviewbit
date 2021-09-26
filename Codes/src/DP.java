@@ -1,3 +1,4 @@
+import javax.swing.text.html.StyleSheet;
 import java.util.*;
 
 class DP {
@@ -1544,6 +1545,55 @@ class DP {
         return i >= 0 && i < m && j >= 0 && j < n;
     }
 
+    // https://www.interviewbit.com/problems/sub-matrices-with-sum-zero/
+    static int subMatricesWithSumZero(int[][] A) {
+        // input validation
+        int m = A.length;
+        if (m == 0)
+            return 0;
+        int n = A[0].length;
+        if (n == 0)
+            return 0;
+
+        int res = 0;
+        // for each pair of rows including with self
+        for (int i = 0; i < m; i++) {
+            int[] row = new int[n];
+
+            for (int j = i; j < m; j++) {
+                // take each pair of rows and add up all the rows between them
+                for (int k = 0; k < n; k++)
+                    row[k] += A[j][k];
+                // update count of sub-arrays with sum = 0 in the newly formed 1D array
+                res += subArraysWithZeroSum(row);
+            }
+        }
+
+        return res;
+    }
+
+    // util to find number of sub-arrays with sum = 0
+    private static int subArraysWithZeroSum(int[] A) {
+        int sum = 0, res = 0;
+        Map<Integer, Integer> map = new HashMap<>();
+
+        for (int val : A) {
+            // update prefix sum
+            sum += val;
+            // found a prefix array with sum = 0
+            if (sum == 0)
+                res++;
+            // if found prefix array with sum = current sum,
+            // add count of all sub-arrays that can be formed in between having sum = 0
+            if (map.containsKey(sum))
+                res += map.get(sum);
+            // update the sum map count
+            map.put(sum, map.getOrDefault(sum, 0) + 1);
+        }
+
+        return res;
+    }
+
     // https://www.interviewbit.com/problems/coin-sum-infinite/
     static int coinSumInfinite(int[] A, int N) {
         // can also be done using 2D dp and optimized with dp[2][N + 1]
@@ -1719,6 +1769,40 @@ class DP {
         return dp[0][n - 1];
     }
 
+    // https://www.interviewbit.com/problems/flip-array/
+    static int flipArray(final int[] A) {
+        int n = A.length, totalSum = 0;
+        // find max sum possible
+        for (int val : A)
+            totalSum += val;
+
+        // try diving the array into 2 subsets and find #elements required in each subset sum
+        // dp[i][sum] = #elements in subset till [0, i] that can add up to sum
+        int[][] dp = new int[n + 1][totalSum / 2 + 1];
+        // n = 0, sum > 0 not possible
+        for (int sum = 1; sum <= totalSum / 2; sum++)
+            dp[0][sum] = Integer.MAX_VALUE;
+
+        for (int sum = 1; sum <= totalSum / 2; sum++) {
+            for (int i = 1; i <= n; i++) {
+                // if we can use current element and subset with the remaining sum is possible, either use it or don't
+                if (sum >= A[i - 1] && dp[i - 1][sum - A[i - 1]] != Integer.MAX_VALUE)
+                    dp[i][sum] = Math.min(1 + dp[i - 1][sum - A[i - 1]], dp[i - 1][sum]);
+                    // cannot use current element
+                else
+                    dp[i][sum] = dp[i - 1][sum];
+            }
+        }
+
+        // find the largest possible achievable sum close to totalSum / 2.
+        // Sign of all the elements in that subset must be flipped
+        int sum = totalSum / 2;
+        while (sum > 0 && dp[n][sum] == Integer.MAX_VALUE)
+            sum--;
+
+        return dp[n][sum];
+    }
+
     // https://www.interviewbit.com/problems/tushars-birthday-party/
     static int birthdayParty(final int[] A, final int[] B, final int[] C) {
         // find the friend with maximum capacity
@@ -1774,6 +1858,94 @@ class DP {
             }
 
         return dp[n][C];
+    }
+
+    // https://www.interviewbit.com/problems/equal-average-partition/
+    static int[][] equalAveragePartition(int[] A) {
+        int n = A.length, totalSum = 0;
+        for (int val : A)
+            totalSum += val;
+
+        // dp[i][sum][len] = T/F for whether sum can be achieved with len numbers till A[i]
+        boolean[][][] dp = new boolean[n][totalSum + 1][n];
+        for (boolean[][] a : dp) {
+            for (boolean[] b : a)
+                Arrays.fill(b, true);
+        }
+
+        // sort for lexicographical order
+        Arrays.sort(A);
+        // try all length subsets
+        for (int len = 1; len < n; len++) {
+            // sum(x) / x = (totalSum - sum(x)) / (n - x) simplifies to sum(x) = totalSum * x / n
+            // check if sum(x) is a whole number
+            if ((totalSum * len) % n != 0)
+                continue;
+
+            int sum1 = (totalSum * len) / n;
+            LinkedList<Integer> list = new LinkedList<>();
+            // find subset of size = len that has sum = sum1
+            if (canFormSum(A, 0, sum1, len, list, dp))
+                return computePartitions(A, list);
+        }
+
+        // partition not possible
+        return new int[0][0];
+    }
+
+    // util to check if subset of size = len starting from A[pos] is possible with sum
+    private static boolean canFormSum(int[] A, int pos, int sum, int len, LinkedList<Integer> list, boolean[][][] dp) {
+        // no elements left - check if sum == 0
+        if (len == 0)
+            return sum == 0;
+        // reached end of array
+        if (pos == A.length)
+            return false;
+        // memoization
+        if (!dp[pos][sum][len])
+            return false;
+
+        // if can include current element, include it in subset
+        if (sum >= A[pos]) {
+            list.add(A[pos]);
+            // recursively check if remaining sum subset is possible
+            if (canFormSum(A, pos + 1, sum - A[pos], len - 1, list, dp))
+                return true;
+            // backtrack
+            list.removeLast();
+        }
+
+        // exclude current element from subset
+        if (canFormSum(A, pos + 1, sum, len, list, dp))
+            return true;
+
+        // subset sum not possible
+        return dp[pos][sum][len] = false;
+    }
+
+    // util to compute result array from the 1st partition list
+    private static int[][] computePartitions(int[] A, List<Integer> list) {
+        int n = A.length;
+        int size1 = list.size(), size2 = n - list.size();
+        int[][] res = new int[2][];
+        // copy the 1st partition
+        res[0] = new int[size1];
+        for (int i = 0; i < size1; i++)
+            res[0][i] = list.get(i);
+
+        // compute 2nd partition
+        res[1] = new int[size2];
+        int p1 = 0, p2 = 0;
+        for (int val : A) {
+            // if already present in 1st partition - skip
+            if (p1 < size1 && val == list.get(p1))
+                p1++;
+                // else add to 2nd partition
+            else
+                res[1][p2++] = val;
+        }
+
+        return res;
     }
 
     // https://www.interviewbit.com/problems/best-time-to-buy-and-sell-stocks-ii/

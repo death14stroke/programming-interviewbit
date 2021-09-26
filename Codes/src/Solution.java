@@ -1,7 +1,9 @@
+import java.util.Arrays;
+
 public class Solution {
     public static void main(String[] args) {
-        String A = ")()))(())((())))))())()(((((())())((()())(())((((())))())((()()))(()(((()()(()((()()))(())()))(((";
+        int[] A = {1, 7, 15, 29, 11, 9};
 
-        System.out.println(DP.longestValidParentheses(A));
+        System.out.println(Arrays.deepToString(DP.equalAveragePartition(A)));
     }
 }
