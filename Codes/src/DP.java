@@ -2016,6 +2016,45 @@ class DP {
         return res;
     }
 
+    // https://www.interviewbit.com/problems/unique-binary-search-trees-ii/
+    static int uniqueBST2(int A) {
+        // dp[i] = #BST formed with i nodes
+        int[] dp = new int[A + 1];
+        return uniqueBST2Util(1, A, dp);
+    }
+
+    // util to compute #BST formed within range of min to max inclusive
+    private static int uniqueBST2Util(int min, int max, int[] dp) {
+        // reached end
+        if (min > max)
+            return 0;
+        // leaf node
+        if (min == max)
+            return 1;
+        // memoization
+        if (dp[max - min + 1] != 0)
+            return dp[max - min + 1];
+
+        // try each node as root
+        for (int i = min; i <= max; i++) {
+            // find #BST for (i - min) nodes and (max - i) nodes
+            int left = uniqueBST2Util(min, i - 1, dp);
+            int right = uniqueBST2Util(i + 1, max, dp);
+
+            // count BSTs with only right subtree
+            if (left == 0)
+                dp[max - min + 1] += right;
+                // count BSTs with only left subtree
+            else if (right == 0)
+                dp[max - min + 1] += left;
+                // count BSTs with all left and right subtree combinations
+            else
+                dp[max - min + 1] += left * right;
+        }
+
+        return dp[max - min + 1];
+    }
+
     // https://www.interviewbit.com/problems/palindrome-partitioning-ii/
     static int palindromePartitioning2(String A) {
         int n = A.length();
