@@ -1,4 +1,3 @@
-import javax.swing.text.html.StyleSheet;
 import java.util.*;
 
 class DP {
@@ -2053,6 +2052,77 @@ class DP {
         }
 
         return dp[max - min + 1];
+    }
+
+    // https://www.interviewbit.com/problems/count-permutations-of-bst/
+    static int countPermutationsBST(int A, int B) {
+        // need at least B + 1 nodes to achieve height B
+        if (A <= B)
+            return 0;
+        // 1 node tree has height = 0
+        if (A == 1 && B == 0)
+            return 1;
+
+        final int MOD = 1_000_000_007;
+        // dp[i][j] = #permutations of i nodes with height = j
+        int[][] dp = new int[A + 1][B + 1];
+        dp[0][0] = 1;
+        dp[1][0] = 1;
+        // compute and memoize combinations
+        long[][] C = computeCombinations(A);
+
+        // iterate for 2 to A node permutations
+        for (int i = 2; i <= A; i++) {
+            // check for height = 1 to B
+            for (int height = 1; height <= B; height++) {
+                // try each node in the range as root
+                for (int root = 1; root <= i; root++) {
+                    int x = root - 1, y = i - root;
+                    // sum1 = sum of h = 1 to height - 2 permutations of size = x
+                    // sum2 = sum of h = 1 to height - 2 permutations of size = y
+                    long sum1 = 0, sum2 = 0, cnt = 0;
+                    // compute sum1 and sum2
+                    for (int h = 0; h <= height - 2; h++) {
+                        sum1 = (sum1 + dp[x][h]) % MOD;
+                        sum2 = (sum2 + dp[y][h]) % MOD;
+                    }
+
+                    // cnt = cnt + #trees with left half of h = 1 to height - 2 and right half of h = height - 1
+                    cnt = (cnt + sum1 * dp[y][height - 1]) % MOD;
+                    // cnt = cnt + #trees with left half of h = height - 1 and right half of h = 1 to height - 2
+                    cnt = (cnt + sum2 * dp[x][height - 1]) % MOD;
+                    // cnt = cnt + #trees with left half of h = height - 1 and right half of h = height - 1
+                    cnt = (cnt + (long) dp[x][height - 1] * dp[y][height - 1]) % MOD;
+                    // cnt = cnt * #permutations possible (x and y nodes should be in relative order hence fix x or y nodes (x+y)C(y))
+                    cnt = (cnt * C[x + y][y]);
+
+                    dp[i][height] = (int) ((dp[i][height] + cnt) % MOD);
+                }
+            }
+        }
+
+        return dp[A][B];
+    }
+
+    // util to compute and memoize all combinations
+    private static long[][] computeCombinations(int N) {
+        long[][] C = new long[N + 1][N + 1];
+
+        for (int n = 0; n < N; n++) {
+            // nC0 = 1
+            C[n][0] = 1;
+
+            for (int k = 1; k <= n; k++) {
+                // nCn = 1
+                if (n == k)
+                    C[n][k] = 1;
+                    // nCk = (n-1)C(k) + (n-1)C(k-1)
+                else
+                    C[n][k] = (C[n - 1][k] + C[n - 1][k - 1]) % 1000000007;
+            }
+        }
+
+        return C;
     }
 
     // https://www.interviewbit.com/problems/palindrome-partitioning-ii/
