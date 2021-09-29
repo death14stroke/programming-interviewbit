@@ -1611,6 +1611,25 @@ class DP {
         return dp[N];
     }
 
+    // https://www.interviewbit.com/problems/max-product-subarray/
+    static int maxProductSubarray(final int[] A) {
+        int n = A.length;
+        // keep track of max and min product along with result
+        int maxProd = A[0], minProd = A[0], res = A[0];
+
+        for (int i = 1; i < n; i++) {
+            // save previous maxProd
+            int temp = maxProd;
+            // maxProd = max(curr [if prev = 0], curr * maxProd [if curr is pos], curr * minProd [if curr is neg])
+            maxProd = Math.max(A[i], Math.max(maxProd * A[i], minProd * A[i]));
+            // minProd = min(curr [if prev = 0], curr * prev maxProd [if curr is neg], curr * minProd [if curr is pos])
+            minProd = Math.min(A[i], Math.min(temp * A[i], minProd * A[i]));
+            res = Math.max(res, maxProd);
+        }
+
+        return res;
+    }
+
     // https://www.interviewbit.com/problems/best-time-to-buy-and-sell-stocks-i/
     static int buyAndSellStocks1(final int[] A) {
         int minPrice = A[0], profit = 0;
