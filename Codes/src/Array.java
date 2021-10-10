@@ -543,21 +543,15 @@ public class Array {
     }
 
     // https://www.interviewbit.com/problems/flip/
-    static int[] flip(String a) {
-        // all 1's in the string
-        if (!a.contains("0"))
-            return new int[0];
-
-        // use Kadane's algorithm to find largest sequence of 0's
+    static int[] flip(String A) {
+        // use Kadane's algorithm to find the largest sequence of 0's
         int[] res = new int[2];
         int start = 0, diff = 0, maxDiff = Integer.MIN_VALUE;
 
-        for (int i = 0; i < a.length(); i++) {
+        for (int i = 0; i < A.length(); i++) {
             // 0 is required hence +1, 1 is not required hence -1
-            diff += (a.charAt(i) == '0') ? 1 : -1;
-
-            // number of 1's is more in the current sequence
-            // so reset starting point to next possible 0
+            diff += (A.charAt(i) == '0') ? 1 : -1;
+            // number of 1's is more in the current sequence. So reset starting point to next possible 0
             if (diff < 0) {
                 diff = 0;
                 start = i + 1;
@@ -568,6 +562,156 @@ public class Array {
                 res[0] = start + 1;
                 res[1] = i + 1;
             }
+        }
+
+        // all 1's in the string
+        if (res[0] == 0)
+            return new int[0];
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/max-min-05542f2f-69aa-4253-9cc7-84eb7bf739c4/
+    // two methods: this and Tournament method (https://www.geeksforgeeks.org/maximum-and-minimum-in-an-array/)
+    static int maxMin(int[] A) {
+        // #comparisions = n is odd: 3 * (n - 1) / 2
+        // If n is even: 1 initial comparison for initializing min and max, and 3 * (n - 2) / 2 comparisons for rest of the elements
+        // = 1 + 3 * (n - 2) / 2 = 3 * n / 2 - 2
+        int n = A.length;
+        // minimum and maximum for the array
+        int min, max;
+        // starting index
+        int i;
+
+        // if array length is odd, same min-max and start from 1
+        if (n % 2 == 1) {
+            min = max = A[0];
+            i = 1;
+        }
+        // else one comparison to find initial min-max and start from 2
+        else {
+            if (A[0] < A[1]) {
+                min = A[0];
+                max = A[1];
+            } else {
+                min = A[1];
+                max = A[0];
+            }
+
+            i = 2;
+        }
+
+        // take elements in pairs - compare larger of them with max and smaller with min and update global max-min
+        for (; i + 1 < n; i += 2) {
+            if (A[i] > A[i + 1]) {
+                max = Math.max(max, A[i]);
+                min = Math.min(min, A[i + 1]);
+            } else {
+                max = Math.max(max, A[i + 1]);
+                min = Math.min(min, A[i]);
+            }
+        }
+
+        return min + max;
+    }
+
+    // https://www.interviewbit.com/problems/merge-intervals/
+    static class Interval {
+        int start = 0, end = 0;
+    }
+
+    static ArrayList<Interval> insertInterval(ArrayList<Interval> intervals, Interval newInterval) {
+        // rearrange new interval
+        if (newInterval.start > newInterval.end) {
+            int temp = newInterval.start;
+            newInterval.start = newInterval.end;
+            newInterval.end = temp;
+        }
+
+        int n = intervals.size();
+        // given list is empty
+        if (n == 0) {
+            intervals.add(newInterval);
+            return intervals;
+        }
+
+        // Case-1: new interval is at the first position
+        if (newInterval.end < intervals.get(0).start) {
+            intervals.add(0, newInterval);
+            return intervals;
+        }
+
+        // Case-2: new interval is at the last position
+        if (newInterval.start > intervals.get(n - 1).end) {
+            intervals.add(newInterval);
+            return intervals;
+        }
+
+        // Case-3: new interval overlaps all intervals
+        if (newInterval.start <= intervals.get(0).start && newInterval.end >= intervals.get(n - 1).end) {
+            ArrayList<Interval> res = new ArrayList<>();
+            res.add(newInterval);
+            return res;
+        }
+
+        // Case 4-5: new interval fits between other intervals or is overlapping
+        ArrayList<Interval> res = new ArrayList<>();
+        int i = 0;
+
+        while (i < n) {
+            boolean overlap = doesOverlap(newInterval, intervals.get(i));
+
+            if (!overlap) {
+                res.add(intervals.get(i));
+                // Case-4: new interval lies between two intervals
+                if (newInterval.start > intervals.get(i).end && newInterval.end < intervals.get(i + 1).start)
+                    res.add(newInterval);
+
+                i++;
+                continue;
+            }
+
+            // Case-5: merge overlapping intervals
+            Interval temp = new Interval();
+            temp.start = Math.min(newInterval.start, intervals.get(i).start);
+
+            // traverse until intervals are overlapping
+            while (i < n && overlap) {
+                temp.end = Math.max(newInterval.end, intervals.get(i).end);
+
+                if (i == n - 1)
+                    overlap = false;
+                else
+                    overlap = doesOverlap(newInterval, intervals.get(i + 1));
+
+                i++;
+            }
+
+            res.add(temp);
+        }
+
+        return res;
+    }
+
+    // util to check if two intervals overlap
+    private static boolean doesOverlap(Interval a, Interval b) {
+        return Math.min(a.end, b.end) >= Math.max(a.start, b.start);
+    }
+
+    // https://www.interviewbit.com/problems/merge-overlapping-intervals/
+    static ArrayList<Interval> merge(ArrayList<Interval> intervals) {
+        // sort all intervals by start time
+        intervals.sort(Comparator.comparingInt(a -> a.start));
+
+        ArrayList<Interval> res = new ArrayList<>();
+        res.add(intervals.get(0));
+
+        for (int i = 1; i < intervals.size(); i++) {
+            Interval top = res.get(res.size() - 1), curr = intervals.get(i);
+            // does not overlap
+            if (top.end < curr.start)
+                res.add(curr);
+            else
+                top.end = Math.max(top.end, curr.end);
         }
 
         return res;
@@ -597,6 +741,24 @@ public class Array {
         }
 
         return 0;
+    }
+
+    // https://www.interviewbit.com/problems/kth-row-of-pascals-triangle/
+    static int[] kthRowOfPascal(int A) {
+        // kth row is C(k, 0) to C(k, k)
+        int[] res = new int[A + 1];
+        res[0] = 1;
+
+        // compute 1st half of the row
+        // C(k, i) = C(k, i - 1) * (k - (i - 1)) / i;
+        for (int i = 1; i <= A / 2; i++)
+            res[i] = res[i - 1] * (A - i + 1) / i;
+
+        // 2nd half of the row is the mirror of the 1st half
+        for (int i = A / 2 + 1; i <= A; i++)
+            res[i] = res[A - i];
+
+        return res;
     }
 
     // https://www.interviewbit.com/problems/spiral-order-matrix-ii/
@@ -655,26 +817,8 @@ public class Array {
 
             // middle ones are the sum of the upper row entries
             for (int i = 1; i < k; i++)
-                res[k][i] = res[k - 1][i] + res[k - 1][i];
+                res[k][i] = res[k - 1][i] + res[k - 1][i - 1];
         }
-
-        return res;
-    }
-
-    // https://www.interviewbit.com/problems/kth-row-of-pascals-triangle/
-    static int[] kthRowOfPascal(int A) {
-        // kth row is C(k, 0) to C(k, k)
-        int[] res = new int[A + 1];
-        res[0] = 1;
-
-        // compute 1st half of the row
-        // C(k, i) = C(k, i - 1) * (k + 1 - i) / i;
-        for (int i = 1; i <= A / 2; i++)
-            res[i] = res[i - 1] * (A + 1 - i) / i;
-
-        // 2nd half of the row is the mirror of the 1st half
-        for (int i = A / 2 + 1; i <= A; i++)
-            res[i] = res[A - i];
 
         return res;
     }
@@ -847,7 +991,7 @@ public class Array {
     }
 
     // https://www.interviewbit.com/problems/hotel-bookings-possible/
-    static boolean hotel(ArrayList<Integer> arrive, ArrayList<Integer> depart, int k) {
+    static boolean hotel(ArrayList<Integer> arrive, ArrayList<Integer> depart, int K) {
         Collections.sort(arrive);
         Collections.sort(depart);
 
@@ -860,16 +1004,16 @@ public class Array {
             if (arrive.get(i) < depart.get(j)) {
                 cnt++;
                 i++;
+
+                // max rooms exceeded
+                if (cnt > K)
+                    return false;
             }
             // previous guest left, empty his room, wait for next guest to leave
             else {
                 cnt--;
                 j++;
             }
-
-            // max rooms exceeded
-            if (cnt > k)
-                return false;
         }
 
         return true;
@@ -1052,110 +1196,6 @@ public class Array {
         out.add(max);
 
         return out;
-    }
-
-    // https://www.interviewbit.com/problems/merge-intervals/
-    private static class Interval {
-        int start = 0, end = 0;
-    }
-
-    static ArrayList<Interval> insertInterval(ArrayList<Interval> intervals, Interval newInterval) {
-        // rearrange new interval
-        if (newInterval.start > newInterval.end) {
-            int temp = newInterval.start;
-            newInterval.start = newInterval.end;
-            newInterval.end = temp;
-        }
-
-        int n = intervals.size();
-        // given list is empty
-        if (n == 0) {
-            ArrayList<Interval> ans = new ArrayList<>();
-            ans.add(newInterval);
-            return ans;
-        }
-
-        // Case-1: new interval is at the first position
-        if (newInterval.end < intervals.get(0).start) {
-            intervals.add(0, newInterval);
-            return intervals;
-        }
-
-        // Case-2: new interval is at the last position
-        if (newInterval.start > intervals.get(n - 1).end) {
-            intervals.add(newInterval);
-            return intervals;
-        }
-
-        // Case-3: new interval overlaps all intervals
-        if (newInterval.start <= intervals.get(0).start && newInterval.end >= intervals.get(n - 1).end) {
-            ArrayList<Interval> ans = new ArrayList<>();
-            ans.add(newInterval);
-            return ans;
-        }
-
-        // Case 4-5: new interval fits between other intervals or is overlapping
-        ArrayList<Interval> ans = new ArrayList<>();
-        int i = 0;
-
-        while (i < n) {
-            boolean overlap = doesOverlap(newInterval, intervals.get(i));
-
-            if (!overlap) {
-                ans.add(intervals.get(i));
-                // Case-4: new interval lies between two intervals
-                if (newInterval.start > intervals.get(i).end && newInterval.end < intervals.get(i + 1).start)
-                    ans.add(newInterval);
-
-                i++;
-                continue;
-            }
-
-            // Case-5: merge overlapping intervals
-            Interval temp = new Interval();
-            temp.start = Math.min(newInterval.start, intervals.get(i).start);
-
-            // traverse until intervals are overlapping
-            while (i < n && overlap) {
-                temp.end = Math.max(newInterval.end, intervals.get(i).end);
-
-                if (i == n - 1)
-                    overlap = false;
-                else
-                    overlap = doesOverlap(newInterval, intervals.get(i + 1));
-
-                i++;
-            }
-
-            ans.add(temp);
-        }
-
-        return ans;
-    }
-
-    // util to check if two intervals overlap
-    private static boolean doesOverlap(Interval a, Interval b) {
-        return Math.min(a.end, b.end) >= Math.max(a.start, b.start);
-    }
-
-    // https://www.interviewbit.com/problems/merge-overlapping-intervals/
-    static ArrayList<Interval> merge(ArrayList<Interval> intervals) {
-        // sort all intervals by start time
-        intervals.sort(Comparator.comparingInt(a -> a.start));
-
-        ArrayList<Interval> res = new ArrayList<>();
-        res.add(intervals.get(0));
-
-        for (int i = 1; i < intervals.size(); i++) {
-            Interval top = res.get(res.size() - 1), curr = intervals.get(i);
-            // does not overlap
-            if (top.end < curr.start)
-                res.add(curr);
-            else
-                top.end = Math.max(top.end, curr.end);
-        }
-
-        return res;
     }
 
     // https://www.interviewbit.com/problems/set-matrix-zeros/
@@ -1477,55 +1517,6 @@ public class Array {
         }
 
         return cnt;
-    }
-
-    // https://www.interviewbit.com/problems/max-min-05542f2f-69aa-4253-9cc7-84eb7bf739c4/
-    // two methods: this and Tournament method (https://www.geeksforgeeks.org/maximum-and-minimum-in-an-array/)
-    static int maxMin(int[] A) {
-        int n = A.length;
-        // minimum and maximum for the array
-        int min, max;
-        // starting index
-        int i;
-
-        // if array length is odd, same min-max and start from 1
-        if (n % 2 == 1) {
-            min = A[0];
-            max = A[0];
-            i = 1;
-        }
-        // else one comparison to find initial min-max and start from 2
-        else {
-            if (A[0] < A[1]) {
-                min = A[0];
-                max = A[1];
-            } else {
-                min = A[1];
-                max = A[0];
-            }
-
-            i = 2;
-        }
-
-        // take elements in pairs - compare larger of them with max and smaller with min and update global max-min
-        while (i + 1 < n) {
-            if (A[i] > A[i + 1]) {
-                if (A[i] > max)
-                    max = A[i];
-                if (A[i + 1] < min)
-                    min = A[i + 1];
-            } else {
-                if (A[i + 1] > max)
-                    max = A[i + 1];
-                if (A[i] < min)
-                    min = A[i];
-            }
-
-            // skip 2 since taking elements in pairs
-            i += 2;
-        }
-
-        return min + max;
     }
 
     // https://www.interviewbit.com/problems/leaders-in-an-array/
