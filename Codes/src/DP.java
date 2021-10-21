@@ -873,7 +873,7 @@ class DP {
 
                 for (int j = 0; j < i; j++) {
                     // if we can earn profit today by buying on day j, update maximum profit earned
-                    // dp[i][k] = Math.max(dp[i][k], dp[j][k - 1])
+                    // dp[i][k] = Math.max(dp[i][k], profit today + dp[j][k - 1])
                     if (A[i] > A[j])
                         dp[i][pos] = Math.max(dp[i][pos], A[i] - A[j] + dp[j][1 - pos]);
                 }

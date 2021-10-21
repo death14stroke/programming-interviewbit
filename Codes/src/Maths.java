@@ -5,34 +5,34 @@ import java.util.List;
 
 public class Maths {
     // https://www.interviewbit.com/problems/all-factors/
-    public static ArrayList<Integer> allFactors(int n) {
+    public static ArrayList<Integer> allFactors(int A) {
         ArrayList<Integer> res = new ArrayList<>();
-        // add all factors till sqrt(n)
-        for (int i = 1; i * i <= n; i++) {
-            if (n % i == 0)
+        // add all factors till sqrt(A)
+        for (int i = 1; i * i <= A; i++) {
+            if (A % i == 0)
                 res.add(i);
         }
 
-        // add the remaining complement factors (larger the factor till sqrt(n), smaller its complement will be)
+        // add the remaining complement factors (larger the factor till sqrt(A), smaller its complement will be)
         for (int i = res.size() - 1; i >= 0; i--) {
             int fact = res.get(i);
             // if not the same factor, add to result
-            if (n / fact != fact)
-                res.add(n / fact);
+            if (A / fact != fact)
+                res.add(A / fact);
         }
 
         return res;
     }
 
     // https://www.interviewbit.com/problems/verify-prime/
-    public static int isPrime(int n) {
+    public static int isPrime(int A) {
         // 0,1 are not prime
-        if (n < 2)
+        if (A < 2)
             return 0;
 
-        for (int i = 2; i * i <= n; i++) {
-            // n has factors other than 1 and n
-            if (n % i == 0)
+        for (int i = 2; i * i <= A; i++) {
+            // A has factors other than 1 and A
+            if (A % i == 0)
                 return 0;
         }
 
@@ -40,101 +40,119 @@ public class Maths {
     }
 
     // https://www.interviewbit.com/problems/prime-numbers/
-    public static ArrayList<Integer> sieve(int n) {
-        // Time complexity = O (n log log n)
-        if (n < 2)
-            return new ArrayList<>();
+    public static ArrayList<Integer> sieve(int A) {
+        // Time complexity = O (A log log A)
+        ArrayList<Integer> res = new ArrayList<>();
+        if (A < 2)
+            return res;
 
         // mark initially as prime
-        boolean[] sieve = new boolean[n + 1];
-        Arrays.fill(sieve, 2, n + 1, true);
+        boolean[] sieve = new boolean[A + 1];
+        Arrays.fill(sieve, 2, A + 1, true);
 
-        // i = 2 to sqrt(n)
-        for (int i = 2; i * i <= n; i++) {
+        // i = 2 to sqrt(A)
+        for (int i = 2; i * i <= A; i++) {
             if (sieve[i]) {
                 // mark all multiples of i as not prime
-                for (int j = i * i; j <= n; j += i)
+                for (int j = i * i; j <= A; j += i)
                     sieve[j] = false;
             }
         }
 
-        ArrayList<Integer> out = new ArrayList<>();
-        for (int i = 1; i <= n; i++) {
+        for (int i = 2; i <= A; i++) {
             if (sieve[i])
-                out.add(i);
+                res.add(i);
         }
 
-        return out;
+        return res;
     }
 
     // https://www.interviewbit.com/problems/binary-representation/
-    public static String findDigitsInBinary(int n) {
-        if (n == 0)
+    public static String findDigitsInBinary(int A) {
+        if (A == 0)
             return "0";
 
-        StringBuilder binary = new StringBuilder();
-        // keep dividing by 2 till n = 0
-        while (n > 0) {
-            int bit = n % 2;
+        StringBuilder builder = new StringBuilder();
+        // keep dividing by 2 till A = 0
+        while (A > 0) {
             // insert the remainder bit at the beginning
-            binary.append(bit);
-
-            n /= 2;
+            builder.append(A % 2);
+            A /= 2;
         }
 
-        return binary.reverse().toString();
+        return builder.reverse().toString();
+    }
+
+    // https://www.interviewbit.com/problems/total-moves-for-bishop/
+    static int movesForBishop(int A, int B) {
+        // calculate moves possible in all 4 directions
+        int topLeft = Math.min(A - 1, B - 1);
+        int topRight = Math.min(A - 1, 8 - B);
+        int bottomLeft = Math.min(8 - A, B - 1);
+        int bottomRight = Math.min(8 - A, 8 - B);
+
+        return topLeft + topRight + bottomLeft + bottomRight;
+    }
+
+    // https://www.interviewbit.com/problems/distribute-in-circle/
+    static int distributeInCircle(int A, int B, int C) {
+        // A: item pos in queue
+        // C: position in circle starting from 1
+        // B: size of circle
+        return (C + A - 1) % B;
     }
 
     // https://www.interviewbit.com/problems/prime-sum/
-    static int[] primeSum(int n) {
-        boolean[] sieve = new boolean[n + 1];
-        Arrays.fill(sieve, 2, n + 1, true);
+    static int[] primeSum(int A) {
+        boolean[] sieve = new boolean[A];
+        Arrays.fill(sieve, 2, A, true);
 
-        // find primes up to n with sieve: O(n log log n)
-        for (int i = 2; i * i <= n; i++) {
+        // find primes up to A with sieve: O(A log log A)
+        for (int i = 2; i * i <= A; i++) {
             if (sieve[i]) {
-                for (int j = i * i; j <= n; j += i)
+                for (int j = i * i; j < A; j += i)
                     sieve[j] = false;
             }
         }
 
-        for (int i = 2; i <= n / 2; i++) {
-            // if i and n-i both are prime
-            if (sieve[i] && sieve[n - i])
-                return new int[]{i, n - i};
+        for (int i = 2; i <= A / 2; i++) {
+            // if i and A-i both are prime
+            if (sieve[i] && sieve[A - i])
+                return new int[]{i, A - i};
         }
 
         return new int[0];
     }
 
     // https://www.interviewbit.com/problems/sum-of-pairwise-hamming-distance/
-    static int hammingDistance(final int[] a) {
-        long sum = 0, p = 1000000007, n = a.length;
+    static int hammingDistance(final int[] A) {
+        int n = A.length, MOD = 1000000007;
+        long sum = 0;
 
         // check for each bit position
         for (int i = 0; i < 32; i++) {
             // zeroCnt = # of integers where bit i is 0
             // n - zeroCnt = # of integers where bit i is 1
             long zeroCnt = 0;
+            int bitPos = 1 << i;
 
-            for (int val : a) {
-                if ((val & (1 << i)) == 0)
+            for (int val : A) {
+                if ((val & bitPos) == 0)
                     zeroCnt++;
             }
 
             // arrange 1 each from both groups and order matters hence 2x
-            sum += (zeroCnt * (n - zeroCnt) * 2L) % p;
+            sum = (sum + zeroCnt * (n - zeroCnt) * 2L) % MOD;
         }
 
-        return (int) (sum % p);
+        return (int) sum;
     }
 
     // https://www.interviewbit.com/problems/fizzbuzz/
-    static String[] fizzBuzz(int n) {
-        String[] res = new String[n];
+    static String[] fizzBuzz(int A) {
+        String[] res = new String[A];
 
-        for (int i = 1; i <= n; i++) {
-            res[i - 1] = String.valueOf(i);
+        for (int i = 1; i <= A; i++) {
             // div by both 3 and 5
             if (i % 15 == 0)
                 res[i - 1] = "FizzBuzz";
@@ -144,30 +162,50 @@ public class Maths {
                 // div by only 5
             else if (i % 5 == 0)
                 res[i - 1] = "Buzz";
+                // put number as string
+            else
+                res[i - 1] = String.valueOf(i);
         }
 
         return res;
     }
 
     // https://www.interviewbit.com/problems/is-rectangle/
-    static int isRectangle(int a, int b, int c, int d) {
+    static int isRectangle(int A, int B, int C, int D) {
         // check if any pair of opposite sides is equal
-        if ((a == b && c == d) || (a == c && b == d) || (a == d && b == c))
+        if ((A == B && C == D) || (A == C && B == D) || (A == D && B == C))
             return 1;
         // not a rectangle else
         return 0;
     }
 
+    // https://www.interviewbit.com/problems/step-by-step/
+    static int stepByStep(int A) {
+        // moving in either side is symmetric
+        A = Math.abs(A);
+        int sum = 0, steps = 0;
+
+        // keep moving forward till either destination is reached or
+        // the difference between target and destination is not even
+        while (sum < A || (sum - A) % 2 != 0) {
+            steps++;
+            sum += steps;
+        }
+
+        // if difference is even i.e. sum - target = 2 * i,
+        // we can take ith step in the opposite direction to reach our destination
+        return steps;
+    }
+
     // https://www.interviewbit.com/problems/power-of-two-integers/
-    static int isPower(int n) {
-        if (n < 2)
+    static int isPower(int A) {
+        if (A < 2)
             return 1;
 
-        // i^x = n. Check if x is integer or not
-        // Largest possible i will be sqrt(n)^2 = n hence loop till sqrt(n)
-        for (int i = 2; i * i <= n; i++) {
-            double x = Math.log(n) / Math.log(i);
-
+        // i^x = A. Check if x is integer or not
+        // the largest possible 'i' will be sqrt(A)^2 = A hence loop till sqrt(A)
+        for (int i = 2; i * i <= A; i++) {
+            double x = Math.log(A) / Math.log(i);
             // x is almost integer
             if (x - (int) x < 0.0000001)
                 return 1;
@@ -177,84 +215,162 @@ public class Maths {
     }
 
     // https://www.interviewbit.com/problems/excel-column-number/
-    static int titleToNumber(String s) {
-        int ans = 0;
+    static int titleToNumber(String A) {
+        int res = 0;
         // move from left to right and multiply by 26 (equivalent of 10 in decimal)
-        for (char c : s.toCharArray())
-            ans = ans * 26 + (c - 'A' + 1);
+        for (char c : A.toCharArray())
+            res = res * 26 + (c - 'A' + 1);
 
-        return ans;
+        return res;
     }
 
     // https://www.interviewbit.com/problems/excel-column-title/
-    static String convertToTitle(int n) {
+    static String convertToTitle(int A) {
         StringBuilder builder = new StringBuilder();
 
-        while (n > 0) {
+        while (A > 0) {
             // 1 is 'A' not 0 hence subtract 1 every time
-            n--;
+            A--;
 
-            char c = (char) ('A' + n % 26);
+            char c = (char) ('A' + A % 26);
             builder.append(c);
 
-            n /= 26;
+            A /= 26;
         }
 
         return builder.reverse().toString();
     }
 
     // https://www.interviewbit.com/problems/palindrome-integer/
-    static int isPalindrome(int n) {
-        if (n < 0)
+    static int isPalindrome(int A) {
+        if (A < 0)
             return 0;
 
         // reverse the int and check
-        return (n == reverseUtil(n)) ? 1 : 0;
+        return A == reverseUtil(A) ? 1 : 0;
     }
 
     // util to reverse number
-    private static int reverseUtil(int n) {
+    private static int reverseUtil(int A) {
         int res = 0;
         // multiply res by 10 to shift all digits one pos to left
-        while (n > 0) {
-            res = (res * 10) + (n % 10);
-            n /= 10;
+        while (A > 0) {
+            res = (res * 10) + (A % 10);
+            A /= 10;
         }
 
         return res;
     }
 
     // https://www.interviewbit.com/problems/reverse-integer/
-    static int reverse(int n) {
-        boolean neg = false;
-        // make number positive for reverse func and mark flag
-        if (n < 0) {
-            neg = true;
-            n = -n;
+    static int reverse(int A) {
+        int sign = 1;
+        // make number positive for reverse func and update sign
+        if (A < 0) {
+            sign = -1;
+            A = -A;
         }
 
-        n = reverseOverflowUtil(n);
-
-        // if original num was negative
-        if (neg)
-            return -n;
-        return n;
+        return reverseOverflowUtil(A) * sign;
     }
 
     // util to reverse the number and check if it overflows or not
-    private static int reverseOverflowUtil(int n) {
+    private static int reverseOverflowUtil(int A) {
         long res = 0;
-
         // multiply res by 10 to shift all digits one pos to left
-        while (n > 0) {
-            res = (res * 10L) + (n % 10);
-            n /= 10;
+        while (A > 0) {
+            res = (res * 10) + (A % 10);
+            A /= 10;
         }
 
         // overflow has occurred
         if (res > Integer.MAX_VALUE)
             return 0;
         return (int) res;
+    }
+
+    // https://www.interviewbit.com/problems/next-smallest-palindrome/
+    static String nextSmallestPalindrome(String A) {
+        int n = A.length();
+        // Case 1: All '9's in the string
+        if (allNines(A)) {
+            StringBuilder builder = new StringBuilder("1");
+            //noinspection StringRepeatCanBeUsed
+            for (int i = 0; i < n - 1; i++)
+                builder.append(0);
+            builder.append(1);
+
+            return builder.toString();
+        }
+
+        int mid = n / 2;
+        // start from mid two elements (if even) or the two elements surrounding the middle character (if odd)
+        int i = mid - 1;
+        int j = (n % 2 == 0) ? mid : mid + 1;
+
+        // Remaining cases: initially skip the common middle part
+        while (i >= 0 && A.charAt(i) == A.charAt(j)) {
+            i--;
+            j++;
+        }
+
+        // flag to check if only copying left half to right will not work
+        boolean leftSmaller = (i < 0) || (A.charAt(i) < A.charAt(j));
+
+        StringBuilder builder = new StringBuilder(A);
+        // copy left half to right half
+        while (i >= 0) {
+            builder.setCharAt(j, A.charAt(i));
+            i--;
+            j++;
+        }
+
+        // rest of the cases
+        if (!leftSmaller)
+            return builder.toString();
+
+        // Case 2: Input string is palindrome
+        // Case 3: ith digit is less than jth digit hence only copying won't work
+        // In both cases: add 1 to middle character and keep adding the carry on left
+        // and copying digits to the right
+        int carry = 1;
+        // if length is odd, add carry to the middle digit
+        if (n % 2 == 1) {
+            // add carry to digit
+            int num = A.charAt(mid) - '0' + carry;
+            char c = (char) ('0' + num % 10);
+            carry = num / 10;
+            // update the middle character
+            builder.setCharAt(mid, c);
+        }
+
+        // start from mid two elements (if even) or the two elements surrounding the middle element (if odd)
+        i = mid - 1;
+        j = (n % 2 == 0) ? mid : mid + 1;
+
+        // loop till carry is found or reached left end
+        while (i >= 0 && carry > 0) {
+            // add carry to digit
+            int num = A.charAt(i) - '0' + carry;
+            char c = (char) ('0' + num % 10);
+            carry = num / 10;
+
+            // update characters at positions i and its mirror j
+            builder.setCharAt(i--, c);
+            builder.setCharAt(j++, c);
+        }
+
+        return builder.toString();
+    }
+
+    // util to check if string is of the form "9999...9"
+    private static boolean allNines(String A) {
+        for (char c : A.toCharArray()) {
+            if (c != '9')
+                return false;
+        }
+
+        return true;
     }
 
     // https://www.interviewbit.com/problems/greatest-common-divisor/
@@ -266,82 +382,76 @@ public class Maths {
     }
 
     // https://www.interviewbit.com/problems/find-nth-fibonacci/
-    static int nthFibonacci(int n) {
+    static int nthFibonacci(int A) {
         // F1 = 1
-        if (n == 1)
+        if (A == 1)
             return 1;
 
         int p = 1000000007;
-        int[][] matrix = {
+        long[][] matrix = {
                 {1, 1},
                 {1, 0}
         };
+        // Mn = power(Mat({1, 1}, {1, 0}), A - 2) where Mn[0][0] = Fn
+        matrix = matrixPowerMod(matrix, A - 2, p);
 
-        // Mn = power(Mat({1, 1}, {1, 0}), n - 2) where Mn[0][0] = Fn
-        matrix = matrixPowerMod(matrix, n - 2, p);
-
-        return matrix[0][0];
+        return (int) matrix[0][0];
     }
 
     // util to calculate matrix power modulo
-    private static int[][] matrixPowerMod(int[][] a, int n, int p) {
-        int[][] res = {
+    private static long[][] matrixPowerMod(long[][] A, int x, int p) {
+        long[][] res = {
                 {1, 1},
                 {1, 1}
         };
 
-        // calculate power(a, n) in O(log n)
-        while (n > 0) {
-            if (n % 2 == 1)
-                res = sqMatrixModMult(res, a, p);
+        // calculate power(A, x) in O(log x)
+        while (x > 0) {
+            if (x % 2 == 1)
+                res = sqMatrixModMult(res, A, p);
 
-            a = sqMatrixModMult(a, a, p);
-            n /= 2;
+            A = sqMatrixModMult(A, A, p);
+            x /= 2;
         }
 
         return res;
     }
 
-    // util to multiply two square matrices
-    private static int[][] sqMatrixModMult(int[][] a, int[][] b, int p) {
-        int n = a.length;
-        int[][] res = new int[n][n];
-
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                for (int k = 0; k < n; k++)
-                    res[i][j] = (res[i][j] + (int) (((long) a[i][k] * (long) b[k][j]) % p)) % p;
-            }
-        }
+    // util to multiply 2 x 2 square matrices
+    private static long[][] sqMatrixModMult(long[][] A, long[][] B, int p) {
+        long[][] res = new long[2][2];
+        // compute each entry in output
+        res[0][0] = ((A[0][0] * B[0][0]) % p + (A[0][1] * B[1][0]) % p) % p;
+        res[0][1] = ((A[0][0] * B[0][1]) % p + (A[0][1] * B[1][1]) % p) % p;
+        res[1][0] = ((A[1][0] * B[0][0]) % p + (A[1][1] * B[1][0]) % p) % p;
+        res[1][1] = ((A[1][0] * B[0][1]) % p + (A[1][1] * B[1][1]) % p) % p;
 
         return res;
     }
 
     // https://www.interviewbit.com/problems/trailing-zeros-in-factorial/
-    static int trailingZeroes(int n) {
-        int cnt = 0;
+    static int trailingZeroes(int A) {
+        int res = 0;
         // count the #5's in the factorial as #5's < #2's
-        // #5's = (n/5) + (n/25) +... = (n/5) + ((n/5)/5) +...
-        while (n > 0) {
-            cnt += n / 5;
-            n /= 5;
+        // #5's = (A / 5) + (A / 25) +... = (A / 5) + ((A / 5) / 5) +...
+        while (A > 0) {
+            res += A / 5;
+            A /= 5;
         }
 
-        return cnt;
+        return res;
     }
 
     // https://www.interviewbit.com/problems/sorted-permutation-rank/
-    static int findRank(String s) {
+    static int findRank(String A) {
         int MAX_CHAR = 256, p = 1000003;
-        int n = s.length();
+        int n = A.length();
 
         // count[i] = #characters in string < char i
         int[] count = new int[MAX_CHAR];
-
         // each character count
-        for (char c : s.toCharArray())
+        for (char c : A.toCharArray())
             count[c]++;
-
         // perform cumulative count
         for (int i = 1; i < MAX_CHAR; i++)
             count[i] += count[i - 1];
@@ -351,9 +461,9 @@ public class Maths {
         long rank = 1;
 
         for (int i = 0; i < n; i++) {
-            char c = s.charAt(i);
+            char c = A.charAt(i);
             // rank = rank + (#chars smaller than c)*(#places on the right)!
-            rank = (rank + ((long) count[c - 1] * (long) fact[n - 1 - i]) % p) % p;
+            rank = (rank + ((long) count[c - 1] * fact[n - 1 - i]) % p) % p;
             // remove the current character from all greater characters count
             for (int j = c; j < MAX_CHAR; j++)
                 count[j]--;
@@ -368,28 +478,29 @@ public class Maths {
         fact[0] = 1;
 
         for (int i = 1; i <= n; i++)
-            fact[i] = (int) (((long) fact[i - 1] * (long) i) % p);
+            fact[i] = (int) ((fact[i - 1] * (long) i) % p);
 
         return fact;
     }
 
     // https://www.interviewbit.com/problems/largest-coprime-divisor/
-    static int cpFact(int a, int b) {
-        while (gcd(a, b) != 1)
-            a /= gcd(a, b);
+    static int cpFact(int A, int B) {
+        // keep removing the common factors of A and B from A till we find the co-prime factor
+        while (gcd(A, B) != 1)
+            A /= gcd(A, B);
 
-        return a;
+        return A;
     }
 
     // https://www.interviewbit.com/problems/sorted-permutation-rank-with-repeats/
-    static int findRepeatRank(String s) {
+    static int findRepeatRank(String A) {
         int MAX_CHAR = 256, p = 1000003;
-        int n = s.length();
+        int n = A.length();
 
         // count[i] = #characters in string < char i
         int[] count = new int[MAX_CHAR];
         // each character count
-        for (char c : s.toCharArray())
+        for (char c : A.toCharArray())
             count[c]++;
         // perform cumulative count
         for (int i = 1; i < 256; i++)
@@ -400,18 +511,19 @@ public class Maths {
         long rank = 1;
 
         for (int i = 0; i < n; i++) {
-            char c = s.charAt(i);
+            char c = A.charAt(i);
             // num = (#chars smaller than c)*(#places on the right)!
-            long num = ((long) count[c - 1] * (long) fact[n - 1 - i]) % p;
-            // den = (p1! * p2! * ... pn!)
-            long den = fact[count[0]] % p;
-            for (int j = 1; j < MAX_CHAR; j++)
-                den = (den * (long) (fact[count[j] - count[j - 1]])) % p;
+            long num = ((long) count[c - 1] * fact[n - 1 - i]) % p;
+            if (num != 0) {
+                // den = (p1! * p2! * ... pn!)
+                long den = fact[count[0]] % p;
+                for (int j = 1; j < MAX_CHAR; j++)
+                    den = (den * fact[count[j] - count[j - 1]]) % p;
 
-            // rank = rank + num/den
-            // modular inverse for modulo division (p is prime)
-            rank = (rank + (num * modInverse(den, p)) % p) % p;
-
+                // rank = rank + num/den
+                // modular inverse for modulo division (p is prime)
+                rank = (rank + (num * modInverse(den, p)) % p) % p;
+            }
             // remove the current character from all greater characters count
             for (int j = c; j < MAX_CHAR; j++)
                 count[j]--;
@@ -448,32 +560,22 @@ public class Maths {
         if (n == 1)
             return "-1";
 
-        int i = n - 2;
+        int last = n - 2;
         // find the last increasing pair
-        while (i >= 0 && A.charAt(i) >= A.charAt(i + 1))
-            i--;
-
+        while (last >= 0 && A.charAt(last) >= A.charAt(last + 1))
+            last--;
         // whole string is in non-increasing order
-        if (i < 0)
+        if (last < 0)
             return "-1";
 
         // find successor of first digit of the increasing pair
-        int nextPos = findSuccessor(A, i + 1, n - 1, A.charAt(i));
+        int nextPos = findSuccessor(A, last + 1, n - 1, A.charAt(last));
         // swap first digit of pair with its successor
         StringBuilder builder = new StringBuilder(A);
-        builder.setCharAt(i, A.charAt(nextPos));
-        builder.setCharAt(nextPos, A.charAt(i));
+        swap(builder, last, nextPos);
 
         // reverse the remaining half of the string
-        int start = i + 1, end = n - 1;
-        while (start < end) {
-            char temp = builder.charAt(start);
-            builder.setCharAt(start, builder.charAt(end));
-            builder.setCharAt(end, temp);
-
-            start++;
-            end--;
-        }
+        reverse(builder, last + 1, n - 1);
 
         return builder.toString();
     }
@@ -498,82 +600,94 @@ public class Maths {
         return res;
     }
 
+    // util to swap characters in StringBuilder
+    private static void swap(StringBuilder builder, int i, int j) {
+        char temp = builder.charAt(i);
+        builder.setCharAt(i, builder.charAt(j));
+        builder.setCharAt(j, temp);
+    }
+
+    // util to reverse StringBuilder from index start to end
+    private static void reverse(StringBuilder builder, int start, int end) {
+        while (start < end)
+            swap(builder, start++, end--);
+    }
+
     // https://www.interviewbit.com/problems/rearrange-array/
-    static void arrange(ArrayList<Integer> a) {
+    static void arrange(ArrayList<Integer> A) {
         // if x = a + bn where a is old value and b is new value then
         // old value = x % n and new value = x / n
-        int n = a.size();
+        int n = A.size();
 
         // add new value b to old value a of each element (a + bn)
         for (int i = 0; i < n; i++) {
-            int x = a.get(i) % n, y = a.get(x) % n;
-            a.set(i, x + y * n);
+            int x = A.get(i), y = A.get(x) % n;
+            A.set(i, x + y * n);
         }
 
         // retrieve new value b from the a + bn sum
         for (int i = 0; i < n; i++)
-            a.set(i, a.get(i) / n);
+            A.set(i, A.get(i) / n);
     }
 
     // https://www.interviewbit.com/problems/numbers-of-length-n-and-value-less-than-k/
-    static int solve(ArrayList<Integer> a, int b, int c) {
+    static int solve(int[] A, int B, int C) {
         int MAX_DIG = 10;
-        List<Integer> digits = getDigitsFromNumber(c);
+        List<Integer> digits = getDigitsFromNumber(C);
 
-        int n = a.size(), d = digits.size();
+        int n = A.length, d = digits.size();
         // CASE-1: no digits in set or output digits > limit number's digits
-        if (n == 0 || b > d)
+        if (n == 0 || B > d)
             return 0;
 
         // CASE-2: output digits < limit number's digits
-        if (b < d) {
-            if (a.get(0) == 0 && b != 1)
-                return (int) ((n - 1) * Math.pow(n, b - 1));
+        if (B < d) {
+            if (A[0] == 0 && B != 1)
+                return (int) ((n - 1) * Math.pow(n, B - 1));
             else
-                return (int) Math.pow(n, b);
+                return (int) Math.pow(n, B);
         }
 
         // CASE-3: output digits == limit number's digits
         int[] lower = new int[MAX_DIG + 1];
         // initialize lower for the digits in list a
-        for (int dig : a)
+        for (int dig : A)
             lower[dig + 1] = 1;
         // cumulative count
         for (int i = 1; i <= MAX_DIG; i++)
             lower[i] += lower[i - 1];
 
         // if limit is single digit number
-        if (b == 1)
+        if (B == 1)
             return lower[digits.get(0)];
 
-        // dp[i] = #of numbers that can be formed with first i digits of A
-        // that is less than first i digits of C
-        int[] dp = new int[b + 1];
+        // dp[i] = #of numbers that can be formed with first i digits of A that is less than first i digits of C
+        int[] dp = new int[B + 1];
         dp[0] = 0;
-
         // first digit can be all digits less than first digit of C except 0
         dp[1] = lower[digits.get(0)];
-        if (a.get(0) == 0)
+        if (A[0] == 0)
             dp[1]--;
 
-        // if the first (i - 2) digits of C are present in A
-        boolean eqFlag = true;
+        // if the first (i - 1) digits of C are present in A
+        boolean eqFlag = lower[digits.get(0) + 1] - lower[digits.get(0)] == 1;
 
-        for (int i = 2; i <= b; i++) {
+        for (int i = 2; i <= B; i++) {
             // for digits lower than digit[i - 2]
             // we can place all the digits in list A after them
             dp[i] = dp[i - 1] * n;
 
-            // update the flag by checking if digit[i - 2] (previous) is present in A
-            int prevDigit = digits.get(i - 2), currDigit = digits.get(i - 1);
-            eqFlag = (eqFlag && (lower[prevDigit + 1] - lower[prevDigit]) == 1);
-            // if first (i - 2) digits present, pos i can have digits only lower than digit[i - 1] (current)
+            int currDigit = digits.get(i - 1);
+            // if first (i - 1) digits present, pos i can have digits only lower than digit[i - 1] (current)
             // for the equal first half case
-            if (eqFlag)
+            if (eqFlag) {
                 dp[i] += lower[currDigit];
+                // update the flag by checking if current digit is present in A
+                eqFlag = lower[currDigit + 1] - lower[currDigit] == 1;
+            }
         }
 
-        return dp[b];
+        return dp[B];
     }
 
     private static List<Integer> getDigitsFromNumber(int n) {
@@ -597,174 +711,57 @@ public class Maths {
     }
 
     // https://www.interviewbit.com/problems/grid-unique-paths/
-    static int uniquePaths(int m, int n) {
-        // total steps that must be taken will be (m - 1) steps right + (n - 1) steps bottom
-        // if we choose either (m - 1) steps, remaining (n - 1) steps would be fixed or vice-versa
-        // hence # unique paths = C (m + n - 2, m - 1) = C (m + n - 2, n - 1)
-        return C(m + n - 2, m - 1);
+    static int uniquePaths(int A, int B) {
+        // total steps that must be taken will be (A - 1) steps right + (B - 1) steps bottom
+        // if we choose either (A - 1) steps, remaining (B - 1) steps would be fixed or vice-versa
+        // hence # unique paths = C (A + B - 2, A - 1) = C (A + B - 2, B - 1)
+        return C(A + B - 2, A - 1);
     }
 
     private static int C(int n, int r) {
         if (r > n / 2)
             return C(n, n - r);
 
-        long num = 1, den = 1;
+        int res = 1;
+        for (int i = 0; i < r; i++)
+            res = res * (n - i) / (i + 1);
 
-        for (int i = 0; i < r; i++) {
-            num *= (n - i);
-            den *= (r - i);
-        }
-
-        return (int) (num / den);
+        return res;
     }
 
-    // https://www.interviewbit.com/problems/step-by-step/
-    static int stepByStep(int A) {
-        // moving in either side is symmetric
-        A = Math.abs(A);
-        int sum = 0, steps = 0;
-
-        // keep moving forward till either destination is reached or
-        // the difference between target and destination is not even
-        while (sum < A || (sum - A) % 2 != 0) {
-            steps++;
-            sum += steps;
-        }
-
-        // if difference is even i.e sum - target = 2 * i,
-        // we can take ith step in the opposite direction to reach our destination
-        return steps;
-    }
-
-    // https://www.interviewbit.com/problems/next-smallest-palindrome/
-    static String nextSmallestPalindrome(String A) {
-        int n = A.length();
-
-        // Case 1: All '9's in the string
-        if (allNines(A))
-            return "1" + "0".repeat(n - 1) + "1";
-
-        int mid = n / 2;
-        // start from mid two elements (if even) or the two elements surrounding mid element (if odd)
-        int i = mid - 1;
-        int j = (n % 2 == 0) ? mid : mid + 1;
-
-        // Remaining cases: initially skip the common middle part
-        while (i >= 0 && A.charAt(i) == A.charAt(j)) {
-            i--;
-            j++;
-        }
-
-        // flag to check if only copying left half to right will not work
-        boolean leftSmaller = (i < 0) || (A.charAt(i) < A.charAt(j));
-
-        StringBuilder builder = new StringBuilder(A);
-        // copy left half to right half
-        while (i >= 0) {
-            builder.setCharAt(j, A.charAt(i));
-            i--;
-            j++;
-        }
-
-        // rest of the cases
-        if (!leftSmaller)
-            return builder.toString();
-
-        // Case 2: Input string is palindrome
-        // Case 3: ith digit is less than jth digit hence only copying won't work
-        // In both cases: add 1 to middle character and keep adding the carry on left
-        // and copying digits to the right
-        int carry = 1;
-
-        // if length is odd, add carry to the middle digit
-        if (n % 2 == 1) {
-            // add carry to digit
-            int num = A.charAt(mid) - '0' + carry;
-            char c = (char) ('0' + num % 10);
-            carry = num / 10;
-            // update mid character
-            builder.setCharAt(mid, c);
-        }
-
-        // start from mid two elements (if even) or the two elements surrounding mid element (if odd)
-        i = mid - 1;
-        j = (n % 2 == 0) ? mid : mid + 1;
-
-        // loop till carry is found or reached left end
-        while (i >= 0 && carry > 0) {
-            // add carry to digit
-            int num = A.charAt(i) - '0' + carry;
-            char c = (char) ('0' + num % 10);
-            carry = num / 10;
-
-            // update characters at positions i and its mirror j
-            builder.setCharAt(i--, c);
-            builder.setCharAt(j++, c);
-        }
-
-        return builder.toString();
-    }
-
-    // util to check if string is of the form "9999...9"
-    private static boolean allNines(String A) {
-        for (char c : A.toCharArray()) {
-            if (c != '9')
-                return false;
-        }
-
-        return true;
-    }
-
-    // https://www.interviewbit.com/problems/distribute-in-circle/
-    static int distributeInCircle(int A, int B, int C) {
-        // A: item pos in queue
-        // C: position in circle starting from 1
-        // B: size of circle
-        return (A + C - 1) % B;
-    }
-
-    // https://www.interviewbit.com/problems/total-moves-for-bishop/
-    static int movesForBishop(int A, int B) {
-        // calculate moves possible in all 4 directions
-        int topLeft = Math.min(A, B) - 1;
-        int topRight = Math.min(A, 9 - B) - 1;
-        int bottomLeft = 8 - Math.max(A, 9 - B);
-        int bottomRight = 8 - Math.max(A, B);
-
-        return topLeft + topRight + bottomLeft + bottomRight;
-    }
+    //TODO: https://www.interviewbit.com/problems/city-tour/
 
     // Jump to LEVEL-3 code
     // https://www.interviewbit.com/problems/prettyprint/
-    static int[][] prettyPrint(int n) {
-        int len = 2 * n - 1;
+    static int[][] prettyPrint(int A) {
+        int len = 2 * A - 1;
         int[][] res = new int[len][len];
 
         // traverse in fashion similar to spiral matrix problem
         int t = 0, b = len - 1, l = 0, r = len - 1;
-        while (n > 0) {
+        while (A > 0) {
             // move towards right in topmost row
             for (int i = l; i <= r; i++)
-                res[t][i] = n;
+                res[t][i] = A;
             t++;
 
             // move towards bottom in rightmost row
             for (int i = t; i <= b; i++)
-                res[i][r] = n;
+                res[i][r] = A;
             r--;
 
             // move towards left in bottommost row
             for (int i = r; i >= l; i--)
-                res[b][i] = n;
+                res[b][i] = A;
             b--;
 
             // move towards top in leftmost row
             for (int i = b; i >= t; i--)
-                res[i][l] = n;
+                res[i][l] = A;
             l++;
 
             // update the number to be filled
-            n--;
+            A--;
         }
 
         return res;
