@@ -82,11 +82,12 @@ Interview bit problems topic wise
 - [Grid Unique Paths](https://www.interviewbit.com/problems/grid-unique-paths/)
 - [PRETTYPRINT](https://www.interviewbit.com/problems/prettyprint/)
 
-## Binary Search (16)
+## Binary Search (17)
 
+- [Square Root of Integer](https://www.interviewbit.com/problems/square-root-of-integer/)
 - [Count Element Occurence](https://www.interviewbit.com/problems/count-element-occurence/)
 - [Rotated Array](https://www.interviewbit.com/problems/rotated-array/)
-- [Square Root of Integer](https://www.interviewbit.com/problems/square-root-of-integer/)
+- [Search in Bitonic Array!](https://www.interviewbit.com/problems/search-in-bitonic-array/)
 - [Smaller or equal elements](https://www.interviewbit.com/problems/smaller-or-equal-elements/)
 - [WoodCutting Made Easy!](https://www.interviewbit.com/problems/woodcutting-made-easy/)
 - [Matrix Search](https://www.interviewbit.com/problems/matrix-search/)
@@ -99,7 +100,6 @@ Interview bit problems topic wise
 - [Simple Queries](https://www.interviewbit.com/problems/simple-queries/)
 - [Rotated Sorted Array Search](https://www.interviewbit.com/problems/rotated-sorted-array-search/)
 - [Median of Array](https://www.interviewbit.com/problems/median-of-array/)
-- [Search in Bitonic Array!](https://www.interviewbit.com/problems/search-in-bitonic-array/)
 
 ## Strings (27)
 

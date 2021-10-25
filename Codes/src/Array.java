@@ -9,7 +9,7 @@ public class Array {
         int t = 0, l = 0, b = n - 1, r = m - 1, dir = 0, k = 0;
 
         // keep crossing off row(t++ and then b--) and column(l++ and then r--)
-        while (t <= b && l <= r) {
+        while (k != m * n) {
             //noinspection EnhancedSwitchMigration
             switch (dir) {
                 // move left to right top row
@@ -50,16 +50,12 @@ public class Array {
         int n = A.length;
 
         for (int i = 1; i < n; i++) {
-            int j = i - 1;
-            int key = A[i];
-
-            // move elements of arr[0...i-1], that are greater than key,
-            // to one position ahead of their current position
+            int j = i - 1, key = A[i];
+            // move elements of arr[0...i-1] that are greater than key, to one position ahead of their current position
             while (j >= 0 && A[j] > key) {
                 A[j + 1] = A[j];
                 j--;
             }
-
             // insert the element from unsorted list at the hole created
             A[j + 1] = key;
         }
@@ -113,7 +109,6 @@ public class Array {
 
         // pi is partitioning index, arr[pi] is now at right place
         int pi = partition(A, l, r);
-
         // Recursively sort elements before partition and after partition
         quickSort(A, l, pi - 1);
         quickSort(A, pi + 1, r);
@@ -128,7 +123,6 @@ public class Array {
         for (int i = l; i < r; i++) {
             // if current element is smaller than or equal to pivot
             if (A[i] <= pivot) {
-                // swap arr[i] and arr[pi]
                 swap(A, i, pi);
                 pi++;
             }
@@ -153,21 +147,20 @@ public class Array {
         for (int i = 0; i < n; i++) {
             int pos = findMinIndex(A, i, n);
             // bring the minimum position to start
-            if (i != pos)
-                swap(A, i, pos);
+            swap(A, i, pos);
         }
     }
 
     // find index of minimum element in the array
     private static int findMinIndex(int[] A, int start, int end) {
-        int min_pos = start;
+        int minPos = start;
 
         for (int i = start + 1; i < end; i++) {
-            if (A[i] < A[min_pos])
-                min_pos = i;
+            if (A[i] < A[minPos])
+                minPos = i;
         }
 
-        return min_pos;
+        return minPos;
     }
 
     // https://www.interviewbit.com/tutorial/bubble-sort/
@@ -230,7 +223,6 @@ public class Array {
         int[] res = new int[500];
         // 0! = 1! = 1
         res[0] = 1;
-
         // no of digits in output
         int resSize = 1;
 
@@ -285,14 +277,14 @@ public class Array {
     }
 
     // https://www.interviewbit.com/problems/min-steps-in-infinite-grid/
-    static int coverPoints(int[] a, int[] b) {
+    static int coverPoints(int[] A, int[] B) {
         int steps = 0;
         // get minimum steps required from previous point to the next and sum up
-        for (int i = 1; i < a.length; i++) {
+        for (int i = 1; i < A.length; i++) {
             // minimum steps from (x1, y1) to (x2, y2) is moving diagonally
             // and then towards the coordinate which is not reached yet =
             // max of diagonal distance between both coordinates
-            steps += Math.max(Math.abs(a[i] - a[i - 1]), Math.abs(b[i] - b[i - 1]));
+            steps += Math.max(Math.abs(A[i] - A[i - 1]), Math.abs(B[i] - B[i - 1]));
         }
 
         return steps;
@@ -303,29 +295,26 @@ public class Array {
         int n = A.length;
         // initial start position will be min of first unreached position and the last position
         int i = Math.min(B - 1, n - 1), res = 0;
-
         // keep jumping to the end
         while (i < n) {
             // keep moving backwards till a bulb is found
             while (i >= 0 && A[i] == 0)
                 i--;
-
             // if reached before start or an already lit bulb, no solution possible
             if (i < 0 || A[i] == -1)
                 return -1;
-                // else there is bulb not currently turned on
-            else {
-                // turn on current bulb, mark as on and jump to next unreached position
-                A[i] = -1;
-                res++;
-                i += B;
 
-                // if all positions are covered
-                if (i >= n)
-                    return res;
-                // jump to minimum of last position of array or position where next light should be
-                i = Math.min(i + B - 1, n - 1);
-            }
+            // else there is bulb not currently turned on
+            // turn on current bulb, mark as on and jump to next unreached position
+            A[i] = -1;
+            res++;
+            i += B;
+
+            // if all positions are covered
+            if (i >= n)
+                return res;
+            // jump to minimum of last position of array or position where next light should be
+            i = Math.min(i + B - 1, n - 1);
         }
 
         return res;
@@ -335,12 +324,12 @@ public class Array {
     static int maxSumTriplet(int[] A) {
         int n = A.length;
 
-        // calculate max suffix array such that maxSuffix[i] = max(A[i]...A[n - 1])
-        int[] maxSuffix = new int[n];
-        maxSuffix[n - 1] = A[n - 1];
+        // calculate right maximum array such that rightMax[i] = max(A[i]...A[n - 1])
+        int[] rightMax = new int[n];
+        rightMax[n - 1] = A[n - 1];
 
         for (int i = n - 2; i >= 0; i--)
-            maxSuffix[i] = Math.max(maxSuffix[i + 1], A[i]);
+            rightMax[i] = Math.max(rightMax[i + 1], A[i]);
 
         // use a treeSet to keep track of element just smaller than current
         TreeSet<Integer> leftMax = new TreeSet<>();
@@ -350,7 +339,7 @@ public class Array {
         // select A[j] one by one and check for corresponding A[i] and A[k]
         for (int j = 1; j < n - 1; j++) {
             // choose optimum A[k]
-            int ak = maxSuffix[j + 1];
+            int ak = rightMax[j + 1];
             // j < k always so check if A[j] < A[k]
             if (A[j] < ak) {
                 // get A[i] for A[j]
@@ -432,7 +421,6 @@ public class Array {
         for (int i = 0; i < A.length; i++) {
             min1 = Math.min(min1, A[i] - i);
             max1 = Math.max(max1, A[i] - i);
-
             min2 = Math.min(min2, A[i] + i);
             max2 = Math.max(max2, A[i] + i);
         }
@@ -509,13 +497,12 @@ public class Array {
 
                     // calculate base of the triangle
                     int base = bottom[y][i] - top[x][i] + 1;
-
                     // third vertex which forms the height
                     int z = 3 - x - y;
+
                     // check if the third vertex lies on the left of current column
                     if (left[z] != Integer.MAX_VALUE)
                         maxProd = Math.max(maxProd, base * (i - left[z] + 1));
-
                     // check if the third vertex lies on the right of current column
                     if (right[z] != Integer.MIN_VALUE)
                         maxProd = Math.max(maxProd, base * (right[z] - i + 1));
@@ -720,7 +707,6 @@ public class Array {
     // https://www.interviewbit.com/problems/perfect-peak-of-array/
     static int perfectPeak(int[] A) {
         int n = A.length;
-
         // leftMax[i] = max(A[0]...A[i])
         int[] leftMax = new int[n];
         leftMax[0] = A[0];
@@ -729,7 +715,6 @@ public class Array {
 
         // rightMin = min(A[i]...A[n - 1])
         int rightMin = A[n - 1];
-
         // check for all middle positions from end
         for (int i = n - 2; i >= 1; i--) {
             // if A[i] is greater than max of all lefts and less than min of all rights
@@ -1258,6 +1243,8 @@ public class Array {
             // try another i which might have a smaller value in array
             else {
                 i++;
+                // try j with gap higher than current maxGap
+                j = i + maxGap + 1;
             }
         }
 

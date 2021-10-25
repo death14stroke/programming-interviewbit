@@ -4,22 +4,51 @@ import java.util.List;
 import java.util.Stack;
 
 public class BinarySearch {
+    // https://www.interviewbit.com/problems/square-root-of-integer/
+    static int sqrt(int A) {
+        // sqrt(0) = 0, sqrt(1) = 1
+        if (A <= 1)
+            return A;
+
+        int l = 2, r = A;
+        int sqrt = 1;
+
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            long prod = (long) mid * mid;
+
+            // perfect square
+            if (prod == A)
+                return mid;
+            // mid might be floor(sqrt(A)). Keep looking for larger numbers still
+            if (prod < A) {
+                sqrt = mid;
+                l = mid + 1;
+            }
+            // check for smaller numbers
+            else
+                r = mid - 1;
+        }
+
+        return sqrt;
+    }
+
     // https://www.interviewbit.com/problems/count-element-occurence/
     static int findCount(final int[] A, int B) {
-        // find first occurence of B
-        int start = findFirstOccurence(A, B);
+        // find first occurrence of B
+        int start = findFirstOccurrence(A, B);
         // if not found B in list A
         if (start == -1)
             return 0;
 
         // find last occurrence of B
-        int end = findLastOccurence(A, B);
+        int end = findLastOccurrence(A, B);
 
         return end - start + 1;
     }
 
-    // util to find first occurence of x in array
-    private static int findFirstOccurence(int[] A, int x) {
+    // util to find first occurrence of x in array
+    private static int findFirstOccurrence(int[] A, int x) {
         int l = 0, r = A.length - 1, res = -1;
 
         while (l <= r) {
@@ -42,8 +71,8 @@ public class BinarySearch {
         return res;
     }
 
-    // util to find last occurence of x in array
-    private static int findLastOccurence(int[] A, int x) {
+    // util to find last occurrence of x in array
+    private static int findLastOccurrence(int[] A, int x) {
         int l = 0, r = A.length - 1, res = -1;
 
         while (l <= r) {
@@ -67,28 +96,25 @@ public class BinarySearch {
     }
 
     // https://www.interviewbit.com/problems/rotated-array/
-    static int findMin(final List<Integer> a) {
-        // pivot is the element which is greater than both next and prev
-        int n = a.size(), pivotPos = findPivotPos(a, n);
-        return a.get((pivotPos + 1) % n);
-    }
+    static int findMin(final List<Integer> A) {
+        int n = A.size();
+        // if sorted array 0th element is minimum
+        if (A.get(0) <= A.get(n - 1))
+            return A.get(0);
 
-    // util to find pivot element position
-    private static int findPivotPos(List<Integer> a, int n) {
         int l = 0, r = n - 1;
-
         while (l <= r) {
             int mid = l + (r - l) / 2;
             // next and previous in circular array
-            int next = (mid + 1) % n, prev = (mid - 1 + n) % n;
+            int prev = (mid - 1) % n, next = (mid + 1) % n;
 
-            // if mid is the pivot
-            if (a.get(mid) >= a.get(prev) && a.get(mid) >= a.get(next))
-                return mid;
-            // if left half is strictly increasing search in right half
-            if (a.get(0) <= a.get(mid))
+            // mid is the minimum
+            if (A.get(mid) <= A.get(prev) && A.get(mid) <= A.get(next))
+                return A.get(mid);
+            // if left half is sorted search in right half
+            if (A.get(0) <= A.get(mid))
                 l = mid + 1;
-                // else right half is strictly increasing search in left half
+                // else right half is sorted search in left half
             else
                 r = mid - 1;
         }
@@ -96,33 +122,37 @@ public class BinarySearch {
         return -1;
     }
 
-    // https://www.interviewbit.com/problems/square-root-of-integer/
-    static int sqrt(int n) {
-        // sqrt(0) = 0, sqrt(1) = 1
-        if (n <= 1)
-            return n;
-
-        int l = 2, r = n;
-        int sqrt = 1;
+    // https://www.interviewbit.com/problems/search-in-bitonic-array/
+    static int bitonicSearch(int[] A, int B) {
+        int n = A.length;
+        int l = 0, r = n - 1;
 
         while (l <= r) {
             int mid = l + (r - l) / 2;
-            long prod = (long) mid * (long) mid;
-
-            // perfect square
-            if (prod == n)
+            // found target
+            if (A[mid] == B)
                 return mid;
-            // mid might be floor(sqrt(n)). Keep looking for larger numbers still
-            if (prod < n) {
-                sqrt = mid;
-                l = mid + 1;
+            // if current left half is sorted increasing
+            if (A[l] <= A[mid]) {
+                // if target falls in range of left half, search in left half
+                if (A[l] <= B && B <= A[mid])
+                    r = mid - 1;
+                    // else search in right half
+                else
+                    l = mid + 1;
             }
-            // check for smaller numbers
-            else
-                r = mid - 1;
+            // else current right half is sorted decreasing
+            else {
+                // if target falls in range of right half, search in right half
+                if (A[mid] >= B && B >= A[n - 1])
+                    l = mid + 1;
+                    // else search in left half
+                else
+                    r = mid - 1;
+            }
         }
 
-        return sqrt;
+        return -1;
     }
 
     // https://www.interviewbit.com/problems/smaller-or-equal-elements/
@@ -197,12 +227,12 @@ public class BinarySearch {
         while (l <= r) {
             int mid = l + (r - l) / 2;
             // mapping to row and col in matrix
-            int row = mid / n, col = mid % n;
+            int x = mid / n, y = mid % n;
 
             // found B
-            if (A[row][col] == B)
+            if (A[x][y] == B)
                 return 1;
-            if (A[row][col] < B)
+            if (A[x][y] < B)
                 l = mid + 1;
             else
                 r = mid - 1;
@@ -214,43 +244,43 @@ public class BinarySearch {
     // https://www.interviewbit.com/problems/search-for-a-range/
     static int[] searchRange(final int[] A, int B) {
         // find first occurrence
-        int firstOccurence = findFirstOccurence(A, B);
-        if (firstOccurence == -1)
+        int firstOccurrence = findFirstOccurrence(A, B);
+        if (firstOccurrence == -1)
             return new int[]{-1, -1};
 
         // find last occurrence
-        int lastOccurrence = findLastOccurence(A, B);
+        int lastOccurrence = findLastOccurrence(A, B);
 
-        return new int[]{firstOccurence, lastOccurrence};
+        return new int[]{firstOccurrence, lastOccurrence};
     }
 
     // https://www.interviewbit.com/problems/sorted-insert-position/
-    static int searchInsert(ArrayList<Integer> a, int b) {
-        int n = a.size();
-        // found or insert b at beginning
-        if (b <= a.get(0))
+    static int searchInsert(ArrayList<Integer> A, int B) {
+        int n = A.size();
+        // found or insert B at beginning
+        if (B <= A.get(0))
             return 0;
-        // insert b at end
-        if (b > a.get(n - 1))
+        // insert B at end
+        if (B > A.get(n - 1))
             return n;
 
-        int l = 0, r = n - 1, ans = -1;
+        int l = 0, r = n - 1, res = -1;
         while (l <= r) {
             int mid = l + (r - l) / 2;
-            // found b
-            if (a.get(mid) == b)
+            // found B
+            if (A.get(mid) == B)
                 return mid;
             // search for smaller pos in left sub-array
-            if (a.get(mid) < b)
+            if (A.get(mid) < B)
                 l = mid + 1;
                 // search for larger pos in right sub-array
             else {
-                ans = mid;
+                res = mid;
                 r = mid - 1;
             }
         }
 
-        return ans;
+        return res;
     }
 
     // https://www.interviewbit.com/problems/matrix-median/
@@ -409,15 +439,16 @@ public class BinarySearch {
         if (x == 0)
             return 0;
 
-        long res = 1;
+        // x1 to avoid overflow
+        long x1 = x, res = 1;
 
         while (n > 0) {
             // pow(x, 2k+1) = pow(x, 2k) * x
             if (n % 2 == 1)
-                res = (int) ((res * (long) x) % d);
+                res = (res * x1) % d;
 
             // pow(x, 2k) = pow (x^2, k)
-            x = (int) (((long) x * (long) x) % d);
+            x1 = (x1 * x1) % d;
             n /= 2;
         }
 
@@ -648,88 +679,6 @@ public class BinarySearch {
                 // left partition for x is too small. Move to right
             else
                 l = partitionX + 1;
-        }
-
-        return -1;
-    }
-
-    // https://www.interviewbit.com/problems/search-in-bitonic-array/
-    static int bitonicSearch(int[] A, int B) {
-        int n = A.length;
-        // find the peak in array
-        int peakPos = findPeak(A);
-
-        // binary search in increasing order left half
-        int leftSearch = binarySearchLeft(A, 0, peakPos, B);
-        if (leftSearch != -1)
-            return leftSearch;
-        // not found in left half. Binary search in decreasing order right half
-        return binarySearchRight(A, peakPos + 1, n - 1, B);
-    }
-
-    // find peak element in bitonic array
-    private static int findPeak(int[] A) {
-        int n = A.length;
-        int l = 0, r = n - 1;
-
-        while (l <= r) {
-            int mid = l + (r - l) / 2;
-            // base case - 1
-            if (mid == 0) {
-                if (A[0] > A[1])
-                    return 0;
-                return 1;
-            }
-            // base case - 2
-            if (mid == n - 1) {
-                if (A[n - 2] > A[n - 1])
-                    return n - 2;
-                return n - 1;
-            }
-
-            int next = mid + 1, prev = mid - 1;
-            // found peak
-            if (A[mid] > A[prev] && A[mid] > A[next])
-                return mid;
-            // left half is increasing
-            if (A[mid] > A[prev])
-                l = mid + 1;
-                // peak point already passed
-            else if (A[mid] < A[prev])
-                r = mid - 1;
-        }
-
-        return -1;
-    }
-
-    // binary search ascending
-    @SuppressWarnings("SameParameterValue")
-    private static int binarySearchLeft(int[] A, int l, int r, int x) {
-        while (l <= r) {
-            int mid = l + (r - l) / 2;
-
-            if (A[mid] == x)
-                return mid;
-            if (A[mid] < x)
-                l = mid + 1;
-            else
-                r = mid - 1;
-        }
-
-        return -1;
-    }
-
-    // binary search descending
-    private static int binarySearchRight(int[] A, int l, int r, int x) {
-        while (l <= r) {
-            int mid = l + (r - l) / 2;
-
-            if (A[mid] == x)
-                return mid;
-            if (A[mid] < x)
-                r = mid - 1;
-            else
-                l = mid + 1;
         }
 
         return -1;
