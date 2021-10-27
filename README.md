@@ -82,7 +82,7 @@ Interview bit problems topic wise
 - [Grid Unique Paths](https://www.interviewbit.com/problems/grid-unique-paths/)
 - [PRETTYPRINT](https://www.interviewbit.com/problems/prettyprint/)
 
-## Binary Search (17)
+## Binary Search (16)
 
 - [Square Root of Integer](https://www.interviewbit.com/problems/square-root-of-integer/)
 - [Count Element Occurence](https://www.interviewbit.com/problems/count-element-occurence/)
@@ -94,12 +94,12 @@ Interview bit problems topic wise
 - [Search for a Range](https://www.interviewbit.com/problems/search-for-a-range/)
 - [Sorted Insert Position](https://www.interviewbit.com/problems/sorted-insert-position/)
 - [Matrix Median](https://www.interviewbit.com/problems/matrix-median/)
-- [Painter's Partition Problem](https://www.interviewbit.com/problems/painters-partition-problem/)
 - [Allocate Books](https://www.interviewbit.com/problems/allocate-books/)
+- [Painter's Partition Problem](https://www.interviewbit.com/problems/painters-partition-problem/)
 - [Implement Power Function](https://www.interviewbit.com/problems/implement-power-function/)
 - [Simple Queries](https://www.interviewbit.com/problems/simple-queries/)
-- [Rotated Sorted Array Search](https://www.interviewbit.com/problems/rotated-sorted-array-search/)
 - [Median of Array](https://www.interviewbit.com/problems/median-of-array/)
+- [Rotated Sorted Array Search](https://www.interviewbit.com/problems/rotated-sorted-array-search/)
 
 ## Strings (27)
 

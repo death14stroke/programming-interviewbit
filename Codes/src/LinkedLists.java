@@ -26,12 +26,10 @@ class LinkedLists {
     // util to get length of linked list
     private static int length(ListNode head) {
         int len = 0;
-        ListNode curr = head;
-
         // keep traversing and update length
-        while (curr != null) {
+        while (head != null) {
             len++;
-            curr = curr.next;
+            head = head.next;
         }
 
         return len;
@@ -727,13 +725,16 @@ class LinkedLists {
             System.out.println("Empty list");
             return;
         }
+
         ListNode curr = head;
+
         while (curr != null) {
             System.out.print(curr.val);
             if (curr.next != null)
                 System.out.print(" -> ");
             curr = curr.next;
         }
+
         System.out.println();
     }
 
@@ -743,7 +744,6 @@ class LinkedLists {
 
         ListNode(int val) {
             this.val = val;
-            next = null;
         }
     }
 }
