@@ -1,3 +1,5 @@
+import java.util.List;
+
 class LinkedLists {
     // https://www.interviewbit.com/problems/intersection-of-linked-lists/
     static ListNode getIntersectionNode(ListNode head1, ListNode head2) {
@@ -61,7 +63,7 @@ class LinkedLists {
 
         // dummy nodes to avoid null pointers
         ListNode dummy0 = new ListNode(-1), dummy1 = new ListNode(-1);
-        // pointers to two sublists one for each zeroes and ones
+        // pointers to two sublist one for each, zeroes and ones
         ListNode zero = dummy0, one = dummy1, curr = head;
 
         // traverse the list
@@ -89,23 +91,23 @@ class LinkedLists {
     }
 
     // https://www.interviewbit.com/problems/partition-list/
-    static ListNode partition(ListNode head, int x) {
+    static ListNode partition(ListNode head, int B) {
         // if 0 or 1 nodes in the list
         if (head == null || head.next == null)
             return head;
 
-        // dummy head nodes for two lists: one with less than x and other with the rest
+        // dummy head nodes for two lists: one with less than B and other with the rest
         ListNode smallerDummy = new ListNode(-1), greaterDummy = new ListNode(-1);
         // head nodes for both lists
         ListNode smallerHead = smallerDummy, greaterHead = greaterDummy, curr = head;
 
         while (curr != null) {
-            // append at the end of smaller than x list
-            if (curr.val < x) {
+            // append at the end of smaller than B list
+            if (curr.val < B) {
                 smallerHead.next = curr;
                 smallerHead = smallerHead.next;
             }
-            // append at the end of greater than or equal to x
+            // append at the end of greater than or equal to B
             else {
                 greaterHead.next = curr;
                 greaterHead = greaterHead.next;
@@ -116,7 +118,7 @@ class LinkedLists {
 
         // join the two list
         smallerHead.next = greaterDummy.next;
-        // make sure the greater than or equal to x list has an end
+        // make sure the greater than or equal to B list has an end
         greaterHead.next = null;
 
         return smallerDummy.next;
@@ -137,7 +139,7 @@ class LinkedLists {
         while (curr != null) {
             ListNode j = dummy.next, tempPrev = dummy;
             // look for position to insert current node in the previous half of the list which is sorted
-            while (j != null && j.val < curr.val) {
+            while (j != curr && j.val < curr.val) {
                 tempPrev = j;
                 j = j.next;
             }
@@ -173,7 +175,7 @@ class LinkedLists {
             return head;
 
         ListNode slow = head, fast = head.next;
-        // find the mid pointer (slow)
+        // find the mid-pointer (slow)
         while (fast != null && fast.next != null) {
             slow = slow.next;
             fast = fast.next.next;
@@ -190,29 +192,28 @@ class LinkedLists {
     // https://www.interviewbit.com/problems/merge-two-sorted-lists/
     static ListNode mergeSortedLinkedLists(ListNode head1, ListNode head2) {
         // create new empty list with dummy node as head
-        ListNode dummy = new ListNode(-1);
-        ListNode tail = dummy;
+        ListNode dummy = new ListNode(-1), curr = dummy;
 
         // while both lists have nodes
         while (head1 != null && head2 != null) {
             // add first or second list node to end
             if (head1.val <= head2.val) {
-                tail.next = head1;
+                curr.next = head1;
                 head1 = head1.next;
             } else {
-                tail.next = head2;
+                curr.next = head2;
                 head2 = head2.next;
             }
 
-            tail = tail.next;
+            curr = curr.next;
         }
 
         // if first list has reached end
         if (head1 == null)
-            tail.next = head2;
+            curr.next = head2;
             // if second list has reached end
         else
-            tail.next = head1;
+            curr.next = head1;
 
         return dummy.next;
     }
@@ -249,21 +250,6 @@ class LinkedLists {
         return 1;
     }
 
-    // https://www.interviewbit.com/problems/remove-duplicates-from-sorted-list/
-    static ListNode removeDuplicates(ListNode head) {
-        ListNode curr = head;
-        while (curr != null) {
-            // skip references to duplicate nodes till a unique node is found
-            while (curr.next != null && curr.val == curr.next.val)
-                curr.next = curr.next.next;
-
-            // update current pointer
-            curr = curr.next;
-        }
-
-        return head;
-    }
-
     // https://www.interviewbit.com/problems/remove-duplicates-from-sorted-list-ii/
     static ListNode removeAllDuplicates(ListNode head) {
         // add a dummy unique node to avoid null
@@ -289,33 +275,50 @@ class LinkedLists {
         return dummy.next;
     }
 
-    // https://www.interviewbit.com/problems/remove-nth-node-from-list-end/
-    static ListNode removeNthFromEnd(ListNode head, int n) {
-        ListNode first = head, second = head;
-        // move second pointer to nth node from start
-        for (int i = 0; i < n; i++) {
-            // if the list size is less than or equal than n remove first node
-            if (second.next == null)
-                return head.next;
+    // https://www.interviewbit.com/problems/remove-duplicates-from-sorted-list/
+    static ListNode removeDuplicates(ListNode head) {
+        ListNode curr = head;
+        while (curr != null) {
+            // skip references to duplicate nodes till a unique node is found
+            while (curr.next != null && curr.val == curr.next.val)
+                curr.next = curr.next.next;
 
-            second = second.next;
+            // update current pointer
+            curr = curr.next;
         }
 
-        // iterate second till end so first reaches at (len - n)th node from beginning i.e. nth node from end
+        return head;
+    }
+
+    // https://www.interviewbit.com/problems/remove-nth-node-from-list-end/
+    static ListNode removeNthFromEnd(ListNode head, int B) {
+        // empty list
+        if (head == null)
+            return null;
+
+        ListNode first = head, second = head;
+        // move second pointer to nth node from start or till end
+        for (int i = 0; i < B && second != null; i++)
+            second = second.next;
+
+        // if the list size is >= B remove first node
+        if (second == null)
+            return head.next;
+
+        // iterate second till end so first reaches at (len - B)th node from beginning i.e. nth node from end
         while (second.next != null) {
             second = second.next;
             first = first.next;
         }
 
         // remove nth node from end
-        if (first.next != null)
-            first.next = first.next.next;
+        first.next = first.next.next;
 
         return head;
     }
 
     // https://www.interviewbit.com/problems/k-reverse-linked-list/
-    static ListNode reverseList(ListNode head, int k) {
+    static ListNode reverseList(ListNode head, int B) {
         // dummy node for previous node to start as non-null
         ListNode dummy = new ListNode(-1);
         dummy.next = head;
@@ -324,18 +327,17 @@ class LinkedLists {
 
         while (curr != null) {
             ListNode temp = curr, oldPrev = prev;
-            // reverse k nodes from curr
-            for (int i = 0; i < k; i++) {
+            // reverse B nodes from curr
+            for (int i = 0; i < B; i++) {
                 ListNode next = curr.next;
                 curr.next = prev;
-
                 prev = curr;
                 curr = next;
             }
 
             // prev of the old head will now point to the new head
             oldPrev.next = prev;
-            // old head will now point to the (k + 1)th node
+            // old head will now point to the (B + 1)th node
             temp.next = curr;
 
             // update previous pointer to old head (new tail)
@@ -352,14 +354,14 @@ class LinkedLists {
             return head;
 
         // create odd position nodes sublist. Insert new nodes at end
-        ListNode oddHead = head, tempOdd = oddHead;
+        ListNode oddHead = head, odd = oddHead;
         head = head.next;
 
         // create even position nodes sublist. Insert new nodes at beginning
-        ListNode evenHead = head;
+        ListNode even = head;
         head = head.next;
         // mark even list end as null
-        evenHead.next = null;
+        even.next = null;
 
         // start from 3rd node
         boolean oddPos = true;
@@ -368,11 +370,11 @@ class LinkedLists {
             ListNode next = head.next;
 
             if (oddPos) {
-                tempOdd.next = head;
-                tempOdd = tempOdd.next;
+                odd.next = head;
+                odd = odd.next;
             } else {
-                head.next = evenHead;
-                evenHead = head;
+                head.next = even;
+                even = head;
             }
 
             oddPos = !oddPos;
@@ -380,25 +382,25 @@ class LinkedLists {
         }
 
         // mark odd list end as null
-        tempOdd.next = null;
-
+        odd.next = null;
         // head of the resultant list
         head = oddHead;
 
         ListNode curr = oddHead;
         // start from 2nd entry in odd list
-        oddHead = oddHead.next;
+        odd = oddHead.next;
         // head already appended hence next node will be even
         oddPos = false;
 
         // merge both lists alternately
-        while (oddHead != null || evenHead != null) {
+        while (odd != null || even != null) {
             if (oddPos) {
-                curr.next = oddHead;
-                oddHead = oddHead.next;
+                curr.next = odd;
+                odd = odd.next;
             } else {
-                curr.next = evenHead;
-                evenHead = evenHead.next;
+                curr.next = even;
+                //noinspection ConstantConditions
+                even = even.next;
             }
 
             oddPos = !oddPos;
@@ -435,7 +437,7 @@ class LinkedLists {
     }
 
     // https://www.interviewbit.com/problems/rotate-list/
-    static ListNode rotateRight(ListNode head, int k) {
+    static ListNode rotateRight(ListNode head, int B) {
         // 0 or 1 nodes in linked-list
         if (head == null || head.next == null)
             return head;
@@ -448,121 +450,118 @@ class LinkedLists {
             len++;
         }
 
-        k = k % len;
+        B = B % len;
         // no need to rotate
-        if (k == 0)
+        if (B == 0)
             return head;
-        // rotate len-k from left
-        k = len - k;
+        // rotate len-B from left
+        B = len - B;
 
         ListNode curr = head;
         // find new tail after rotation
-        for (int i = 0; i < k - 1; i++)
+        for (int i = 0; i < B - 1; i++)
             curr = curr.next;
 
         // link old tail to head
         tail.next = head;
         // head of the rotated list
-        ListNode head2 = curr.next;
+        head = curr.next;
         // mark new tail
         curr.next = null;
 
-        return head2;
+        return head;
     }
 
     // https://www.interviewbit.com/problems/kth-node-from-middle/
-    static int kthFromMiddle(ListNode head, int k) {
+    static int kthFromMiddle(ListNode head, int B) {
+        // another approach is to find middle node and then use algo for kth node from end
         // calculate length of the linked list
         int n = length(head);
-
-        // kth node from middle (n/2 + 1) towards beginning = (n/2) + 1 - k from the beginning
-        k = (n / 2) + 1 - k;
-        // if k is not valid
-        if (k < 1)
+        // kth node from middle (n/2 + 1) towards beginning = (n/2) + 1 - B from the beginning
+        B = (n / 2) + 1 - B;
+        // if B is not valid
+        if (B < 1)
             return -1;
 
-        // move k positions from the beginning
+        // move B - 1 positions from the beginning
         ListNode curr = head;
-        for (int i = 1; i < k; i++)
+        for (int i = 1; i < B; i++)
             curr = curr.next;
 
         return curr.val;
     }
 
     // https://www.interviewbit.com/problems/reverse-alternate-k-nodes/
-    static ListNode reverseAlternateK(ListNode head, int k) {
+    static ListNode reverseAlternateK(ListNode head, int B) {
         // create dummy node to avoid null previous pointer
         ListNode dummy = new ListNode(-1);
         dummy.next = head;
 
         ListNode prev = dummy, curr = head;
-        // process 2k nodes at a time
+        // flag to check if current B nodes should be reversed or not
+        boolean reverse = true;
+
         while (curr != null) {
-            ListNode tempPrev = prev, temp = curr;
-
-            // reverse the first set of k nodes
-            for (int i = 0; i < k; i++) {
-                ListNode next = curr.next;
-                curr.next = prev;
-
-                prev = curr;
-                curr = next;
-            }
-
-            // join the nodes before and after the reversed part
-            tempPrev.next = prev;
-            temp.next = curr;
-
-            // update previous pointer
-            prev = temp;
-
-            // skip next k nodes if present
-            if (curr != null) {
-                for (int i = 0; i < k; i++) {
+            // skip current B nodes
+            if (!reverse) {
+                for (int i = 0; i < B; i++) {
                     prev = curr;
                     curr = curr.next;
                 }
             }
+            // else reverse current B nodes
+            else {
+                ListNode oldPrev = prev, temp = curr;
+                // reverse B nodes
+                for (int i = 0; i < B; i++) {
+                    ListNode next = curr.next;
+                    curr.next = prev;
+                    prev = curr;
+                    curr = next;
+                }
+
+                // join the nodes before and after the reversed part
+                oldPrev.next = prev;
+                temp.next = curr;
+                // update previous pointer
+                prev = temp;
+            }
+
+            // flip the flag for next B nodes
+            reverse = !reverse;
         }
 
         return dummy.next;
     }
 
     // https://www.interviewbit.com/problems/reverse-link-list-ii/
-    static ListNode reverseBetween(ListNode head, int m, int n) {
+    static ListNode reverseBetween(ListNode head, int B, int C) {
         // no need to reverse
-        if (m == n)
+        if (B == C)
             return head;
 
         // create dummy node to avoid null previous pointer
         ListNode dummy = new ListNode(-1);
         dummy.next = head;
-
-        // skip m positions
+        // skip B positions
         ListNode prev = dummy;
-        for (int i = 1; i < m; i++)
+        for (int i = 1; i < B; i++)
             prev = prev.next;
 
-        // node before the head of sublist to reverse
-        ListNode reversePrev = prev;
-
-        prev = prev.next;
-        // head of sublist to reverse
-        ListNode head2 = prev;
-        ListNode curr = head2.next;
-        // reversing the sublist from m to n
-        for (int i = m; i < n; i++) {
+        ListNode curr = prev.next;
+        ListNode oldPrev = prev, temp = curr;
+        // reversing the sublist from B to C
+        for (int i = B; i < C; i++) {
             ListNode next = curr.next;
             curr.next = prev;
-
             prev = curr;
             curr = next;
         }
 
-        // link head of original sublist to the (m+1)th node
-        head2.next = curr;
         // link node before head of original sublist to point to the tail of the original sublist
-        reversePrev.next = prev;
+        oldPrev.next = prev;
+        // link head of original sublist to the (B+1)th node
+        temp.next = curr;
 
         return dummy.next;
     }
@@ -618,18 +617,17 @@ class LinkedLists {
 
         // dummy node to avoid null head in output list
         ListNode dummy = new ListNode(-1);
-        ListNode head = dummy;
+        ListNode curr = dummy;
 
         int carry = 0;
-        // till both numbers have same number of digits
+        // till both numbers have the same number of digits
         while (head1 != null && head2 != null) {
             int sum = head1.val + head2.val + carry;
             carry = sum / 10;
             sum = sum % 10;
 
-            head.next = new ListNode(sum);
-            head = head.next;
-
+            curr.next = new ListNode(sum);
+            curr = curr.next;
             head1 = head1.next;
             head2 = head2.next;
         }
@@ -640,9 +638,8 @@ class LinkedLists {
             carry = sum / 10;
             sum = sum % 10;
 
-            head.next = new ListNode(sum);
-            head = head.next;
-
+            curr.next = new ListNode(sum);
+            curr = curr.next;
             head1 = head1.next;
         }
 
@@ -652,39 +649,32 @@ class LinkedLists {
             carry = sum / 10;
             sum = sum % 10;
 
-            head.next = new ListNode(sum);
-            head = head.next;
-
+            curr.next = new ListNode(sum);
+            curr = curr.next;
             head2 = head2.next;
         }
 
         // if carry is not zero, create new node for carry
         if (carry != 0)
-            head.next = new ListNode(carry);
+            curr.next = new ListNode(carry);
 
         return dummy.next;
     }
 
     // https://www.interviewbit.com/problems/list-cycle/
-    @SuppressWarnings("ConstantConditions")
     static ListNode detectCycle(ListNode head) {
         // 0 or 1 node in the list
         if (head == null || head.next == null)
             return null;
 
         ListNode slow = head, fast = head;
-        // move one step for loop to run
-        slow = slow.next;
-        fast = fast.next.next;
-
         // move both pointers till they meet or fast pointer reaches null
         while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
             // found the meeting point
             if (slow == fast)
                 break;
-
-            slow = slow.next;
-            fast = fast.next.next;
         }
 
         // pointers didn't meet as fast pointer reached null hence no loop
@@ -693,7 +683,6 @@ class LinkedLists {
 
         // reset slow pointer to head and keep fast pointer at the meeting point
         slow = head;
-
         // while both pointers don't meet again
         while (slow != fast) {
             slow = slow.next;
