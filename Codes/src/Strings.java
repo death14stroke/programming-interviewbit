@@ -147,7 +147,7 @@ public class Strings {
     static int amazingSubarrays(String A) {
         int n = A.length(), p = 10003;
         int cnt = 0;
-        // if a vowel is found at pos i, then # substrings = strings each of length 1 to n - i starting at i
+        // if a vowel is found at pos i, then #substrings = strings each of length 1 to n - i starting at i
         // hence cnt = cnt + (n - i)
         for (int i = 0; i < n; i++) {
             if (isVowel(A.charAt(i)))
@@ -514,51 +514,6 @@ public class Strings {
         return 0;
     }
 
-    // https://www.interviewbit.com/problems/atoi/
-    static int atoi(final String A) {
-        int n = A.length();
-        // empty string
-        if (n == 0)
-            return 0;
-
-        int i = 0;
-        // remove leading white spaces
-        while (i < n && A.charAt(i) == ' ')
-            i++;
-
-        boolean neg = false;
-        // check for + or - sign at beginning
-        if (A.charAt(i) == '+') {
-            i++;
-        } else if (A.charAt(i) == '-') {
-            neg = true;
-            i++;
-        }
-
-        long ans = 0;
-
-        for (; i < n; i++) {
-            char c = A.charAt(i);
-            // not a digit
-            if (c < '0' || c > '9')
-                break;
-
-            ans = ans * 10 + (c - '0');
-
-            // overflow
-            if (ans > Integer.MAX_VALUE) {
-                if (neg)
-                    return Integer.MIN_VALUE;
-                return Integer.MAX_VALUE;
-            }
-        }
-
-        // if - sign encountered at beginning
-        if (neg)
-            return (int) -ans;
-        return (int) ans;
-    }
-
     // https://www.interviewbit.com/problems/valid-number/
     static int isNumber(final String A) {
         int n = A.length();
@@ -626,33 +581,91 @@ public class Strings {
         return 1;
     }
 
+    // https://www.interviewbit.com/problems/atoi/
+    static int atoi(final String A) {
+        int n = A.length();
+        int i = 0;
+        // remove leading white spaces
+        while (i < n && A.charAt(i) == ' ')
+            i++;
+        // empty string or all white spaces
+        if (i == n)
+            return 0;
+
+        int sign = 1;
+        // check for + or - sign at beginning
+        if (A.charAt(i) == '+') {
+            i++;
+        } else if (A.charAt(i) == '-') {
+            sign = -1;
+            i++;
+        }
+
+        long res = 0;
+        for (; i < n; i++) {
+            char c = A.charAt(i);
+            // not a digit
+            if (!Character.isDigit(c))
+                break;
+
+            res = res * 10 + (c - '0');
+            // overflow
+            if (res > Integer.MAX_VALUE)
+                return sign == 1 ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+        }
+
+        return (int) (sign * res);
+    }
+
     // https://www.interviewbit.com/problems/valid-ip-addresses/
     static ArrayList<String> restoreIpAddresses(String A) {
         ArrayList<String> res = new ArrayList<>();
-
         int n = A.length();
         // length of valid IPV4 address will be min 4 and max 12
         if (n < 4 || n > 12)
             return res;
 
-        // regex pattern for ipv4
-        Pattern ipv4 = Pattern.compile("((([0-9])|([1-9][0-9])|(1[0-9][0-9])|(2[0-4][0-9])|(25[0-5]))\\.){3}(([0-9])|([1-9][0-9])|(1[0-9][0-9])|(2[0-4][0-9])|(25[0-5]))");
-
+        // regex pattern for matching number from 0 to 255
+        Pattern ipv4 = Pattern.compile("([0-9])|([1-9][0-9])|(1[0-9][0-9])|(2[0-4][0-9])|(25[0-5])");
         // try out all combinations for placing dots
         for (int i = 0; i < n - 3; i++) {
-            for (int j = i + 1; j < n - 2; j++) {
-                for (int k = j + 1; k < n - 1; k++) {
-                    // create ipv4 string and match with regex
-                    String address = A.substring(0, i + 1) + "." + A.substring(i + 1, j + 1) + "." +
-                            A.substring(j + 1, k + 1) + "." + A.substring(k + 1);
+            String a = A.substring(0, i + 1);
+            if (!ipv4.matcher(a).matches())
+                break;
 
-                    if (ipv4.matcher(address).matches())
-                        res.add(address);
+            for (int j = i + 1; j < n - 2; j++) {
+                String b = A.substring(i + 1, j + 1);
+                if (!ipv4.matcher(b).matches())
+                    break;
+
+                for (int k = j + 1; k < n - 1; k++) {
+                    String c = A.substring(j + 1, k + 1);
+                    if (!ipv4.matcher(c).matches())
+                        break;
+
+                    String d = A.substring(k + 1);
+                    // all 4 numbers are valid. Add ipv4 address to result
+                    if (ipv4.matcher(d).matches())
+                        res.add(a + "." + b + "." + c + "." + d);
                 }
             }
         }
 
         return res;
+    }
+
+    // https://www.interviewbit.com/problems/integer-to-roman/
+    static String intToRoman(int A) {
+        // ones = { blank, 1...9 }
+        String[] ones = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
+        // tens = { blank, 10...90 }
+        String[] tens = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
+        // hundreds = { blank, 100...900 }
+        String[] hundreds = {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
+        // thousands = { blank, 1000...3000 }
+        String[] thousands = {"", "M", "MM", "MMM"};
+
+        return thousands[A / 1000] + hundreds[(A % 1000) / 100] + tens[(A % 100) / 10] + ones[A % 10];
     }
 
     // https://www.interviewbit.com/problems/roman-to-integer/
@@ -673,31 +686,15 @@ public class Strings {
 
         for (int i = n - 2; i >= 0; i--) {
             int curr = map.get(A.charAt(i)), next = map.get(A.charAt(i + 1));
-            // if current Roman char is less than its right one, subtract
-            // e.g. IV, IX
+            // if current Roman char is less than its right one, subtract. e.g. IV, IX
             if (curr < next)
                 res -= curr;
-                // else add its value
-                // e.g VI, XX, XV
+                // else add its value. e.g VI, XX, XV
             else
                 res += curr;
         }
 
         return res;
-    }
-
-    // https://www.interviewbit.com/problems/integer-to-roman/
-    static String intToRoman(int A) {
-        // ones = { blank, 1...9 }
-        String[] ones = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
-        // tens = { blank, 10...90 }
-        String[] tens = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
-        // hundreds = { blank, 100...900 }
-        String[] hundreds = {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
-        // thousands = { blank, 1000...3000 }
-        String[] thousands = {"", "M", "MM", "MMM"};
-
-        return thousands[A / 1000] + hundreds[(A % 1000) / 100] + tens[(A % 100) / 10] + ones[A % 10];
     }
 
     // https://www.interviewbit.com/problems/add-binary-strings/
@@ -772,7 +769,6 @@ public class Strings {
     private static String divideBy2(String A) {
         StringBuilder res = new StringBuilder();
         int n = A.length(), rem = 0;
-
         // school division - take down digits one by one and update remainder
         for (int i = 0; i < n; i++) {
             rem = rem * 10 + (A.charAt(i) - '0');
@@ -802,26 +798,21 @@ public class Strings {
     static String multiply(String A, String B) {
         A = removeLeadingZeroes(A);
         B = removeLeadingZeroes(B);
-
+        // multiply with 0 gives 0
         if (A.equals("") || B.equals(""))
             return "0";
 
         int m = A.length(), n = B.length();
         String res = "";
-
-        // school multiplication technique: 123 * 456 =
-        // (123 * 400) + (123 * 50) + (123 * 6)
+        // school multiplication technique: 123 * 456 = (123 * 400) + (123 * 50) + (123 * 6)
         for (int i = n - 1; i >= 0; i--) {
             StringBuilder tmp = new StringBuilder();
             int carry = 0;
-
             // multiply string A with each digit of B
             for (int j = m - 1; j >= 0; j--) {
                 int prod = (B.charAt(i) - '0') * (A.charAt(j) - '0') + carry;
-                int digit = prod % 10;
+                tmp.append(prod % 10);
                 carry = prod / 10;
-
-                tmp.append(digit);
             }
 
             // append carry for multiplication
@@ -829,12 +820,10 @@ public class Strings {
                 tmp.append(carry);
             // reverse the string as it was appended
             tmp.reverse();
-
-            // add the zeroes as per the decimal position of digit in string b
+            // add the zeroes as per the decimal position of digit in string B
             //noinspection StringRepeatCanBeUsed
             for (int k = 0; k < n - 1 - i; k++)
                 tmp.append(0);
-
             // add the current product with previous result
             res = add(res, tmp.toString());
         }
@@ -844,19 +833,15 @@ public class Strings {
 
     // util for adding two strings
     private static String add(String A, String B) {
-        int m = A.length(), n = B.length();
         StringBuilder res = new StringBuilder();
-
-        int i = m - 1, j = n - 1;
-        int carry = 0;
-
+        int m = A.length(), n = B.length();
+        int i = m - 1, j = n - 1, carry = 0;
         // add all the digits in B with corresponding digits in A
         while (i >= 0 && j >= 0) {
             int sum = (A.charAt(i) - '0') + (B.charAt(j) - '0') + carry;
-            int digit = sum % 10;
+            res.append(sum % 10);
             carry = sum / 10;
 
-            res.append(digit);
             i--;
             j--;
         }
@@ -864,173 +849,160 @@ public class Strings {
         // add the remaining digits in A
         while (i >= 0) {
             int sum = (A.charAt(i) - '0') + carry;
-            int digit = sum % 10;
+            res.append(sum % 10);
             carry = sum / 10;
 
-            res.append(digit);
             i--;
         }
 
         // add the remaining digits in B
         while (j >= 0) {
             int sum = (B.charAt(j) - '0') + carry;
-            int digit = sum % 10;
+            res.append(sum % 10);
             carry = sum / 10;
 
-            res.append(digit);
             j--;
         }
 
         // append carry if exists
         if (carry > 0)
             res.append(carry);
-
         // reverse the result to get the number
         return res.reverse().toString();
     }
 
+    // https://www.interviewbit.com/problems/zigzag-string/
+    static String convert(String A, int B) {
+        // if #required rows is 1 return the string itself
+        if (B == 1)
+            return A;
+
+        StringBuilder builder = new StringBuilder();
+        int n = A.length();
+        // first row: always move down
+        for (int i = 0; i < n; i += 2 * (B - 1))
+            builder.append(A.charAt(i));
+
+        // middle rows: move down and then up
+        for (int k = 1; k < B - 1; k++) {
+            // initial direction will be down
+            boolean down = true;
+            int i = k;
+
+            while (i < n) {
+                builder.append(A.charAt(i));
+                // move down or up
+                if (down)
+                    i += 2 * (B - k - 1);
+                else
+                    i += 2 * k;
+                // switch direction
+                down = !down;
+            }
+        }
+
+        // last row: always move up
+        for (int i = B - 1; i < n; i += 2 * (B - 1))
+            builder.append(A.charAt(i));
+
+        return builder.toString();
+    }
+
     // https://www.interviewbit.com/problems/justified-text/
-    static ArrayList<String> fullJustify(ArrayList<String> words, int L) {
+    static ArrayList<String> fullJustify(ArrayList<String> A, int B) {
         ArrayList<String> res = new ArrayList<>();
-        if (words.isEmpty())
+        if (A.isEmpty())
             return res;
 
         // chars = number of non-space characters
         // spaces = minimum number of spaces required
         // start = position of first word of the line in list
-        int chars = words.get(0).length(), spaces = 0, start = 0;
-        for (int i = 1; i < words.size(); i++) {
+        int chars = A.get(0).length(), spaces = 0, start = 0;
+        for (int i = 1; i < A.size(); i++) {
             // skip empty words
-            if (words.get(i).isEmpty())
+            if (A.get(i).isEmpty())
                 continue;
 
             // if current word cannot be added in the same line
-            if (chars + spaces + words.get(i).length() + 1 > L) {
+            if (chars + spaces + A.get(i).length() + 1 > B) {
                 // construct and add current line
-                String line = constructLineWithSpaces(words, start, i, L, chars, spaces);
+                String line = constructLineWithSpaces(A, start, i, B, chars, spaces);
                 res.add(line);
 
                 // create new line
                 start = i;
-                chars = words.get(i).length();
+                chars = A.get(i).length();
                 spaces = 0;
             } else {
                 // add word to current line
-                chars += words.get(i).length();
+                chars += A.get(i).length();
                 spaces++;
             }
         }
 
         // add the remaining words to last line
-        String line = constructLineWithSpaces(words, start, words.size(), L, chars, spaces);
+        String line = constructLineWithSpaces(A, start, A.size(), B, chars, spaces);
         res.add(line);
 
         return res;
     }
 
     // util to construct string with equal spaces in middle as per limit
-    private static String constructLineWithSpaces(ArrayList<String> words, int start, int end, int L,
+    @SuppressWarnings("StringRepeatCanBeUsed")
+    private static String constructLineWithSpaces(ArrayList<String> A, int start, int end, int B,
                                                   int chars, int spaces) {
-        StringBuilder line = new StringBuilder();
         // total white spaces in the string
-        int totalSpace = L - chars;
-
+        int totalSpace = B - chars;
+        StringBuilder line = new StringBuilder();
         // add the first word
-        line.append(words.get(start));
+        line.append(A.get(start));
 
         // if there is only one word on the line
         if (spaces == 0) {
             // add all the white spaces at the end
-            return line.append(" ".repeat(totalSpace))
-                    .toString();
+            for (int k = 0; k < totalSpace; k++)
+                line.append(' ');
+            return line.toString();
         }
 
         // if this is the last string
-        if (end == words.size()) {
+        if (end == A.size()) {
             for (int i = start + 1; i < end; i++) {
                 // add only one white space after each word
-                line.append(" ");
+                line.append(' ');
                 totalSpace--;
                 // append the current word after white space
-                line.append(words.get(i));
+                line.append(A.get(i));
             }
 
             // add all the remaining white spaces at the end
-            return line.append(" ".repeat(totalSpace))
-                    .toString();
+            for (int k = 0; k < totalSpace; k++)
+                line.append(' ');
+            return line.toString();
         }
 
-        // blanks = # white spaces per word
+        // blanks = #white spaces per word
         int blanks = totalSpace / spaces;
         for (int i = start + 1; i < end; i++) {
             // add the equal amount of white spaces
-            line.append(" ".repeat(blanks));
-
+            for (int k = 0; k < blanks; k++)
+                line.append(' ');
             // if division is not even give the extra white space if left
             if (totalSpace % spaces != 0) {
-                line.append(" ");
+                line.append(' ');
                 totalSpace--;
             }
-
             // append the current word after white space
-            line.append(words.get(i));
+            line.append(A.get(i));
         }
 
         return line.toString();
     }
 
-    // https://www.interviewbit.com/problems/zigzag-string/
-    static String convert(String A, int rows) {
-        // if # required rows is 1 return the string itself
-        if (rows == 1)
-            return A;
-
-        int n = A.length();
-        StringBuilder res = new StringBuilder();
-
-        // first row: always move down
-        int pos = 0;
-        while (pos < n) {
-            res.append(A.charAt(pos));
-            pos += 2 * (rows - 1);
-        }
-
-        // middle rows: move down and then up
-        for (int r = 1; r < rows - 1; r++) {
-            // initial direction will be down
-            boolean down = true;
-            pos = r;
-
-            while (pos < n) {
-                res.append(A.charAt(pos));
-
-                // move down and then switch dir to up
-                if (down) {
-                    pos += 2 * (rows - 1 - r);
-                    down = false;
-                }
-                // move up and then switch dir to down
-                else {
-                    pos += 2 * r;
-                    down = true;
-                }
-            }
-        }
-
-        // last row: always move up
-        pos = rows - 1;
-        while (pos < n) {
-            res.append(A.charAt(pos));
-            pos += 2 * (rows - 1);
-        }
-
-        return res.toString();
-    }
-
     // https://www.interviewbit.com/problems/pretty-json/
     static ArrayList<String> prettyJson(String A) {
-        int n = A.length();
         ArrayList<String> res = new ArrayList<>();
+        int n = A.length();
         // empty string or first char is not open bracket (invalid JSON)
         if (n == 0 || (A.charAt(0) != '{' && A.charAt(0) != '['))
             return res;
@@ -1039,59 +1011,43 @@ public class Strings {
         StringBuilder line = new StringBuilder();
 
         for (int i = 0; i < n; i++) {
-            switch (A.charAt(i)) {
-                case '{':
-                case '[':
-                    // if previous line is not blank, add to result
-                    if (line.length() != 0 && !Character.isWhitespace(line.charAt(line.length() - 1)))
-                        res.add(line.toString());
-
-                    // create new line with tabs for current line,
-                    // append bracket and add to result
-                    line = initTabbedLine(tabs);
-                    line.append(A.charAt(i));
+            char c = A.charAt(i);
+            if (c == '{' || c == '[') {
+                // if previous line is not blank, add to result
+                if (line.length() != 0 && !Character.isWhitespace(line.charAt(line.length() - 1)))
                     res.add(line.toString());
-
-                    // increment tabs and create new line with tabs for next line
-                    tabs++;
-                    line = initTabbedLine(tabs);
-                    break;
-
-                case '}':
-                case ']':
-                    // if previous line is not blank, add to result
-                    if (line.length() != 0 && !Character.isWhitespace(line.charAt(line.length() - 1)))
-                        res.add(line.toString());
-
-                    // decrement tab count and create new line with tabs and bracket
-                    tabs--;
-                    line = initTabbedLine(tabs);
-                    line.append(A.charAt(i));
-
-                    // if next char is comma(,) then add it to the same line
-                    // skip to char after comma
-                    if (i + 1 < n && A.charAt(i + 1) == ',') {
-                        line.append(A.charAt(i + 1));
-                        i++;
-                    }
-                    // add line to result
+                // create new line with tabs for current line, append bracket and add to result
+                line = initTabbedLine(tabs);
+                line.append(c);
+                res.add(line.toString());
+                // increment tabs and create new line with tabs for next line
+                tabs++;
+                line = initTabbedLine(tabs);
+            } else if (c == '}' || c == ']') {
+                // if previous line is not blank, add to result
+                if (line.length() != 0 && !Character.isWhitespace(line.charAt(line.length() - 1)))
                     res.add(line.toString());
-
-                    // create new line with tabs for next line
-                    line = initTabbedLine(tabs);
-                    break;
-
-                case ',':
-                    // add comma at the end, add line to result
-                    line.append(A.charAt(i));
-                    res.add(line.toString());
-
-                    // create new line with tabs for next line
-                    line = initTabbedLine(tabs);
-                    break;
-
-                default:
-                    line.append(A.charAt(i));
+                // decrement tab count and create new line with tabs and bracket
+                tabs--;
+                line = initTabbedLine(tabs);
+                line.append(c);
+                // if next char is comma(,) then add it to the same line and skip to char after comma
+                if (i + 1 < n && A.charAt(i + 1) == ',') {
+                    line.append(',');
+                    i++;
+                }
+                // add line to result
+                res.add(line.toString());
+                // create new line with tabs for next line
+                line = initTabbedLine(tabs);
+            } else if (c == ',') {
+                // add comma at the end, add line to result
+                line.append(',');
+                res.add(line.toString());
+                // create new line with tabs for next line
+                line = initTabbedLine(tabs);
+            } else {
+                line.append(c);
             }
         }
 
@@ -1099,8 +1055,11 @@ public class Strings {
     }
 
     // util for creating tabs at the beginning
+    @SuppressWarnings("StringRepeatCanBeUsed")
     private static StringBuilder initTabbedLine(int tabs) {
-        return new StringBuilder()
-                .append("\t".repeat(tabs));
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < tabs; i++)
+            builder.append('\t');
+        return builder;
     }
 }
