@@ -141,9 +141,9 @@ Interview bit problems topic wise
 - [Min XOR value](https://www.interviewbit.com/problems/min-xor-value/)
 - [Count Total Set Bits](https://www.interviewbit.com/problems/count-total-set-bits/)
 - [Palindromic Binary Representation](https://www.interviewbit.com/problems/palindromic-binary-representation/)
+- [XOR-ing the Subarrays!](https://www.interviewbit.com/problems/xor-ing-the-subarrays/)
 - [Single Number](https://www.interviewbit.com/problems/single-number/)
 - [Single Number II](https://www.interviewbit.com/problems/single-number-ii/)
-- [XOR-ing the Subarrays!](https://www.interviewbit.com/problems/xor-ing-the-subarrays/)
 
 ## Two Pointers (19)
 

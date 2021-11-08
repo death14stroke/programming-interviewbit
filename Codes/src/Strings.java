@@ -795,6 +795,7 @@ public class Strings {
     }
 
     // https://www.interviewbit.com/problems/multiply-strings/
+    // another approach is normal multiplication with each digit of B followed by adding prev result and current multiplication strings
     static String multiply(String A, String B) {
         A = removeLeadingZeroes(A);
         B = removeLeadingZeroes(B);
@@ -803,72 +804,30 @@ public class Strings {
             return "0";
 
         int m = A.length(), n = B.length();
-        String res = "";
+        // int array to store and add all digit multiplications
+        int[] res = new int[m + n - 1];
         // school multiplication technique: 123 * 456 = (123 * 400) + (123 * 50) + (123 * 6)
-        for (int i = n - 1; i >= 0; i--) {
-            StringBuilder tmp = new StringBuilder();
-            int carry = 0;
+        for (int j = n - 1; j >= 0; j--) {
+            int b = B.charAt(j) - '0';
             // multiply string A with each digit of B
-            for (int j = m - 1; j >= 0; j--) {
-                int prod = (B.charAt(i) - '0') * (A.charAt(j) - '0') + carry;
-                tmp.append(prod % 10);
-                carry = prod / 10;
-            }
-
-            // append carry for multiplication
-            if (carry != 0)
-                tmp.append(carry);
-            // reverse the string as it was appended
-            tmp.reverse();
-            // add the zeroes as per the decimal position of digit in string B
-            //noinspection StringRepeatCanBeUsed
-            for (int k = 0; k < n - 1 - i; k++)
-                tmp.append(0);
-            // add the current product with previous result
-            res = add(res, tmp.toString());
+            for (int i = m - 1; i >= 0; i--)
+                res[i + j] += b * (A.charAt(i) - '0');
         }
 
-        return res;
-    }
-
-    // util for adding two strings
-    private static String add(String A, String B) {
-        StringBuilder res = new StringBuilder();
-        int m = A.length(), n = B.length();
-        int i = m - 1, j = n - 1, carry = 0;
-        // add all the digits in B with corresponding digits in A
-        while (i >= 0 && j >= 0) {
-            int sum = (A.charAt(i) - '0') + (B.charAt(j) - '0') + carry;
-            res.append(sum % 10);
+        StringBuilder builder = new StringBuilder();
+        int carry = 0;
+        // map int array to string with single digit numbers while updating carry
+        for (int i = res.length - 1; i >= 0; i--) {
+            int sum = res[i] + carry;
+            builder.append(sum % 10);
             carry = sum / 10;
-
-            i--;
-            j--;
         }
 
-        // add the remaining digits in A
-        while (i >= 0) {
-            int sum = (A.charAt(i) - '0') + carry;
-            res.append(sum % 10);
-            carry = sum / 10;
+        // append carry
+        if (carry != 0)
+            builder.append(carry);
 
-            i--;
-        }
-
-        // add the remaining digits in B
-        while (j >= 0) {
-            int sum = (B.charAt(j) - '0') + carry;
-            res.append(sum % 10);
-            carry = sum / 10;
-
-            j--;
-        }
-
-        // append carry if exists
-        if (carry > 0)
-            res.append(carry);
-        // reverse the result to get the number
-        return res.reverse().toString();
+        return builder.reverse().toString();
     }
 
     // https://www.interviewbit.com/problems/zigzag-string/
