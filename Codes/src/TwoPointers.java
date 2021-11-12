@@ -16,76 +16,74 @@ public class TwoPointers {
     }
 
     // https://www.interviewbit.com/problems/3-sum/
-    static int threeSumClosest(int[] A, int target) {
-        int n = A.length;
+    static int threeSumClosest(int[] A, int B) {
         Arrays.sort(A);
 
+        int n = A.length;
         // initialize with sum of first three numbers
-        int closestSum = A[0] + A[1] + A[2];
+        int res = A[0] + A[1] + A[2];
         // take first pointer at start, second at one pos after start and third at the end
         for (int i = 0; i < n - 2; i++) {
             int j = i + 1, k = n - 1;
             // keep adding the three numbers and update the sum based on difference
             while (j < k) {
                 int sum = A[i] + A[j] + A[k];
-                // move second pointer right if sum is lesser
-                if (sum < target)
-                    j++;
-                    // move third pointer left if sum is greater
-                else if (sum > target)
-                    k--;
-                    // found exact sum
-                else
+                // found exact sum
+                if (sum == B)
                     return sum;
+                // move second pointer right if sum is lesser
+                if (sum < B)
+                    j++;
+                    // move third pointer left
+                else
+                    k--;
 
                 // if this sum is closer to target than previous sum
-                if (Math.abs(target - sum) < Math.abs(target - closestSum))
-                    closestSum = sum;
+                if (Math.abs(B - sum) < Math.abs(B - res))
+                    res = sum;
             }
         }
 
-        return closestSum;
+        return res;
     }
 
     // https://www.interviewbit.com/problems/3-sum-zero/
     static ArrayList<ArrayList<Integer>> threeSum(ArrayList<Integer> A) {
         Collections.sort(A);
 
-        ArrayList<ArrayList<Integer>> ans = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
         int n = A.size();
-        // check for all triplets with smallest number as A[i]
+        // check for all triplets with the smallest number as A[i]
         for (int i = 0; i < n - 2; i++) {
             int j = i + 1, k = n - 1;
 
             while (j < k) {
                 // long to avoid overflow
-                long sum = (long) A.get(i) + (long) A.get(j) + (long) A.get(k);
-
-                // check for larger 2nd element
-                if (sum < 0)
-                    j++;
-                    // check for smaller 3rd element
-                else if (sum > 0)
-                    k--;
-                    // found triplet
-                else {
+                long sum = (long) A.get(i) + A.get(j) + A.get(k);
+                // found triplet
+                if (sum == 0) {
                     ArrayList<Integer> triplet = new ArrayList<>();
                     triplet.add(A.get(i));
                     triplet.add(A.get(j));
                     triplet.add(A.get(k));
-                    ans.add(triplet);
+                    res.add(triplet);
 
                     j++;
-                    k--;
-
                     // skip duplicate 2nd element of triplet
-                    while (j < n && A.get(j).equals(A.get(j - 1)))
+                    while (j < k && A.get(j).equals(A.get(j - 1)))
                         j++;
 
+                    k--;
                     // skip duplicate 3rd element of triplet
-                    while (k >= 0 && A.get(k).equals(A.get(k + 1)))
+                    while (k > j && A.get(k).equals(A.get(k + 1)))
                         k--;
                 }
+                // check for larger 2nd element
+                else if (sum < 0)
+                    j++;
+                    // check for smaller 3rd element
+                else
+                    k--;
             }
 
             // skip duplicate 1st element of triplet
@@ -93,16 +91,15 @@ public class TwoPointers {
                 i++;
         }
 
-        return ans;
+        return res;
     }
 
     // https://www.interviewbit.com/problems/counting-triangles/
-    static int nTriang(int[] A) {
+    static int nTriangle(int[] A) {
         int p = 1000000007, n = A.length;
-        long ans = 0;
+        int res = 0;
 
         Arrays.sort(A);
-
         // choose the largest side
         for (int k = 2; k < n; k++) {
             int i = 0, j = k - 1;
@@ -111,28 +108,29 @@ public class TwoPointers {
                 // if sum is less, increase the smallest side
                 if (A[i] + A[j] <= A[k])
                     i++;
-                    // found a triangle, all triangles with smallest side greater than A[i] will also form a triangle
+                    // found a triangle, all triangles with the smallest side greater than A[i] will also form a triangle
                     // decrement the second side and check again
                 else {
-                    ans = (ans + (j - i)) % p;
+                    res = (res + (j - i)) % p;
                     j--;
                 }
             }
         }
 
-        return (int) ans;
+        return res;
     }
 
     // https://www.interviewbit.com/problems/diffk/
-    static int diffK(int[] A, int k) {
+    static int diffK(int[] A, int B) {
         int n = A.length, i = 0, j = 1;
         // check from the first pair
         while (i <= j && j < n) {
+            int diff = A[j] - A[i];
             // found the difference
-            if (A[j] - A[i] == k && i != j)
+            if (diff == B && i != j)
                 return 1;
             // difference is higher, move left pointer
-            if (A[j] - A[i] > k)
+            if (diff > B)
                 i++;
                 // diff is lower or both elements are same, move right pointer
             else
@@ -145,72 +143,126 @@ public class TwoPointers {
     // https://www.interviewbit.com/problems/maximum-ones-after-modification/
     static int maxOnesLength(int[] A, int B) {
         // current window
-        int wL = 0, wR = 0;
-        // best window
+        int start = 0, end = 0;
+        // best window size
         int bestWindow = 0;
         // number of zeroes in current window
         int cnt = 0;
-
         // keep sliding window till end
-        while (wR < A.length) {
+        while (end < A.length) {
             // if window can contain more zeroes, expand on right
             if (cnt <= B) {
-                if (A[wR] == 0)
+                if (A[end] == 0)
                     cnt++;
-                wR++;
+                end++;
+                // if number of zeroes in current window is below limit and
+                // this window is larger than the previous best window
+                if (cnt <= B && bestWindow < end - start)
+                    bestWindow = end - start;
             }
             // shrink window from the left to remove extra zeroes
             else {
-                if (A[wL] == 0)
+                if (A[start] == 0)
                     cnt--;
-                wL++;
+                start++;
             }
-
-            // if number of zeroes in current window is below limit and
-            // this window is larger than the previous best window
-            if (cnt <= B && bestWindow < wR - wL)
-                bestWindow = wR - wL;
         }
 
         return bestWindow;
     }
 
+    // https://www.interviewbit.com/problems/counting-subarrays/
+    static int countingSubArrays(int[] A, int B) {
+        int n = A.length;
+        int start = 0, end = 0;
+        int sum = 0, cnt = 0;
+        // sliding window approach
+        while (end < n) {
+            // if new sum is less than B count new subarrays
+            if (sum + A[end] < B) {
+                sum += A[end];
+                cnt += end - start + 1;
+                end++;
+            }
+            // else keep removing sum from the start
+            else {
+                sum -= A[start];
+                start++;
+            }
+        }
+
+        return cnt;
+    }
+
+    // https://www.interviewbit.com/problems/subarrays-with-distinct-integers/
+    static int subArraysWithDistinct(int[] A, int B) {
+        // # subarrays with exactly B distinct =
+        // # subarrays with at most B distinct - # subarrays with at most (B - 1) distinct
+        return atMostB(A, B) - atMostB(A, B - 1);
+    }
+
+    // util to get sub-array count with at most B distinct elements
+    private static int atMostB(int[] A, int B) {
+        int n = A.length;
+        int start = 0, end = 0, res = 0;
+        Map<Integer, Integer> map = new HashMap<>();
+
+        while (end < n) {
+            // increment frequency of end pointer value
+            map.put(A[end], map.getOrDefault(A[end], 0) + 1);
+            // while there are more than B distinct elements keep removing from the start
+            while (map.size() > B) {
+                int freq = map.get(A[start]) - 1;
+                if (freq == 0)
+                    map.remove(A[start]);
+                else
+                    map.put(A[start], freq);
+
+                start++;
+            }
+
+            // add subarrays formed by current range to answer
+            res += end - start + 1;
+            // move right
+            end++;
+        }
+
+        return res;
+    }
+
     // https://www.interviewbit.com/problems/max-continuous-series-of-1s/
-    static int[] maxone(int[] A, int M) {
+    static int[] maxOne(int[] A, int B) {
         // current window
-        int wL = 0, wR = 0;
+        int start = 0, end = 0;
         // best window
-        int bestL = 0, bestWindow = 0;
+        int bestStart = 0, bestWindow = 0;
         // number of zeroes in current window
         int cnt = 0;
-
         // keep sliding window till end
-        while (wR < A.length) {
+        while (end < A.length) {
             // if window can contain more zeroes, expand on right
-            if (cnt <= M) {
-                if (A[wR] == 0)
+            if (cnt <= B) {
+                if (A[end] == 0)
                     cnt++;
-                wR++;
+                end++;
+                // if number of zeroes in current window is below limit and this window is larger than the previous best window
+                if (cnt <= B && bestWindow < end - start) {
+                    bestWindow = end - start;
+                    bestStart = start;
+                }
             }
             // shrink window from the left to remove extra zeroes
             else {
-                if (A[wL] == 0)
+                if (A[start] == 0)
                     cnt--;
-                wL++;
-            }
-
-            // if number of zeroes in current window is below limit and
-            // this window is larger than the previous best window
-            if (cnt <= M && bestWindow < wR - wL) {
-                bestWindow = wR - wL;
-                bestL = wL;
+                start++;
             }
         }
 
         // result array with all indices of the best window
         int[] res = new int[bestWindow];
         for (int i = 0; i < bestWindow; i++)
-            res[i] = bestL + i;
+            res[i] = bestStart + i;
 
         return res;
     }
@@ -240,8 +292,7 @@ public class TwoPointers {
 
     // https://www.interviewbit.com/problems/container-with-most-water/
     static int maxArea(int[] A) {
-        int n = A.length;
-        int l = 0, r = n - 1;
+        int l = 0, r = A.length - 1;
         int maxArea = 0;
 
         // take the widest container and then keep shrinking it
@@ -261,27 +312,24 @@ public class TwoPointers {
     // https://www.interviewbit.com/problems/merge-two-sorted-lists-ii/
     static void merge(ArrayList<Integer> A, ArrayList<Integer> B) {
         int m = A.size(), n = B.size();
-        int i = m - 1, j = n - 1, pos = m + n - 1;
-
         // increase size of A
         for (int k = 0; k < n; k++)
             A.add(0);
 
+        int i = m - 1, j = n - 1;
         // traverse both list in reverse. Set the greater element at end of list A
         while (i >= 0 && j >= 0) {
             if (A.get(i) > B.get(j))
-                A.set(pos--, A.get(i--));
+                A.set(i + j + 1, A.get(i--));
             else
-                A.set(pos--, B.get(j--));
+                A.set(i + j + 1, B.get(j--));
         }
-
         // add remaining elements of list A
         while (i >= 0)
-            A.set(pos--, A.get(i--));
-
+            A.set(i, A.get(i--));
         // else add remaining elements of list B
         while (j >= 0)
-            A.set(pos--, B.get(j--));
+            A.set(j, B.get(j--));
     }
 
     // https://www.interviewbit.com/problems/intersection-of-sorted-arrays/
@@ -310,46 +358,30 @@ public class TwoPointers {
 
     // https://www.interviewbit.com/problems/remove-duplicates-from-sorted-array/
     static int removeDuplicates(ArrayList<Integer> A) {
-        int n = A.size();
+        int pos = 1;
         // 0th element is always unique. Start from 1st position
-        int i = 1, pos = 1;
-        // loop till end
-        while (i < n) {
-            // skip duplicate elements
-            while (i < n && A.get(i).equals(A.get(pos - 1)))
-                i++;
-            // reached end
-            if (i == n)
-                break;
-            // set current unique element after last unique element
-            A.set(pos++, A.get(i++));
+        for (int i = 1; i < A.size(); i++) {
+            // if not duplicate add at first pointer and update
+            if (!A.get(i).equals(A.get(i - 1)))
+                A.set(pos++, A.get(i));
         }
 
-        // remove the end of the list
-        A.subList(pos, n).clear();
         // return the length of new list
         return pos;
     }
 
     // https://www.interviewbit.com/problems/remove-duplicates-from-sorted-array-ii/
     static int removeDuplicates2(ArrayList<Integer> A) {
-        int n = A.size(), atMost = 2;
-        // if list is smaller than least requirement
-        if (n <= atMost)
+        int n = A.size(), pos = 2;
+        // if list is smaller than the least requirement
+        if (pos >= n)
             return n;
 
-        // start from (atMost)th position
-        int i = atMost, pos = atMost;
-        // loop till end
-        while (i < n) {
-            // skip extra elements
-            while (i < n && A.get(i).equals(A.get(pos - atMost)))
-                i++;
-            // reached end
-            if (i == n)
-                break;
-            // set current element after last allowed element
-            A.set(pos++, A.get(i++));
+        // start from (atMost = 2)th position and loop till end
+        for (int i = 2; i < n; i++) {
+            // if not duplicate add at the end of pos pointer. Compare it with (pos - 2) and not (i - 2) as list has changed
+            if (!A.get(i).equals(A.get(pos - 2)))
+                A.set(pos++, A.get(i));
         }
 
         // remove the end of the list
@@ -359,13 +391,12 @@ public class TwoPointers {
     }
 
     // https://www.interviewbit.com/problems/remove-element-from-array/
-    static int removeElement(ArrayList<Integer> A, int k) {
-        int n = A.size();
+    static int removeElement(ArrayList<Integer> A, int B) {
         int pos = 0;
         // keep replacing values at positions to be removed
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < A.size(); i++) {
             // if not target, add value at pos pointer and update
-            if (A.get(i) != k)
+            if (A.get(i) != B)
                 A.set(pos++, A.get(i));
         }
 
@@ -376,33 +407,18 @@ public class TwoPointers {
     // https://www.interviewbit.com/problems/sort-by-color/
     static void sortByColor(ArrayList<Integer> A) {
         int n = A.size();
-        int c0 = 0, c1, c2 = n - 1;
-
-        // skip all zeroes at the beginning
-        while (c0 < n && A.get(c0) == 0)
-            c0++;
-        c1 = c0;
-
-        // skip all twos at the end
-        while (c2 >= 0 && A.get(c2) == 2)
-            c2--;
-
-        // shrink the unknown range from c1 to c2
-        while (c1 <= c2) {
-            // swap c1 with the known 0-range
-            if (A.get(c1) == 0) {
-                swap(A, c1, c0);
-                c0++;
-                c1++;
-            }
-            // swap c1 with the known 2-range
-            else if (A.get(c1) == 2) {
-                swap(A, c1, c2);
-                c2--;
-            }
-            // shrink unknown range with 1s fixed at the position c1
+        int p0 = 0, p2 = n - 1, i = 0;
+        // keep traversing till 2's are arranged at end
+        while (i <= p2) {
+            // swap i with the known 0-range
+            if (A.get(i) == 0)
+                swap(A, i++, p0++);
+                // swap i with the known 2-range
+            else if (A.get(i) == 2)
+                swap(A, i, p2--);
+                // skip current position
             else
-                c1++;
+                i++;
         }
     }
 
@@ -412,71 +428,8 @@ public class TwoPointers {
         A.set(j, temp);
     }
 
-    // https://www.interviewbit.com/problems/counting-subarrays/
-    static int countingSubArrays(int[] A, int B) {
-        int n = A.length;
-        int start = 0, end = 0;
-        int sum = 0, cnt = 0;
-
-        // sliding window approach
-        while (end < n) {
-            // if new sum is less than B count new subarrays
-            if (sum + A[end] < B) {
-                sum += A[end];
-                cnt += end - start + 1;
-                end++;
-            }
-            // else keep removing sum from the start
-            else {
-                sum -= A[start];
-                start++;
-            }
-        }
-
-        return cnt;
-    }
-
-    // https://www.interviewbit.com/problems/subarrays-with-distinct-integers/
-    static int subArraysWithDistinct(int[] A, int B) {
-        // # subarrays with exactly B distinct =
-        // # subarrays with at most B distinct - # subarrays with at most (B - 1) distinct
-        return atMostB(A, B) - atMostB(A, B - 1);
-    }
-
-    // util to get subarray count with at most B distinct elements
-    private static int atMostB(int[] A, int B) {
-        int n = A.length;
-        int start = 0, end = 0;
-        int cnt = 0;
-
-        Map<Integer, Integer> map = new HashMap<>();
-
-        while (end < n) {
-            // increment frequency of end pointer value
-            map.put(A[end], map.getOrDefault(A[end], 0) + 1);
-
-            // while there are more than B distinct elements keep removing from the start
-            while (map.size() > B) {
-                int freq = map.get(A[start]) - 1;
-                if (freq == 0)
-                    map.remove(A[start]);
-                else
-                    map.put(A[start], freq);
-
-                start++;
-            }
-
-            // add subarrays formed by current range to answer
-            cnt += end - start + 1;
-            // move right
-            end++;
-        }
-
-        return cnt;
-    }
-
     // https://www.interviewbit.com/problems/kth-smallest-element-in-the-array/
-    static int kthSmallest(final int[] A, int k) {
+    static int kthSmallest(final int[] A, int B) {
         // binary search on answer from min to max
         int max = A[0], min = A[0];
         for (int i = 1; i < A.length; i++) {
@@ -496,12 +449,12 @@ public class TwoPointers {
                     le++;
             }
 
-            // if number of elements less than mid is less than k and
-            // less than equal to mid is greater than equal k, mid is the kth smallest
-            if (lt < k && le >= k)
+            // if number of elements less than mid is less than B and less than equal to mid is greater than equal B,
+            // then mid is the Bth smallest
+            if (lt < B && le >= B)
                 return mid;
             // else look for higher value as answer
-            if (le < k)
+            if (le < B)
                 l = mid + 1;
                 // else look for smaller value as answer
             else
@@ -513,33 +466,31 @@ public class TwoPointers {
 
     // https://www.interviewbit.com/problems/numrange/
     static int numRange(int[] A, int B, int C) {
-        // #subarrays with sum in [B, C] =
-        // #subarrays with sum <= C - #subarrays with sum <= B - 1
+        // #subarrays with sum in [B, C] = #subarrays with sum <= C - #subarrays with sum <= B - 1
         return sumAtMost(A, C) - sumAtMost(A, B - 1);
     }
 
-    // util to calculate #subarrays with sum less than equal to k
-    private static int sumAtMost(int[] A, int k) {
-        int n = A.length;
+    // util to calculate #subarrays with sum less than equal to B
+    private static int sumAtMost(int[] A, int B) {
         int start = 0, end = 0;
         int sum = 0, cnt = 0;
-
         // sliding window
-        while (end < n) {
+        while (end < A.length) {
             // if window can be expanded, expand and add the count of new subarrays possible
-            if (sum + A[end] <= k) {
+            if (sum + A[end] <= B) {
                 sum += A[end];
                 cnt += end - start + 1;
                 end++;
             }
             // shrink window from the left
             else {
-                sum -= A[start];
-                start++;
-                // if start moves ahead of end, readjust window end
-                if (start == end + 1) {
-                    sum += A[end];
+                // window is empty
+                if (start == end) {
+                    start++;
                     end++;
+                } else {
+                    sum -= A[start];
+                    start++;
                 }
             }
         }

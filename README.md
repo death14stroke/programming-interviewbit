@@ -153,6 +153,8 @@ Interview bit problems topic wise
 - [Counting Triangles](https://www.interviewbit.com/problems/counting-triangles/)
 - [Diffk](https://www.interviewbit.com/problems/diffk/)
 - [Maximum Ones After Modification](https://www.interviewbit.com/problems/maximum-ones-after-modification/)
+- [Counting Subarrays!](https://www.interviewbit.com/problems/counting-subarrays/)
+- [Subarrays with distinct integers!](https://www.interviewbit.com/problems/subarrays-with-distinct-integers/)
 - [Max Continuous Series of 1s](https://www.interviewbit.com/problems/max-continuous-series-of-1s/)
 - [Array 3 Pointers](https://www.interviewbit.com/problems/array-3-pointers/)
 - [Container With Most Water](https://www.interviewbit.com/problems/container-with-most-water/)
@@ -162,8 +164,6 @@ Interview bit problems topic wise
 - [Remove Duplicates from Sorted Array II](https://www.interviewbit.com/problems/remove-duplicates-from-sorted-array-ii/)
 - [Remove Element from Array](https://www.interviewbit.com/problems/remove-element-from-array/)
 - [Sort by Color](https://www.interviewbit.com/problems/sort-by-color/)
-- [Counting Subarrays!](https://www.interviewbit.com/problems/counting-subarrays/)
-- [Subarrays with distinct integers!](https://www.interviewbit.com/problems/subarrays-with-distinct-integers/)
 - [Kth Smallest Element in the Array](https://www.interviewbit.com/problems/kth-smallest-element-in-the-array/)
 - [NUMRANGE](https://www.interviewbit.com/problems/numrange/)
 
