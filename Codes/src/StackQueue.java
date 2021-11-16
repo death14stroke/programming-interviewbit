@@ -17,7 +17,7 @@ class StackQueue {
     }
 
     // https://www.interviewbit.com/problems/generate-all-parentheses/
-    static int validMixParantheses(String A) {
+    static int validMixParentheses(String A) {
         Stack<Character> s = new Stack<>();
 
         for (char c : A.toCharArray()) {
@@ -39,26 +39,140 @@ class StackQueue {
         return s.empty() ? 1 : 0;
     }
 
+    // https://www.interviewbit.com/problems/balanced-parantheses/
+    static int balancedParentheses(String A) {
+        // maintain count of open parentheses
+        int open = 0;
+
+        for (char c : A.toCharArray()) {
+            // increment count of open parentheses
+            if (c == '(')
+                open++;
+                // if at least one open parentheses is present, balance that with current closing one
+            else if (open > 0)
+                open--;
+                // no open parentheses to balance this closed one, invalid string
+            else
+                return 0;
+        }
+
+        // if all open balanced, valid string else invalid string
+        return open == 0 ? 1 : 0;
+    }
+
+    // https://www.interviewbit.com/problems/simplify-directory-path/
+    static String simplifyDirPath(String A) {
+        // use deque as stack to not reverse the result at the end
+        Deque<String> q = new LinkedList<>();
+        // split by "/"
+        for (String s : A.split("/")) {
+            // do nothing if empty string or "."
+            if (s.isEmpty() || s.equals("."))
+                continue;
+            // move up in the path (pop current folder)
+            if (s.equals(".."))
+                q.pollLast();
+                // add current folder to path
+            else
+                q.addLast(s);
+        }
+
+        // if empty path
+        if (q.isEmpty())
+            return "/";
+        // else construct path by traversing stack from the bottom (deque)
+        StringBuilder res = new StringBuilder();
+        while (!q.isEmpty()) {
+            res.append("/");
+            res.append(q.pollFirst());
+        }
+
+        return res.toString();
+    }
+
+    // https://www.interviewbit.com/problems/redundant-braces/
+    static int redundantBraces(String A) {
+        Stack<Character> s = new Stack<>();
+
+        for (char c : A.toCharArray()) {
+            // if closing braces encountered
+            if (c == ')') {
+                char top = s.pop();
+                int cnt = 0;
+                // keep popping from stack till corresponding opening parentheses is encountered
+                while (top != '(') {
+                    top = s.pop();
+                    cnt++;
+                }
+                // if there was zero or only one operator/operand between
+                if (cnt < 2)
+                    return 1;
+            }
+            // push operators, operands and open parentheses on the stack
+            else {
+                s.push(c);
+            }
+        }
+
+        // no redundant parentheses as all pairs contained at least one operator
+        return 0;
+    }
+
+    // https://www.interviewbit.com/problems/min-stack/
+    static class MinStack {
+        // s: stack for entries, minStack: stack for minimum values
+        private final Stack<Integer> s, minStack;
+
+        public MinStack() {
+            s = new Stack<>();
+            minStack = new Stack<>();
+        }
+
+        public void push(int x) {
+            // push x to the main stack
+            s.push(x);
+            // if minStack is empty or x is a new minimum push to minStack
+            if (minStack.empty() || x <= minStack.peek())
+                minStack.push(x);
+        }
+
+        public void pop() {
+            // if main stack is not empty
+            if (!s.empty()) {
+                int top = s.pop();
+                // if minStack is not empty and top of the main stack is a minimum
+                if (!minStack.empty() && top == minStack.peek())
+                    minStack.pop();
+            }
+        }
+
+        public int top() {
+            return s.empty() ? -1 : s.peek();
+        }
+
+        public int getMin() {
+            return minStack.empty() ? -1 : minStack.peek();
+        }
+    }
+
     // https://www.interviewbit.com/problems/maxspprod/
     static int maxSpecialProduct(int[] A) {
-        long p = 1000000007;
-        long ans = -1;
-
+        int p = 1000000007;
+        long res = 0;
         // get left and right specials with next greater element logic
         int[] leftSpecials = calculateLeftSpecials(A);
         int[] rightSpecials = calculateRightSpecials(A);
         // maximize the product first then take modulo
         for (int i = 0; i < A.length; i++)
-            ans = Math.max(ans, (long) leftSpecials[i] * rightSpecials[i]);
+            res = Math.max(res, (long) leftSpecials[i] * rightSpecials[i]);
 
-        return (int) (ans % p);
+        return (int) (res % p);
     }
 
     // util to calculate right special index j such that j > i && A[j] > A[i]
     private static int[] calculateRightSpecials(int[] A) {
         int n = A.length;
         int[] nextGreater = new int[n];
-
         Stack<Integer> s = new Stack<>();
         s.push(0);
 
@@ -77,19 +191,13 @@ class StackQueue {
     private static int[] calculateLeftSpecials(int[] A) {
         int n = A.length;
         int[] prevGreater = new int[n];
-
         Stack<Integer> s = new Stack<>();
-        s.push(0);
+        s.push(n - 1);
 
-        for (int i = 1; i < n; i++) {
-            // pop elements from stack while stack is not empty and top of stack is smaller than arr[i]
-            // we always have elements in decreasing order in a stack.
-            while (!s.empty() && A[s.peek()] <= A[i])
-                s.pop();
-            // if stack becomes empty, then no element is greater on left side
-            // else top of stack is previous greater
-            if (!s.empty())
-                prevGreater[i] = s.peek();
+        for (int i = n - 2; i >= 0; i--) {
+            // pop elements from stack and mark prev greater as the current element
+            while (!s.empty() && A[s.peek()] < A[i])
+                prevGreater[s.pop()] = i;
 
             s.push(i);
         }
@@ -101,21 +209,16 @@ class StackQueue {
     static int[] prevSmaller(int[] A) {
         int n = A.length;
         int[] G = new int[n];
-        Arrays.fill(G, -1);
-
+        G[n - 1] = -1;
         Stack<Integer> s = new Stack<>();
-        s.push(0);
+        s.push(n - 1);
 
-        for (int i = 1; i < n; i++) {
-            // pop elements from stack while stack is not empty and top of stack is greater than arr[i]
-            // we always have elements in increasing order in a stack.
-            while (!s.empty() && A[s.peek()] >= A[i])
-                s.pop();
-            // if stack becomes empty, then no element is smaller on left side
-            // else top of stack is previous smaller
-            if (!s.empty())
-                G[i] = A[s.peek()];
+        for (int i = n - 2; i >= 0; i--) {
+            // pop elements from stack and mark prev smaller as the current element
+            while (!s.empty() && A[s.peek()] > A[i])
+                G[s.pop()] = A[i];
 
+            G[i] = -1;
             s.push(i);
         }
 
@@ -126,7 +229,6 @@ class StackQueue {
     static int largestRectangleArea(int[] A) {
         int n = A.length;
         int maxArea = 0;
-
         Stack<Integer> s = new Stack<>();
         s.push(0);
 
@@ -169,7 +271,7 @@ class StackQueue {
 
             // keep removing repeating chars from the front of queue until a non-repeating char is found
             while (!q.isEmpty() && map[q.peek() - 'a'] != 1)
-                q.remove();
+                q.poll();
 
             // if no non-repeating char, append '#'
             if (q.isEmpty())
@@ -185,9 +287,8 @@ class StackQueue {
     @SuppressWarnings("ConstantConditions")
     static int[] slidingWindowMax(final int[] A, int B) {
         int n = A.length;
-        // if window is larger than array, take max of the array
-        if (B > n)
-            B = n;
+        // if window is larger than array, shrink to size of the array
+        B = Math.min(B, n);
 
         int[] res = new int[n - B + 1];
         Deque<Integer> q = new LinkedList<>();
@@ -207,11 +308,9 @@ class StackQueue {
             // if first element in deque is out of range, remove
             if (!q.isEmpty() && q.peekFirst() <= i - B)
                 q.pollFirst();
-
             // remove all elements smaller than current from the back end of deque
             while (!q.isEmpty() && A[i] >= A[q.peekLast()])
                 q.pollLast();
-
             // add current element to the back end
             q.addLast(i);
             // max of the current window
@@ -221,115 +320,6 @@ class StackQueue {
         return res;
     }
 
-    // https://www.interviewbit.com/problems/simplify-directory-path/
-    static String simplifyDirPath(String A) {
-        // use deque as stack to not reverse the result at the end
-        Deque<String> q = new LinkedList<>();
-
-        // split by "/"
-        for (String s : A.split("/")) {
-            // do nothing if empty string or "."
-            if (s.isEmpty() || s.equals("."))
-                continue;
-
-            // move up in the path (pop current folder)
-            if (s.equals("..")) {
-                if (!q.isEmpty())
-                    q.removeLast();
-            }
-            // add current folder to path
-            else
-                q.addLast(s);
-        }
-
-        // if empty path
-        if (q.isEmpty())
-            return "/";
-
-        // else construct path by traversing stack from the bottom (deque)
-        StringBuilder res = new StringBuilder();
-        while (!q.isEmpty()) {
-            res.append("/");
-            res.append(q.pollFirst());
-        }
-
-        return res.toString();
-    }
-
-    // https://www.interviewbit.com/problems/redundant-braces/
-    static int redundantBraces(String A) {
-        Stack<Character> s = new Stack<>();
-
-        for (char c : A.toCharArray()) {
-            // if closing braces encountered
-            if (c == ')') {
-                char top = s.pop();
-                int cnt = 0;
-
-                // keep popping from stack till corresponding open parantheses is encountered
-                while (top != '(') {
-                    top = s.pop();
-                    cnt++;
-                }
-
-                // if there was no or only one operator/operand between
-                if (cnt < 2)
-                    return 1;
-            }
-            // push operators, operands and open parantheses on the stack
-            else
-                s.push(c);
-        }
-
-        // no redundant parentheses as all pairs contained at least one operator
-        return 0;
-    }
-
-    // https://www.interviewbit.com/problems/min-stack/
-    static class MinStack {
-        // s: stack for entries, minStack: stack for minimum values
-        private final Stack<Integer> s, minStack;
-
-        public MinStack() {
-            s = new Stack<>();
-            minStack = new Stack<>();
-        }
-
-        public void push(int x) {
-            // push x to the main stack
-            s.push(x);
-
-            // if minStack is empty or x is a new minimum push to minStack
-            if (minStack.empty() || x <= minStack.peek())
-                minStack.push(x);
-        }
-
-        public void pop() {
-            // if main stack is not empty
-            if (!s.empty()) {
-                int top = s.pop();
-
-                // if minStack is not empty and top of the main stack is a minimum
-                if (!minStack.empty() && top == minStack.peek())
-                    minStack.pop();
-            }
-        }
-
-        public int top() {
-            // if main stack is empty
-            if (s.empty())
-                return -1;
-            return s.peek();
-        }
-
-        public int getMin() {
-            // if minStack is empty
-            if (minStack.empty())
-                return -1;
-            return minStack.peek();
-        }
-    }
-
     // https://www.interviewbit.com/problems/evaluate-expression/
     static int evaluate(String[] A) {
         // if no operands and operators
@@ -337,31 +327,35 @@ class StackQueue {
             return 0;
 
         Stack<Integer> s = new Stack<>();
+        int a, b;
+
         for (String str : A) {
-            // if operator, apply operator to top two elements of stack and push new result after popping them
-            if (str.equals("+") || str.equals("-") || str.equals("*") || str.equals("/")) {
-                int b = s.pop(), a = s.pop(), op;
-
-                switch (str) {
-                    case "+":
-                        op = a + b;
-                        break;
-                    case "-":
-                        op = a - b;
-                        break;
-                    case "*":
-                        op = a * b;
-                        break;
-                    default:
-                        op = a / b;
-                        break;
-                }
-
-                s.push(op);
+            switch (str) {
+                // if operator, apply operator to top two elements of stack and push new result after popping them
+                case "+":
+                    b = s.pop();
+                    a = s.pop();
+                    s.push(a + b);
+                    break;
+                case "-":
+                    b = s.pop();
+                    a = s.pop();
+                    s.push(a - b);
+                    break;
+                case "*":
+                    b = s.pop();
+                    a = s.pop();
+                    s.push(a * b);
+                    break;
+                case "/":
+                    b = s.pop();
+                    a = s.pop();
+                    s.push(a / b);
+                    break;
+                // else if operand, push the operand to the stack
+                default:
+                    s.push(Integer.parseInt(str));
             }
-            // else if operand, push the operand to the stack
-            else
-                s.push(Integer.parseInt(str));
         }
 
         // last number left will be the result of the expression
@@ -370,9 +364,9 @@ class StackQueue {
 
     // https://www.interviewbit.com/problems/rain-water-trapped/
     static int rainWaterTrapped(final int[] A) {
+        // another approach - keep adding min(leftMax[i], rightMax[i]) - A[i] for each position except 0 and n - 1
         int n = A.length;
         int res = 0, l = 0, r = n - 1, leftMax = 0, rightMax = 0;
-
         // keep two pointers at extreme ends
         while (l <= r) {
             // if left height is smaller, water will be trapped at this point
@@ -394,25 +388,63 @@ class StackQueue {
         return res;
     }
 
-    // https://www.interviewbit.com/problems/balanced-parantheses/
-    static int balancedParentheses(String A) {
-        // maintain count of open parentheses
-        int open = 0;
-
-        for (char c : A.toCharArray()) {
-            // increment count of open parentheses
-            if (c == '(')
-                open++;
-                // if at least one open parentheses is present, balance that with current closing one
-            else if (open > 0)
-                open--;
-                // no open parentheses to balance this closed one, invalid string
-            else
-                return 0;
+    // https://www.interviewbit.com/problems/hotel-service/
+    static int[] nearestHotel(int[][] A, int[][] B) {
+        int m = A.length, n = A[0].length;
+        Queue<Point> q = new LinkedList<>();
+        int[][] dist = new int[m][n];
+        // perform multi-level BFS from all hotel points
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (A[i][j] == 1) {
+                    dist[i][j] = 0;
+                    q.add(new Point(i, j));
+                } else {
+                    dist[i][j] = Integer.MAX_VALUE;
+                }
+            }
         }
 
-        // if all open balanced, valid string else invalid string
-        return open == 0 ? 1 : 0;
+        while (!q.isEmpty()) {
+            Point top = q.poll();
+            int x = top.x, y = top.y;
+            // update distance of 4 neighbours if they are not visited and add to queue
+            if (x + 1 < m && dist[x + 1][y] == Integer.MAX_VALUE) {
+                dist[x + 1][y] = dist[x][y] + 1;
+                q.add(new Point(x + 1, y));
+            }
+            if (x > 0 && dist[x - 1][y] == Integer.MAX_VALUE) {
+                dist[x - 1][y] = dist[x][y] + 1;
+                q.add(new Point(x - 1, y));
+            }
+            if (y + 1 < n && dist[x][y + 1] == Integer.MAX_VALUE) {
+                dist[x][y + 1] = dist[x][y] + 1;
+                q.add(new Point(x, y + 1));
+            }
+            if (y > 0 && dist[x][y - 1] == Integer.MAX_VALUE) {
+                dist[x][y - 1] = dist[x][y] + 1;
+                q.add(new Point(x, y - 1));
+            }
+        }
+
+        int qLen = B.length;
+        int[] res = new int[qLen];
+        // compute res array from the dist[][] array
+        for (int i = 0; i < qLen; i++) {
+            int x = B[i][0] - 1, y = B[i][1] - 1;
+            res[i] = dist[x][y];
+        }
+
+        return res;
+    }
+
+    static class Point {
+        int x, y;
+
+        Point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
     }
 
     // https://www.interviewbit.com/problems/subtract/
@@ -426,7 +458,6 @@ class StackQueue {
 
         Stack<LinkedLists.ListNode> s = new Stack<>();
         fast = slow.next;
-
         // push the nodes starting from middle on the stack
         while (fast != null) {
             s.push(fast);
@@ -448,8 +479,7 @@ class StackQueue {
     static int[] nextGreater(int[] A) {
         int n = A.length;
         int[] G = new int[n];
-        Arrays.fill(G, -1);
-
+        G[0] = -1;
         Stack<Integer> s = new Stack<>();
         s.push(0);
 
@@ -458,6 +488,7 @@ class StackQueue {
             while (!s.empty() && A[s.peek()] < A[i])
                 G[s.pop()] = A[i];
 
+            G[i] = -1;
             s.push(i);
         }
 

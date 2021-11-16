@@ -191,21 +191,22 @@ Interview bit problems topic wise
 - [Add Two Numbers as Lists](https://www.interviewbit.com/problems/add-two-numbers-as-lists/)
 - [List Cycle](https://www.interviewbit.com/problems/list-cycle/)
 
-## Stacks And Queues
+## Stacks And Queues (16)
 
-- [Generate all Parentheses](https://www.interviewbit.com/problems/generate-all-parentheses/)
 - [Reverse String](https://www.interviewbit.com/problems/reverse-string/)
+- [Generate all Parentheses](https://www.interviewbit.com/problems/generate-all-parentheses/)
+- [Balanced Parantheses!](https://www.interviewbit.com/problems/balanced-parantheses/)
+- [Simplify Directory Path](https://www.interviewbit.com/problems/simplify-directory-path/)
+- [Redundant Braces](https://www.interviewbit.com/problems/redundant-braces/)
+- [Min Stack](https://www.interviewbit.com/problems/min-stack/)
 - [MAXSPPROD](https://www.interviewbit.com/problems/maxspprod/)
 - [Nearest Smaller Element](https://www.interviewbit.com/problems/nearest-smaller-element/)
 - [Largest Rectangle in Histogram](https://www.interviewbit.com/problems/largest-rectangle-in-histogram/)
 - [First non-repeating character in a stream of characters](https://www.interviewbit.com/problems/first-non-repeating-character-in-a-stream-of-characters/)
 - [Sliding Window Maximum](https://www.interviewbit.com/problems/sliding-window-maximum/)
-- [Simplify Directory Path](https://www.interviewbit.com/problems/simplify-directory-path/)
-- [Redundant Braces](https://www.interviewbit.com/problems/redundant-braces/)
-- [Min Stack](https://www.interviewbit.com/problems/min-stack/)
 - [Evaluate Expression](https://www.interviewbit.com/problems/evaluate-expression/)
 - [Rain Water Trapped](https://www.interviewbit.com/problems/rain-water-trapped/)
-- [Balanced Parantheses!](https://www.interviewbit.com/problems/balanced-parantheses/)
+- [Hotel Service](https://www.interviewbit.com/problems/hotel-service/)
 - [SUBTRACT](https://www.interviewbit.com/problems/subtract/)
 - [NEXTGREATER](https://www.interviewbit.com/problems/nextgreater/)
 
