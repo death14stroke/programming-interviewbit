@@ -210,10 +210,13 @@ Interview bit problems topic wise
 - [SUBTRACT](https://www.interviewbit.com/problems/subtract/)
 - [NEXTGREATER](https://www.interviewbit.com/problems/nextgreater/)
 
-## Backtracking
+## Backtracking (17)
 
 - [Reverse Link List Recursion](https://www.interviewbit.com/problems/reverse-link-list-recursion)
 - [Modular Expression](https://www.interviewbit.com/problems/modular-expression/)
+- [Maximal String](https://www.interviewbit.com/problems/maximal-string/)
+- [Kth Permutation Sequence](https://www.interviewbit.com/problems/kth-permutation-sequence/)
+- [Gray Code](https://www.interviewbit.com/problems/gray-code/)
 - [Subset](https://www.interviewbit.com/problems/subset/)
 - [Combination Sum](https://www.interviewbit.com/problems/combination-sum/)
 - [Combination Sum II](https://www.interviewbit.com/problems/combination-sum-ii/)
@@ -223,11 +226,9 @@ Interview bit problems topic wise
 - [Palindrome Partitioning](https://www.interviewbit.com/problems/palindrome-partitioning/)
 - [Generate all Parentheses II](https://www.interviewbit.com/problems/generate-all-parentheses-ii/)
 - [Permutations](https://www.interviewbit.com/problems/permutations/)
-- [Kth Permutation Sequence](https://www.interviewbit.com/problems/kth-permutation-sequence/)
-- [Gray Code](https://www.interviewbit.com/problems/gray-code/)
 - [NQueens](https://www.interviewbit.com/problems/nqueens/)
 - [Sudoku](https://www.interviewbit.com/problems/sudoku/)
-- [Maximal String](https://www.interviewbit.com/problems/maximal-string/)
+- [All Possible Combinations](https://www.interviewbit.com/problems/all-possible-combinations/)
 
 ## Hashing
 
