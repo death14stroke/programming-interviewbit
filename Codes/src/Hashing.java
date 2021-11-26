@@ -2,25 +2,24 @@ import java.util.*;
 
 class Hashing {
     // https://www.interviewbit.com/problems/colorful-number/
-    static int colorfulNumber(int N) {
+    static int colorfulNumber(int A) {
         Set<Integer> set = new HashSet<>();
-        // convert N to string to loop through each digit
-        String s = String.valueOf(N);
-
-        // check for all sub sequences
-        for (int i = 0; i < s.length(); i++) {
-            int prod = 1;
-
-            for (int j = i; j < s.length(); j++) {
-                // update product for s.substring(i, j + 1)
-                prod *= (s.charAt(j) - '0');
-
+        // check for all subsequences starting at each digit position in A
+        while (A > 0) {
+            int temp = A, prod = 1;
+            // update product for subsequence starting with last digit of A
+            while (temp > 0) {
+                prod *= temp % 10;
                 // if this product is already found, not a colorful number
                 if (set.contains(prod))
                     return 0;
-
+                // add new product to set
                 set.add(prod);
+                // move to next digit
+                temp /= 10;
             }
+            // remove last digit for next set of subsequences
+            A /= 10;
         }
 
         // all subsequence products unique, colorful number
@@ -37,7 +36,6 @@ class Hashing {
         int sum = 0, maxLeft = 0, maxSize = 0;
         for (int i = 0; i < A.length; i++) {
             sum += A[i];
-
             // if this sum is already encountered
             if (map.containsKey(sum)) {
                 int left = map.get(sum) + 1, size = i - left + 1;
@@ -52,24 +50,57 @@ class Hashing {
                 map.put(sum, i);
         }
 
-        // return the subarray with sum zero
+        // return the sub-array with sum zero
         return Arrays.copyOfRange(A, maxLeft, maxLeft + maxSize);
+    }
+
+    // https://www.interviewbit.com/problems/longest-subarray-length/
+    static int longestSubarray(int[] A) {
+        // map each sum to its position
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(0, -1);
+        int sum = 0, res = 0;
+
+        for (int i = 0; i < A.length; i++) {
+            // count difference between number of 1s and 0s at this position
+            sum += (A[i] == 0 ? -1 : 1);
+            // found subarray array with one more 1s than 0s. Update result
+            if (map.containsKey(sum - 1))
+                res = Math.max(res, i - map.get(sum - 1));
+            // mark first occurrence of sum to position
+            map.putIfAbsent(sum, i);
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/first-repeating-element/
+    static int firstRepeating(int[] A) {
+        Set<Integer> set = new HashSet<>();
+        int res = -1;
+        // traverse array from the end
+        for (int i = A.length - 1; i >= 0; i--) {
+            // if element has already been seen, update result
+            if (set.contains(A[i]))
+                res = A[i];
+                // else mark current element as seen
+            else
+                set.add(A[i]);
+        }
+
+        return res;
     }
 
     // https://www.interviewbit.com/problems/2-sum/
     static int[] twoSum(final int[] A, int B) {
         // hashmap to store value with its index
-        HashMap<Integer, Integer> map = new HashMap<>();
-        int n = A.length;
-
+        Map<Integer, Integer> map = new HashMap<>();
         // try all values for the second element
-        for (int i = 0; i < n; i++) {
-            // if there is an element before current that satisfies target,
-            // return indices with 1-based indexing
+        for (int i = 0; i < A.length; i++) {
+            // if there is an element before current that satisfies target, return indices with 1-based indexing
             if (map.containsKey(B - A[i]))
                 return new int[]{map.get(B - A[i]) + 1, i + 1};
-
-            // add current element to map only if it is first occurence
+            // add current element to map only if it is first occurrence
             map.putIfAbsent(A[i], i);
         }
 
@@ -78,20 +109,18 @@ class Hashing {
     }
 
     // https://www.interviewbit.com/problems/4-sum/
-    static ArrayList<ArrayList<Integer>> fourSum(ArrayList<Integer> A, int target) {
+    static ArrayList<ArrayList<Integer>> fourSum(ArrayList<Integer> A, int B) {
         int n = A.size();
         // sort the list for getting quadruplets in order
         Collections.sort(A);
 
-        Set<ArrayList<Integer>> res = new LinkedHashSet<>();
-        Map<Integer, List<Pair<Integer, Integer>>> map = new HashMap<>();
-
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        Map<Integer, List<Pair>> map = new HashMap<>();
         // compute sum of each pair and store in hashmap with sum as key and list of pairs as values
         for (int i = 0; i < n - 1; i++) {
             for (int j = i + 1; j < n; j++) {
                 int sum = A.get(i) + A.get(j);
-                map.putIfAbsent(sum, new ArrayList<>());
-                map.get(sum).add(new Pair<>(i, j));
+                map.computeIfAbsent(sum, k -> new LinkedList<>()).add(new Pair(i, j));
             }
         }
 
@@ -99,88 +128,65 @@ class Hashing {
         for (int i = 0; i < n - 1; i++) {
             for (int j = i + 1; j < n; j++) {
                 int sum = A.get(i) + A.get(j);
-
                 // if remaining pair sum is present
-                if (map.containsKey(target - sum)) {
+                if (map.containsKey(B - sum)) {
                     // for each pair with sum equal to remaining
-                    for (Pair<Integer, Integer> pair : map.get(target - sum)) {
-                        // if any element is overlapping
-                        if (i == pair.first || i == pair.second || j == pair.first || j == pair.second)
-                            continue;
-                        // if the other pair is starting between first pair
-                        if (j > pair.first)
-                            continue;
-
-                        // add solution to the set
-                        ArrayList<Integer> quad = new ArrayList<>();
-                        quad.add(A.get(i));
-                        quad.add(A.get(j));
-                        quad.add(A.get(pair.first));
-                        quad.add(A.get(pair.second));
-
-                        res.add(quad);
+                    for (Pair pair : map.get(B - sum)) {
+                        // the two pairs are not overlapping and in order
+                        if (j < pair.first) {
+                            ArrayList<Integer> quad = new ArrayList<>();
+                            quad.add(A.get(i));
+                            quad.add(A.get(j));
+                            quad.add(A.get(pair.first));
+                            quad.add(A.get(pair.second));
+                            // if output is empty or current quadruplet is unique
+                            if (res.isEmpty() || !quad.equals(res.get(res.size() - 1)))
+                                res.add(quad);
+                        }
                     }
                 }
-
                 // skip duplicate second element
                 while (j + 1 < n && A.get(j + 1).equals(A.get(j)))
                     j++;
             }
-
             // skip duplicate first element
             while (i + 1 < n && A.get(i + 1).equals(A.get(i)))
                 i++;
         }
 
-        return new ArrayList<>(res);
+        return res;
     }
 
     // pair class
-    static class Pair<F, S> {
-        F first;
-        S second;
+    static class Pair {
+        int first, second;
 
-        Pair(F first, S second) {
+        Pair(int first, int second) {
             this.first = first;
             this.second = second;
         }
     }
 
     // https://www.interviewbit.com/problems/valid-sudoku/
-    static int validSudoku(final String[] board) {
-        Set<String> set = new HashSet<>();
+    static int validSudoku(final String[] A) {
+        // int mask for each row, column, box
+        int[] rows = new int[9], cols = new int[9], boxes = new int[9];
 
-        // mark each entry's presence in its resp row, column and box & check for duplication
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                char c = board[i].charAt(j);
-                // if empty, ignore
+                char c = A[i].charAt(j);
                 if (c == '.')
                     continue;
 
-                // base string to mark the number in cell
-                String temp = "(" + c + ")";
-
-                // string construct for row i
-                String row = i + temp;
-                // if row i already contains c
-                if (set.contains(row))
+                int val = c - '0', mask = 1 << (val - 1);
+                int box = (i / 3) * 3 + j / 3;
+                // if the bit position in any masks is not 0 means the number is repeated
+                if ((rows[i] & mask) != 0 || (cols[j] & mask) != 0 || (boxes[box] & mask) != 0)
                     return 0;
-                set.add(row);
-
-                // string construct for col j
-                String col = temp + j;
-                // if col j already contains c
-                if (set.contains(col))
-                    return 0;
-                set.add(col);
-
-                // string construct for box starting at (i / 3, j / 3)
-                String box = i / 3 + temp + j / 3;
-                // if the box already contains c
-                if (set.contains(box))
-                    return 0;
-                set.add(box);
+                // set the bit pos in all masks
+                rows[i] |= mask;
+                cols[j] |= mask;
+                boxes[box] |= mask;
             }
         }
 
@@ -189,14 +195,13 @@ class Hashing {
     }
 
     // https://www.interviewbit.com/problems/diffk-ii/
-    static int diffk2(final int[] A, int k) {
+    static int diffk2(final int[] A, int B) {
         Set<Integer> set = new HashSet<>();
 
         for (int val : A) {
-            // if already seen x where x - val = k or val - x = k
-            if (set.contains(val - k) || set.contains(val + k))
+            // if already seen x where x - val = B or val - x = B
+            if (set.contains(val - B) || set.contains(val + B))
                 return 1;
-
             set.add(val);
         }
 
@@ -204,19 +209,32 @@ class Hashing {
         return 0;
     }
 
+    // https://www.interviewbit.com/problems/pairs-with-given-xor/
+    static int pairsWithGivenXOR(int[] A, int B) {
+        Set<Integer> set = new HashSet<>();
+        int cnt = 0;
+        // for each element
+        for (int val : A) {
+            // if val ^ B has been seen before, increment res
+            if (set.contains(val ^ B))
+                cnt++;
+            // add current val to set
+            set.add(val);
+        }
+
+        return cnt;
+    }
+
     // https://www.interviewbit.com/problems/anagrams/
     static ArrayList<ArrayList<Integer>> anagrams(final List<String> A) {
         Map<Integer, ArrayList<Integer>> map = new HashMap<>();
-
         // map hash of each string to its position in the list
         for (int i = 0; i < A.size(); i++) {
             int key = hash(A.get(i));
-            map.putIfAbsent(key, new ArrayList<>());
-            map.get(key).add(i + 1);
+            map.computeIfAbsent(key, k -> new ArrayList<>()).add(i + 1);
         }
 
-        // return all the entries in the map.
-        // Anagrams will have the same hash hence will be in common list
+        // return all the entries in the map. Anagrams will have the same hash hence will be in common list
         return new ArrayList<>(map.values());
     }
 
@@ -239,23 +257,19 @@ class Hashing {
     static int[] equal(int[] A) {
         int n = A.length;
         // map sum to first found pair
-        Map<Integer, Pair<Integer, Integer>> map = new HashMap<>();
-
+        Map<Integer, Pair> map = new HashMap<>();
         int[] res = new int[4];
-        Arrays.fill(res, Integer.MAX_VALUE);
-
+        Arrays.fill(res, n);
         // for each pair
         for (int i = 0; i < n - 1; i++) {
             for (int j = i + 1; j < n; j++) {
                 int sum = A[i] + A[j];
-
                 // if already a pair exists, get the first such pair
                 if (map.containsKey(sum)) {
-                    Pair<Integer, Integer> pair = map.get(sum);
-                    // if overlapping indices, skip
-                    if (i == pair.first || i == pair.second || j == pair.first || j == pair.second)
+                    Pair pair = map.get(sum);
+                    // if not A1 < C1, B1 != D1 or B1 != C1
+                    if (pair.first >= i || pair.second == i || pair.second == j)
                         continue;
-
                     // update if the new solution is lexicographically smaller than the previous one
                     if (pair.first < res[0]) {
                         res[0] = pair.first;
@@ -269,17 +283,19 @@ class Hashing {
                     } else if (pair.first == res[0] && pair.second == res[1] && i < res[2]) {
                         res[2] = i;
                         res[3] = j;
-                    } else if (pair.first == res[0] && pair.second == res[1] && i == res[2] && j < res[3])
+                    } else if (pair.first == res[0] && pair.second == res[1] && i == res[2] && j < res[3]) {
                         res[3] = j;
+                    }
                 }
                 // add current pair to hashmap with its sum as key
-                else
-                    map.put(sum, new Pair<>(i, j));
+                else {
+                    map.put(sum, new Pair(i, j));
+                }
             }
         }
 
         // if no solution found
-        if (res[0] == Integer.MAX_VALUE)
+        if (res[0] == n)
             return new int[0];
         return res;
     }
@@ -298,7 +314,6 @@ class Hashing {
         // hashmap to map old nodes to new nodes
         Map<RandomListNode, RandomListNode> map = new HashMap<>();
         RandomListNode curr = head;
-
         // traverse the list and map each node to a new node
         while (curr != null) {
             map.put(curr, new RandomListNode(curr.label));
@@ -308,9 +323,9 @@ class Hashing {
         curr = head;
         // traverse the list again and map the random and next pointers
         while (curr != null) {
-            RandomListNode node = map.get(curr);
-            node.next = map.get(curr.next);
-            node.random = map.get(curr.random);
+            RandomListNode copy = map.get(curr);
+            copy.next = map.get(curr.next);
+            copy.random = map.get(curr.random);
 
             curr = curr.next;
         }
@@ -318,71 +333,25 @@ class Hashing {
         return map.get(head);
     }
 
-    // https://www.interviewbit.com/problems/longest-substring-without-repeat/
-    static int longestSubstringWithoutRepeat(String A) {
-        // set to check whether char is repeating or not
-        Set<Character> set = new HashSet<>();
-        int start = 0, res = 1;
+    // https://www.interviewbit.com/problems/check-palindrome/
+    static int checkPalindrome(String A) {
+        // count frequency of all chars
+        int[] map = new int[26];
+        for (char c : A.toCharArray())
+            map[c - 'a']++;
 
-        // for each char
-        for (char c : A.toCharArray()) {
-            // keep removing all chars from start till the first occurence of current element
-            while (set.contains(c)) {
-                set.remove(A.charAt(start));
-                start++;
-            }
-
-            // current character is unique. Add to set and update result
-            set.add(c);
-            res = Math.max(res, set.size());
-        }
-
-        return res;
-    }
-
-    // https://www.interviewbit.com/problems/window-string/
-    static String windowString(String S, String T) {
-        int[] map = new int[256], patMap = new int[256];
-        // count frequency of all characters in the pattern string
-        for (char c : T.toCharArray())
-            patMap[c]++;
-
-        int n = S.length();
-        int start = 0, end = 0, cnt = 0, minStart = 0, minLen = Integer.MAX_VALUE;
-
-        // sliding window two pointers
-        while (end < n) {
-            char c = S.charAt(end);
-            // if present in pattern and frequency in current window not fulfilled yet
-            if (map[c] < patMap[c])
-                cnt++;
-
-            map[c]++;
-            end++;
-
-            // if all chars found, keep shrinking window from left till it remains a valid window
-            while (cnt == T.length()) {
-                // smaller window found
-                if (end - start < minLen) {
-                    minStart = start;
-                    minLen = end - start;
-                }
-
-                // remove first char of window if present in pattern and is extra
-                c = S.charAt(start);
-                if (patMap[c] != 0 && map[c] <= patMap[c])
-                    cnt--;
-
-                // shrink window from left side
-                map[c]--;
-                start++;
+        int oddCount = 0;
+        // a palindrome string can have at most 1 character with odd frequency
+        for (int freq : map) {
+            if (freq % 2 == 1) {
+                oddCount++;
+                // if more than 1 chars have odd frequency, palindrome not possible
+                if (oddCount > 1)
+                    return 0;
             }
         }
 
-        // if no valid window was found
-        if (minLen == Integer.MAX_VALUE)
-            return "";
-        return S.substring(minStart, minStart + minLen);
+        return 1;
     }
 
     // https://www.interviewbit.com/problems/fraction/
@@ -397,45 +366,37 @@ class Hashing {
         boolean neg = (num < 0) ^ (den < 0);
         if (neg)
             res.append('-');
-
         // now perform operations on absolute values
         num = Math.abs(num);
         den = Math.abs(den);
-
         // integer part of the division
-        long q = num / den;
-        res.append(q);
-
+        res.append(num / den);
         // remainder. Use long to avoid negative numbers in modulo
         long rem = num % den;
         // if perfect division
         if (rem == 0)
             return res.toString();
-
         // decimal point
         res.append('.');
+
         // map to keep track of remainders
         Map<Long, Integer> map = new HashMap<>();
-
         // perform division till remainder is not 0
         while (rem != 0) {
-            // if this remainder is already seen, we have entered recurring sequence.
-            // Place parantheses at appropriate positions
+            // if this remainder is already seen, we have entered recurring sequence. Place parentheses at appropriate positions
             if (map.containsKey(rem)) {
                 res.insert(map.get(rem), "(");
                 res.append(')');
                 break;
             }
-            // else mark this remainder as seen with its position
-            else
-                map.put(rem, res.length());
 
+            // else mark this remainder as seen with its position
+            map.put(rem, res.length());
             // multiply remainder by 10 and perform division
             rem *= 10;
             res.append(rem / den);
-
             // update remainder
-            rem = rem % den;
+            rem %= den;
         }
 
         return res.toString();
@@ -448,7 +409,7 @@ class Hashing {
         if (n <= 2)
             return n;
 
-        int result = 0;
+        int res = 0;
         // max number of points with slope equal to current point
         int curMax;
         // number of points repeating with current point
@@ -462,7 +423,6 @@ class Hashing {
             Map<Slope, Integer> map = new HashMap<>();
             // init
             curMax = overlapPoints = verticalPoints = 0;
-
             // for each possible pair
             for (int j = i + 1; j < n; j++) {
                 // overlapping point
@@ -475,7 +435,6 @@ class Hashing {
                 else {
                     int xDiff = X.get(j) - X.get(i);
                     int yDiff = Y.get(j) - Y.get(i);
-
                     // find gcd to store slope in x/y form
                     int g = Maths.gcd(xDiff, yDiff);
                     xDiff /= g;
@@ -491,10 +450,10 @@ class Hashing {
             // max of vertical points and max of definite slope
             curMax = Math.max(curMax, verticalPoints);
             // result max = max of prev points stats and current point max + overlaps for current point
-            result = Math.max(result, curMax + overlapPoints + 1);
+            res = Math.max(res, curMax + overlapPoints + 1);
         }
 
-        return result;
+        return res;
     }
 
     // util class to store Slope in y/x form
@@ -508,8 +467,10 @@ class Hashing {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             Slope slope = (Slope) o;
             return x == slope.x && y == slope.y;
         }
@@ -518,6 +479,74 @@ class Hashing {
         public int hashCode() {
             return Objects.hash(x, y);
         }
+    }
+
+    // https://www.interviewbit.com/problems/an-increment-problem/
+    static int[] incrementProblem(int[] A) {
+        Map<Integer, Integer> map = new HashMap<>();
+        // move ahead in sequence
+        for (int i = 0; i < A.length; i++) {
+            // if first occurrence is present
+            if (map.containsKey(A[i])) {
+                // increment value at first occurrence position
+                int pos = map.get(A[i]);
+                A[pos]++;
+                // if the incremented value is a first occurrence
+                if (!map.containsKey(A[pos]) || pos < map.get(A[pos]))
+                    map.put(A[pos], pos);
+            }
+
+            // mark first occurrence for the element
+            map.put(A[i], i);
+        }
+
+        return A;
+    }
+
+    // https://www.interviewbit.com/problems/subarray-with-given-xor/
+    static int subarrayWithXor(int[] A, int B) {
+        Map<Integer, Integer> map = new HashMap<>();
+        // xor = 0 when no elements taken
+        map.put(0, 1);
+        int xor = 0, res = 0;
+        // calculate running xor from A[0, i]
+        for (int val : A) {
+            xor ^= val;
+            // if there are any subarrays from (0, j) that have xor = currXor ^ B where j < i,
+            // then there will be equal subarrays from (j, i) with xor = B
+            if (map.containsKey(xor ^ B))
+                res += map.get(xor ^ B);
+            // update count of current xor value in map
+            map.put(xor, map.getOrDefault(xor, 0) + 1);
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/two-out-of-three/
+    static ArrayList<Integer> twoOutOfThree(ArrayList<Integer> A, ArrayList<Integer> B, ArrayList<Integer> C) {
+        // create sets from arrays
+        Set<Integer> s1 = new HashSet<>(A), s2 = new HashSet<>(B), s3 = new HashSet<>(C);
+        Map<Integer, Integer> map = new HashMap<>();
+        // update count of each element from all the sets in the map
+        for (int val : s1)
+            map.put(val, 1);
+        for (int val : s2)
+            map.put(val, map.getOrDefault(val, 0) + 1);
+        for (int val : s3)
+            map.put(val, map.getOrDefault(val, 0) + 1);
+
+        ArrayList<Integer> res = new ArrayList<>();
+        // for each entry in map
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            // if appeared in at least two sets, add to result
+            if (entry.getValue() >= 2)
+                res.add(entry.getKey());
+        }
+
+        Collections.sort(res);
+
+        return res;
     }
 
     @SuppressWarnings("unchecked")
@@ -543,12 +572,10 @@ class Hashing {
             HashMap<String, Integer> temp = (HashMap<String, Integer>) map.clone();
             // count: no of words remaining to find
             int j = i, count = wordCnt;
-
             // for all the words of size wordLen starting from i
             while (j < i + totalChars) {
                 String word = A.substring(j, j + wordLen);
                 int freq = temp.getOrDefault(word, 0);
-
                 // if visited all occurrences or no occurrences in list
                 if (freq == 0)
                     break;
@@ -568,119 +595,82 @@ class Hashing {
         return res;
     }
 
-    // https://www.interviewbit.com/problems/pairs-with-given-xor/
-    static int pairsWithGivenXOR(int[] A, int B) {
-        Set<Integer> set = new HashSet<>();
-        int cnt = 0;
-
-        // for each element
-        for (int val : A) {
-            // if val ^ B has been seen before, increment res
-            if (set.contains(val ^ B))
-                cnt++;
-                // else add current val to set
-            else
-                set.add(val);
-        }
-
-        return cnt;
-    }
-
-    // https://www.interviewbit.com/problems/an-increment-problem/
-    static int[] incrementProblem(int[] A) {
-        Map<Integer, Integer> map = new HashMap<>();
-
-        // move ahead in sequence
-        for (int i = 0; i < A.length; i++) {
-            // if first occurence is present
-            if (map.containsKey(A[i])) {
-                // increment value at first occurence position
-                int pos = map.get(A[i]);
-                A[pos]++;
-
-                // if the incremented value is a first occurence
-                if (!map.containsKey(A[pos]) || pos < map.get(A[pos]))
-                    map.put(A[pos], pos);
-            }
-
-            // mark first occurence for the element
-            map.put(A[i], i);
-        }
-
-        return A;
-    }
-
-    // https://www.interviewbit.com/problems/subarray-with-given-xor/
-    @SuppressWarnings("ForLoopReplaceableByForEach")
-    static int subarrayWithXor(int[] A, int B) {
-        int xor = 0, res = 0;
-        Map<Integer, Integer> map = new HashMap<>();
-
-        // calculate running xor from A[0, i]
-        for (int i = 0; i < A.length; i++) {
-            xor ^= A[i];
-
-            int temp = xor ^ B;
-            // if there are any subarrays from (0, j) where j < i, add that count to result
-            if (map.containsKey(temp))
-                res += map.get(temp);
-
-            // if this subarray from A[0, i] has the target xor
-            if (xor == B)
-                res++;
-
-            // update count of current xor value in map
-            map.put(xor, map.getOrDefault(xor, 0) + 1);
-        }
-
-        return res;
-    }
-
-    // https://www.interviewbit.com/problems/two-out-of-three/
-    static ArrayList<Integer> twoOutOfThree(ArrayList<Integer> A, ArrayList<Integer> B, ArrayList<Integer> C) {
-        // create sets from arrays
-        Set<Integer> s1 = new HashSet<>(A), s2 = new HashSet<>(B), s3 = new HashSet<>(C);
-        Map<Integer, Integer> map = new HashMap<>();
-
-        // update count of each element from all the sets in the map
-        for (int val : s1)
-            map.put(val, 1);
-        for (int val : s2)
-            map.put(val, map.getOrDefault(val, 0) + 1);
-        for (int val : s3)
-            map.put(val, map.getOrDefault(val, 0) + 1);
-
-        ArrayList<Integer> res = new ArrayList<>();
-        // for each entry in map
-        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
-            // if appeared in at least two sets, add to result
-            if (entry.getValue() > 1)
-                res.add(entry.getKey());
-        }
-
-        Collections.sort(res);
-
-        return res;
-    }
-
     // https://www.interviewbit.com/problems/subarray-with-b-odd-numbers/
     static int subarrayWithOdd(int[] A, int B) {
         int res = 0, odd = 0;
-        // maintain count of prefix arrays with i odd numbers
+        // maintain count of prefix arrays with i odd numbers excluding current position
         int[] count = new int[A.length + 1];
 
         for (int val : A) {
             // increase count of prefix arrays with i odd numbers
             count[odd]++;
-
             // found one more odd number
             if (val % 2 == 1)
                 odd++;
-
-            // if required count of odd numbers met, there will be count[odd - B] elements
-            // which can be used to form a permutation
+            // if required count of odd numbers met, there will be count[odd - B] elements which can be used to form a permutation
             if (odd >= B)
                 res += count[odd - B];
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/window-string/
+    static String windowString(String A, String B) {
+        int[] map = new int[256], patMap = new int[256];
+        // count frequency of all characters in the pattern string
+        for (char c : B.toCharArray())
+            patMap[c]++;
+
+        int n = A.length();
+        int start = 0, end = 0, cnt = 0, minStart = 0, minLen = Integer.MAX_VALUE;
+        // sliding window two pointers
+        while (end < n) {
+            char c = A.charAt(end);
+            // if present in pattern and frequency in current window not fulfilled yet
+            if (map[c] < patMap[c])
+                cnt++;
+            // update frequency in string map
+            map[c]++;
+
+            c = A.charAt(start);
+            // keep shrinking window till there are extra characters at the start
+            while (start < end && map[c] > patMap[c]) {
+                map[c]--;
+                start++;
+                c = A.charAt(start);
+            }
+            // found a valid window which is smaller than current window
+            if (cnt == B.length() && end - start + 1 < minLen) {
+                minLen = end - start + 1;
+                minStart = start;
+            }
+
+            end++;
+        }
+
+        // if no valid window was found
+        if (minLen == Integer.MAX_VALUE)
+            return "";
+        return A.substring(minStart, minStart + minLen);
+    }
+
+    // https://www.interviewbit.com/problems/longest-substring-without-repeat/
+    static int longestSubstringWithoutRepeat(String A) {
+        // set to check whether char is repeating or not
+        Set<Character> set = new HashSet<>();
+        int start = 0, res = 1;
+        // for each char
+        for (char c : A.toCharArray()) {
+            // keep removing all chars from start till the first occurrence of current element
+            while (set.contains(c)) {
+                set.remove(A.charAt(start));
+                start++;
+            }
+
+            // current character is unique. Add to set and update result
+            set.add(c);
+            res = Math.max(res, set.size());
         }
 
         return res;
@@ -706,51 +696,9 @@ class Hashing {
 
         // initialize count with all prefixes having diff = 0
         int res = map.getOrDefault(0, 0);
-        // select any two of same zero or non-zero diff so that the subarray formed from their difference will have diff 0
+        // select any two of same zero or non-zero prefix diff so that the subarray formed from their difference will have diff 0
         for (int val : map.values())
             res += val * (val - 1) / 2;
-
-        return res;
-    }
-
-    // https://www.interviewbit.com/problems/longest-subarray-length/
-    static int longestSubarray(int[] A) {
-        int sum = 0, res = 0;
-        // map each sum to its position
-        Map<Integer, Integer> map = new HashMap<>();
-
-        for (int i = 0; i < A.length; i++) {
-            // count difference between number of 1s and 0s at this position
-            sum += (A[i] == 0 ? -1 : 1);
-
-            // found prefix array with one more 1s than 0s
-            if (sum == 1)
-                res = i + 1;
-                // else check if there is a larger subarray than current max
-            else if (map.containsKey(sum - 1))
-                res = Math.max(res, i - map.get(sum - 1));
-
-            // mark first occurrence of sum to position
-            map.putIfAbsent(sum, i);
-        }
-
-        return res;
-    }
-
-    // https://www.interviewbit.com/problems/first-repeating-element/
-    static int firstRepeating(int[] A) {
-        Set<Integer> set = new HashSet<>();
-        int res = -1;
-
-        // traverse array from the end
-        for (int i = A.length - 1; i >= 0; i--) {
-            // if element has already been seen, update result
-            if (set.contains(A[i]))
-                res = A[i];
-                // else mark current element as seen
-            else
-                set.add(A[i]);
-        }
 
         return res;
     }
@@ -764,7 +712,7 @@ class Hashing {
 
         int res = 1;
         for (int val : A) {
-            // if (val - 1) is present, sequence containing val has already been checked
+            // if (val - 1) is present, sequence will be starting from val - 1 so check from that
             if (set.contains(val - 1))
                 continue;
 

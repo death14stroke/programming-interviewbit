@@ -596,8 +596,7 @@ class Backtracking {
             // if we can place number at current position
             if (isValid(i, j, c)) {
                 board.get(i).set(j, c);
-                int val = c - '0';
-                int mask = (1 << (val - 1));
+                int val = c - '0', mask = (1 << (val - 1));
                 int box = (i / 3) * 3 + j / 3;
                 // set the bit pos in all masks
                 rows[i] |= mask;
@@ -621,8 +620,7 @@ class Backtracking {
 
     // util to check whether character c can be placed at board[row][col] or not
     private static boolean isValid(int row, int col, char c) {
-        int val = c - '0';
-        int mask = (1 << (val - 1));
+        int val = c - '0', mask = (1 << (val - 1));
         int box = (row / 3) * 3 + col / 3;
         // check if the bit position in all masks is 0
         return (rows[row] & mask) == 0 && (cols[col] & mask) == 0 && (boxes[box] & mask) == 0;
