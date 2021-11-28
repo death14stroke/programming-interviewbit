@@ -257,17 +257,18 @@ Interview bit problems topic wise
 - [Subarray with equal occurences!](https://www.interviewbit.com/problems/subarray-with-equal-occurences/)
 - [Longest Consecutive Sequence](https://www.interviewbit.com/problems/longest-consecutive-sequence/)
 
-## Heaps And Maps
+## Heaps And Maps (10)
 
+- [Ways to form Max Heap](https://www.interviewbit.com/problems/ways-to-form-max-heap/)
 - [N max pair combinations](https://www.interviewbit.com/problems/n-max-pair-combinations/)
-- [Magician and Chocolates](https://www.interviewbit.com/problems/magician-and-chocolates/)
-- [Merge K Sorted Lists](https://www.interviewbit.com/problems/merge-k-sorted-lists/)
-- [Distinct Numbers in Window](https://www.interviewbit.com/problems/distinct-numbers-in-window/)
-- [LRU Cache](https://www.interviewbit.com/problems/lru-cache/)
-- [Maximum Sum Combinations](https://www.interviewbit.com/problems/maximum-sum-combinations/)
 - [K Largest Elements](https://www.interviewbit.com/problems/k-largest-elements/)
 - [Profit Maximisation](https://www.interviewbit.com/problems/profit-maximisation/)
 - [Merge K sorted arrays!](https://www.interviewbit.com/problems/merge-k-sorted-arrays/)
+- [Magician and Chocolates](https://www.interviewbit.com/problems/magician-and-chocolates/)
+- [Maximum Sum Combinations](https://www.interviewbit.com/problems/maximum-sum-combinations/)
+- [Merge K Sorted Lists](https://www.interviewbit.com/problems/merge-k-sorted-lists/)
+- [Distinct Numbers in Window](https://www.interviewbit.com/problems/distinct-numbers-in-window/)
+- [LRU Cache](https://www.interviewbit.com/problems/lru-cache/)
 
 ## Tree Data Structure
 
