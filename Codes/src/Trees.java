@@ -28,48 +28,43 @@ class Trees {
 
     // https://www.interviewbit.com/problems/next-greater-number-bst/
     static TreeNode getSuccessor(TreeNode root, int x) {
-        TreeNode successor = null;
+        TreeNode succ = null;
         // find the required node in tree and mark all greater nodes as successor
         while (root.val != x) {
             if (x < root.val) {
-                successor = root;
+                succ = root;
                 root = root.left;
-            } else
+            } else {
                 root = root.right;
+            }
         }
 
         // if right child of the found node is not null, successor will be the leftmost child of this right child
         if (root.right != null) {
-            root = root.right;
-            while (root.left != null)
-                root = root.left;
+            succ = root.right;
+            while (succ.left != null)
+                succ = succ.left;
 
-            return root;
+            return succ;
         }
 
         // else the last found greater element in the path will be successor
-        return successor;
+        return succ;
     }
 
     // https://www.interviewbit.com/problems/valid-bst-from-preorder/
     static int isValidBSTFromPreorder(int[] A) {
         int n = A.length;
         // always a valid BST
-        if (n < 3)
+        if (n <= 2)
             return 1;
 
         // take a 3 node BST [1, 2, 3]. Among all preorder traversals, [2, 3, 1] is not a valid BST.
-        // Hence if A[a] < A[b] and A[b] > A[c] and A[a] > A[c] where a, b, c are
+        // Hence, if A[b] > A[a] and A[a] > A[c] where a, b, c are
         // three consecutive positions in the preorder traversal, it is not a valid BST
-        int a = 0, b = 1, c = 2;
-        while (c < n) {
-            if (A[a] < A[b] && A[b] > A[c] && A[a] > A[c])
+        for (int a = 0, b = 1, c = 2; c < n; a++, b++, c++) {
+            if (A[b] > A[a] && A[a] > A[c])
                 return 0;
-
-            // check next triplet
-            a++;
-            b++;
-            c++;
         }
 
         // none of the triplets satisfy the invalid condition
@@ -81,31 +76,33 @@ class Trees {
 
     static int kthSmallest(TreeNode root, int k) {
         // init global variables to keep track of position and result in inorder traversal
-        pos = ans = 0;
+        pos = k;
+        ans = 0;
         // inorder traversal as it will traverse in ascending order
-        inorder(root, k);
+        inorder(root);
 
         return ans;
     }
 
     // util to perform inorder traversal
-    private static void inorder(TreeNode root, int k) {
+    private static boolean inorder(TreeNode root) {
+        // reached end
         if (root == null)
-            return;
-
-        // visit left child
-        inorder(root.left, k);
+            return false;
+        // kth node found in left subtree
+        if (inorder(root))
+            return true;
 
         // visit current node. Update position
-        pos++;
-        // if found kth node, update result variable and return
-        if (pos == k) {
+        pos--;
+        // found kth node, update result variable and return
+        if (pos == 0) {
             ans = root.val;
-            return;
+            return true;
         }
 
         // visit right child
-        inorder(root.right, k);
+        return inorder(root.right);
     }
 
     // https://www.interviewbit.com/problems/2sum-binary-tree/
@@ -116,7 +113,6 @@ class Trees {
 
         // stacks to keep track of inorder and reverse inorder traversal
         Stack<TreeNode> s1 = new Stack<>(), s2 = new Stack<>();
-
         boolean done1 = false, done2 = false;
         int val1 = 0, val2 = 0;
         TreeNode curr1 = root, curr2 = root;
@@ -131,12 +127,9 @@ class Trees {
                 }
 
                 // get the smaller value from inorder traversal and then shift to right child
-                if (!s1.empty()) {
-                    curr1 = s1.pop();
-                    val1 = curr1.val;
-                    curr1 = curr1.right;
-                }
-
+                curr1 = s1.pop();
+                val1 = curr1.val;
+                curr1 = curr1.right;
                 // mark inorder traversal as done
                 done1 = true;
             }
@@ -150,18 +143,18 @@ class Trees {
                 }
 
                 // get the smaller value from reverse inorder traversal and then shift to left child
-                if (!s2.empty()) {
-                    curr2 = s2.pop();
-                    val2 = curr2.val;
-                    curr2 = curr2.left;
-                }
-
+                curr2 = s2.pop();
+                val2 = curr2.val;
+                curr2 = curr2.left;
                 // mark reverse inorder traversal as done
                 done2 = true;
             }
 
+            // no pairs found
+            if (val1 >= val2)
+                return 0;
             // found pair
-            if (val1 != val2 && val1 + val2 == B)
+            if (val1 + val2 == B)
                 return 1;
                 // sum is less...move ahead in inorder traversal
             else if (val1 + val2 < B)
@@ -169,10 +162,6 @@ class Trees {
                 // sum is more...move ahead in reverse inorder traversal
             else if (val1 + val2 > B)
                 done2 = false;
-
-            // no pairs found
-            if (val1 >= val2)
-                return 0;
         }
     }
 
@@ -223,10 +212,8 @@ class Trees {
     static int[] recoverBST(TreeNode root) {
         // initialize
         first = second = prev = null;
-
         // check by performing inorder traversal
         recoverBSTUtil(root);
-
         // if tree was not correct, return nodes to be corrected
         if (first != null && second != null)
             return new int[]{second.val, first.val};
@@ -255,6 +242,252 @@ class Trees {
         recoverBSTUtil(root.right);
     }
 
+    // https://www.interviewbit.com/problems/xor-between-two-arrays/
+    static int maxXor(int[] A, int[] B) {
+        BinaryTrie trie = new BinaryTrie();
+        // add all elements of A into binary trie
+        for (int val : A)
+            trie.add(val);
+
+        int res = 0;
+        // for each value in B, find max xor
+        for (int val : B)
+            res = Math.max(res, maxXorUtil(trie.root, val));
+
+        return res;
+    }
+
+    // util to find xor with number differing in most positions in trie
+    private static int maxXorUtil(BinaryTrieNode root, int x) {
+        BinaryTrieNode curr = root;
+        // for each bit pos
+        for (int i = 31; i >= 0; i--) {
+            int bit = (x & (1 << i)) == 0 ? 0 : 1;
+            // if opposite bit present
+            if (curr.child[1 - bit] != null)
+                curr = curr.child[1 - bit];
+                // else have to traverse same bit
+            else
+                curr = curr.child[bit];
+        }
+
+        // return max xor value
+        return curr.val ^ x;
+    }
+
+    // binary trie
+    static class BinaryTrie {
+        BinaryTrieNode root;
+
+        BinaryTrie() {
+            root = new BinaryTrieNode();
+        }
+
+        public void add(int x) {
+            BinaryTrieNode curr = root;
+            // add all bit positions from MSB to trie
+            for (int i = 31; i >= 0; i--) {
+                int bit = (x & (1 << i)) == 0 ? 0 : 1;
+
+                if (curr.child[bit] == null)
+                    curr.child[bit] = new BinaryTrieNode();
+                curr = curr.child[bit];
+            }
+
+            curr.val = x;
+        }
+    }
+
+    // binary trie node
+    static class BinaryTrieNode {
+        BinaryTrieNode[] child;
+        int val;
+
+        BinaryTrieNode() {
+            child = new BinaryTrieNode[2];
+        }
+    }
+
+    // https://www.interviewbit.com/problems/hotel-reviews/
+    @SuppressWarnings("unchecked")
+    static int[] hotelReviews(String A, String[] B) {
+        Trie trie = new Trie();
+        // insert each good word into trie
+        for (String word : A.split("_"))
+            trie.add(word);
+
+        int n = B.length;
+        // create array of a pair of index and #good words of review
+        Pair<Integer, Integer>[] pairArr = new Pair[n];
+        for (int i = 0; i < n; i++) {
+            int freq = 0;
+            // check if each word of review is present in trie or not
+            for (String word : B[i].split("_")) {
+                if (trie.contains(word))
+                    freq++;
+            }
+
+            pairArr[i] = new Pair<>(i, freq);
+        }
+
+        // sort the list by number of good words in decreasing order
+        Arrays.sort(pairArr, (a, b) -> b.second - a.second);
+
+        // copy indices to result array
+        int[] res = new int[n];
+        for (int i = 0; i < n; i++)
+            res[i] = pairArr[i].first;
+
+        return res;
+    }
+
+    // trie data structure
+    static class Trie {
+        TrieNode root;
+
+        Trie() {
+            root = new TrieNode();
+        }
+
+        // add a word to trie
+        public void add(String word) {
+            TrieNode curr = root;
+
+            for (char c : word.toCharArray()) {
+                if (curr.child[c - 'a'] == null)
+                    curr.child[c - 'a'] = new TrieNode();
+                curr = curr.child[c - 'a'];
+            }
+
+            curr.isEnd = true;
+        }
+
+        // check if a word is present in trie or not
+        public boolean contains(String word) {
+            TrieNode curr = root;
+
+            for (char c : word.toCharArray()) {
+                if (curr.child[c - 'a'] == null)
+                    return false;
+
+                curr = curr.child[c - 'a'];
+            }
+
+            return curr.isEnd;
+        }
+    }
+
+    // trie node structure
+    static class TrieNode {
+        TrieNode[] child;
+        boolean isEnd;
+
+        TrieNode() {
+            child = new TrieNode[26];
+        }
+    }
+
+    static class Pair<K, V> {
+        K first;
+        V second;
+
+        Pair(K first, V second) {
+            this.first = first;
+            this.second = second;
+        }
+    }
+
+    // https://www.interviewbit.com/problems/shortest-unique-prefix/
+    static String[] shortestUniquePrefix(String[] words) {
+        PrefixTrie trie = new PrefixTrie();
+        // add all words in prefix trie
+        for (String word : words)
+            trie.add(word);
+
+        int n = words.length;
+        String[] res = new String[n];
+        // get the shortest prefix with last char as unique for each word inserted
+        for (int i = 0; i < n; i++)
+            res[i] = trie.getPrefix(words[i]);
+
+        return res;
+    }
+
+    // prefix trie will contain count of each node occurring in all the words inserted
+    static class PrefixTrie {
+        private final PrefixTrieNode root;
+
+        PrefixTrie() {
+            root = new PrefixTrieNode();
+        }
+
+        // add word
+        public void add(String word) {
+            PrefixTrieNode curr = root;
+
+            for (char c : word.toCharArray()) {
+                if (curr.child[c - 'a'] == null)
+                    curr.child[c - 'a'] = new PrefixTrieNode();
+
+                curr = curr.child[c - 'a'];
+                // update count of this node
+                curr.cnt++;
+            }
+        }
+
+        // get prefix string with the last character freq as 1
+        public String getPrefix(String word) {
+            PrefixTrieNode curr = root;
+            // search for word
+            for (int i = 0; i < word.length(); i++) {
+                curr = curr.child[word.charAt(i) - 'a'];
+                // found last unique char
+                if (curr.cnt == 1)
+                    return word.substring(0, i + 1);
+            }
+
+            return "";
+        }
+    }
+
+    // node for Prefix Trie
+    static class PrefixTrieNode {
+        PrefixTrieNode[] child;
+        int cnt;
+
+        PrefixTrieNode() {
+            child = new PrefixTrieNode[26];
+        }
+    }
+
+    // https://www.interviewbit.com/problems/path-to-given-node/
+    static ArrayList<Integer> findPath(TreeNode root, int B) {
+        ArrayList<Integer> res = new ArrayList<>();
+        // traverse all paths till we reach destination
+        findPathUtil(root, B, res);
+
+        return res;
+    }
+
+    // util to try all paths
+    private static boolean findPathUtil(TreeNode root, int B, ArrayList<Integer> res) {
+        // add current node to path
+        res.add(root.val);
+        // reached destination
+        if (root.val == B)
+            return true;
+        // if found target by moving left or right
+        if (root.left != null && findPathUtil(root.left, B, res))
+            return true;
+        if (root.right != null && findPathUtil(root.right, B, res))
+            return true;
+
+        // remove current node from path
+        res.remove(res.size() - 1);
+
+        return false;
+    }
+
     // https://www.interviewbit.com/problems/remove-half-nodes/
     static TreeNode removeHalfNodes(TreeNode root) {
         if (root == null)
@@ -278,35 +511,81 @@ class Trees {
         return root;
     }
 
-    // https://www.interviewbit.com/problems/path-to-given-node/
-    static ArrayList<Integer> findPath(TreeNode root, int B) {
+    // https://www.interviewbit.com/problems/nodes-at-distance-k/
+    static ArrayList<Integer> distanceK(TreeNode root, int B, int C) {
         ArrayList<Integer> res = new ArrayList<>();
-        // traverse all paths till we reach destination
-        findPathUtil(root, B, res);
+        // recursively search for node with value B
+        distanceKUtil(root, B, C, res);
 
         return res;
     }
 
-    // util to try all paths
-    private static boolean findPathUtil(TreeNode root, int B, ArrayList<Integer> res) {
-        // reached end
+    // util to return the distance from target node if found else -1
+    private static int distanceKUtil(TreeNode root, int B, int C, ArrayList<Integer> res) {
+        // empty node
         if (root == null)
-            return false;
+            return -1;
 
-        // add current node to path
-        res.add(root.val);
-        // reached destination
-        if (root.val == B)
-            return true;
+        // found target node
+        if (root.val == B) {
+            // add all nodes at distance C in both subtrees of current node
+            findExactDistanceNodes(root.left, C, res);
+            findExactDistanceNodes(root.right, C, res);
+            // return the distance from target
+            return 0;
+        }
 
-        // if found target by moving left or right
-        if (findPathUtil(root.left, B, res) || findPathUtil(root.right, B, res))
-            return true;
+        int dist = root.left != null ? distanceKUtil(root.left, B, C, res) : -1;
+        // if found target node in left subtree
+        if (dist != -1) {
+            // update distance
+            dist++;
+            // if current node is at distance C from target, add to result
+            if (dist == C)
+                res.add(root.val);
+                // else search for nodes in right subtree at remaining distance
+            else
+                findExactDistanceNodes(root.right, C - dist, res);
+            // return the distance from target
+            return dist;
+        }
 
-        // remove current node from path
-        res.remove(res.size() - 1);
+        dist = root.right != null ? distanceKUtil(root.right, B, C, res) : -1;
+        // if found target node in right subtree
+        if (dist != -1) {
+            // update distance
+            dist++;
+            // if current node is at distance C from target, add to result
+            if (dist == C)
+                res.add(root.val);
+                // else search for nodes in left subtree at remaining distance
+            else
+                findExactDistanceNodes(root.left, C - dist, res);
+            // return the distance from target
+            return dist;
+        }
 
-        return false;
+        // target node not found
+        return -1;
+    }
+
+    // util to add all nodes at exact distance in result list
+    private static void findExactDistanceNodes(TreeNode root, int dist, ArrayList<Integer> res) {
+        // empty node or distance reached
+        if (root == null || dist == 0)
+            return;
+
+        // update remaining distance
+        dist--;
+        // reached node at required distance
+        if (dist == 0) {
+            res.add(root.val);
+            return;
+        }
+
+        // recursively find exact distance nodes in both subtrees
+        findExactDistanceNodes(root.left, dist, res);
+        findExactDistanceNodes(root.right, dist, res);
     }
 
     // https://www.interviewbit.com/problems/balanced-binary-tree/
@@ -315,23 +594,65 @@ class Trees {
         return isBalancedTreeUtil(root) == -1 ? 0 : 1;
     }
 
-    // util which returns -1 if not balanced else returns max of the left and right height
+    // util which returns -1 if not balanced else returns height of the current subtree
     private static int isBalancedTreeUtil(TreeNode root) {
         if (root == null)
             return 0;
 
-        // calculate left and right heights
         int lHeight = isBalancedTreeUtil(root.left);
-        int rHeight = isBalancedTreeUtil(root.right);
-
-        // if either subtree is not balanced
-        if (lHeight == -1 || rHeight == -1)
+        // left subtree is not balanced
+        if (lHeight == -1)
             return -1;
+
+        int rHeight = isBalancedTreeUtil(root.right);
+        // right subtree is not balanced
+        if (rHeight == -1)
+            return -1;
+
         // if current node is not balanced
         if (Math.abs(lHeight - rHeight) >= 2)
             return -1;
-        // return max height at this node
+        // return height of this subtree
         return Math.max(lHeight, rHeight) + 1;
+    }
+
+    // https://www.interviewbit.com/problems/maximum-edge-removal/
+    private static int res;
+
+    @SuppressWarnings("unchecked")
+    static int maxEdgeRemoval(int A, int[][] B) {
+        List<Integer>[] adj = new List[A + 1];
+        for (int i = 1; i <= A; i++)
+            adj[i] = new LinkedList<>();
+        // prepare adjacency list representation for the graph
+        for (int[] edge : B) {
+            int u = edge[0], v = edge[1];
+            adj[u].add(v);
+        }
+
+        res = 0;
+        // perform dfs to find no of nodes in current component
+        dfs(1, adj);
+
+        return res;
+    }
+
+    // recursive util to perform dfs
+    private static int dfs(int u, List<Integer>[] adj) {
+        int noOfNodes = 1;
+        // for each neighbour
+        for (int v : adj[u]) {
+            // get number of nodes connected to this unvisited node
+            int subComponentNodes = dfs(v, adj);
+            // if this neighbour has even numbered nodes, detach it from current
+            if (subComponentNodes % 2 == 0)
+                res++;
+                // else don't remove this edge. Let it remain part of current component
+            else
+                noOfNodes += subComponentNodes;
+        }
+
+        return noOfNodes;
     }
 
     // https://www.interviewbit.com/problems/merge-two-binary-tree/
@@ -353,6 +674,26 @@ class Trees {
         return root1;
     }
 
+    // https://www.interviewbit.com/problems/symmetric-binary-tree/
+    static int isSymmetric(TreeNode root) {
+        // check if tree is mirror with self or not
+        return isMirror(root, root) ? 1 : 0;
+    }
+
+    // util to check if two trees are mirror image of each other
+    private static boolean isMirror(TreeNode root1, TreeNode root2) {
+        // both nodes null so mirror image
+        if (root1 == null && root2 == null)
+            return true;
+        // one node is null, trees are not mirror image
+        if (root1 == null || root2 == null)
+            return false;
+
+        // trees are mirror image if the values at current nodes are same and
+        // left and right subtrees of tree-1 are mirror with right and left subtrees of tree-2 respectively
+        return root1.val == root2.val && isMirror(root1.left, root2.right) && isMirror(root1.right, root2.left);
+    }
+
     // https://www.interviewbit.com/problems/identical-binary-trees/
     static int isSameTree(TreeNode root1, TreeNode root2) {
         // both nodes are null
@@ -365,27 +706,6 @@ class Trees {
         return isSameTree(root1.left, root2.left) & isSameTree(root1.right, root2.right);
     }
 
-    // https://www.interviewbit.com/problems/symmetric-binary-tree/
-    static int isSymmetric(TreeNode root) {
-        // check if tree is mirror with self or not
-        return isMirror(root, root) ? 1 : 0;
-    }
-
-    // util to check if two trees are mirror image of each other
-    private static boolean isMirror(TreeNode root1, TreeNode root2) {
-        // both nodes null so mirror image
-        if (root1 == null && root2 == null)
-            return true;
-
-        // one node is null, trees are not mirror image
-        if (root1 == null || root2 == null)
-            return false;
-
-        // trees are mirror image if the values at current nodes are same and
-        // left and right subtrees of tree-1 are mirror with right and left subtrees of tree-2 respectively
-        return root1.val == root2.val && isMirror(root1.left, root2.right) && isMirror(root1.right, root2.left);
-    }
-
     // https://www.interviewbit.com/problems/vertical-order-traversal-of-binary-tree/
     static ArrayList<ArrayList<Integer>> verticalOrderTraversal(TreeNode root) {
         ArrayList<ArrayList<Integer>> res = new ArrayList<>();
@@ -393,66 +713,48 @@ class Trees {
             return res;
 
         // perform level order traversal and mark vertical level of each node
-        Queue<Pair<Integer, TreeNode>> q = new LinkedList<>();
-        q.add(new Pair<>(0, root));
-
+        Queue<Pair<TreeNode, Integer>> q = new LinkedList<>();
+        q.add(new Pair<>(root, 0));
         Map<Integer, ArrayList<Integer>> map = new HashMap<>();
+
         while (!q.isEmpty()) {
-            Pair<Integer, TreeNode> top = q.poll();
-
+            Pair<TreeNode, Integer> front = q.poll();
             // map current node to its vertical level
-            map.putIfAbsent(top.first, new ArrayList<>());
-            map.get(top.first).add(top.second.val);
-
+            map.computeIfAbsent(front.second, k -> new ArrayList<>()).add(front.first.val);
             // go to next horizontal level
-            if (top.second.left != null)
-                q.offer(new Pair<>(top.first - 1, top.second.left));
-            if (top.second.right != null)
-                q.offer(new Pair<>(top.first + 1, top.second.right));
+            if (front.first.left != null)
+                q.add(new Pair<>(front.first.left, front.second - 1));
+            if (front.first.right != null)
+                q.add(new Pair<>(front.first.right, front.second + 1));
         }
 
         // find min and max vertical level
         int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
-        for (int level : map.keySet()) {
-            min = Math.min(min, level);
-            max = Math.max(max, level);
+        for (int dist : map.keySet()) {
+            min = Math.min(min, dist);
+            max = Math.max(max, dist);
         }
 
         // prepare output list
         for (int i = min; i <= max; i++)
             res.add(map.get(i));
-
         return res;
-    }
-
-    static class Pair<K, V> {
-        K first;
-        V second;
-
-        Pair(K first, V second) {
-            this.first = first;
-            this.second = second;
-        }
     }
 
     // https://www.interviewbit.com/problems/diagonal-traversal/
     static ArrayList<Integer> diagonalTraversal(TreeNode root) {
+        ArrayList<Integer> res = new ArrayList<>();
         Queue<TreeNode> q = new LinkedList<>();
         q.add(root);
 
-        ArrayList<Integer> res = new ArrayList<>();
-
         while (!q.isEmpty()) {
             TreeNode front = q.poll();
-
             // keep moving right for current node (same diagonal)
             while (front != null) {
                 res.add(front.val);
-
                 // if any left child found, add to queue
                 if (front.left != null)
                     q.add(front.left);
-
                 // move along in same diagonal
                 front = front.right;
             }
@@ -465,7 +767,6 @@ class Trees {
     static ArrayList<Integer> inorderTraversal(TreeNode root) {
         ArrayList<Integer> res = new ArrayList<>();
         Stack<TreeNode> s = new Stack<>();
-
         // loop till all nodes traversed
         while (root != null || !s.empty()) {
             // keep pushing to stack till the leftmost node
@@ -484,40 +785,6 @@ class Trees {
         return res;
     }
 
-    // https://www.interviewbit.com/problems/postorder-traversal/
-    static ArrayList<Integer> postorderTraversal(TreeNode root) {
-        ArrayList<Integer> res = new ArrayList<>();
-        // empty tree
-        if (root == null)
-            return res;
-
-        // push nodes with 0(left child), 1(right child) or 2(node) as pair
-        Stack<Pair<TreeNode, Integer>> s = new Stack<>();
-        s.push(new Pair<>(root, 0));
-
-        while (!s.empty()) {
-            Pair<TreeNode, Integer> top = s.pop();
-
-            switch (top.second) {
-                case 0:
-                    s.push(new Pair<>(top.first, 1));
-                    if (top.first.left != null)
-                        s.push(new Pair<>(top.first.left, 0));
-                    break;
-                case 1:
-                    s.push(new Pair<>(top.first, 2));
-                    if (top.first.right != null)
-                        s.push(new Pair<>(top.first.right, 0));
-                    break;
-                // add to result
-                case 2:
-                    res.add(top.first.val);
-            }
-        }
-
-        return res;
-    }
-
     // https://www.interviewbit.com/problems/preorder-traversal/
     static ArrayList<Integer> preorderTraversal(TreeNode root) {
         ArrayList<Integer> res = new ArrayList<>();
@@ -529,59 +796,51 @@ class Trees {
         s.push(root);
 
         while (!s.empty()) {
-            TreeNode top = s.pop();
+            root = s.pop();
             // add root node to output
-            res.add(top.val);
+            res.add(root.val);
 
             // push right child first so that left child comes first in output
-            if (top.right != null)
-                s.push(top.right);
-            if (top.left != null)
-                s.push(top.left);
+            if (root.right != null)
+                s.push(root.right);
+            if (root.left != null)
+                s.push(root.left);
         }
 
         return res;
     }
 
-    // https://www.interviewbit.com/problems/cousins-in-binary-tree/
-    @SuppressWarnings("ConstantConditions")
-    static ArrayList<Integer> cousins(TreeNode root, int B) {
+    // https://www.interviewbit.com/problems/postorder-traversal/
+    static ArrayList<Integer> postorderTraversal(TreeNode root) {
+        // another approach is to perform reverse postorder and then reverse output (D-R-L) - similar to preorder traversal
         ArrayList<Integer> res = new ArrayList<>();
-
-        // root doesn't have any cousins
-        if (root.val == B)
+        // empty tree
+        if (root == null)
             return res;
 
-        boolean found = false;
-        Queue<TreeNode> q = new LinkedList<>();
-        q.add(root);
+        // push nodes with 0(left child), 1(right child) or 2(node) as pair
+        Stack<Pair<TreeNode, Integer>> s = new Stack<>();
+        s.push(new Pair<>(root, 2));
+        s.push(new Pair<>(root, 1));
+        s.push(new Pair<>(root, 0));
 
-        // perform level order traversal till required node is found as child
-        while (!found) {
-            int n = q.size();
-            // store next level nodes in the result
-            res = new ArrayList<>();
-
-            // for the current level
-            for (int i = 0; i < n; i++) {
-                TreeNode front = q.poll();
-
-                // if the front node is parent of required node, don't push its children to queue
-                if ((front.left != null && front.left.val == B) || (front.right != null && front.right.val == B)) {
-                    found = true;
-                    continue;
-                }
-
-                // push left child and add to result
-                if (front.left != null) {
-                    q.add(front.left);
-                    res.add(front.left.val);
-                }
-                // push right child and add to result
-                if (front.right != null) {
-                    q.add(front.right);
-                    res.add(front.right.val);
-                }
+        while (!s.empty()) {
+            Pair<TreeNode, Integer> top = s.pop();
+            // add all actions for the left child
+            if (top.second == 0 && top.first.left != null) {
+                s.push(new Pair<>(top.first.left, 2));
+                s.push(new Pair<>(top.first.left, 1));
+                s.push(new Pair<>(top.first.left, 0));
+            }
+            // add all actions for the right child
+            else if (top.second == 1 && top.first.right != null) {
+                s.push(new Pair<>(top.first.right, 2));
+                s.push(new Pair<>(top.first.right, 1));
+                s.push(new Pair<>(top.first.right, 0));
+            }
+            // visit current node and add to output
+            else if (top.second == 2) {
+                res.add(top.first.val);
             }
         }
 
@@ -603,11 +862,9 @@ class Trees {
         while (!q.isEmpty()) {
             int n = q.size();
             TreeNode front = q.peek();
-
             // traverse each node in this level and add its children to queue
             for (int i = 0; i < n; i++) {
                 front = q.poll();
-
                 if (front.left != null)
                     q.add(front.left);
                 if (front.right != null)
@@ -617,6 +874,76 @@ class Trees {
             // add the last node in this level to result
             res.add(front.val);
         }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/cousins-in-binary-tree/
+    @SuppressWarnings("ConstantConditions")
+    static int[] cousins(TreeNode root, int B) {
+        // root doesn't have any cousins
+        if (root.val == B)
+            return new int[0];
+
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+
+        // perform level order traversal
+        while (!q.isEmpty()) {
+            int n = q.size();
+            boolean found = false;
+            // for the current level
+            for (int i = 0; i < n; i++) {
+                TreeNode front = q.poll();
+                // if the front node is parent of required node, don't push its children to queue
+                if (!found && (front.left != null && front.left.val == B) || (front.right != null && front.right.val == B)) {
+                    found = true;
+                    continue;
+                }
+
+                // push left child
+                if (front.left != null)
+                    q.add(front.left);
+                // push right child
+                if (front.right != null)
+                    q.add(front.right);
+            }
+
+            // found B in current level. Queue will contain all nodes of next level except children of B
+            if (found) {
+                n = q.size();
+                // copy queue to array
+                int[] res = new int[n];
+                for (int i = 0; i < n; i++)
+                    res[i] = q.poll().val;
+
+                return res;
+            }
+        }
+
+        return new int[0];
+    }
+
+    // https://www.interviewbit.com/problems/reverse-level-order/
+    static ArrayList<Integer> reverseLevelOrder(TreeNode root) {
+        ArrayList<Integer> res = new ArrayList<>();
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+
+        // perform level order traversal
+        while (!q.isEmpty()) {
+            TreeNode front = q.poll();
+            // add front node to level order result
+            res.add(front.val);
+            // reverse: take right child first then left for level order
+            if (front.right != null)
+                q.add(front.right);
+            if (front.left != null)
+                q.add(front.left);
+        }
+
+        // reverse the current level order traversal to get last level at top and left nodes in each level before right nodes
+        Collections.reverse(res);
 
         return res;
     }
@@ -633,7 +960,6 @@ class Trees {
         while (!q.isEmpty()) {
             ArrayList<Integer> level = new ArrayList<>();
             int n = q.size();
-
             // move from left to right in level
             if (!reverse) {
                 // poll from deque front
@@ -676,7 +1002,6 @@ class Trees {
         TreeLinkNode left, right, next;
 
         TreeLinkNode(int val) {
-            left = right = next = null;
             this.val = val;
         }
     }
@@ -687,13 +1012,9 @@ class Trees {
             return;
 
         TreeLinkNode level = root;
-        // root's next will be null
-        level.next = null;
-
         // traverse each level
         while (level != null) {
             TreeLinkNode curr = level;
-
             // move next along the level
             while (curr != null) {
                 if (curr.left != null) {
@@ -702,12 +1023,12 @@ class Trees {
                         curr.left.next = curr.right;
                         // else find the next node in the level
                     else
-                        curr.left.next = getNextNode(curr);
+                        curr.left.next = getNextNode(curr.next);
                 }
 
                 // make right child point to next node in the level
                 if (curr.right != null)
-                    curr.right.next = getNextNode(curr);
+                    curr.right.next = getNextNode(curr.next);
 
                 curr = curr.next;
             }
@@ -718,183 +1039,173 @@ class Trees {
             else if (level.right != null)
                 level = level.right;
             else
-                level = getNextNode(level);
+                level = getNextNode(level.next);
         }
     }
 
     // get the next node for current node's right child (or left child if right is absent)
     private static TreeLinkNode getNextNode(TreeLinkNode root) {
-        TreeLinkNode temp = root.next;
-
         // keep moving in current level till node is not a leaf
-        while (temp != null) {
-            if (temp.left != null)
-                return temp.left;
-            if (temp.right != null)
-                return temp.right;
-            temp = temp.next;
+        while (root != null) {
+            if (root.left != null)
+                return root.left;
+            if (root.right != null)
+                return root.right;
+            root = root.next;
         }
 
         // all nodes are leaves in the parent level
         return null;
     }
 
-    // https://www.interviewbit.com/problems/hotel-reviews/
-    static int[] hotelReviews(String A, String[] B) {
-        Trie trie = new Trie();
-        // insert each good word into trie
-        for (String word : A.split("_"))
-            trie.add(word);
-
-        int n = B.length;
-        // create list of pair of no of good words and index of review
-        List<Pair<Integer, Integer>> cntList = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            int cnt = 0;
-            String review = B[i];
-
-            // check if each word of review is present in trie or not
-            for (String word : review.split("_")) {
-                if (trie.contains(word))
-                    cnt++;
-            }
-
-            cntList.add(new Pair<>(cnt, i));
-        }
-
-        // sort the list by number of good words in decreasing order
-        cntList.sort((p1, p2) -> p2.first - p1.first);
-
-        // copy indices to result array
-        int[] res = new int[n];
-        int i = 0;
-        for (Pair<Integer, Integer> pair : cntList) {
-            res[i] = pair.second;
-            i++;
-        }
+    // https://www.interviewbit.com/problems/burn-a-tree/
+    static int burnTree(TreeNode root, int B) {
+        // time taken to burn the whole tree
+        res = 0;
+        // recursively burn tree from leaf node
+        burnTreeUtil(root, B);
 
         return res;
     }
 
-    // trie data structure
-    static class Trie {
-        TrieNode root;
+    // util to find if a subtree contains the leaf node and return the time taken to reach back to current node
+    private static int burnTreeUtil(TreeNode root, int B) {
+        // found the leaf node
+        if (root.val == B)
+            return 0;
 
-        Trie() {
-            root = new TrieNode();
+        // search for the leaf in left subtree
+        int time = root.left != null ? burnTreeUtil(root.left, B) : -1;
+        // if found the leaf in left subtree
+        if (time != -1) {
+            // update current time
+            time++;
+            // time taken to burn this subtree = time taken from leaf to reach current node + height of right subtree
+            res = Math.max(res, time + height(root.right));
+
+            return time;
         }
 
-        // add a word to trie
-        void add(String word) {
-            TrieNode curr = root;
+        // search for the leaf in right subtree
+        time = root.right != null ? burnTreeUtil(root.right, B) : -1;
+        // if found the leaf in right subtree
+        if (time != -1) {
+            // update current time
+            time++;
+            // time taken to burn this subtree = time taken from leaf to reach current node + height of left subtree
+            res = Math.max(res, time + height(root.left));
 
-            for (char c : word.toCharArray()) {
-                if (curr.child[c - 'a'] == null)
-                    curr.child[c - 'a'] = new TrieNode();
-
-                curr = curr.child[c - 'a'];
-            }
-
-            curr.isEnd = true;
+            return time;
         }
 
-        // check if a word is present in trie or not
-        boolean contains(String word) {
-            TrieNode curr = root;
-
-            for (char c : word.toCharArray()) {
-                if (curr.child[c - 'a'] == null)
-                    return false;
-
-                curr = curr.child[c - 'a'];
-            }
-
-            return curr.isEnd;
-        }
+        // starting leaf node not found
+        return -1;
     }
 
-    // trie node structure
-    static class TrieNode {
-        TrieNode[] child;
-        boolean isEnd;
-
-        TrieNode() {
-            child = new TrieNode[26];
-            isEnd = false;
-        }
+    // util to compute height of tree
+    private static int height(TreeNode root) {
+        if (root == null)
+            return 0;
+        return Math.max(height(root.left), height(root.right)) + 1;
     }
 
-    // https://www.interviewbit.com/problems/shortest-unique-prefix/
-    static String[] shortestUniquePrefix(String[] words) {
-        PrefixTrie trie = new PrefixTrie();
-        // add all words in prefix trie
-        for (String word : words)
-            trie.add(word);
+    // https://www.interviewbit.com/problems/max-depth-of-binary-tree/
+    static int maxDepth(TreeNode root) {
+        // empty node
+        if (root == null)
+            return 0;
 
-        int n = words.length;
-        String[] res = new String[n];
-        // get shortest prefix with last char as unique for each word inserted
-        for (int i = 0; i < n; i++)
-            res[i] = trie.getPrefix(words[i]);
+        // max depth at this point is max of the left and right depths + 1
+        return Math.max(maxDepth(root.left), maxDepth(root.right)) + 1;
+    }
+
+    // https://www.interviewbit.com/problems/sum-root-to-leaf-numbers/
+    static int sumNumbers(TreeNode root) {
+        if (root == null)
+            return 0;
+        return sumNumbersUtil(root, 0, 1003);
+    }
+
+    // util to form number from digits on the path and update cumulative path sum
+    private static int sumNumbersUtil(TreeNode root, int curr, int MOD) {
+        // update current number
+        curr = (curr * 10 + root.val) % MOD;
+        // if leaf node, update cumulative path sum
+        if (root.left == null && root.right == null)
+            return curr;
+
+        // recursively find path sum of digits in left and right direction
+        int left = root.left != null ? sumNumbersUtil(root.left, curr, MOD) : 0;
+        int right = root.right != null ? sumNumbersUtil(root.right, curr, MOD) : 0;
+
+        return (left + right) % MOD;
+    }
+
+    // https://www.interviewbit.com/problems/path-sum/
+    static int hasPathSum(TreeNode root, int B) {
+        // empty node
+        if (root == null)
+            return 0;
+
+        // if leaf node, check if path sum is satisfied
+        if (root.left == null && root.right == null)
+            return B - root.val == 0 ? 1 : 0;
+
+        // recursively check if left or right path satisfy path sum
+        if (hasPathSum(root.left, B - root.val) == 1 || hasPathSum(root.right, B - root.val) == 1)
+            return 1;
+        return 0;
+    }
+
+    // https://www.interviewbit.com/problems/min-depth-of-binary-tree/
+    static int minDepth(TreeNode root) {
+        // empty node - path cannot end here
+        if (root == null)
+            return Integer.MAX_VALUE;
+        // leaf node
+        if (root.left == null && root.right == null)
+            return 1;
+
+        // min depth at this is min of the left and right depths + 1
+        return Math.min(minDepth(root.left), minDepth(root.right)) + 1;
+    }
+
+    // https://www.interviewbit.com/problems/root-to-leaf-paths-with-sum/
+    static ArrayList<ArrayList<Integer>> findAllPathSum(TreeNode root, int B) {
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        // empty tree
+        if (root == null)
+            return res;
+        // recursively try all paths
+        findAllPathSumUtil(root, B, new ArrayList<>(), res);
 
         return res;
     }
 
-    // util class for prefix trie
-    // prefix trie will contain count of each node occurring in all the words inserted
-    static class PrefixTrie {
-        PrefixTrieNode root;
+    // util to traverse all paths and check path sum
+    private static void findAllPathSumUtil(TreeNode root, int B, ArrayList<Integer> curr, ArrayList<ArrayList<Integer>> res) {
+        // add current node to path and update remaining sum
+        curr.add(root.val);
+        B -= root.val;
 
-        PrefixTrie() {
-            root = new PrefixTrieNode();
+        // if leaf node
+        if (root.left == null && root.right == null) {
+            // no remaining sum hence add current path to result
+            if (B == 0)
+                res.add(new ArrayList<>(curr));
+            // backtrack
+            curr.remove(curr.size() - 1);
+            return;
         }
 
-        // add word
-        void add(String word) {
-            PrefixTrieNode curr = root;
+        // recursively check left and right paths
+        if (root.left != null)
+            findAllPathSumUtil(root.left, B, curr, res);
+        if (root.right != null)
+            findAllPathSumUtil(root.right, B, curr, res);
 
-            for (char c : word.toCharArray()) {
-                if (curr.child[c - 'a'] == null)
-                    curr.child[c - 'a'] = new PrefixTrieNode();
-
-                curr = curr.child[c - 'a'];
-                // update count of this node
-                curr.cnt++;
-            }
-
-            curr.isEnd = true;
-        }
-
-        // get prefix string with the last character freq as 1
-        String getPrefix(String word) {
-            PrefixTrieNode curr = root;
-            StringBuilder res = new StringBuilder();
-
-            // search for word
-            for (char c : word.toCharArray()) {
-                res.append(c);
-
-                curr = curr.child[c - 'a'];
-                // found last unique char
-                if (curr.cnt == 1)
-                    break;
-            }
-
-            return res.toString();
-        }
-    }
-
-    // node for Prefix Trie
-    static class PrefixTrieNode {
-        PrefixTrieNode[] child;
-        boolean isEnd;
-        int cnt;
-
-        PrefixTrieNode() {
-            child = new PrefixTrieNode[26];
-            isEnd = false;
-            cnt = 0;
-        }
+        // backtrack
+        curr.remove(curr.size() - 1);
     }
 
     // https://www.interviewbit.com/problems/inorder-traversal-of-cartesian-tree/
@@ -902,19 +1213,16 @@ class Trees {
 
     static TreeNode buildCartesianTree(int[] inorder) {
         int n = inorder.length;
-
         // height of segment tree
         int height = (int) Math.ceil(Math.log(2 * n) / Math.log(2));
         // size of segment tree array
-        int size = (int) (2 * Math.pow(2, height) - 1);
-
+        int size = (int) (Math.pow(2, height + 1) - 1);
         // segment tree array
         st = new int[size];
         Arrays.fill(st, -1);
 
         // build segment tree for range maximum queries
         buildSegmentTree(0, 0, n - 1, inorder);
-
         // build cartesian tree recursively
         return buildCartesianTreeUtil(inorder, 0, n - 1);
     }
@@ -946,13 +1254,11 @@ class Trees {
         // no overlap
         if (sr < l || r < sl)
             return -1;
-
         // total overlap
         if (l <= sl && sr <= r)
             return st[si];
 
         int mid = sl + (sr - sl) / 2;
-
         // find left and right range maximum element indexes
         int l1 = rangeMax(2 * si + 1, sl, mid, l, r, arr);
         int r1 = rangeMax(2 * si + 2, mid + 1, sr, l, r, arr);
@@ -963,12 +1269,10 @@ class Trees {
         // right range not exists
         if (r1 == -1)
             return l1;
-
         // calculate maximum element index from left and right maximums
         if (arr[l1] > arr[r1])
             return l1;
-        else
-            return r1;
+        return r1;
     }
 
     private static TreeNode buildCartesianTreeUtil(int[] inorder, int l, int r) {
@@ -979,7 +1283,6 @@ class Trees {
         // root is the maximum node in the inorder traversal
         int m = rangeMax(0, 0, inorder.length - 1, l, r, inorder);
         TreeNode root = new TreeNode(inorder[m]);
-
         // recursively build left and right subtrees
         root.left = buildCartesianTreeUtil(inorder, l, m - 1);
         root.right = buildCartesianTreeUtil(inorder, m + 1, r);
@@ -1001,7 +1304,6 @@ class Trees {
         // root will be the middle node in sorted array
         int mid = l + (r - l) / 2;
         TreeNode root = new TreeNode(A.get(mid));
-
         // recursively build left and right subtree
         root.left = buildBalancedBSTUtil(A, l, mid - 1);
         root.right = buildBalancedBSTUtil(A, mid + 1, r);
@@ -1009,82 +1311,63 @@ class Trees {
         return root;
     }
 
-    // https://www.interviewbit.com/problems/binary-tree-from-inorder-and-postorder/
-    private static int postorderPos;
-
-    static TreeNode constructTreeFromInAndPost(int[] inorder, int[] postorder) {
+    // https://www.interviewbit.com/problems/construct-binary-tree-from-inorder-and-preorder/
+    static TreeNode constructTreeFromInAndPre(int[] preorder, int[] inorder) {
         int n = inorder.length;
         // map inorder elements to position for O(1) searching
-        Map<Integer, Integer> inorderMap = new HashMap<>();
+        Map<Integer, Integer> map = new HashMap<>();
         for (int i = 0; i < n; i++)
-            inorderMap.put(inorder[i], i);
+            map.put(inorder[i], i);
 
-        // last node in postorder is root
-        postorderPos = n - 1;
+        // first node in preorder is root
+        pos = 0;
         // recursively construct tree
-        return constructFromInAndPostUtil(postorder, 0, n - 1, inorderMap);
+        return constructFromInAndPreUtil(preorder, 0, n - 1, map);
     }
 
-    // util to construct tree node from inorder and postorder traversal
-    private static TreeNode constructFromInAndPostUtil(int[] postorder, int inStart, int inEnd,
-                                                       Map<Integer, Integer> inorderMap) {
+    // util to construct tree node from inorder and preorder traversal
+    private static TreeNode constructFromInAndPreUtil(int[] preorder, int start, int end, Map<Integer, Integer> map) {
         // reached end of traversal
-        if (inStart > inEnd)
+        if (start > end)
             return null;
 
-        // create current node
-        int val = postorder[postorderPos--];
-        TreeNode root = new TreeNode(val);
-
-        // leaf node
-        if (inStart == inEnd)
-            return root;
-
+        TreeNode root = new TreeNode(preorder[pos++]);
         // search for element in inorder
-        int inorderPos = inorderMap.get(val);
-        // recursively create right and left subtrees
-        root.right = constructFromInAndPostUtil(postorder, inorderPos + 1, inEnd, inorderMap);
-        root.left = constructFromInAndPostUtil(postorder, inStart, inorderPos - 1, inorderMap);
+        int inorderPos = map.get(root.val);
+        // recursively create left and right subtrees
+        root.left = constructFromInAndPreUtil(preorder, start, inorderPos - 1, map);
+        root.right = constructFromInAndPreUtil(preorder, inorderPos + 1, end, map);
 
         return root;
     }
 
-    // https://www.interviewbit.com/problems/construct-binary-tree-from-inorder-and-preorder/
-    private static int preorderPos;
-
-    static TreeNode constructTreeFromInAndPre(int[] preorder, int[] inorder) {
+    // https://www.interviewbit.com/problems/binary-tree-from-inorder-and-postorder/
+    static TreeNode constructTreeFromInAndPost(int[] inorder, int[] postorder) {
         int n = inorder.length;
         // map inorder elements to position for O(1) searching
-        Map<Integer, Integer> inorderMap = new HashMap<>();
+        Map<Integer, Integer> map = new HashMap<>();
         for (int i = 0; i < n; i++)
-            inorderMap.put(inorder[i], i);
+            map.put(inorder[i], i);
 
-        // first node in preorder is root
-        preorderPos = 0;
+        // last node in postorder is root
+        pos = n - 1;
         // recursively construct tree
-        return constructFromInAndPreUtil(preorder, 0, n - 1, inorderMap);
+        return constructFromInAndPostUtil(postorder, 0, n - 1, map);
     }
 
-    // util to construct tree node from inorder and preorder traversal
-    private static TreeNode constructFromInAndPreUtil(int[] preorder, int inStart, int inEnd,
-                                                      Map<Integer, Integer> inorderMap) {
+    // util to construct tree node from inorder and postorder traversal
+    private static TreeNode constructFromInAndPostUtil(int[] postorder, int start, int end, Map<Integer, Integer> map) {
         // reached end of traversal
-        if (inStart > inEnd)
+        if (start > end)
             return null;
 
         // create current node
-        int val = preorder[preorderPos++];
-        TreeNode root = new TreeNode(val);
-
-        // leaf node
-        if (inStart == inEnd)
-            return root;
-
+        TreeNode root = new TreeNode(postorder[pos--]);
         // search for element in inorder
-        int inorderPos = inorderMap.get(val);
-        // recursively create left and right subtrees
-        root.left = constructFromInAndPreUtil(preorder, inStart, inorderPos - 1, inorderMap);
-        root.right = constructFromInAndPreUtil(preorder, inorderPos + 1, inEnd, inorderMap);
+        int inorderPos = map.get(root.val);
+        // recursively create right and left subtrees
+        root.right = constructFromInAndPostUtil(postorder, inorderPos + 1, end, map);
+        root.left = constructFromInAndPostUtil(postorder, start, inorderPos - 1, map);
 
         return root;
     }
@@ -1095,163 +1378,49 @@ class Trees {
         if (root == null)
             return null;
 
+        TreeNode left = root.left;
         // recursively invert left and right subtrees
-        root.left = invertTree(root.left);
-        root.right = invertTree(root.right);
+        root.left = invertTree(root.right);
+        root.right = invertTree(left);
 
-        // swap left and right child of current node
-        TreeNode temp = root.left;
-        root.left = root.right;
-        root.right = temp;
-
-        // updated node with swapped children
         return root;
-    }
-
-    // https://www.interviewbit.com/problems/path-sum/
-    static int hasPathSum(TreeNode root, int sum) {
-        // empty node
-        if (root == null)
-            return 0;
-
-        // if leaf node, check if path sum is satisfied
-        if (root.left == null && root.right == null)
-            return sum - root.val == 0 ? 1 : 0;
-
-        // recursively check if left or right path satisfy path sum
-        if (hasPathSum(root.left, sum - root.val) == 1 || hasPathSum(root.right, sum - root.val) == 1)
-            return 1;
-        return 0;
-    }
-
-    // https://www.interviewbit.com/problems/root-to-leaf-paths-with-sum/
-    static ArrayList<ArrayList<Integer>> findAllPathSum(TreeNode root, int sum) {
-        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
-        // recursively try all paths
-        findAllPathSumUtil(root, sum, new ArrayList<>(), res);
-
-        return res;
-    }
-
-    // util to traverse all paths and check path sum
-    private static void findAllPathSumUtil(TreeNode root, int sum, ArrayList<Integer> path,
-                                           ArrayList<ArrayList<Integer>> res) {
-        // empty node
-        if (root == null)
-            return;
-
-        // add current node to path
-        path.add(root.val);
-
-        // if leaf node and path sum matches
-        if (root.left == null && root.right == null && sum - root.val == 0) {
-            // add current path to result
-            res.add(new ArrayList<>(path));
-            // backtrack
-            path.remove(path.size() - 1);
-            return;
-        }
-
-        // recursively check left and right paths
-        findAllPathSumUtil(root.left, sum - root.val, path, res);
-        findAllPathSumUtil(root.right, sum - root.val, path, res);
-
-        // backtrack
-        path.remove(path.size() - 1);
-    }
-
-    // https://www.interviewbit.com/problems/max-depth-of-binary-tree/
-    static int maxDepth(TreeNode root) {
-        // empty node
-        if (root == null)
-            return 0;
-
-        // max depth at this point is max of the left and right depths + 1
-        return Math.max(maxDepth(root.left), maxDepth(root.right)) + 1;
-    }
-
-    // https://www.interviewbit.com/problems/min-depth-of-binary-tree/
-    static int minDepth(TreeNode root) {
-        // empty node
-        if (root == null)
-            return Integer.MAX_VALUE;
-
-        // leaf node
-        if (root.left == null && root.right == null)
-            return 1;
-
-        // min depth at this is min of the left and right depths + 1
-        return Math.min(minDepth(root.left), minDepth(root.right)) + 1;
-    }
-
-    // https://www.interviewbit.com/problems/sum-root-to-leaf-numbers/
-    private static int pathCumSum;
-
-    static int sumRootToLeafNumbers(TreeNode root) {
-        int p = 1003;
-        // init cumulative sum path
-        pathCumSum = 0;
-        // recursively traverse all paths
-        sumRootToLeafNumbersUtil(root, 0, p);
-
-        return pathCumSum;
-    }
-
-    // util to form number from digits on the path and update cumulative path sum
-    private static void sumRootToLeafNumbersUtil(TreeNode root, int curr, int p) {
-        // empty node
-        if (root == null)
-            return;
-
-        // update current number
-        curr = (curr * 10 + root.val) % p;
-        // if leaf node, update cumulative path sum
-        if (root.left == null && root.right == null) {
-            pathCumSum = (pathCumSum + curr) % p;
-            return;
-        }
-
-        // recursively find path sum of digits in left and right direction
-        sumRootToLeafNumbersUtil(root.left, curr, p);
-        sumRootToLeafNumbersUtil(root.right, curr, p);
     }
 
     // https://www.interviewbit.com/problems/least-common-ancestor/
     private static boolean v1, v2;
 
-    static int lca(TreeNode root, int A, int B) {
+    static int lca(TreeNode root, int B, int C) {
         // set found for both nodes as false
         v1 = v2 = false;
         // recursively find lca
-        TreeNode lca = lcaUtil(root, A, B);
-
+        TreeNode lca = lcaUtil(root, B, C);
         // if visited both nodes during lca or if search for other node returns true
-        if (v1 && v2 || v1 && findNode(lca, B) || v2 && findNode(lca, A))
+        if (v1 && v2 || v1 && findNode(lca, C) || v2 && findNode(lca, B))
             return lca.val;
         // one or more nodes not found
         return -1;
     }
 
     // recursive util to find lca of two nodes at a point
-    private static TreeNode lcaUtil(TreeNode root, int A, int B) {
+    private static TreeNode lcaUtil(TreeNode root, int B, int C) {
         // empty node
         if (root == null)
             return null;
 
-        // found node A
-        if (root.val == A) {
+        // found node B
+        if (root.val == B) {
             v1 = true;
             return root;
         }
-        // found node B
-        if (root.val == B) {
+        // found node C
+        if (root.val == C) {
             v2 = true;
             return root;
         }
 
         // recursively search in left and right subtrees
-        TreeNode left = lcaUtil(root.left, A, B);
-        TreeNode right = lcaUtil(root.right, A, B);
+        TreeNode left = lcaUtil(root.left, B, C);
+        TreeNode right = lcaUtil(root.right, B, C);
 
         // found both nodes in subtrees
         if (left != null && right != null)
@@ -1276,46 +1445,37 @@ class Trees {
     private static TreeNode last;
 
     static TreeNode flattenBinaryTreeToLinkedList(TreeNode root) {
-        // node to keep track of rightmost node
-        last = root;
+        TreeNode dummy = new TreeNode(-1);
+        // node to keep track of current node in linked-list
+        last = dummy;
         // recursively flatten tree
         flattenUtil(root);
 
-        return root;
+        return dummy.right;
     }
 
     // recursive util to flatten tree
     private static void flattenUtil(TreeNode root) {
-        // reached end
-        if (root == null)
-            return;
+        // shift current subtree to right child of last node
+        last.right = root;
+        // make left child null
+        last.left = null;
+        // move ahead in the newly appended linked-list
+        last = last.right;
 
-        // save left and right subtree roots
-        TreeNode left = root.left, right = root.right;
-
-        // if this is not the last node in tree
-        if (last != root) {
-            // shift current subtree to right child of last node
-            last.right = root;
-            // make left child null
-            last.left = null;
-            // move ahead in the newly appended linked-list
-            last = last.right;
-        }
-
+        // save right child reference
+        TreeNode right = root.right;
         // recursively flatten left and right subtrees
-        flattenUtil(left);
-        flattenUtil(right);
-
-        // if leaf node, this is last node
-        if (left == null && right == null)
-            last = root;
+        if (root.left != null)
+            flattenUtil(root.left);
+        if (right != null)
+            flattenUtil(right);
     }
 
     // https://www.interviewbit.com/problems/order-of-people-heights/
     static int[] orderOfHeights(int[] heights, int[] inFronts) {
         int n = heights.length;
-        // create array of pair of each person's height and count of people in front
+        // create array of each person's height and count of people in front
         Person[] people = new Person[n];
         for (int i = 0; i < n; i++)
             people[i] = new Person(heights[i], inFronts[i]);
@@ -1332,7 +1492,6 @@ class Trees {
         st.buildSegmentTree(0, 0, n - 1);
 
         int[] res = new int[n];
-
         for (int i = 0; i < n; i++) {
             // find (people[i].inFront + 1)th empty position using segment tree in O(log n)
             int index = st.query(people[i].inFront + 1, 0, 0, n - 1);
@@ -1347,14 +1506,13 @@ class Trees {
 
     // segment tree for range sum with leaf nodes as 1
     static class SumSegmentTree {
-        int[] st;
+        private final int[] st;
 
         SumSegmentTree(int n) {
             // height of segment tree
             int height = (int) Math.ceil(Math.log(2 * n) / Math.log(2));
             // size of array
-            int size = (int) (2 * Math.pow(2, height) - 1);
-
+            int size = (int) (Math.pow(2, height + 1) - 1);
             // create segment tree and initialize
             st = new int[size];
             Arrays.fill(st, -1);
@@ -1370,8 +1528,7 @@ class Trees {
 
             int mid = l + (r - l) / 2;
             // compute current range using left range and right range
-            st[si] = buildSegmentTree(2 * si + 1, l, mid) +
-                    buildSegmentTree(2 * si + 2, mid + 1, r);
+            st[si] = buildSegmentTree(2 * si + 1, l, mid) + buildSegmentTree(2 * si + 2, mid + 1, r);
 
             return st[si];
         }
@@ -1391,9 +1548,8 @@ class Trees {
             // query index is in left range
             if (leftSum >= x)
                 return query(x, 2 * si + 1, l, mid);
-                // query index is in right range
-            else
-                return query(x - leftSum, 2 * si + 2, mid + 1, r);
+            // query index is in right range
+            return query(x - leftSum, 2 * si + 2, mid + 1, r);
         }
 
         // update segment tree
@@ -1404,7 +1560,6 @@ class Trees {
 
             // update current range node
             st[si] += diff;
-
             // if not leaf, recursively update left and right range nodes
             if (sl != sr) {
                 int mid = sl + (sr - sl) / 2;
@@ -1424,86 +1579,145 @@ class Trees {
         }
     }
 
-    // https://www.interviewbit.com/problems/reverse-level-order/
-    static ArrayList<Integer> reverseLevelOrder(TreeNode root) {
-        ArrayList<Integer> res = new ArrayList<>();
+    // https://www.interviewbit.com/problems/vertical-sum-of-a-binary-tree/
+    static int[] verticalSum(TreeNode root) {
+        if (root == null)
+            return new int[0];
 
+        Map<Integer, Integer> map = new HashMap<>();
+        Queue<Pair<TreeNode, Integer>> q = new LinkedList<>();
+        q.add(new Pair<>(root, 0));
+        // perform level order traversal and mark vertical level of each node
+        while (!q.isEmpty()) {
+            Pair<TreeNode, Integer> front = q.poll();
+            // add current node to its vertical level sum
+            map.put(front.second, map.getOrDefault(front.second, 0) + front.first.val);
+            // go to next horizontal level
+            if (front.first.left != null)
+                q.add(new Pair<>(front.first.left, front.second - 1));
+            if (front.first.right != null)
+                q.add(new Pair<>(front.first.right, front.second + 1));
+        }
+
+        // find min and max vertical level
+        int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
+        for (int dist : map.keySet()) {
+            min = Math.min(min, dist);
+            max = Math.max(max, dist);
+        }
+
+        // prepare output array
+        int[] res = new int[max - min + 1];
+        for (int i = 0; i < res.length; i++)
+            res[i] = map.get(min + i);
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/construct-bst-from-preorder/
+    static TreeNode constructBST(int[] A) {
+        pos = 0;
+        return constructBSTUtil(A, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    }
+
+    private static TreeNode constructBSTUtil(int[] A, int min, int max) {
+        // tree finished or current value is out of bounds
+        if (pos == A.length || A[pos] < min || A[pos] > max)
+            return null;
+
+        TreeNode root = new TreeNode(A[pos++]);
+        // recursively create left and right subtrees
+        root.left = constructBSTUtil(A, min, root.val - 1);
+        root.right = constructBSTUtil(A, root.val + 1, max);
+
+        return root;
+    }
+
+    // https://www.interviewbit.com/problems/covered-uncovered-nodes/
+    @SuppressWarnings("ConstantConditions")
+    public long coveredNodes(TreeNode root) {
+        // compute sum of covered and uncovered nodes
+        long covered = 0, uncovered = 0;
         Queue<TreeNode> q = new LinkedList<>();
         q.add(root);
-
         // perform level order traversal
         while (!q.isEmpty()) {
-            TreeNode front = q.poll();
-            // add front node to level order result
-            res.add(front.val);
+            int n = q.size();
+            for (int i = 0; i < n; i++) {
+                TreeNode front = q.poll();
+                // first and last node of each level will be uncovered nodes
+                if (i == 0 || i == n - 1)
+                    uncovered += front.val;
+                else
+                    covered += front.val;
 
-            // reverse: take right child first then left for level order
-            if (front.right != null)
-                q.add(front.right);
-            if (front.left != null)
-                q.add(front.left);
+                if (front.left != null)
+                    q.add(front.left);
+                if (front.right != null)
+                    q.add(front.right);
+            }
         }
 
-        // reverse the current level order traversal to get last level at top and
-        // left nodes in each level before right nodes
-        Collections.reverse(res);
-
-        return res;
+        return Math.abs(covered - uncovered);
     }
 
-    // https://www.interviewbit.com/problems/maximum-edge-removal/
-    private static int res;
+    // https://www.interviewbit.com/problems/last-node-in-a-complete-binary-tree/
+    static int lastNode(TreeNode root) {
+        // T.C = O(log n * log n)
+        // get depth of leftmost node of current subtree
+        int h = getLeftHeight(root);
+        // no left subtree present
+        if (h == 1)
+            return root.val;
 
-    @SuppressWarnings("unchecked")
-    static int maxEdgeRemoval(int A, int[][] B) {
-        List<Integer>[] adj = new List[A + 1];
-        for (int i = 1; i <= A; i++)
-            adj[i] = new ArrayList<>();
-
-        // prepare adjacency list representation for the graph
-        for (int[] edge : B) {
-            int u = edge[0], v = edge[1];
-            adj[u].add(v);
-        }
-
-        boolean[] visited = new boolean[A + 1];
-        res = 0;
-        // perform dfs to find no of nodes in current component
-        dfs(1, adj, visited);
-
-        return res;
+        // if depth of leftmost node of right subtree = depth of leftmost node of left subtree,
+        // search for last node in right subtree
+        if (getLeftHeight(root.right) == h - 1)
+            return lastNode(root.right);
+        // else search for last node in left subtree
+        return lastNode(root.left);
     }
 
-    // recursive util to perform dfs
-    private static int dfs(int u, List<Integer>[] adj, boolean[] visited) {
-        int noOfNodes = 0;
-        // mark current node as visited
-        visited[u] = true;
-
-        // for each neighbour
-        for (int v : adj[u]) {
-            if (visited[v])
-                continue;
-
-            // get number of nodes connected to this unvisited number
-            int subComponentNodes = dfs(v, adj, visited);
-            // if this neighbour has even number of nodes, detach it from current
-            if (subComponentNodes % 2 == 0)
-                res++;
-                // else don't remove this edge. Let it remain part of current component
-            else
-                noOfNodes += subComponentNodes;
+    // util to get depth of leftmost node
+    private static int getLeftHeight(TreeNode root) {
+        int h = 0;
+        // keep moving left and update depth
+        while (root != null) {
+            h++;
+            root = root.left;
         }
 
-        // #nodes in current component = #nodes visited by neighbours + 1(current node)
-        return noOfNodes + 1;
+        return h;
+    }
+
+    // https://www.interviewbit.com/problems/consecutive-parent-child/
+    public static int consecutiveNodes(TreeNode root) {
+        if (root == null)
+            return 0;
+
+        int cnt = 0;
+        if (root.left != null) {
+            // if left child is consecutive, update count
+            if (Math.abs(root.val - root.left.val) == 1)
+                cnt++;
+            // recursively count consecutive parent-child in left subtree
+            cnt += consecutiveNodes(root.left);
+        }
+
+        if (root.right != null) {
+            // if right child is consecutive, update count
+            if (Math.abs(root.val - root.right.val) == 1)
+                cnt++;
+            // recursively count consecutive parent-child in right subtree
+            cnt += consecutiveNodes(root.right);
+        }
+
+        return cnt;
     }
 
     // https://www.interviewbit.com/problems/maximum-level-sum/
     @SuppressWarnings("ConstantConditions")
     static int maxLevelSum(TreeNode root) {
-        // maximum sum among all levels
-        int maxSum = 0;
+        int res = 0;
         // queue for level order traversal
         Queue<TreeNode> q = new LinkedList<>();
         q.add(root);
@@ -1523,159 +1737,16 @@ class Trees {
                     q.add(front.right);
             }
 
-            // find max level sum till this level
-            maxSum = Math.max(sum, maxSum);
+            // update level sum
+            res = Math.max(sum, res);
         }
-
-        return maxSum;
-    }
-
-    // https://www.interviewbit.com/problems/xor-between-two-arrays/
-    static int maxXor(int[] A, int[] B) {
-        BinaryTrie trie = new BinaryTrie();
-        // add all elements of A into binary trie
-        for (int val : A)
-            trie.add(val);
-
-        int res = 0;
-        // for each value in B, find max xor
-        for (int val : B)
-            res = Math.max(res, maxXorUtil(trie.root, val));
 
         return res;
     }
 
-    // util to find xor with number differing in most positions in trie
-    private static int maxXorUtil(BinaryTrieNode root, int x) {
-        // res is the number differing from x in most bit positions
-        int res = 0;
-        BinaryTrieNode curr = root;
-
-        // for each bit pos
-        for (int i = 31; i >= 0; i--) {
-            int bit = (x & (1 << i)) == 0 ? 0 : 1;
-
-            // if opposite bit present
-            if (curr.child[1 - bit] != null) {
-                res = (res << 1) | (1 - bit);
-                curr = curr.child[1 - bit];
-            }
-            // else have to traverse same bit
-            else {
-                res = (res << 1) | bit;
-                curr = curr.child[bit];
-            }
-        }
-
-        // return max xor value
-        return res ^ x;
-    }
-
-    // binary trie
-    static class BinaryTrie {
-        BinaryTrieNode root;
-
-        BinaryTrie() {
-            root = new BinaryTrieNode();
-        }
-
-        void add(int x) {
-            BinaryTrieNode curr = root;
-
-            // add all bit positions from MSB to trie
-            for (int i = 31; i >= 0; i--) {
-                int bit = (x & (1 << i)) == 0 ? 0 : 1;
-
-                if (curr.child[bit] == null)
-                    curr.child[bit] = new BinaryTrieNode();
-                curr = curr.child[bit];
-            }
-        }
-    }
-
-    // binary trie node
-    static class BinaryTrieNode {
-        BinaryTrieNode[] child;
-
-        BinaryTrieNode() {
-            child = new BinaryTrieNode[2];
-        }
-    }
-
-    // https://www.interviewbit.com/problems/burn-a-tree/
-    private static int time;
-
-    static int burnTree(TreeNode root, int x) {
-        // time taken to burn the whole tree
-        time = 0;
-        // recursively burn tree from leaf node
-        burnTreeUtil(root, new Data(), x);
-
-        return time;
-    }
-
-    // util to burn a subtree and update time
-    private static void burnTreeUtil(TreeNode root, Data data, int x) {
-        // empty node
-        if (root == null)
-            return;
-
-        // leaf node
-        if (root.left == null && root.right == null) {
-            // found leaf to be burnt first
-            if (root.val == x) {
-                data.time = 0;
-                data.contains = true;
-            }
-            return;
-        }
-
-        // recursively burn left subtree
-        Data lData = new Data();
-        burnTreeUtil(root.left, lData, x);
-
-        // recursively burn right subtree
-        Data rData = new Data();
-        burnTreeUtil(root.right, rData, x);
-
-        // whether current subtree contains target leaf
-        data.contains = lData.contains || rData.contains;
-
-        // update time taken to burn subtree from leaf to current node
-        data.time = lData.contains ? 1 + lData.time : -1;
-        if (data.time == -1)
-            data.time = rData.contains ? 1 + rData.time : -1;
-
-        // update left and right depth for current node
-        data.lDepth = (root.left == null) ? 0 : 1 + Math.max(lData.lDepth, lData.rDepth);
-        data.rDepth = (root.right == null) ? 0 : 1 + Math.max(rData.lDepth, rData.rDepth);
-
-        // if current subtree contains target leaf, update global time
-        if (data.contains) {
-            if (lData.contains)
-                time = Math.max(time, data.time + data.rDepth);
-            else
-                time = Math.max(time, data.time + data.lDepth);
-        }
-    }
-
-    // data class to store node left and right depth, time to burn and
-    // whether its subtree contains target leaf or not
-    static class Data {
-        int lDepth, rDepth, time;
-        boolean contains;
-
-        Data() {
-            lDepth = rDepth = 0;
-            time = -1;
-            contains = false;
-        }
-    }
-
     // https://www.interviewbit.com/problems/inversions/
     static int countInversions(int[] A) {
-        int n = A.length;
-        return mergeSortAndCount(A, 0, n - 1);
+        return mergeSortAndCount(A, 0, A.length - 1);
     }
 
     // recursively merge sort and count number of swaps
@@ -1701,7 +1772,6 @@ class Trees {
         // left and right halves
         int[] left = Arrays.copyOfRange(A, l, mid + 1);
         int[] right = Arrays.copyOfRange(A, mid + 1, r + 1);
-
         int i = 0, j = 0, k = l, swaps = 0;
 
         // merge both the halves
@@ -1713,14 +1783,12 @@ class Trees {
             else {
                 A[k++] = right[j++];
                 // swaps += (size of first half - last position filled previously in first half)
-                swaps += (mid + 1) - (l + i);
+                swaps += (mid - l + 1) - i;
             }
         }
-
         // merge remaining left half
         while (i < left.length)
             A[k++] = left[i++];
-
         // merge remaining right half
         while (j < right.length)
             A[k++] = right[j++];
