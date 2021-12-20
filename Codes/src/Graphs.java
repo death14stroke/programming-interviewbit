@@ -1,62 +1,115 @@
 import java.util.*;
 
 class Graphs {
-    // https://www.interviewbit.com/problems/valid-path/
-    // problem statement wrong: (0, 0) is top left and (x, y) is bottom right
-    static String validPath(int x, int y, int N, int R, int[] A, int[] B) {
-        // visited array for BFS
-        boolean[][] visited = new boolean[x + 1][y + 1];
+    // https://www.interviewbit.com/problems/path-in-directed-graph/
+    @SuppressWarnings("unchecked")
+    static int isPath(int A, int[][] B) {
+        // create adjacency list for the graph
+        List<Integer>[] adj = new List[A + 1];
+        for (int i = 1; i <= A; i++)
+            adj[i] = new ArrayList<>();
 
-        // for each point (i, j)
-        for (int i = 0; i <= x; i++) {
-            for (int j = 0; j <= y; j++) {
-                // for each circle
-                for (int k = 0; k < N; k++) {
-                    int x0 = A[k], y0 = B[k];
+        for (int[] edge : B) {
+            int u = edge[0], v = edge[1];
+            adj[u].add(v);
+        }
 
-                    // if (i, j) is in circle, mark (i, j) as visited
-                    if (isInCircle(i, j, x0, y0, R)) {
-                        visited[i][j] = true;
-                        break;
-                    }
-                }
+        // perform DFS till the last node is reached starting from 1
+        return isPathUtil(1, A, adj, new boolean[A + 1]) ? 1 : 0;
+    }
+
+    // util to check if node A is reached or not using DFS
+    private static boolean isPathUtil(int u, int A, List<Integer>[] adj, boolean[] visited) {
+        // reached end
+        if (u == A)
+            return true;
+
+        // mark current node as visited
+        visited[u] = true;
+
+        // for each neighbour
+        for (int v : adj[u]) {
+            // if unvisited and has a path to node A, return true
+            if (!visited[v] && isPathUtil(v, A, adj, visited))
+                return true;
+        }
+
+        // no path found to node A
+        return false;
+    }
+
+    // https://www.interviewbit.com/problems/water-flow/
+    static int waterFlow(int[][] A) {
+        int m = A.length, n = A[0].length;
+        // visited array for both rivers: 0 - not visited, 1 - river1, 2 - river2, 3 - both rivers
+        // perform reverse traversal from sink node to start node to get all nodes which will flow into either river
+        int[][] vis = new int[m][n];
+        // top row is river 1
+        for (int j = 0; j < n; j++) {
+            // perform BFS if cell not visited already
+            if (vis[0][j] == 0)
+                waterFlowUtil(0, j, A, vis, 1);
+        }
+
+        // left row is river 1
+        for (int i = 0; i < m; i++) {
+            // perform BFS if cell not visited already
+            if (vis[i][0] == 0)
+                waterFlowUtil(i, 0, A, vis, 1);
+        }
+
+        // bottom row is river 2
+        for (int j = 0; j < n; j++) {
+            // perform BFS if cell not visited or only river 1 visited
+            if (vis[m - 1][j] <= 1)
+                waterFlowUtil(m - 1, j, A, vis, 2);
+        }
+
+        // right row is river 2
+        for (int i = 0; i < m; i++) {
+            // perform BFS if cell not visited or only river 1 visited
+            if (vis[i][n - 1] <= 1)
+                waterFlowUtil(i, n - 1, A, vis, 2);
+        }
+
+        int res = 0;
+        // for each cell
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                // if visited by both rivers, update result count
+                if (vis[i][j] == 3)
+                    res++;
             }
         }
 
+        return res;
+    }
+
+    // util to visit cells by river using BFS.
+    private static void waterFlowUtil(int i, int j, int[][] A, int[][] vis, int river) {
+        int m = A.length, n = A[0].length;
+        int[][] dirs = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
         // queue for BFS
         Queue<MatrixNode> q = new LinkedList<>();
-        // start with (0, 0)
-        q.add(new MatrixNode(0, 0));
-        visited[0][0] = true;
+        q.add(new MatrixNode(i, j));
+        // mark current cell as visited by river
+        vis[i][j] += river;
 
-        // 8 directions
-        int[][] dirs = {{0, 1}, {0, -1}, {-1, 0}, {1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
-
-        // perform BFS
         while (!q.isEmpty()) {
             MatrixNode front = q.poll();
-
-            // reached destination
-            if (front.x == x && front.y == y)
-                return "YES";
-
             // for each direction
             for (int[] dir : dirs) {
-                int x1 = front.x + dir[0], y1 = front.y + dir[1];
-
-                // if out of bounds or already visited
-                if (x1 < 0 || x1 > x || y1 < 0 || y1 > y || visited[x1][y1])
+                int x = front.x + dir[0], y = front.y + dir[1];
+                // if out of bounds or flow is less than current flow or already visited by current river
+                if (x < 0 || x >= m || y < 0 || y >= n || A[x][y] < A[front.x][front.y] || vis[x][y] >= river)
                     continue;
 
                 // add to queue for BFS
-                q.add(new MatrixNode(x1, y1));
-                // mark as visited
-                visited[x1][y1] = true;
+                q.add(new MatrixNode(x, y));
+                // mark as visited by river
+                vis[x][y] += river;
             }
         }
-
-        // cannot reach destination
-        return "NO";
     }
 
     // data class for each position in the matrix
@@ -69,682 +122,142 @@ class Graphs {
         }
     }
 
-    // util to check if (x, y) is in or on circle with center (x0, y0) and radius R
-    static boolean isInCircle(int x, int y, int x0, int y0, int R) {
-        return Math.pow(x - x0, 2) + Math.pow(y - y0, 2) <= R * R;
-    }
+    // https://www.interviewbit.com/problems/stepping-numbers/
+    static ArrayList<Integer> steppingNumbers(int A, int B) {
+        ArrayList<Integer> res = new ArrayList<>();
+        // queue for BFS
+        Queue<Integer> q = new LinkedList<>();
+        // 0 to 9 will be the first 10 stepping numbers
+        for (int i = 0; i <= 9; i++)
+            q.add(i);
 
-    // https://www.interviewbit.com/problems/region-in-binarymatrix/
-    static int largestRegion(int[][] A) {
-        int m = A.length, n = A[0].length;
-        // length of largest connected component
-        int res = 0;
+        // for each number in queue
+        while (!q.isEmpty()) {
+            int num = q.poll();
+            // if in range, add to result
+            if (num >= A && num <= B)
+                res.add(num);
+            // if 0, cannot form new numbers or if out of range, no use in forming new numbers
+            if (num == 0 || num > B)
+                continue;
 
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                // unvisited node - start dfs
-                if (A[i][j] == 1)
-                    res = Math.max(res, dfs(i, j, A));
+            // last digit in current number
+            int digit = num % 10;
+            // new number with unit's digit one less than current number
+            int num1 = num * 10 + (digit - 1);
+            // new number with unit's digit one more than current number
+            int num2 = num * 10 + (digit + 1);
+
+            // for 0, can only add one
+            if (digit == 0)
+                q.add(num2);
+                // for 9, can only subtract one
+            else if (digit == 9)
+                q.add(num1);
+                // subtract one and add one to the last digit
+            else {
+                q.add(num1);
+                q.add(num2);
             }
         }
 
         return res;
     }
 
-    // util to count no of nodes traversed in dfs
-    private static int dfs(int i, int j, int[][] A) {
-        // mark current node as visited
-        A[i][j] = 0;
+    // https://www.interviewbit.com/problems/capture-regions-on-board/
+    @SuppressWarnings("ForLoopReplaceableByForEach")
+    static void captureRegions(ArrayList<ArrayList<Character>> board) {
+        int m = board.size(), n = board.get(0).size();
+        // start DFS from each 'O' on the four boundaries and mark them as '.'
+        for (int i = 0; i < m; i++) {
+            if (board.get(i).get(0) == 'O')
+                captureRegionsUtil(i, 0, board);
+            if (board.get(i).get(n - 1) == 'O')
+                captureRegionsUtil(i, n - 1, board);
+        }
 
-        // 8 directions in which we can move ahead
-        int[][] dirs = {{-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}};
-        int m = A.length, n = A[0].length;
-        // no of nodes traversed in current dfs
-        int noOfNodes = 1;
+        for (int j = 0; j < n; j++) {
+            if (board.get(0).get(j) == 'O')
+                captureRegionsUtil(0, j, board);
+            if (board.get(m - 1).get(j) == 'O')
+                captureRegionsUtil(m - 1, j, board);
+        }
 
+        // mark each '.' as 'O' (un-captured) and each 'O' as 'X' (captured)
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (board.get(i).get(j) == '.')
+                    board.get(i).set(j, 'O');
+                else if (board.get(i).get(j) == 'O')
+                    board.get(i).set(j, 'X');
+            }
+        }
+    }
+
+    // util to mark 'O' as '.' on board using DFS
+    private static void captureRegionsUtil(int i, int j, ArrayList<ArrayList<Character>> board) {
+        // mark current position as 'O'
+        board.get(i).set(j, '.');
+
+        int m = board.size(), n = board.get(0).size();
+        // for each direction if there is 'O' move and mark it as '.'
+        if (i + 1 < m && board.get(i + 1).get(j) == 'O')
+            captureRegionsUtil(i + 1, j, board);
+        if (i > 0 && board.get(i - 1).get(j) == 'O')
+            captureRegionsUtil(i - 1, j, board);
+        if (j + 1 < n && board.get(i).get(j + 1) == 'O')
+            captureRegionsUtil(i, j + 1, board);
+        if (j > 0 && board.get(i).get(j - 1) == 'O')
+            captureRegionsUtil(i, j - 1, board);
+    }
+
+    // https://www.interviewbit.com/problems/word-search-board/
+    static int wordSearch(String[] A, String B) {
+        int m = A.length, n = A[0].length();
+        // for each cell on board
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                // if word can start with current cell, check if word found
+                if (A[i].charAt(j) == B.charAt(0) && wordSearchUtil(i, j, 0, B, A))
+                    return 1;
+            }
+        }
+
+        // word not found on board
+        return 0;
+    }
+
+    // util to check for word on board using DFS with repeated cells in path
+    private static boolean wordSearchUtil(int i, int j, int pos, String B, String[] A) {
+        // reached last character in the word
+        if (pos == B.length() - 1)
+            return true;
+
+        // move to next character
+        pos++;
+
+        int[][] dirs = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+        int m = A.length, n = A[0].length();
         // for each direction
         for (int[] dir : dirs) {
             int x = i + dir[0], y = j + dir[1];
-            // if path does not exist
-            if (x < 0 || x >= m || y < 0 || y >= n || A[x][y] == 0)
+            // if out of bounds or character doesn't match to word position
+            if (x < 0 || x >= m || y < 0 || y >= n || B.charAt(pos) != A[x].charAt(y))
                 continue;
 
-            // add no of nodes traversed in this direction to total
-            noOfNodes += dfs(x, y, A);
-        }
-
-        return noOfNodes;
-    }
-
-    // https://www.interviewbit.com/problems/snake-ladder-problem/
-    static int snakesAndLadders(int[][] A, int[][] B) {
-        // create edge map for all the ladders and snakes
-        int[] edges = new int[101];
-        for (int[] ladder : A)
-            edges[ladder[0]] = ladder[1];
-        for (int[] snake : B)
-            edges[snake[0]] = snake[1];
-
-        // visited array for BFS
-        boolean[] visited = new boolean[101];
-        // queue for BFS
-        Queue<GameNode> q = new LinkedList<>();
-
-        // start from 1
-        q.add(new GameNode(1, 0));
-        visited[1] = true;
-
-        // since in the board game all edges will have equal weight, BFS will give us the shortest path
-        while (!q.isEmpty()) {
-            GameNode front = q.poll();
-            int v = front.v;
-            // reached end
-            if (v == 100)
-                return front.dist;
-
-            // try all 6 possible numbers on dice
-            for (int i = 1; i <= 6; i++) {
-                int j = v + i;
-                // not valid roll
-                if (j > 100)
-                    break;
-                // already visited
-                if (visited[j])
-                    continue;
-
-                // mark current node as visited
-                visited[j] = true;
-
-                // if any ladder or snake present, move up/down along that and mark visited
-                if (edges[j] != 0) {
-                    j = edges[j];
-                    visited[j] = true;
-                }
-
-                q.add(new GameNode(j, front.dist + 1));
-            }
-        }
-
-        // solution not found
-        return -1;
-    }
-
-    // data class for each position on the board
-    private static class GameNode {
-        // vertex on the board
-        int v;
-        // distance currently travelled
-        int dist;
-
-        GameNode(int v, int dist) {
-            this.v = v;
-            this.dist = dist;
-        }
-    }
-
-    // https://www.interviewbit.com/problems/level-order/
-    @SuppressWarnings("ConstantConditions")
-    static ArrayList<ArrayList<Integer>> levelOrder(Trees.TreeNode root) {
-        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
-        // empty tree
-        if (root == null)
-            return res;
-
-        // queue for level order traversal
-        Queue<Trees.TreeNode> q = new LinkedList<>();
-        q.add(root);
-
-        while (!q.isEmpty()) {
-            int n = q.size();
-            ArrayList<Integer> level = new ArrayList<>();
-
-            // traverse current level
-            for (int i = 0; i < n; i++) {
-                Trees.TreeNode front = q.poll();
-                // add node to current level
-                level.add(front.val);
-
-                // append next level nodes to queue
-                if (front.left != null)
-                    q.add(front.left);
-                if (front.right != null)
-                    q.add(front.right);
-            }
-
-            res.add(level);
-        }
-
-        return res;
-    }
-
-    // https://www.interviewbit.com/problems/smallest-multiple-with-0-and-1/
-    static String smallestMultiple(int n) {
-        // base cases
-        if (n == 0)
-            return "0";
-        if (n == 1)
-            return "1";
-
-        // start BFS from "1"
-        Queue<StringNode> q = new LinkedList<>();
-        q.add(new StringNode('1', 1, null));
-        // set to check if remainder is seen or not. A smaller string with same remainder will generate
-        // all the possible remainders that can be generated by a larger string with same remainder
-        boolean[] remainderSet = new boolean[n];
-        remainderSet[1] = true;
-        // last digit in the result string
-        StringNode head = null;
-
-        while (!q.isEmpty()) {
-            StringNode front = q.poll();
-
-            // found required number
-            if (front.remainder % n == 0) {
-                head = front;
-                break;
-            }
-
-            // if remainder not seen before, perform BFS
-            int rem1 = (front.remainder * 10) % n, rem2 = (front.remainder * 10 + 1) % n;
-            if (!remainderSet[rem1]) {
-                remainderSet[rem1] = true;
-                q.add(new StringNode('0', rem1, front));
-            }
-
-            if (!remainderSet[rem2]) {
-                remainderSet[rem2] = true;
-                q.add(new StringNode('1', rem2, front));
-            }
-        }
-
-        // build the reverse number
-        StringBuilder builder = new StringBuilder();
-        while (head != null) {
-            builder.append(head.c);
-            head = head.prev;
-        }
-
-        return builder.reverse().toString();
-    }
-
-    // data class for BFS node
-    private static class StringNode {
-        // current character in the result string
-        char c;
-        // remainder of the string formed till now
-        int remainder;
-        // pointer to the previous char's node in the string
-        StringNode prev;
-
-        StringNode(char c, int remainder, StringNode prev) {
-            this.c = c;
-            this.remainder = remainder;
-            this.prev = prev;
-        }
-    }
-
-    // https://www.interviewbit.com/problems/permutation-swaps/
-    static int permutationSwaps(int[] A, int[] B, int[][] C) {
-        int n = A.length;
-
-        // subsets array for union find with rank and path compression
-        Subset[] subsets = new Subset[n + 1];
-        for (int i = 1; i <= n; i++)
-            subsets[i] = new Subset(0, i);
-
-        // take union of end points for each edge
-        for (int[] edge : C) {
-            int i1 = edge[0] - 1, i2 = edge[1] - 1;
-            unionRank(subsets, A[i1], A[i2]);
-        }
-
-        // for each index
-        for (int i = 0; i < n; i++) {
-            if (A[i] != B[i]) {
-                // if values not equal and don't have same subset, cannot swap them
-                if (findRank(subsets, A[i]) != findRank(subsets, B[i]))
-                    return 0;
-            }
-        }
-
-        // can make swaps to get output permutation
-        return 1;
-    }
-
-    // util for find operation with rank and path compression
-    private static int findRank(Subset[] subsets, int i) {
-        // if not reached parent
-        if (subsets[i].parent != i)
-            // recursively find parent of parent and also compress the path for current node
-            subsets[i].parent = findRank(subsets, subsets[i].parent);
-
-        // return the compressed path parent for current node
-        return subsets[i].parent;
-    }
-
-    // util for union operation with rank and path compression
-    private static void unionRank(Subset[] subsets, int x, int y) {
-        // find parents of both nodes
-        int xFind = findRank(subsets, x);
-        int yFind = findRank(subsets, y);
-
-        // if parent(y) has higher rank, append parent(x) to parent(y)
-        if (subsets[xFind].rank < subsets[yFind].rank)
-            subsets[xFind].parent = yFind;
-            // else if parent(x) has higher rank, append parent(y) to parent(x)
-        else if (subsets[yFind].rank < subsets[xFind].rank)
-            subsets[yFind].parent = xFind;
-            // else equal ranks - append to any and increment its rank
-        else {
-            subsets[xFind].parent = yFind;
-            subsets[yFind].rank++;
-        }
-    }
-
-    // data class for union find with rank and path compression on disjoint sets
-    private static class Subset {
-        // rank of the node
-        int rank;
-        // parent of the node
-        int parent;
-
-        Subset(int rank, int parent) {
-            this.rank = rank;
-            this.parent = parent;
-        }
-    }
-
-    // https://www.interviewbit.com/problems/min-cost-path/
-    static int minCostPath(int A, int B, String[] C) {
-        // deque for 0-1 BFS
-        Deque<MatrixNode> q = new LinkedList<>();
-        // start with (0, 0)
-        q.addLast(new MatrixNode(0, 0));
-
-        // distance from (0, 0) to each node
-        int[][] distance = new int[A][B];
-        // initialize with max distance
-        for (int[] d : distance)
-            Arrays.fill(d, Integer.MAX_VALUE);
-        // source to source distance is 0
-        distance[0][0] = 0;
-
-        // visited array for BFS
-        boolean[][] visited = new boolean[A][B];
-
-        // four directions and their char representations
-        int[][] dirs = {{-1, 0}, {0, 1}, {0, -1}, {1, 0}};
-        char[] dirChars = {'U', 'R', 'L', 'D'};
-
-        // perform BFS
-        while (!q.isEmpty()) {
-            MatrixNode front = q.pollFirst();
-
-            // mark current node as visited
-            visited[front.x][front.y] = true;
-
-            // for each direction (edge)
-            for (int i = 0; i < 4; i++) {
-                int x = front.x + dirs[i][0], y = front.y + dirs[i][1];
-                // out of bounds or already visited
-                if (x < 0 || x >= A || y < 0 || y >= B || visited[x][y])
-                    continue;
-
-                // if direction is same as the entry in matrix, weight of edge is 0 else it is 1
-                int w = dirChars[i] == C[front.x].charAt(front.y) ? 0 : 1;
-
-                // relax current edge
-                if (distance[x][y] > distance[front.x][front.y] + w)
-                    distance[x][y] = distance[front.x][front.y] + w;
-
-                // if weight is 0, add to front of deque
-                if (w == 0)
-                    q.addFirst(new MatrixNode(x, y));
-                    // else add to end of deque
-                else
-                    q.addLast(new MatrixNode(x, y));
-            }
-        }
-
-        // distance from (0, 0) to (A - 1, B - 1)
-        return distance[A - 1][B - 1];
-    }
-
-    // https://www.interviewbit.com/problems/commutable-islands/
-    static int minCostBridges(int A, int[][] B) {
-        int res = 0;
-        // no of edges required for MST
-        int reqNoOfEdges = A - 1;
-
-        // union-find parent array
-        int[] parent = new int[A + 1];
-        Arrays.fill(parent, -1);
-
-        // sort the edges in increasing order of weight
-        Arrays.sort(B, Comparator.comparingInt(e -> e[2]));
-
-        // for each edge
-        for (int[] edge : B) {
-            int u = edge[0], v = edge[1], weight = edge[2];
-
-            // if both points are in same set, adding edge will form cycle
-            if (find(parent, u) == find(parent, v))
-                continue;
-
-            // update minimum cost
-            res += weight;
-            // update no of edges remaining
-            reqNoOfEdges--;
-            // MST is complete
-            if (reqNoOfEdges == 0)
-                break;
-
-            // add both endpoints to the same set
-            union(parent, u, v);
-        }
-
-        return res;
-    }
-
-    // util to perform find operation in disjoint set
-    private static int find(int[] parent, int i) {
-        // find the root node of the set
-        while (parent[i] != -1)
-            i = parent[i];
-
-        return i;
-    }
-
-    // util to perform union operation in disjoint set
-    private static void union(int[] parent, int x, int y) {
-        // find parents of both nodes
-        x = find(parent, x);
-        y = find(parent, y);
-
-        // make either node as parent of other node
-        parent[x] = y;
-    }
-
-    // https://www.interviewbit.com/problems/possibility-of-finishing-all-courses-given-prerequisites/
-    @SuppressWarnings("unchecked")
-    static int canFinishCourses(int A, int[] B, int[] C) {
-        // create adjacency list for the graph
-        List<Integer>[] adj = new List[A + 1];
-        for (int i = 1; i <= A; i++)
-            adj[i] = new LinkedList<>();
-
-        for (int i = 0; i < B.length; i++)
-            adj[B[i]].add(C[i]);
-
-        // boolean array to keep track of visited nodes
-        boolean[] visited = new boolean[A + 1];
-        // boolean array to keep track of nodes currently in DFS path stack
-        boolean[] recStack = new boolean[A + 1];
-
-        for (int i = 1; i <= A; i++) {
-            // perform DFS for each connected component. If cycle, cannot complete courses
-            if (!visited[i] && isDirectedCyclicUtil(i, adj, visited, recStack))
-                return 0;
-        }
-
-        // no cycles. Can complete all courses in a topological order
-        return 1;
-    }
-
-    // util to check for cycle in directed graph using DFS
-    private static boolean isDirectedCyclicUtil(int u, List<Integer>[] adj, boolean[] visited, boolean[] recStack) {
-        // mark current node as visited
-        visited[u] = true;
-        // mark current node as part of stack
-        recStack[u] = true;
-
-        // for each neighbour
-        for (int v : adj[u]) {
-            // if node already in stack, there is cycle
-            if (recStack[v])
-                return true;
-
-            // if node is unvisited and it forms cycle
-            if (!visited[v] && isDirectedCyclicUtil(v, adj, visited, recStack))
+            // recursively check if remaining word found in this direction
+            if (wordSearchUtil(x, y, pos, B, A))
                 return true;
         }
 
-        // pop current node from stack
-        recStack[u] = false;
-
-        // no cycles starting from current node
+        // word not found
         return false;
     }
 
-    // https://www.interviewbit.com/problems/cycle-in-undirected-graph/
-    // Approach 1 - using DFS (T.C O(V + E))
+    // https://www.interviewbit.com/problems/path-with-good-nodes/
     @SuppressWarnings("unchecked")
-    static int isUndirectedCycle(int A, int[][] B) {
-        // create adjacency list for graph
-        List<Integer>[] adj = new List[A + 1];
-        for (int i = 1; i <= A; i++)
-            adj[i] = new LinkedList<>();
-
-        for (int[] edge : B) {
-            int u = edge[0], v = edge[1];
-            adj[u].add(v);
-            adj[v].add(u);
-        }
-
-        // visited array for DFS
-        boolean[] visited = new boolean[A + 1];
-        // perform DFS for each connected component and check if cycle found
-        for (int i = 1; i <= A; i++) {
-            if (!visited[i] && isUndirectedCycleUtil(i, adj, visited, -1))
-                return 1;
-        }
-
-        // no cycles found
-        return 0;
-    }
-
-    // util to check cycle in undirected graph using DFS
-    private static boolean isUndirectedCycleUtil(int u, List<Integer>[] adj, boolean[] visited, int parent) {
-        // mark current node as visited
-        visited[u] = true;
-
-        // for each neighbour
-        for (int v : adj[u]) {
-            // if visited node and is not the parent of the current node, cycle found
-            if (visited[v] && v != parent)
-                return true;
-
-            // if unvisited node and forms cycle
-            if (!visited[v] && isUndirectedCycleUtil(v, adj, visited, u))
-                return true;
-        }
-
-        // no cycles formed by any neighbours
-        return false;
-    }
-
-    // https://www.interviewbit.com/problems/cycle-in-undirected-graph/
-    // Approach 2 - using union find (T.C: O(E log V))
-    static int isUndirectedCycleUnionFind(int A, int[][] B) {
-        // initialize parent array for all nodes
-        int[] parent = new int[A + 1];
-        Arrays.fill(parent, -1);
-
-        // for each edge
-        for (int[] edge : B) {
-            // find parents of both end points
-            int x = find(parent, edge[0]);
-            int y = find(parent, edge[1]);
-
-            // if in same subset, cycle exists
-            if (x == y)
-                return 1;
-
-            // perform union of both parents
-            union(parent, x, y);
-        }
-
-        // no cycles found
-        return 0;
-    }
-
-    // https://www.interviewbit.com/problems/black-shapes/
-    static int blackShapes(String[] A) {
-        int m = A.length, n = A[0].length();
-        // no of connected components
-        int res = 0;
-
-        boolean[][] visited = new boolean[m][n];
-
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                // if character is 'X' and not visited
-                if (A[i].charAt(j) == 'X' && !visited[i][j]) {
-                    // update count
-                    res++;
-                    // perform DFS
-                    blackShapesUtil(i, j, m, n, A, visited);
-                }
-            }
-        }
-
-        return res;
-    }
-
-    // util to perform DFS for each connected component
-    private static void blackShapesUtil(int i, int j, int m, int n, String[] A, boolean[][] visited) {
-        // mark current position as visited
-        visited[i][j] = true;
-
-        int[][] dirs = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
-
-        // for all 4 directions
-        for (int[] dir : dirs) {
-            int x = i + dir[0], y = j + dir[1];
-
-            // if no path or character is 'O' or already visited
-            if (x < 0 || x >= m || y < 0 || y >= n || A[x].charAt(y) == 'O' || visited[x][y])
-                continue;
-
-            // perform DFS
-            blackShapesUtil(x, y, m, n, A, visited);
-        }
-    }
-
-    // https://www.interviewbit.com/problems/largest-distance-between-nodes-of-a-tree/
-    @SuppressWarnings("unchecked")
-    static int largestDistance(int[] A) {
+    static int pathWithGoodNodes(int[] A, int[][] B, int C) {
         int n = A.length;
-
-        // create adjacency list
-        List<Integer>[] adj = new List[n];
-        for (int i = 0; i < n; i++)
-            adj[i] = new LinkedList<>();
-
-        // root of the tree
-        int root = 0;
-
-        for (int i = 0; i < n; i++) {
-            // add undirected edge to the graph
-            if (A[i] != -1) {
-                adj[i].add(A[i]);
-                adj[A[i]].add(i);
-            }
-            // mark root node
-            else {
-                root = i;
-            }
-        }
-
-        // find the last visited node in BFS starting from root node
-        int lastNode = findLastNode(root, adj);
-
-        // calculate the distance of last visited node in BFS starting from the previous result
-        return farthestNode(lastNode, adj);
-    }
-
-    // util to find the last visited node in BFS
-    private static int findLastNode(int root, List<Integer>[] adj) {
-        // last visited node
-        int lastNode = root;
-
-        // queue for BFS
-        Queue<Integer> q = new LinkedList<>();
-        q.add(root);
-
-        // visited array
-        boolean[] visited = new boolean[adj.length];
-        visited[root] = true;
-
-        // perform BFS
-        while (!q.isEmpty()) {
-            lastNode = q.poll();
-
-            // for each neighbour
-            for (int v : adj[lastNode]) {
-                // if not visited, mark visited and add to queue
-                if (!visited[v]) {
-                    visited[v] = true;
-                    q.add(v);
-                }
-            }
-        }
-
-        return lastNode;
-    }
-
-    // util to find the distance to the farthest node in BFS
-    private static int farthestNode(int start, List<Integer>[] adj) {
-        // farthest node
-        BFSNode front = new BFSNode(start, 0);
-
-        // queue for BFS
-        Queue<BFSNode> queue = new LinkedList<>();
-        queue.add(front);
-
-        // visited array
-        boolean[] visited = new boolean[adj.length];
-        visited[start] = true;
-
-        // perform BFS
-        while (!queue.isEmpty()) {
-            front = queue.poll();
-
-            // for each neighbour
-            for (int v : adj[front.label]) {
-                // if not visited, mark visited, update distance and add to queue
-                if (!visited[v]) {
-                    visited[v] = true;
-                    queue.add(new BFSNode(v, front.dist + 1));
-                }
-            }
-        }
-
-        // distance to the last node
-        return front.dist;
-    }
-
-    // data class for BFS node
-    private static class BFSNode {
-        // label of the node
-        int label;
-        // distance from the root node
-        int dist;
-
-        BFSNode(int label, int dist) {
-            this.label = label;
-            this.dist = dist;
-        }
-    }
-
-    // https://www.interviewbit.com/problems/delete-edge/
-    private static int maxProduct;
-    private static final int p = 1000000007;
-
-    @SuppressWarnings("unchecked")
-    static int deleteEdge(int[] A, int[][] B) {
-        int n = A.length;
-
         // create adjacency list for undirected tree
         List<Integer>[] adj = new List[n + 1];
         for (int i = 1; i <= n; i++)
@@ -756,40 +269,85 @@ class Graphs {
             adj[v].add(u);
         }
 
-        // calculate total sum of all node weights
-        long sum = 0;
-        for (int w : A)
-            sum += w;
-
-        // maximum product of sum of two subtrees
-        maxProduct = 0;
-
-        // DFS util to calculate subtree sum at each node
-        deleteEdgeUtil(1, -1, adj, sum, A);
-
-        return maxProduct;
+        // start DFS from root (1) to count good paths
+        return goodPaths(1, -1, C, A, adj);
     }
 
-    // util to calculate subtree sum at each node and maximize result
-    private static void deleteEdgeUtil(int u, int parent, List<Integer>[] adj, long sum, int[] A) {
-        // initialize current subtree sum
-        int x = A[u - 1];
+    // util to count for good root to leaf paths using DFS
+    private static int goodPaths(int u, int parent, int C, int[] A, List<Integer>[] adj) {
+        // good node - update count
+        if (A[u - 1] == 1)
+            C--;
+        // exhausted all good nodes
+        if (C < 0)
+            return 0;
+        // if leaf node, update good paths count
+        if (adj[u].size() == 1 && adj[u].get(0) == parent)
+            return 1;
 
+        int cnt = 0;
         // for each neighbour
         for (int v : adj[u]) {
-            // if not parent node, recursively calculate subtree sum and append the sum to current node
-            if (v != parent) {
-                deleteEdgeUtil(v, u, adj, sum, A);
-                x += A[v - 1];
+            // if not parent, recursively perform DFS to count good paths
+            if (v != parent)
+                cnt += goodPaths(v, u, C, A, adj);
+        }
+
+        return cnt;
+    }
+
+    // https://www.interviewbit.com/problems/largest-distance-between-nodes-of-a-tree/
+    private static int res;
+
+    @SuppressWarnings("unchecked")
+    public static int largestDistance(int[] A) {
+        int n = A.length;
+        // create adjacency list
+        List<Integer>[] adj = new List[n];
+        for (int i = 0; i < n; i++)
+            adj[i] = new LinkedList<>();
+
+        // root of the tree
+        int root = 0;
+        for (int i = 0; i < n; i++) {
+            // add edge from root to child
+            if (A[i] != -1)
+                adj[A[i]].add(i);
+            else
+                root = i;
+        }
+
+        res = 0;
+        // perform dfs to compute height of each subtree
+        largestDistanceUtil(root, adj);
+
+        return res;
+    }
+
+    private static int largestDistanceUtil(int u, List<Integer>[] adj) {
+        // leaf node
+        if (adj[u].isEmpty())
+            return 1;
+
+        // find the two subtrees with maximum height
+        int max1 = 0, max2 = 0;
+        for (int v : adj[u]) {
+            int height = largestDistanceUtil(v, adj);
+            // found subtree with maximum height
+            if (height >= max1) {
+                max2 = max1;
+                max1 = height;
+            }
+            // found subtree with 2nd maximum height
+            else if (height > max2) {
+                max2 = height;
             }
         }
 
-        // update subtree sum for current node
-        A[u - 1] = x;
-
-        // if not root node, update result
-        if (u != 1)
-            maxProduct = (int) Math.max(maxProduct, (x * (sum - x)) % p);
+        // largest distance = max(the largest distance so far, sum of heights of max 2 subtrees)
+        res = Math.max(res, max1 + max2);
+        // return height of current subtree
+        return max1 + 1;
     }
 
     // https://www.interviewbit.com/problems/cycle-in-directed-graph/
@@ -799,7 +357,6 @@ class Graphs {
         List<Integer>[] adj = new List[A + 1];
         for (int i = 1; i <= A; i++)
             adj[i] = new LinkedList<>();
-
         for (int[] edge : B)
             adj[edge[0]].add(edge[1]);
 
@@ -816,6 +373,77 @@ class Graphs {
 
         // no cycles found
         return 0;
+    }
+
+    // util to check for cycle in directed graph using DFS
+    private static boolean isDirectedCyclicUtil(int u, List<Integer>[] adj, boolean[] visited, boolean[] recStack) {
+        // mark current node as visited
+        visited[u] = true;
+        // mark current node as part of stack
+        recStack[u] = true;
+
+        // for each neighbour
+        for (int v : adj[u]) {
+            // if node already in stack, there is cycle
+            if (recStack[v])
+                return true;
+            // if node is unvisited and it forms cycle
+            if (!visited[v] && isDirectedCyclicUtil(v, adj, visited, recStack))
+                return true;
+        }
+
+        // pop current node from stack
+        recStack[u] = false;
+
+        // no cycles starting from current node
+        return false;
+    }
+
+    // https://www.interviewbit.com/problems/delete-edge/
+    private static final int MOD = 1_000_000_007;
+    private static long totalSum, maxProduct;
+
+    @SuppressWarnings("unchecked")
+    static int deleteEdge(int[] A, int[][] B) {
+        int n = A.length;
+        // create adjacency list for undirected tree
+        List<Integer>[] adj = new List[n + 1];
+        for (int i = 1; i <= n; i++)
+            adj[i] = new LinkedList<>();
+
+        for (int[] edge : B) {
+            int u = edge[0], v = edge[1];
+            adj[u].add(v);
+            adj[v].add(u);
+        }
+
+        // calculate total sum of all node weights
+        totalSum = 0;
+        for (int val : A)
+            totalSum += val;
+
+        // maximum product of sum of two subtrees
+        maxProduct = 0;
+        // DFS util to calculate subtree sum at each node
+        deleteEdgeUtil(1, -1, A, adj);
+
+        return (int) maxProduct;
+    }
+
+    // util to calculate subtree sum at each node and maximize result
+    private static long deleteEdgeUtil(int u, int parent, int[] A, List<Integer>[] adj) {
+        long sum = A[u - 1];
+        // for each neighbour
+        for (int v : adj[u]) {
+            if (v != parent) {
+                // if not parent node, recursively calculate subtree sum, update result and append to current sum
+                long subtreeSum = deleteEdgeUtil(v, u, A, adj);
+                maxProduct = Math.max(maxProduct, (subtreeSum * (totalSum - subtreeSum)) % MOD);
+                sum += subtreeSum;
+            }
+        }
+
+        return sum;
     }
 
     // https://www.interviewbit.com/problems/two-teams/
@@ -850,19 +478,16 @@ class Graphs {
         // queue for BFS
         Queue<Integer> q = new LinkedList<>();
         q.add(src);
-
         // color source vertex as 0
         color[src] = 0;
 
         while (!q.isEmpty()) {
             int u = q.poll();
-
             // for each neighbour of u
             for (int v : adj[u]) {
                 // if same color, graph is not bipartite
                 if (color[v] == color[u])
                     return false;
-
                 // if not colored, color with opposite color and add to queue for BFS
                 if (color[v] == -1) {
                     color[v] = 1 - color[u];
@@ -875,152 +500,547 @@ class Graphs {
         return true;
     }
 
-    // https://www.interviewbit.com/problems/stepping-numbers/
-    static ArrayList<Integer> steppingNumbers(int A, int B) {
-        ArrayList<Integer> res = new ArrayList<>();
+    // https://www.interviewbit.com/problems/valid-path/
+    // problem statement wrong: (0, 0) is top left and (x, y) is bottom right
+    static String validPath(int x, int y, int N, int R, int[] A, int[] B) {
+        // visited array for BFS
+        boolean[][] visited = new boolean[x + 1][y + 1];
+        // for each point (i, j)
+        for (int i = 0; i <= x; i++) {
+            for (int j = 0; j <= y; j++) {
+                // for each circle
+                for (int k = 0; k < N; k++) {
+                    int x0 = A[k], y0 = B[k];
+                    // if (i, j) is in circle, mark (i, j) as visited
+                    if (isInCircle(i, j, x0, y0, R)) {
+                        visited[i][j] = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // source or destination touches any circle
+        if (visited[0][0] || visited[x][y])
+            return "NO";
 
         // queue for BFS
-        Queue<Integer> q = new LinkedList<>();
-        // 0 to 9 will be the first 10 stepping numbers
-        for (int i = 0; i <= 9; i++)
-            q.add(i);
+        Queue<MatrixNode> q = new LinkedList<>();
+        // start with (0, 0)
+        q.add(new MatrixNode(0, 0));
+        visited[0][0] = true;
 
-        // for each number in queue
+        // 8 directions
+        int[][] dirs = {{0, 1}, {0, -1}, {-1, 0}, {1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+        // perform BFS
         while (!q.isEmpty()) {
-            int num = q.poll();
+            MatrixNode front = q.poll();
+            // reached destination
+            if (front.x == x && front.y == y)
+                return "YES";
 
-            // if in range, add to result
-            if (num >= A && num <= B)
-                res.add(num);
+            // for each direction
+            for (int[] dir : dirs) {
+                int x1 = front.x + dir[0], y1 = front.y + dir[1];
+                // if out of bounds or already visited
+                if (x1 < 0 || x1 > x || y1 < 0 || y1 > y || visited[x1][y1])
+                    continue;
 
-            // if 0, cannot form new numbers or if out of range, no use in forming new numbers
-            if (num == 0 || num > B)
-                continue;
+                // add to queue for BFS
+                q.add(new MatrixNode(x1, y1));
+                // mark as visited
+                visited[x1][y1] = true;
+            }
+        }
 
-            // last digit in current number
-            int digit = num % 10;
-            // new number with unit's digit one less than current number
-            int num1 = num * 10 + (digit - 1);
-            // new number with unit's digit one more than current number
-            int num2 = num * 10 + (digit + 1);
+        // cannot reach destination
+        return "NO";
+    }
 
-            // for 0, can only add one
-            if (digit == 0)
-                q.add(num2);
-                // for 9, can only subtract one
-            else if (digit == 9)
-                q.add(num1);
-                // subtract one and add one to the last digit
-            else {
-                q.add(num1);
-                q.add(num2);
+    // util to check if (x, y) is in or on circle with center (x0, y0) and radius R
+    private static boolean isInCircle(int x, int y, int x0, int y0, int R) {
+        return (x - x0) * (x - x0) + (y - y0) * (y - y0) <= R * R;
+    }
+
+    // https://www.interviewbit.com/problems/snake-ladder-problem/
+    @SuppressWarnings("ConstantConditions")
+    static int snakesAndLadders(int[][] A, int[][] B) {
+        // create edge map for all the ladders and snakes
+        int[] graph = new int[101];
+        for (int[] ladder : A)
+            graph[ladder[0]] = ladder[1];
+        for (int[] snake : B)
+            graph[snake[0]] = snake[1];
+
+        // # dice rolls till now
+        int dist = 0;
+        // queue for BFS
+        Queue<Integer> q = new LinkedList<>();
+        q.add(1);
+        // visited array for BFS
+        boolean[] visited = new boolean[101];
+        visited[1] = true;
+
+        // since in the board game all edges will have equal weight, BFS will give us the shortest path
+        while (!q.isEmpty()) {
+            int n = q.size();
+
+            for (int i = 0; i < n; i++) {
+                int front = q.poll();
+                // reached end
+                if (front == 100)
+                    return dist;
+
+                // try all 6 possible numbers on dice
+                for (int j = 1; j <= 6; j++) {
+                    int x = front + j;
+                    // not valid roll
+                    if (x > 100)
+                        break;
+                    // if any ladder or snake present, move up/down along that
+                    if (graph[x] != 0)
+                        x = graph[x];
+                    // mark as visited and add to queue
+                    if (!visited[x]) {
+                        visited[x] = true;
+                        q.add(x);
+                    }
+                }
+            }
+            // do next dice roll
+            dist++;
+        }
+
+        // solution not found
+        return -1;
+    }
+
+    // https://www.interviewbit.com/problems/region-in-binarymatrix/
+    private static final int[][] dirs = {{-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}};
+
+    static int largestRegion(int[][] A) {
+        int m = A.length, n = A[0].length;
+        // length of largest connected component
+        int res = 0;
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                // unvisited node - start dfs
+                if (A[i][j] == 1)
+                    res = Math.max(res, dfs(i, j, A));
             }
         }
 
         return res;
     }
 
-    // https://www.interviewbit.com/problems/capture-regions-on-board/
-    @SuppressWarnings("ForLoopReplaceableByForEach")
-    static void captureRegions(ArrayList<ArrayList<Character>> A) {
-        int m = A.size(), n = A.get(0).size();
+    // util to count no of nodes traversed in dfs
+    private static int dfs(int i, int j, int[][] A) {
+        // mark current node as visited
+        A[i][j] = 0;
 
-        // mark each 'O' as '-'
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                if (A.get(i).get(j) == 'O')
-                    A.get(i).set(j, '-');
-            }
-        }
-
-        // start BFS from each '-' on the four boundaries and mark them as 'O' again
-        for (int i = 0; i < m; i++) {
-            if (A.get(i).get(0) == '-')
-                captureRegionsUtil(i, 0, A, m, n);
-            if (A.get(i).get(n - 1) == '-')
-                captureRegionsUtil(i, n - 1, A, m, n);
-        }
-
-        for (int j = 0; j < n; j++) {
-            if (A.get(0).get(j) == '-')
-                captureRegionsUtil(0, j, A, m, n);
-            if (A.get(m - 1).get(j) == '-')
-                captureRegionsUtil(m - 1, j, A, m, n);
-        }
-
-        // mark all remaining '-' in the middle as 'X' - captured regions
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                if (A.get(i).get(j) == '-')
-                    A.get(i).set(j, 'X');
-            }
-        }
-    }
-
-    // util to mark '-' as 'O' on board using DFS
-    private static void captureRegionsUtil(int i, int j, ArrayList<ArrayList<Character>> A, int m, int n) {
-        // mark current position as 'O'
-        A.get(i).set(j, 'O');
-
-        int[][] dirs = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+        int m = A.length, n = A[0].length;
+        // #nodes traversed in current dfs
+        int cnt = 1;
 
         // for each direction
         for (int[] dir : dirs) {
             int x = i + dir[0], y = j + dir[1];
-
-            // if out of bounds or not '-'
-            if (x < 0 || x >= m || y < 0 || y >= n || A.get(x).get(y) != '-')
+            // if path does not exist
+            if (x < 0 || x >= m || y < 0 || y >= n || A[x][y] == 0)
                 continue;
 
-            // recursively mark as 'O'
-            captureRegionsUtil(x, y, A, m, n);
+            // add no of nodes traversed in this direction to total
+            cnt += dfs(x, y, A);
         }
+
+        return cnt;
     }
 
-    // https://www.interviewbit.com/problems/word-search-board/
-    static int wordSearch(String[] board, String word) {
-        int m = board.length, n = board[0].length();
+    // https://www.interviewbit.com/problems/level-order/
+    @SuppressWarnings("ConstantConditions")
+    static ArrayList<ArrayList<Integer>> levelOrder(Trees.TreeNode root) {
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        // empty tree
+        if (root == null)
+            return res;
 
-        // for each cell on board
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                // if word can start with current cell, check if word found
-                if (board[i].charAt(j) == word.charAt(0) && wordSearchUtil(i, j, 0, word, board))
-                    return 1;
+        // queue for level order traversal
+        Queue<Trees.TreeNode> q = new LinkedList<>();
+        q.add(root);
+
+        while (!q.isEmpty()) {
+            int n = q.size();
+            ArrayList<Integer> level = new ArrayList<>();
+            // traverse current level
+            for (int i = 0; i < n; i++) {
+                Trees.TreeNode front = q.poll();
+                // add node to current level
+                level.add(front.val);
+                // append next level nodes to queue
+                if (front.left != null)
+                    q.add(front.left);
+                if (front.right != null)
+                    q.add(front.right);
+            }
+
+            res.add(level);
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/smallest-multiple-with-0-and-1/
+    static String smallestMultiple(int A) {
+        // base cases
+        if (A == 0)
+            return "0";
+        if (A == 1)
+            return "1";
+
+        // start BFS from "1"
+        Queue<StringNode> q = new LinkedList<>();
+        q.add(new StringNode('1', 1, null));
+        // set to check if remainder is seen or not. A smaller string with same remainder will generate
+        // all the possible remainders that can be generated by a larger string with same remainder
+        boolean[] remainderSet = new boolean[A];
+        remainderSet[1] = true;
+        // last digit in the result string
+        StringNode front = null;
+
+        while (!q.isEmpty()) {
+            front = q.poll();
+            // found required number
+            if (front.remainder == 0)
+                break;
+
+            // if remainder not seen before, perform BFS
+            int rem1 = (front.remainder * 10) % A, rem2 = (front.remainder * 10 + 1) % A;
+            if (!remainderSet[rem1]) {
+                remainderSet[rem1] = true;
+                q.add(new StringNode('0', rem1, front));
+            }
+
+            if (!remainderSet[rem2]) {
+                remainderSet[rem2] = true;
+                q.add(new StringNode('1', rem2, front));
             }
         }
 
-        // word not found on board
+        // build the reverse number
+        StringBuilder builder = new StringBuilder();
+        while (front != null) {
+            builder.append(front.c);
+            front = front.prev;
+        }
+
+        return builder.reverse().toString();
+    }
+
+    // data class for BFS node
+    private static class StringNode {
+        // current character in the result string
+        char c;
+        // remainder of the string formed till now
+        int remainder;
+        // pointer to the previous char's node in the string
+        StringNode prev;
+
+        StringNode(char c, int remainder, StringNode prev) {
+            this.c = c;
+            this.remainder = remainder;
+            this.prev = prev;
+        }
+    }
+
+    // https://www.interviewbit.com/problems/min-cost-path/
+    static int minCostPath(int A, int B, String[] C) {
+        // deque for 0-1 BFS
+        Deque<MatrixDistNode> q = new LinkedList<>();
+        // start with (0, 0)
+        q.addLast(new MatrixDistNode(0, 0, 0));
+        // visited array for BFS
+        boolean[][] visited = new boolean[A][B];
+
+        // perform BFS
+        while (!q.isEmpty()) {
+            MatrixDistNode front = q.pollFirst();
+            int x = front.x, y = front.y, dist = front.dist;
+            // reached destination
+            if (x == A - 1 && y == B - 1)
+                return dist;
+
+            // mark current node as visited
+            visited[x][y] = true;
+
+            // check down
+            if (x + 1 < A && !visited[x + 1][y]) {
+                // if current node says to go down, no cost else add 1 cost
+                if (C[x].charAt(y) == 'D')
+                    q.addFirst(new MatrixDistNode(x + 1, y, dist));
+                else
+                    q.addLast(new MatrixDistNode(x + 1, y, dist + 1));
+            }
+            // check up
+            if (x > 0 && !visited[x - 1][y]) {
+                // if current node says to go up, no cost else add 1 cost
+                if (C[x].charAt(y) == 'U')
+                    q.addFirst(new MatrixDistNode(x - 1, y, dist));
+                else
+                    q.addLast(new MatrixDistNode(x - 1, y, dist + 1));
+            }
+            // check right
+            if (y + 1 < B && !visited[x][y + 1]) {
+                // if current node says to go right, no cost else add 1 cost
+                if (C[x].charAt(y) == 'R')
+                    q.addFirst(new MatrixDistNode(x, y + 1, dist));
+                else
+                    q.addLast(new MatrixDistNode(x, y + 1, dist + 1));
+            }
+            // check left
+            if (y > 0 && !visited[x][y - 1]) {
+                // if current node says to go left, no cost else add 1 cost
+                if (C[x].charAt(y) == 'L')
+                    q.addFirst(new MatrixDistNode(x, y - 1, dist));
+                else
+                    q.addLast(new MatrixDistNode(x, y - 1, dist + 1));
+            }
+        }
+
+        // path not found
+        return -1;
+    }
+
+    // util class for matrix node
+    static class MatrixDistNode {
+        int x, y, dist;
+
+        MatrixDistNode(int x, int y, int dist) {
+            this.x = x;
+            this.y = y;
+            this.dist = dist;
+        }
+    }
+
+    // https://www.interviewbit.com/problems/permutation-swaps/
+    static int permutationSwaps(int[] A, int[] B, int[][] C) {
+        int n = A.length;
+        // union find with rank and path compression
+        int[] parent = new int[n + 1], rank = new int[n + 1];
+        // take union of end points for each edge
+        for (int[] edge : C) {
+            int i1 = edge[0] - 1, i2 = edge[1] - 1;
+            unionRank(A[i1], A[i2], parent, rank);
+        }
+
+        // for each index
+        for (int i = 0; i < n; i++) {
+            // if values not equal and don't have same subset, cannot swap them
+            if (A[i] != B[i] && find(A[i], parent) != find(B[i], parent))
+                return 0;
+        }
+
+        // can make swaps to get output permutation
+        return 1;
+    }
+
+    // util to find parent
+    private static int find(int i, int[] parent) {
+        // base-case
+        if (parent[i] == -1)
+            return i;
+        // path compression
+        parent[i] = find(parent[i], parent);
+
+        return parent[i];
+    }
+
+    // util to union two nodes
+    public static void unionRank(int x, int y, int[] parent, int[] rank) {
+        x = find(x, parent);
+        y = find(y, parent);
+        // already in same set - no need to union
+        if (x == y)
+            return;
+        // rank is same - update rank of any node
+        if (rank[x] == rank[y])
+            rank[x]++;
+        // mark higher rank node as parent
+        if (rank[x] < rank[y])
+            parent[x] = y;
+        else
+            parent[y] = x;
+    }
+
+    // https://www.interviewbit.com/problems/commutable-islands/
+    static int minCostBridges(int A, int[][] B) {
+        int res = 0;
+        // no of edges required for MST
+        int reqNoOfEdges = A - 1;
+        // union-find parent array
+        int[] parent = new int[A + 1];
+        Arrays.fill(parent, -1);
+        // sort the edges in increasing order of weight
+        Arrays.sort(B, Comparator.comparingInt(e -> e[2]));
+
+        // for each edge
+        for (int[] edge : B) {
+            int u = edge[0], v = edge[1], weight = edge[2];
+            // if both points are in same set, adding edge will form cycle
+            if (find(u, parent) == find(v, parent))
+                continue;
+
+            // update minimum cost
+            res += weight;
+            // update no of edges remaining
+            reqNoOfEdges--;
+            // MST is complete
+            if (reqNoOfEdges == 0)
+                break;
+
+            // add both endpoints to the same set
+            union(parent, u, v);
+        }
+
+        return res;
+    }
+
+    // util to perform union operation in disjoint set
+    private static void union(int[] parent, int x, int y) {
+        // find parents of both nodes
+        x = find(x, parent);
+        y = find(y, parent);
+        // make either node as parent of other node
+        if (x != y)
+            parent[x] = y;
+    }
+
+    // https://www.interviewbit.com/problems/possibility-of-finishing-all-courses-given-prerequisites/
+    @SuppressWarnings("unchecked")
+    static int canFinishCourses(int A, int[] B, int[] C) {
+        // create adjacency list for the graph
+        List<Integer>[] adj = new List[A + 1];
+        for (int i = 1; i <= A; i++)
+            adj[i] = new LinkedList<>();
+        for (int i = 0; i < B.length; i++)
+            adj[B[i]].add(C[i]);
+
+        // boolean array to keep track of visited nodes
+        boolean[] visited = new boolean[A + 1];
+        // boolean array to keep track of nodes currently in DFS path stack
+        boolean[] recStack = new boolean[A + 1];
+
+        for (int i = 1; i <= A; i++) {
+            // perform DFS for each connected component. If found cycle, cannot complete courses
+            if (!visited[i] && isDirectedCyclicUtil(i, adj, visited, recStack))
+                return 0;
+        }
+
+        // no cycles. Can complete all courses in a topological order
+        return 1;
+    }
+
+    // https://www.interviewbit.com/problems/cycle-in-undirected-graph/
+    // Approach 1 - using DFS (T.C O(V + E))
+    @SuppressWarnings("unchecked")
+    static int isUndirectedCycle(int A, int[][] B) {
+        // create adjacency list for graph
+        List<Integer>[] adj = new List[A + 1];
+        for (int i = 1; i <= A; i++)
+            adj[i] = new LinkedList<>();
+        for (int[] edge : B) {
+            int u = edge[0], v = edge[1];
+            adj[u].add(v);
+            adj[v].add(u);
+        }
+
+        // visited array for DFS
+        boolean[] visited = new boolean[A + 1];
+        // perform DFS for each connected component and check if cycle found
+        for (int i = 1; i <= A; i++) {
+            if (!visited[i] && isUndirectedCycleUtil(i, adj, visited, -1))
+                return 1;
+        }
+
+        // no cycles found
         return 0;
     }
 
-    // util to check for word on board using DFS with repeated cells in path
-    private static boolean wordSearchUtil(int i, int j, int pos, String word, String[] board) {
-        // reached last character in the word
-        if (pos == word.length() - 1)
-            return true;
+    // util to check cycle in undirected graph using DFS
+    private static boolean isUndirectedCycleUtil(int u, List<Integer>[] adj, boolean[] visited, int parent) {
+        // mark current node as visited
+        visited[u] = true;
 
-        // move to next character
-        pos++;
-
-        int[][] dirs = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
-        int m = board.length, n = board[0].length();
-
-        // for each direction
-        for (int[] dir : dirs) {
-            int x = i + dir[0], y = j + dir[1];
-
-            // if out of bounds or character doesn't match to word position
-            if (x < 0 || x >= m || y < 0 || y >= n || word.charAt(pos) != board[x].charAt(y))
-                continue;
-
-            // recursively check if remaining word found in this direction
-            if (wordSearchUtil(x, y, pos, word, board))
+        // for each neighbour
+        for (int v : adj[u]) {
+            // if visited node and is not the parent of the current node, cycle found
+            if (visited[v] && v != parent)
+                return true;
+            // if unvisited node and forms cycle
+            if (!visited[v] && isUndirectedCycleUtil(v, adj, visited, u))
                 return true;
         }
 
-        // word not found
+        // no cycles formed by any neighbours
         return false;
+    }
+
+    // https://www.interviewbit.com/problems/cycle-in-undirected-graph/
+    // Approach 2 - using union find (T.C: O(E log V))
+    static int isUndirectedCycleUnionFind(int A, int[][] B) {
+        // initialize parent array for all nodes
+        int[] parent = new int[A + 1];
+        Arrays.fill(parent, -1);
+        // for each edge
+        for (int[] edge : B) {
+            // if in same subset, cycle exists
+            if (find(edge[0], parent) == find(edge[1], parent))
+                return 1;
+            // perform union of both parents
+            union(parent, edge[0], edge[1]);
+        }
+
+        // no cycles found
+        return 0;
+    }
+
+    // https://www.interviewbit.com/problems/black-shapes/
+    static int blackShapes(String[] A) {
+        int m = A.length, n = A[0].length();
+        // no of connected components
+        int res = 0;
+        boolean[][] visited = new boolean[m][n];
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                // if character is 'X' and not visited
+                if (A[i].charAt(j) == 'X' && !visited[i][j]) {
+                    // update count
+                    res++;
+                    // perform DFS
+                    blackShapesUtil(i, j, m, n, A, visited);
+                }
+            }
+        }
+
+        return res;
+    }
+
+    // util to perform DFS for each connected component
+    private static void blackShapesUtil(int i, int j, int m, int n, String[] A, boolean[][] visited) {
+        // mark current position as visited
+        visited[i][j] = true;
+
+        int[][] dirs = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+        // for all 4 directions
+        for (int[] dir : dirs) {
+            int x = i + dir[0], y = j + dir[1];
+            // if no path or character is 'O' or already visited
+            if (x < 0 || x >= m || y < 0 || y >= n || A[x].charAt(y) == 'O' || visited[x][y])
+                continue;
+            // perform DFS
+            blackShapesUtil(x, y, m, n, A, visited);
+        }
     }
 
     // https://www.interviewbit.com/problems/convert-sorted-list-to-binary-search-tree/
@@ -1028,18 +1048,15 @@ class Graphs {
         // empty linked list
         if (head == null)
             return null;
-
         // only one node in linked list
         if (head.next == null)
             return new Trees.TreeNode(head.val);
 
         // prev - previous node of the middle node
         LinkedLists.ListNode prev = null, slow = head, fast = head.next;
-
         // tortoise and hare method to find middle node of linked-list
         while (fast != null && fast.next != null) {
             prev = slow;
-
             slow = slow.next;
             fast = fast.next.next;
         }
@@ -1050,42 +1067,34 @@ class Graphs {
         if (prev != null)
             prev.next = null;
 
-        // create new tree node
-        Trees.TreeNode node = new Trees.TreeNode(slow.val);
-
-        // if left half is null
-        if (slow == head)
-            node.left = null;
-            // else recursively build left subtree
-        else
-            node.left = sortedListToBST(head);
-
+        Trees.TreeNode root = new Trees.TreeNode(slow.val);
+        // recursively build left subtree is left half is not null
+        root.left = head != slow ? sortedListToBST(head) : null;
         // recursively build right subtree
-        node.right = sortedListToBST(head2);
+        root.right = sortedListToBST(head2);
 
-        return node;
+        return root;
     }
 
     // https://www.interviewbit.com/problems/sum-of-fibonacci-numbers/
-    static int sumOfFibonacci(int n) {
+    static int sumOfFibonacci(int A) {
         // base case
-        if (n == 1)
+        if (A == 1)
             return 1;
 
-        // get all fibonacci numbers <= n
-        List<Integer> fib = fibNumbersLessThanEqual(n);
-
+        // get all fibonacci numbers <= A
+        List<Integer> fib = fibNumbersLessThanEqual(A);
         // minimum fibonacci numbers required
         int cnt = 0;
-        // greedily start from largest possible fib number
+        // greedily start from the largest possible fib number
         int pos = fib.size() - 1;
 
         // while the sum is not satisfied
-        while (n > 0) {
+        while (A > 0) {
             // update count
-            cnt += (n / fib.get(pos));
+            cnt += (A / fib.get(pos));
             // update remaining sum
-            n %= fib.get(pos);
+            A %= fib.get(pos);
             // take next largest fib number
             pos--;
         }
@@ -1101,7 +1110,6 @@ class Graphs {
         fib.add(1);
 
         int t1, t2 = 1, t3 = 2;
-
         // keep adding fib numbers till they are <= n
         while (t3 <= n) {
             fib.add(t3);
@@ -1115,91 +1123,82 @@ class Graphs {
     }
 
     // https://www.interviewbit.com/problems/knight-on-chess-board/
+    @SuppressWarnings("ConstantConditions")
     static int minMovesForKnight(int A, int B, int C, int D, int E, int F) {
         // 8 directions for the knight
         int[][] dirs = {{2, 1}, {-2, 1}, {2, -1}, {-2, -1}, {1, 2}, {1, -2}, {-1, 2}, {-1, -2}};
-
         // queue for BFS
-        Queue<ChessNode> q = new LinkedList<>();
-        q.add(new ChessNode(C, D, 0));
-
+        Queue<MatrixNode> q = new LinkedList<>();
+        q.add(new MatrixNode(C, D));
         // visited array for BFS
         boolean[][] visited = new boolean[A + 1][B + 1];
         visited[C][D] = true;
+        // moves made by knight
+        int dist = 0;
 
         // perform BFS
         while (!q.isEmpty()) {
-            ChessNode front = q.poll();
+            int n = q.size();
+            for (int i = 0; i < n; i++) {
+                MatrixNode front = q.poll();
+                // reached destination - return the distance to reach here
+                if (front.x == E && front.y == F)
+                    return dist;
 
-            // reached destination - return the distance to reach here
-            if (front.x == E && front.y == F)
-                return front.dist;
-
-            // for each direction
-            for (int[] dir : dirs) {
-                int x = front.x + dir[0], y = front.y + dir[1];
-
-                // if out of bounds or already visited
-                if (x < 1 || x > A || y < 1 || y > B || visited[x][y])
-                    continue;
-
-                // add new point to queue with incremented distance and mark as visited
-                q.add(new ChessNode(x, y, front.dist + 1));
-                visited[x][y] = true;
+                // for each direction
+                for (int[] dir : dirs) {
+                    int x = front.x + dir[0], y = front.y + dir[1];
+                    // if out of bounds or already visited
+                    if (x < 1 || x > A || y < 1 || y > B || visited[x][y])
+                        continue;
+                    // add new point to queue with incremented distance and mark as visited
+                    q.add(new MatrixNode(x, y));
+                    visited[x][y] = true;
+                }
             }
+            // update count
+            dist++;
         }
 
         // cannot reach destination
         return -1;
     }
 
-    // data class for Node on chess board
-    private static class ChessNode {
-        // x, y coordinates on the board
-        int x, y;
-        // distance to reach this node from source node
-        int dist;
-
-        ChessNode(int x, int y, int dist) {
-            this.x = x;
-            this.y = y;
-            this.dist = dist;
-        }
-    }
-
     // https://www.interviewbit.com/problems/useful-extra-edges/
     @SuppressWarnings("unchecked")
     static int usefulExtraEdges(int A, int[][] B, int C, int D, int[][] E) {
         // create adjacency list for directed graph
-        LinkedList<Node>[] adj = new LinkedList[A + 1];
+        LinkedList<int[]>[] adj = new LinkedList[A + 1];
         for (int i = 1; i <= A; i++)
             adj[i] = new LinkedList<>();
 
         for (int[] edge : B) {
             int u = edge[0], v = edge[1], w = edge[2];
-            adj[u].add(new Node(v, w));
+            // add as undirected edges, so we can travel from C to D as well as D to C
+            adj[u].add(new int[]{v, w});
+            adj[v].add(new int[]{u, w});
         }
 
-        // calculate shortest distance without any edges from E
-        int minDistance = shortestPathDistance(A, C, D, adj);
+        // calculate the shortest distance from C to D without any edges from E
+        int[] dist1 = shortestPathDistance(C, adj);
+        // calculate the shortest distance from D to C without any edges from E
+        int[] dist2 = shortestPathDistance(D, adj);
 
+        // shortest distance from C to D
+        int minDistance = dist1[D];
         // for each edge in E
         for (int[] edge : E) {
             int u = edge[0], v = edge[1], w = edge[2];
-
+            // skip invalid edges
             if (u < 1 || u > A || v < 1 || v > A)
                 continue;
 
-            // if valid edge, add to graph as undirected edge
-            adj[u].add(new Node(v, w));
-            adj[v].add(new Node(u, w));
-
-            // recalculate shortest distance and update result
-            minDistance = Math.min(minDistance, shortestPathDistance(A, C, D, adj));
-
-            // remove this edge from graph
-            adj[u].removeLast();
-            adj[v].removeLast();
+            // if path from C to u and v to D, use it to optimize
+            if (dist1[u] != Integer.MAX_VALUE && dist2[v] != Integer.MAX_VALUE)
+                minDistance = Math.min(minDistance, dist1[u] + w + dist2[v]);
+            // if path from C to v and u to D, use it to optimize
+            if (dist1[v] != Integer.MAX_VALUE && dist2[u] != Integer.MAX_VALUE)
+                minDistance = Math.min(minDistance, dist1[v] + w + dist2[u]);
         }
 
         // return min distance if found else -1
@@ -1207,74 +1206,44 @@ class Graphs {
     }
 
     // util to calculate shortest distance using Dijkstra
-    private static int shortestPathDistance(int A, int src, int dest, LinkedList<Node>[] adj) {
-        // priority queue for getting nearest node
-        PriorityQueue<Node> pq = new PriorityQueue<>(Comparator.comparingInt(p -> p.weight));
-        pq.add(new Node(src, 0));
-
+    private static int[] shortestPathDistance(int src, LinkedList<int[]>[] adj) {
         // distance array initialize with infinite
-        int[] dist = new int[A + 1];
+        int[] dist = new int[adj.length + 1];
         Arrays.fill(dist, Integer.MAX_VALUE);
         // source to source distance is 0
         dist[src] = 0;
+        // priority queue for getting nearest node
+        PriorityQueue<Integer> pq = new PriorityQueue<>(Comparator.comparingInt(a -> dist[a]));
+        pq.add(src);
 
-        // set to keep track of visited nodes
-        Set<Integer> set = new HashSet<>();
-
-        // loop till all nodes not visited and queue is not empty
-        while (set.size() != A && !pq.isEmpty()) {
-            Node front = pq.poll();
-            int u = front.label;
-
-            // add current node to visited set
-            set.add(u);
-
+        // loop till all edges not relaxed
+        while (!pq.isEmpty()) {
+            int u = pq.poll();
             // for each neighbour
-            for (Node node : adj[u]) {
-                int v = node.label;
-                // if visited already
-                if (set.contains(v))
-                    continue;
-
+            for (int[] node : adj[u]) {
+                int v = node[0], w = node[1];
                 // relax current edge
-                if (dist[v] > dist[u] + node.weight)
-                    dist[v] = dist[u] + node.weight;
-
-                // add updated node to priority queue
-                pq.add(new Node(v, dist[v]));
+                if (dist[v] > dist[u] + w) {
+                    dist[v] = dist[u] + w;
+                    // add node to priority queue
+                    pq.add(v);
+                }
             }
         }
 
-        // distance from src to dest
-        return dist[dest];
-    }
-
-    // util class node for shortest path
-    private static class Node {
-        // label of the node
-        int label;
-        // weight of the edge connecting
-        int weight;
-
-        Node(int label, int weight) {
-            this.label = label;
-            this.weight = weight;
-        }
+        return dist;
     }
 
     // https://www.interviewbit.com/problems/word-ladder-i/
+    @SuppressWarnings("ConstantConditions")
     static int wordLadder1(String A, String B, String[] C) {
         // same source and destination (initial distance is 1 - question requirement)
         if (A.equals(B))
             return 1;
 
-        // word length
-        int n = A.length();
-        // map for storing each intermediate string and
-        // list of original strings from which it can be reached in one step
+        // map for storing each intermediate string and list of original strings from which it can be reached in one step
         // (adjacency list for the graph)
         Map<String, List<String>> map = new HashMap<>();
-
         // for source string
         mapIntermediateStrings(A, map);
         // for destination string
@@ -1283,40 +1252,43 @@ class Graphs {
         for (String str : C)
             mapIntermediateStrings(str, map);
 
+        // initial distance
+        int level = 1;
+        // queue for BFS
+        Queue<String> q = new LinkedList<>();
+        q.add(A);
         // visited set for string
         Set<String> visited = new HashSet<>();
-        // mark source as visited
         visited.add(A);
-
-        // queue for BFS. Take initial distance as 1 (question requirement)
-        Queue<WordNode> q = new LinkedList<>();
-        q.add(new WordNode(A, 1));
 
         // perform BFS
         while (!q.isEmpty()) {
-            WordNode front = q.poll();
-            // reached destination
-            if (front.word.equals(B))
-                return front.dist;
+            int n = q.size();
+            for (int k = 0; k < n; k++) {
+                String front = q.poll();
+                // reached destination
+                if (front.equals(B))
+                    return level;
 
-            StringBuilder builder = new StringBuilder(front.word);
-            // for the current string
-            for (int i = 0; i < n; i++) {
-                // generate intermediate string at position i
-                builder.setCharAt(i, '*');
-
-                String key = builder.toString();
-                // for each original string mapped to this intermediate string
-                for (String str : map.getOrDefault(key, new LinkedList<>())) {
-                    // if not visited, mark visited and add to queue for BFS
-                    if (!visited.contains(str)) {
-                        q.add(new WordNode(str, front.dist + 1));
-                        visited.add(str);
+                StringBuilder builder = new StringBuilder(front);
+                // for the current string
+                for (int i = 0; i < front.length(); i++) {
+                    // generate intermediate string at position i
+                    builder.setCharAt(i, '*');
+                    // for each original string mapped to this intermediate string
+                    for (String str : map.getOrDefault(builder.toString(), new LinkedList<>())) {
+                        // if not visited, mark visited and add to queue for BFS
+                        if (!visited.contains(str)) {
+                            q.add(str);
+                            visited.add(str);
+                        }
                     }
-                }
 
-                builder.setCharAt(i, front.word.charAt(i));
+                    builder.setCharAt(i, front.charAt(i));
+                }
             }
+
+            level++;
         }
 
         // could not transform A to B
@@ -1330,100 +1302,83 @@ class Graphs {
         for (int i = 0; i < str.length(); i++) {
             // generate intermediate string at position i
             builder.setCharAt(i, '*');
-
-            String key = builder.toString();
             // add to map of intermediate string and its list of original strings
-            map.putIfAbsent(key, new LinkedList<>());
-            map.get(key).add(str);
+            map.computeIfAbsent(builder.toString(), k -> new LinkedList<>()).add(str);
 
             builder.setCharAt(i, str.charAt(i));
         }
     }
 
-    // util class for storing word and its distance
-    private static class WordNode {
-        String word;
-        int dist;
-
-        WordNode(String word, int dist) {
-            this.word = word;
-            this.dist = dist;
-        }
-    }
-
     // https://www.interviewbit.com/problems/word-ladder-ii/
+    @SuppressWarnings("ConstantConditions")
     static ArrayList<ArrayList<String>> wordLadder2(String start, String end, ArrayList<String> dict) {
-        // length of each string
-        int n = start.length();
-        // map for storing each intermediate string and
-        // list of original strings from which it can be reached in one step
+        // map for storing each intermediate string and list of original strings from which it can be reached in one step
         // (adjacency list for the graph)
         Map<String, List<String>> map = new HashMap<>();
-
-        // dictionary set as words can repeat in dictionary
-        // (dictionary already contains start and end strings)
+        // dictionary set as words can repeat in dictionary (dictionary already contains start and end strings)
         Set<String> dictSet = new HashSet<>(dict);
         for (String str : dictSet)
             mapIntermediateStrings(str, map);
 
+        // shortest path distance to end
+        int level = 0;
+        // flag to check if path found
+        boolean found = false;
+        // queue for BFS
+        Queue<String> q = new LinkedList<>();
+        q.add(start);
         // visited strings set
         Set<String> visited = new HashSet<>();
         visited.add(start);
 
-        // shortest path distance to end
-        int distance = -1;
-
-        // queue for BFS
-        Queue<WordNode> q = new LinkedList<>();
-        q.add(new WordNode(start, 0));
-
-        while (!q.isEmpty()) {
-            WordNode front = q.poll();
-            // reached end
-            if (front.word.equals(end)) {
-                distance = front.dist;
-                break;
-            }
-
-            StringBuilder builder = new StringBuilder(front.word);
-            // for each intermediate string formed from current word
-            for (int i = 0; i < n; i++) {
-                builder.setCharAt(i, '*');
-
-                String key = builder.toString();
-                // for each original string that can form this intermediate string
-                for (String str : map.getOrDefault(key, new LinkedList<>())) {
-                    // if not visited, mark visited and add to queue for BFS
-                    if (!visited.contains(str)) {
-                        visited.add(str);
-                        q.add(new WordNode(str, front.dist + 1));
-                    }
+        while (!q.isEmpty() && !found) {
+            int n = q.size();
+            for (int k = 0; k < n; k++) {
+                String front = q.poll();
+                // reached end
+                if (front.equals(end)) {
+                    found = true;
+                    break;
                 }
 
-                builder.setCharAt(i, front.word.charAt(i));
+                StringBuilder builder = new StringBuilder(front);
+                // for each intermediate string formed from current word
+                for (int i = 0; i < front.length(); i++) {
+                    builder.setCharAt(i, '*');
+                    // for each original string that can form this intermediate string
+                    for (String str : map.getOrDefault(builder.toString(), new LinkedList<>())) {
+                        // if not visited, mark visited and add to queue for BFS
+                        if (!visited.contains(str)) {
+                            q.add(str);
+                            visited.add(str);
+                        }
+                    }
+
+                    builder.setCharAt(i, front.charAt(i));
+                }
             }
+
+            level++;
         }
 
         ArrayList<ArrayList<String>> res = new ArrayList<>();
         // if cannot transform start to end
-        if (distance == -1)
+        if (!found)
             return res;
 
         // clear visited set
         visited.clear();
         // perform DFS till depth = distance to get all possible shortest paths
-        wordLadder2Util(start, end, distance, map, visited, new ArrayList<>(), res);
+        wordLadder2Util(start, end, level, map, visited, new ArrayList<>(), res);
 
         return res;
     }
 
-    // util to find all paths to end upto depth = distance using DFS
-    private static void wordLadder2Util(String word, String dest, int distance,
-                                        Map<String, List<String>> map, Set<String> visited,
-                                        ArrayList<String> curr, ArrayList<ArrayList<String>> res) {
+    // util to find all paths to end till depth = distance using DFS
+    private static void wordLadder2Util(String word, String dest, int distance, Map<String, List<String>> map,
+                                        Set<String> visited, ArrayList<String> curr, ArrayList<ArrayList<String>> res) {
         // add current word to path
         curr.add(word);
-
         // reached end - add current path to result and backtrack
         if (word.equals(dest)) {
             res.add(new ArrayList<>(curr));
@@ -1446,10 +1401,8 @@ class Graphs {
         // for each intermediate string formed from current word
         for (int i = 0; i < word.length(); i++) {
             builder.setCharAt(i, '*');
-
-            String key = builder.toString();
             // for each original string that can form this intermediate string
-            for (String str : map.getOrDefault(key, new LinkedList<>())) {
+            for (String str : map.getOrDefault(builder.toString(), new LinkedList<>())) {
                 // if not visited, explore using DFS
                 if (!visited.contains(str))
                     wordLadder2Util(str, dest, distance, map, visited, curr, res);
@@ -1474,19 +1427,17 @@ class Graphs {
         }
     }
 
-    static UndirectedGraphNode cloneGraph(UndirectedGraphNode src) {
+    static UndirectedGraphNode cloneGraph(UndirectedGraphNode root) {
         // map for mapping original nodes to cloned nodes
         Map<UndirectedGraphNode, UndirectedGraphNode> map = new HashMap<>();
-        map.put(src, new UndirectedGraphNode(src.label));
-
+        map.put(root, new UndirectedGraphNode(root.label));
         // queue for BFS
         Queue<UndirectedGraphNode> q = new LinkedList<>();
-        q.add(src);
+        q.add(root);
 
         // perform BFS
         while (!q.isEmpty()) {
             UndirectedGraphNode front = q.poll();
-
             // for each neighbor
             for (UndirectedGraphNode node : front.neighbors) {
                 // if node not cloned before, clone it and add original node to queue for BFS
@@ -1500,175 +1451,111 @@ class Graphs {
             }
         }
 
-        // clone of the src node
-        return map.get(src);
+        // clone of the root node
+        return map.get(root);
     }
 
-    // https://www.interviewbit.com/problems/path-in-directed-graph/
+    // https://www.interviewbit.com/problems/mother-vertex/
     @SuppressWarnings("unchecked")
-    static int isPath(int A, int[][] B) {
+    static int motherVertex(int A, int[][] B) {
         // create adjacency list for the graph
-        List<Integer>[] adj = new List[A + 1];
+        Set<Integer>[] adj = new Set[A + 1];
         for (int i = 1; i <= A; i++)
-            adj[i] = new ArrayList<>();
-
-        for (int[] edge : B)
-            adj[edge[0]].add(edge[1]);
-
-        // perform DFS till the last node is reached starting from 1
-        return isPathUtil(1, A, adj, new boolean[A + 1]) ? 1 : 0;
-    }
-
-    // util to check if node A is reached or not using DFS
-    private static boolean isPathUtil(int u, int A, List<Integer>[] adj, boolean[] visited) {
-        // reached end
-        if (u == A)
-            return true;
-
-        // mark current node as visited
-        visited[u] = true;
-
-        // for each neighbour
-        for (int v : adj[u]) {
-            // if unvisited and has a path to node A, return true
-            if (!visited[v] && isPathUtil(v, A, adj, visited))
-                return true;
-        }
-
-        // no path found to node A
-        return false;
-    }
-
-    // https://www.interviewbit.com/problems/path-with-good-nodes/
-    private static int goodPaths;
-
-    @SuppressWarnings("unchecked")
-    static int pathWithGoodNodes(int[] A, int[][] B, int C) {
-        int n = A.length;
-
-        // create adjacency list for undirected tree
-        List<Integer>[] adj = new List[n + 1];
-        for (int i = 1; i <= n; i++)
-            adj[i] = new LinkedList<>();
+            adj[i] = new HashSet<>();
 
         for (int[] edge : B) {
             int u = edge[0], v = edge[1];
-            adj[u].add(v);
-            adj[v].add(u);
+            // skip self-loops
+            if (u != v)
+                adj[u].add(v);
         }
 
-        // number of good paths found
-        goodPaths = 0;
+        boolean[] visited = new boolean[A + 1];
+        // a mother vertex if exists will be the last node from which we start dfs
+        int motherVertex = 0;
+        for (int i = 1; i <= A; i++) {
+            if (!visited[i]) {
+                dfs(i, adj, visited);
+                // mark as possible mother vertex
+                motherVertex = i;
+            }
+        }
 
-        // start DFS from root (1) to count good paths
-        pathWithGoodNodesUtil(1, -1, adj, A, C);
+        visited = new boolean[A + 1];
+        // dfs to check if current node connects to all nodes
+        dfs(motherVertex, adj, visited);
 
-        return goodPaths;
+        for (int i = 1; i <= A; i++) {
+            // found unvisited node - mother vertex not possible
+            if (!visited[i])
+                return 0;
+        }
+        // found 1 mother vertex
+        return 1;
     }
 
-    // util to check for good root to leaf paths using DFS
-    private static void pathWithGoodNodesUtil(int u, int parent, List<Integer>[] adj, int[] A, int goodNodes) {
-        // good node - update count
-        if (A[u - 1] == 1)
-            goodNodes--;
+    // util to perform dfs
+    private static void dfs(int u, Set<Integer>[] adj, boolean[] visited) {
+        visited[u] = true;
 
-        // exhausted all good nodes
-        if (goodNodes < 0)
-            return;
-
-        // if leaf node, update good paths count
-        if (adj[u].size() == 1 && adj[u].get(0) == parent) {
-            goodPaths++;
-            return;
-        }
-
-        // for each neighbour
         for (int v : adj[u]) {
-            // if not parent, recursively perform DFS to find good paths
-            if (v != parent)
-                pathWithGoodNodesUtil(v, u, adj, A, goodNodes);
+            if (!visited[v])
+                dfs(v, adj, visited);
         }
     }
 
-    // https://www.interviewbit.com/problems/water-flow/
-    // wrong problem statement - river flows to another cell in opposite direction,
-    // i.e if value >= current in new cell
-    static int waterFlow(int[][] A) {
-        int m = A.length, n = A[0].length;
-        // visited array for both rivers:
-        // 0 - not visited, 1 - river1, 2 - river2, 3 - both rivers
-        int[][] vis = new int[m][n];
-
-        // top row is river 1
-        for (int j = 0; j < n; j++) {
-            // perform BFS if cell not visited already
-            if (vis[0][j] == 0)
-                waterFlowUtil(0, j, A, vis, 1);
-        }
-
-        // left row is river 1
-        for (int i = 0; i < m; i++) {
-            // perform BFS if cell not visited already
-            if (vis[i][0] == 0)
-                waterFlowUtil(i, 0, A, vis, 1);
-        }
-
-        // bottom row is river 2
-        for (int j = 0; j < n; j++) {
-            // perform BFS if cell not visited or only river 1 visited
-            if (vis[m - 1][j] <= 1)
-                waterFlowUtil(m - 1, j, A, vis, 2);
-        }
-
-        // right row is river 2
-        for (int i = 0; i < m; i++) {
-            // perform BFS if cell not visited or only river 1 visited
-            if (vis[i][n - 1] <= 1)
-                waterFlowUtil(i, n - 1, A, vis, 2);
-        }
-
-        int res = 0;
-
-        // for each cell
-        for (int i = 0; i < m; i++) {
+    // https://www.interviewbit.com/problems/path-in-matrix/
+    public int checkPath(int[][] A) {
+        int n = A.length;
+        for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                // if visited by both rivers, update result count
-                if (vis[i][j] == 3)
-                    res++;
+                // run dfs from source to check if destination reached
+                if (A[i][j] == 1)
+                    return checkPathUtil(i, j, n, A) ? 1 : 0;
+            }
+        }
+        // path not found
+        return 0;
+    }
+
+    // util to check path with dfs
+    private boolean checkPathUtil(int i, int j, int n, int[][] A) {
+        // reached destination
+        if (A[i][j] == 2)
+            return true;
+
+        // mark as visited
+        A[i][j] = 0;
+        int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        // check in all 4 directions
+        for (int[] dir : dirs) {
+            int x = i + dir[0], y = j + dir[1];
+            // out of bounds or already visited
+            if (x < 0 || x >= n || y < 0 || y >= n || A[x][y] == 0)
+                continue;
+            // found path at this neighbour
+            if (checkPathUtil(x, y, n, A))
+                return true;
+        }
+        // path not found
+        return false;
+    }
+
+    // https://www.interviewbit.com/problems/file-search/
+    static int breakRecords(int A, int[][] B) {
+        // ranked union find to group records together
+        int[] parent = new int[A + 1], rank = new int[A + 1];
+        // initially every record is alone in its own group
+        int res = A;
+
+        for (int[] edge : B) {
+            // if in different groups, union the two groups and update remaining groups count
+            if (find(edge[0], parent) != find(edge[1], parent)) {
+                unionRank(edge[0], edge[1], parent, rank);
+                res--;
             }
         }
 
         return res;
-    }
-
-    // util to visit cells by river using BFS
-    private static void waterFlowUtil(int i, int j, int[][] A, int[][] vis, int river) {
-        int m = A.length, n = A[0].length;
-        int[][] dirs = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
-
-        // queue for BFS
-        Queue<MatrixNode> q = new LinkedList<>();
-        q.add(new MatrixNode(i, j));
-
-        // mark current cell as visited by river
-        vis[i][j] += river;
-
-        while (!q.isEmpty()) {
-            MatrixNode front = q.poll();
-
-            // for each direction
-            for (int[] dir : dirs) {
-                int x = front.x + dir[0], y = front.y + dir[1];
-
-                // if out of bounds or flow is less than current flow or already visited by current river
-                if (x < 0 || x >= m || y < 0 || y >= n || A[x][y] < A[front.x][front.y] || vis[x][y] >= river)
-                    continue;
-
-                // add to queue for BFS
-                q.add(new MatrixNode(x, y));
-                // mark as visited by river
-                vis[x][y] += river;
-            }
-        }
     }
 }

@@ -137,24 +137,21 @@ class LinkedLists {
         ListNode curr = head.next, prev = head;
         // check for each node starting from pos 1 if it should be inserted or not
         while (curr != null) {
-            ListNode j = dummy.next, tempPrev = dummy;
-            // look for position to insert current node in the previous half of the list which is sorted
-            while (j != curr && j.val < curr.val) {
-                tempPrev = j;
-                j = j.next;
-            }
-
             ListNode next = curr.next;
-            // if found a position for current node to be inserted
-            if (j != curr) {
-                tempPrev.next = curr;
-                curr.next = j;
+            // current element is already sorted - skip
+            if (curr.val >= prev.val) {
+                prev = curr;
+            } else {
+                ListNode temp = dummy;
+                // search insert position for current node in the previous half of the list which is sorted
+                while (temp.next != curr && temp.next.val <= curr.val)
+                    temp = temp.next;
+
+                // insert current node in the middle
+                curr.next = temp.next;
+                temp.next = curr;
                 prev.next = next;
             }
-            // else don't insert and update prev pointer
-            // (in above case prev pointer will remain same)
-            else
-                prev = curr;
 
             // update current pointer
             curr = next;
