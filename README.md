@@ -323,6 +323,19 @@ Interview bit problems topic wise
 - [Maximum level sum](https://www.interviewbit.com/problems/maximum-level-sum/)
 - [INVERSIONS](https://www.interviewbit.com/problems/inversions/)
 
+## Greedy Algorithm (10)
+
+- [Highest Product](https://www.interviewbit.com/problems/highest-product/)
+- [Bulbs](https://www.interviewbit.com/problems/interview-questions/)
+- [Disjoint Intervals](https://www.interviewbit.com/problems/disjoint-intervals/)
+- [Largest Permutation](https://www.interviewbit.com/problems/largest-permutation/)
+- [Meeting rooms](https://www.interviewbit.com/problems/meeting-rooms/)
+- [Distribute Candy](https://www.interviewbit.com/problems/distribute-candy/)
+- [Seats](https://www.interviewbit.com/problems/seats/)
+- [Assign Mice to Holes](https://www.interviewbit.com/problems/assign-mice-to-holes/)
+- [Majority Element](https://www.interviewbit.com/problems/majority-element/)
+- [Gas Station](https://www.interviewbit.com/problems/gas-station/)
+
 ## Graph Data Structure & Algorithms (31)
 
 - [Path in Directed Graph](https://www.interviewbit.com/problems/path-in-directed-graph/)
@@ -356,19 +369,6 @@ Interview bit problems topic wise
 - [Mother Vertex](https://www.interviewbit.com/problems/mother-vertex/)
 - [Path in Matrix](https://www.interviewbit.com/problems/path-in-matrix/)
 - [File Search](https://www.interviewbit.com/problems/file-search/)
-
-## Greedy Algorithm (10)
-
-- [Highest Product](https://www.interviewbit.com/problems/highest-product/)
-- [Bulbs](https://www.interviewbit.com/problems/interview-questions/)
-- [Disjoint Intervals](https://www.interviewbit.com/problems/disjoint-intervals/)
-- [Largest Permutation](https://www.interviewbit.com/problems/largest-permutation/)
-- [Meeting rooms](https://www.interviewbit.com/problems/meeting-rooms/)
-- [Distribute Candy](https://www.interviewbit.com/problems/distribute-candy/)
-- [Seats](https://www.interviewbit.com/problems/seats/)
-- [Assign Mice to Holes](https://www.interviewbit.com/problems/assign-mice-to-holes/)
-- [Majority Element](https://www.interviewbit.com/problems/majority-element/)
-- [Gas Station](https://www.interviewbit.com/problems/gas-station/)
 
 ## Dynamic Programming (64)
 

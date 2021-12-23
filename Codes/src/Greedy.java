@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 class Greedy {
     // https://www.interviewbit.com/problems/highest-product/
@@ -10,7 +7,7 @@ class Greedy {
         // sort the array
         Arrays.sort(A);
         // maximum product is the max of product of largest three numbers and 
-        // product of largest number and smallest two numbers (when both are negative) 
+        // product of the largest number and smallest two numbers (when both are negative)
         return Math.max(A[n - 1] * A[n - 2] * A[n - 3], A[0] * A[1] * A[n - 1]);
     }
 
@@ -65,7 +62,8 @@ class Greedy {
 
             int pos = map[N];
             // swap current element with next largest
-            swap(A, i, pos);
+            A[pos] = A[i];
+            A[i] = N;
             // update positions of the swapped elements in map
             map[N] = i;
             map[A[pos]] = pos;
@@ -74,13 +72,6 @@ class Greedy {
         }
 
         return A;
-    }
-
-    // util to swap two positions in array
-    private static void swap(int[] A, int i, int j) {
-        int temp = A[i];
-        A[i] = A[j];
-        A[j] = temp;
     }
 
     // https://www.interviewbit.com/problems/meeting-rooms/
@@ -121,35 +112,29 @@ class Greedy {
     // https://www.interviewbit.com/problems/distribute-candy/
     static int distributeCandy(int[] A) {
         int n = A.length;
-        // #candies received when considering only left or right neighbour
-        int[] left = new int[n], right = new int[n];
-        // first and last child
-        left[0] = right[n - 1] = 1;
+        // #candies received by each child
+        int[] candies = new int[n];
+        // first child
+        candies[0] = 1;
 
         for (int i = 1; i < n; i++) {
-            // if more priority than left neighbour, give one candy more than the neighbour
-            // else give only one candy
+            // if more priority than left neighbour, give one candy more than the neighbour else give only one candy
             if (A[i] > A[i - 1])
-                left[i] = left[i - 1] + 1;
+                candies[i] = candies[i - 1] + 1;
             else
-                left[i] = 1;
+                candies[i] = 1;
         }
 
         for (int i = n - 2; i >= 0; i--) {
             // if more priority than right neighbour, give one candy more than the neighbour
-            // else give only one candy
+            // #candies received = #candies required to have more candy than both left and right low priority neighbours
             if (A[i] > A[i + 1])
-                right[i] = right[i + 1] + 1;
-            else
-                right[i] = 1;
+                candies[i] = Math.max(candies[i], candies[i + 1] + 1);
         }
 
         int total = 0;
-        // for each child, #candies received =
-        // #candies required to have more candy than both left and right low priority neighbours =
-        // max(left[i], right[i])
-        for (int i = 0; i < n; i++)
-            total += Math.max(left[i], right[i]);
+        for (int val : candies)
+            total += val;
 
         return total;
     }
@@ -170,9 +155,7 @@ class Greedy {
             return 0;
 
         // optimal solution is moving all people around the middle seated person
-        int mid = cnt / 2, median = positions.get(mid);
-        int res = 0;
-
+        int mid = cnt / 2, median = positions.get(mid), res = 0;
         // move each person to positions around the median person
         for (int i = 0; i < cnt; i++) {
             // cost = positions[i] - (median position + #positions to left/right of the median)
@@ -240,7 +223,7 @@ class Greedy {
         // start from position 0
         int start = 0, end = 1;
         // current petrol
-        int curr = A[start] - B[start];
+        int curr = A[0] - B[0];
 
         // loop till not completed full circle
         while (start != end) {
