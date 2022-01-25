@@ -970,7 +970,6 @@ class Graphs {
     private static boolean isUndirectedCycleUtil(int u, List<Integer>[] adj, boolean[] visited, int parent) {
         // mark current node as visited
         visited[u] = true;
-
         // for each neighbour
         for (int v : adj[u]) {
             // if visited node and is not the parent of the current node, cycle found

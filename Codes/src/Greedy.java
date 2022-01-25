@@ -215,34 +215,20 @@ class Greedy {
 
     // https://www.interviewbit.com/problems/gas-station/
     static int gasStation(final int[] A, final int[] B) {
-        int n = A.length;
-        // if only one station
-        if (n == 1)
-            return A[0] - B[0] >= 0 ? 0 : -1;
+        int total = 0, tank = 0, index = 0;
 
-        // start from position 0
-        int start = 0, end = 1;
-        // current petrol
-        int curr = A[0] - B[0];
-
-        // loop till not completed full circle
-        while (start != end) {
-            // sliding window - remove gas stations from the start and update starting point
-            while (start != end && curr < 0) {
-                curr -= A[start] - B[start];
-                start = (start + 1) % n;
-                // reached position 0 without a solution
-                if (start == 0)
-                    return -1;
+        for (int i = 0; i < A.length; i++) {
+            int consume = A[i] - B[i];
+            tank += consume;
+            total += consume;
+            // if tank becomes negative, update the starting point
+            if (tank < 0) {
+                tank = 0;
+                index = i + 1;
             }
-            // add current gas station to the sliding window
-            curr += A[end] - B[end];
-            end = (end + 1) % n;
         }
 
-        // solution not found
-        if (curr < 0)
-            return -1;
-        return start;
+        // if we can complete circle, return the index else return -1
+        return total >= 0 ? index : -1;
     }
 }

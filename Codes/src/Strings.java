@@ -176,8 +176,7 @@ public class Strings {
             if (str.charAt(i) == pat.charAt(j)) {
                 i++;
                 j++;
-
-                // found pattern ending at i-1
+                // found pattern ending at i - 1
                 if (j == m)
                     return i - m;
             } else {
