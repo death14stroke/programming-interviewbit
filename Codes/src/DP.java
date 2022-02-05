@@ -116,13 +116,11 @@ class DP {
         // memoization
         if (map.containsKey(key))
             return map.get(key);
-
         // if both strings equal
         if (A.compareTo(B) == 0) {
             map.put(key, true);
             return true;
         }
-
         // if both strings are not anagrams
         if (!areAnagrams(A, B)) {
             map.put(key, false);
@@ -133,15 +131,13 @@ class DP {
         // try slicing the string at each possible index
         for (int i = 1; i < n; i++) {
             // recursively check for first halves of both strings and last halves of both strings
-            if (scrambleStringUtil(A.substring(0, i), B.substring(0, i)) &&
-                    scrambleStringUtil(A.substring(i), B.substring(i))) {
+            if (scrambleStringUtil(A.substring(0, i), B.substring(0, i)) && scrambleStringUtil(A.substring(i), B.substring(i))) {
                 map.put(key, true);
                 return true;
             }
 
             // recursively check for first half of A and last half of B && last half of A and first half of B
-            if (scrambleStringUtil(A.substring(0, i), B.substring(n - i)) &&
-                    scrambleStringUtil(A.substring(i), B.substring(0, n - i))) {
+            if (scrambleStringUtil(A.substring(0, i), B.substring(n - i)) && scrambleStringUtil(A.substring(i), B.substring(0, n - i))) {
                 map.put(key, true);
                 return true;
             }
@@ -161,7 +157,7 @@ class DP {
         // decrement frequency map
         for (char c : B.toCharArray()) {
             freq[c]--;
-
+            // if any character is extra is string B
             if (freq[c] < 0)
                 return false;
         }
@@ -366,12 +362,12 @@ class DP {
 
     // https://www.interviewbit.com/problems/tiling-with-dominoes/
     static int tilingWithDominoes(int A) {
-        // base cases
+        // base case
         if (A == 1)
             return 0;
 
-        // A[i] = # ways to form completely filled 3 x i matrix
-        // B[i] = # ways to form top row empty or bottom row empty in last col of 3 x i matrix
+        // A[i] = #ways to form completely filled 3 x i matrix
+        // B[i] = #ways to form top row empty or bottom row empty in last col of 3 x i matrix
         long a0 = 1, a1 = 0, b0 = 0, b1 = 1, a2 = 0, b2;
         int MOD = 1_000_000_007;
 
@@ -415,13 +411,11 @@ class DP {
         dp[0] = 1;
         // single digit which is not zero
         dp[1] = 1;
-
         // check for each 1 digit and 2 digit pairs
         for (int i = 2; i <= n; i++) {
             // if last digit is between 1 and 9
             if (A.charAt(i - 1) != '0')
                 dp[i] = dp[i - 1];
-
             // if last 2 digits form a number between 10 and 26
             if (A.charAt(i - 2) == '1' || (A.charAt(i - 2) == '2' && A.charAt(i - 1) <= '6'))
                 dp[i] = (dp[i] + dp[i - 2]) % p;
@@ -479,16 +473,15 @@ class DP {
             return 1;
 
         int MOD = 1_000_000_007;
-        // dp[i] = # ways possible for i chords
+        // dp[i] = #ways possible for i chords
         long[] dp = new long[A + 1];
         // base cases
-        dp[0] = 1;
-        dp[1] = 1;
+        dp[0] = dp[1] = 1;
 
-        // for i chords there are 2 * i points. 1st chord can be either of 1 - 2, 1 - 4, 1 - 6,..., 1 - i.
+        // for i chords there are 2 * i points. 1st chord can be either of 1 - 2, 1 - 4, 1 - 6,..., 1 - 2 * i.
         // for chord 1 - 3, there will always remain a point empty in between hence no odd numbered end points
         for (int i = 2; i <= A; i++) {
-            // for first chord from 1 - (2 * (j + 1)) # ways is the permutation of sol of the both halves formed
+            // for first chord from 1 - (2 * (j + 1)) #ways is the permutation of sol of the both halves formed
             for (int j = 0; j < i; j++)
                 dp[i] = (dp[i] + dp[j] * dp[i - j - 1]) % MOD;
         }
@@ -507,19 +500,19 @@ class DP {
 
         // greedily length of answer will be #kicks by the weakest friend
         int hits = A / B[minIndex];
+        // update remaining capacity
+        A %= B[minIndex];
         // capacity of Tushar is full
-        if (A % B[minIndex] == 0) {
+        if (A == 0) {
             int[] res = new int[hits];
             Arrays.fill(res, minIndex);
             return res;
         }
 
         int i = 0;
-        LinkedList<Integer> pos = new LinkedList<>();
-        // update remaining capacity
-        A -= B[minIndex] * hits;
+        List<Integer> pos = new LinkedList<>();
         // while capacity remaining, try substituting 1 weak kick with 1 stronger kick if possible before minIndex
-        while (A >= 0 && i < minIndex && hits > 0) {
+        while (A > 0 && i < minIndex && hits > 0) {
             // this kick will be lexicographically smaller and is possible
             if (A + B[minIndex] - B[i] >= 0) {
                 pos.add(i);
@@ -536,8 +529,7 @@ class DP {
         for (int p : pos)
             res[i++] = p;
         // add positions of the weakest kick
-        for (; i < res.length; i++)
-            res[i] = minIndex;
+        Arrays.fill(res, i, res.length, minIndex);
 
         return res;
     }
@@ -578,7 +570,7 @@ class DP {
 
             // if no steps remaining
             if (steps == 0) {
-                // perform a jump
+                // perform a jump (from the point where maxReach was updated)
                 jumps++;
                 // re-initialize steps remaining to take
                 steps = maxReach - i;
@@ -611,9 +603,7 @@ class DP {
                 if (dp[j].containsKey(diff)) {
                     dp[i].put(diff, dp[j].get(diff) + 1);
                     res = Math.max(res, dp[i].get(diff));
-                }
-                // else create new AP at index j with 2 elements
-                else {
+                } else { // else create new AP at index j with 2 elements
                     dp[i].put(diff, 2);
                 }
             }
@@ -625,13 +615,9 @@ class DP {
     // https://www.interviewbit.com/problems/n-digit-numbers-with-digit-sum-s-/
     // alternate solution: https://www.geeksforgeeks.org/count-of-n-digit-numbers-whose-sum-of-digits-equals-to-given-sum/
     static int nDigitNumsWithDigitSum(int N, int S) {
-        // base case
-        if (N == 1) {
-            // numbers start from 1 hence only sum from 1 to 9 possible for N = 1
-            if (S == 0 || S >= 10)
-                return 0;
-            return 1;
-        }
+        // base case: numbers start from 1 hence only sum from 1 to 9 possible for N = 1
+        if (N == 1)
+            return S == 0 || S >= 10 ? 0 : 1;
 
         int MOD = 1000000007;
         // dp[i][j] = # i digit numbers whose sum of digits is j
@@ -654,8 +640,6 @@ class DP {
 
     // https://www.interviewbit.com/problems/shortest-common-superstring/
     // another possible solution is DP with bitmask (see question hint)
-    private static String overlapStrRes;
-
     static int shortestCommonSuperstring(String[] A) {
         int n = A.length;
         Set<Integer> subsets = new HashSet<>();
@@ -673,40 +657,33 @@ class DP {
         }
 
         int k = 0;
-        // keep pushing the marked strings at the end of the array
-        while (k < n) {
-            if (subsets.contains(k)) {
-                A[k] = A[n - 1];
-                n--;
-            } else {
-                k++;
-            }
+        // remove the subset strings
+        for (int i = 0; i < n; i++) {
+            if (!subsets.contains(i))
+                A[k++] = A[i];
         }
 
-        overlapStrRes = "";
-        // merge the most overlapping strings n - 1 times
-        for (int len = n; len > 1; len--) {
-            int maxOverlap = 0;
-            int l = 0, r = 0;
+        // merge the most overlapping strings k - 1 times
+        for (int len = k; len > 1; len--) {
+            int maxOverlap = 0, l = 0, r = 0;
             String overlapStr = "";
             // find maximum overlap among overlaps between each pair of string
             for (int i = 0; i < len - 1; i++) {
                 for (int j = i + 1; j < len; j++) {
-                    int overlap = findOverlappingPair(A[i], A[j]);
-                    if (maxOverlap < overlap) {
-                        maxOverlap = overlap;
+                    Overlap overlap = findOverlappingPair(A[i], A[j]);
+                    if (maxOverlap < overlap.length) {
+                        maxOverlap = overlap.length;
+                        overlapStr = overlap.str;
                         l = i;
                         r = j;
-                        overlapStr = overlapStrRes;
                     }
                 }
             }
 
             // if no overlap merge last string with first
-            if (maxOverlap == 0)
+            if (maxOverlap == 0) {
                 A[0] += A[len - 1];
-                // else replace merged string at one position and swap last string at the other
-            else {
+            } else { // else replace merged string at one position and swap last string at the other
                 A[l] = overlapStr;
                 A[r] = A[len - 1];
             }
@@ -716,24 +693,30 @@ class DP {
     }
 
     // util to find maximum overlap length
-    private static int findOverlappingPair(String A, String B) {
+    private static Overlap findOverlappingPair(String A, String B) {
         int m = A.length(), n = B.length();
-        int maxOverlap = 0;
-        // for all breakpoints of the smaller string
-        for (int i = 1; i <= Math.min(m, n); i++) {
-            // if prefix of A matches with suffix of B, update the overlap
-            if (A.substring(0, i).compareTo(B.substring(n - i)) == 0 && maxOverlap < i) {
-                maxOverlap = i;
-                overlapStrRes = B + A.substring(i);
-            }
-            // if suffix of A matches with prefix of B, update the overlap
-            if (A.substring(m - i).compareTo(B.substring(0, i)) == 0 && maxOverlap < i) {
-                maxOverlap = i;
-                overlapStrRes = A + B.substring(i);
-            }
+        // start with maximum possible overlap
+        for (int i = Math.min(m, n) - 1; i > 0; i--) {
+            // if prefix of A matches with suffix of B
+            if (A.substring(0, i).compareTo(B.substring(n - i)) == 0)
+                return new Overlap(i, B + A.substring(i));
+            // if suffix of A matches with prefix of B
+            if (A.substring(m - i).compareTo(B.substring(0, i)) == 0)
+                return new Overlap(i, A + B.substring(i));
         }
 
-        return maxOverlap;
+        return new Overlap(0, null);
+    }
+
+    // util class to store the overlap length and the merged string
+    static class Overlap {
+        int length;
+        String str;
+
+        Overlap(int length, String str) {
+            this.length = length;
+            this.str = str;
+        }
     }
 
     // https://www.interviewbit.com/problems/ways-to-color-a-3xn-board/
@@ -741,18 +724,18 @@ class DP {
         int p = 1000000007;
         // base case: A = 1 can select C(4, 3) * 3! + C(4, 2) * 2 ways
         long color3 = 24, color2 = 12;
-        // W(n+1) = 10*Y(n)+11*W(n) where W(n+1) is # of 3 color combinations with (n+1) cols
-        // Y(n+1) = 7*Y(n)+5*W(n) where Y(n+1) is # of 2 color combinations with (n+1) cols
+        // W(n+1) = 10*Y(n)+11*W(n) where W(n+1) is #3-color combinations with (n+1) cols
+        // Y(n+1) = 7*Y(n)+5*W(n) where Y(n+1) is #2-color combinations with (n+1) cols
         // see https://www.geeksforgeeks.org/ways-color-3n-board-using-4-colors/ for explanation
         for (int i = 2; i <= A; i++) {
             long temp = color3;
             // update 2 color and 3 color combinations count
-            color3 = (10 * color2 + 11 * color3) % p;
-            color2 = (7 * color2 + 5 * temp) % p;
+            color3 = (11 * color3 + 10 * color2) % p;
+            color2 = (5 * temp + 7 * color2) % p;
         }
 
-        // result will be the sum of 2 color and 3 color combinations
-        return (int) ((color2 + color3) % p);
+        // result will be the sum of 3-color and 2-color combinations
+        return (int) ((color3 + color2) % p);
     }
 
     // https://www.interviewbit.com/problems/kth-manhattan-distance-neighbourhood/
@@ -794,29 +777,28 @@ class DP {
         if (n == 1 || B == 0)
             return 0;
 
-        // max transactions that can be done = n / 2. Hence, optimize value of B (MLE thrown)
+        // max transactions that can be done = n / 2. Hence, optimize value of B
         B = Math.min(B, n / 2);
-        // dp[i][k] = max profit obtained by last txn done on ith day with at most k moves
-        int[][] dp = new int[n][2];
+        // buy[i] = state of buying ith transaction
+        // sell[i] = state of profit after ith transaction
+        int[] buy = new int[B], sell = new int[B];
+        buy[0] = A[0];
+        Arrays.fill(buy, 1, B, Integer.MAX_VALUE);
 
-        for (int k = 1; k <= B; k++) {
-            // space optimized - compute current index
-            int pos = k % 2;
+        for (int i = 1; i < n; i++) {
+            // update first transaction state
+            buy[0] = Math.min(buy[0], A[i]);
+            sell[0] = Math.max(sell[0], A[i] - buy[0]);
 
-            for (int i = 1; i < n; i++) {
-                // don't perform transaction today
-                dp[i][pos] = dp[i - 1][pos];
-
-                for (int j = 0; j < i; j++) {
-                    // if we can earn profit today by buying on day j, update maximum profit earned
-                    // dp[i][k] = Math.max(dp[i][k], profit today + dp[j][k - 1])
-                    if (A[i] > A[j])
-                        dp[i][pos] = Math.max(dp[i][pos], A[i] - A[j] + dp[j][1 - pos]);
-                }
+            for (int k = 1; k < B; k++) {
+                // buying kth txn cost = today's price - previous txn profit
+                buy[k] = Math.min(buy[k], A[i] - sell[k - 1]);
+                // profit after kth txn = today's price - kth txn buying cost
+                sell[k] = Math.max(sell[k], A[i] - buy[k]);
             }
         }
 
-        return dp[n - 1][B % 2];
+        return sell[B - 1];
     }
 
     // https://www.interviewbit.com/problems/coins-in-a-line/
@@ -824,23 +806,22 @@ class DP {
         int n = A.length;
         // dp[i][j] = max score for coins from [i, j]
         int[][] dp = new int[n][n];
-        // len = 1
-        for (int i = 0; i < n; i++)
+        dp[0][0] = A[0];
+        // len = 1 and len = 2
+        for (int i = 1; i < n; i++) {
             dp[i][i] = A[i];
-        // for len = 2 and more
-        for (int len = 2; len <= n; len++) {
+            dp[i - 1][i] = Math.max(A[i - 1], A[i]);
+        }
+        // for len = 3 and more
+        for (int len = 3; len <= n; len++) {
             for (int i = 0; i + len - 1 < n; i++) {
                 int j = i + len - 1;
-                // player chooses i and opponent chooses i + 1 in next step
-                int x = (i + 2 <= j) ? dp[i + 2][j] : 0;
-                // player chooses i and opponent chooses j in next step or
-                // player chooses j and opponent chooses i in next step
-                int y = (i + 1 <= j - 1) ? dp[i + 1][j - 1] : 0;
-                // player chooses j and opponent chooses j - 1 in next step
-                int z = (i <= j - 2) ? dp[i][j - 2] : 0;
-                // max of player chooses i or player chooses j
-                // opponent will choose such that for player's next turn minimum value can be obtained
-                dp[i][j] = Math.max(A[i] + Math.min(x, y), A[j] + Math.min(y, z));
+                // we choose i and opponent chooses i + 1 or j such that we get minimum score
+                int left = A[i] + Math.min(dp[i + 2][j], dp[i + 1][j - 1]);
+                // we choose j and opponent chooses i or j - 1 such that we get minimum score
+                int right = A[j] + Math.min(dp[i + 1][j - 1], dp[i][j - 2]);
+                // make the best choice
+                dp[i][j] = Math.max(left, right);
             }
         }
 
@@ -909,14 +890,14 @@ class DP {
         if (n == 1)
             return 1;
 
-        // dp[k][n] = # drops required for k eggs and n floors
+        // dp[k][n] = #drops required for k eggs and n floors
         int[][] dp = new int[K + 1][n + 1];
         // base-case: 1 egg problem
         for (int i = 1; i <= n; i++)
             dp[1][i] = i;
 
         for (int k = 2; k <= K; k++) {
-            // base-case: 1st floor
+            // base-case: 1 floor
             dp[k][1] = 1;
 
             for (int i = 2; i <= n; i++) {
@@ -925,7 +906,7 @@ class DP {
                 // for egg breaking and egg not breaking is minimum
                 while (l <= r) {
                     int mid = l + (r - l) / 2;
-                    // if egg break case has fewer drops than egg not break case, check for a higher floor
+                    // if diff < 0
                     if (dp[k - 1][mid - 1] < dp[k][i - mid])
                         l = mid + 1;
                         // else check for a lower floor in middle
@@ -948,27 +929,27 @@ class DP {
     static int buyAndSellStocks3(final int[] A) {
         int n = A.length;
         // base case
-        if (n == 0)
+        if (n <= 1)
             return 0;
 
         // buy1 = price to buy 1st stock
-        // profit1 = profit earned for 1st stock
+        // sell1 = profit earned for 1st stock
         // buy2 = price to buy 2nd stock including profit of 1st stock
-        // profit2 = profit earned after selling both stocks
-        int buy1 = A[0], profit1 = 0, buy2 = Integer.MAX_VALUE, profit2 = 0;
+        // sell2 = profit earned after selling both stocks
+        int buy1 = A[0], sell1 = 0, buy2 = Integer.MAX_VALUE, sell2 = 0;
 
         for (int i = 1; i < n; i++) {
             // minimize 1st stock purchase price
             buy1 = Math.min(buy1, A[i]);
             // maximize 1st stock profit
-            profit1 = Math.max(profit1, A[i] - buy1);
+            sell1 = Math.max(sell1, A[i] - buy1);
             // minimize 2nd stock purchase price including profit earned for 1st stock
-            buy2 = Math.min(buy2, A[i] - profit1);
+            buy2 = Math.min(buy2, A[i] - sell1);
             // maximize profit earned from both stocks
-            profit2 = Math.max(profit2, A[i] - buy2);
+            sell2 = Math.max(sell2, A[i] - buy2);
         }
 
-        return profit2;
+        return sell2;
     }
 
     // https://www.interviewbit.com/problems/longest-valid-parentheses/
@@ -1024,7 +1005,7 @@ class DP {
             adj[v].add(new int[]{u, w});
         }
 
-        // height = # of 2^i levels
+        // height = #2^i levels
         int height = (int) Math.ceil(Math.log(n) / Math.log(2));
         // level[i] = level of node i
         int[] level = new int[n + 1];
@@ -1036,7 +1017,6 @@ class DP {
 
         int q = B.length;
         int[] res = new int[q];
-
         for (int i = 0; i < q; i++) {
             int u = B[i][0], v = B[i][1];
             res[i] = getMaxDistance(u, v, dp, parent, level);
@@ -1045,7 +1025,7 @@ class DP {
         return res;
     }
 
-    // util to compute 2^j th parent and 1st parent max edge using binary lifting
+    // util to compute 2^j th parent and the max edge using binary lifting
     private static void dfs(int u, int p, int w, int height, List<int[]>[] adj, int[][] dp, int[][] parent, int[] level) {
         // 1st parent
         parent[u][0] = p;
@@ -1085,7 +1065,7 @@ class DP {
         // keep moving up till lca not reached
         while (u != v) {
             int i = (int) (Math.log(level[u]) / Math.log(2));
-            // keep reducing jump size by 2 if jumps above lca
+            // keep reducing jump size by half if jumps above lca
             while (i > 0 && parent[u][i] == parent[v][i])
                 i--;
 
@@ -1105,7 +1085,6 @@ class DP {
 
         TreeNode(int val) {
             this.val = val;
-            left = right = null;
         }
     }
 
@@ -1236,8 +1215,7 @@ class DP {
             }
         }
 
-        // if there is a path to (m - 1, n - 1) its length will always be m + n - 1
-        // (when only bottom and right dirs are allowed)
+        // if there is a path to (m - 1, n - 1) its length will always be m + n - 1 (when only bottom and right dirs are allowed)
         return dp[m - 1][n - 1] ? m + n - 1 : -1;
     }
 
@@ -1257,24 +1235,20 @@ class DP {
             dp[i][0] = true;
 
         for (int i = 1; i <= n; i++) {
-            for (int s = 1; s <= sum / 2; s++) {
-                // if we can use current element, either use it or don't
-                if (A[i - 1] <= s)
-                    dp[i][s] = dp[i - 1][s - A[i - 1]] || dp[i - 1][s];
-                    // else don't use current element
-                else
-                    dp[i][s] = dp[i - 1][s];
-            }
+            // cannot use current element for sum smaller than it
+            for (int s = 1; s < A[i - 1] && s <= sum / 2; s++)
+                dp[i][s] = dp[i - 1][s];
+            // for sum >= A[i - 1], either use current element or don't
+            for (int s = A[i - 1]; s <= sum / 2; s++)
+                dp[i][s] = dp[i - 1][s - A[i - 1]] || dp[i - 1][s];
         }
 
-        // for each subset sum that can be achieved with n elements, minimize difference between the two subsets
-        int res = Integer.MAX_VALUE;
-        for (int j = 0; j <= sum / 2; j++) {
-            if (dp[n][j])
-                res = Math.min(res, sum - 2 * j);
-        }
+        // find the largest possible achievable sum close to totalSum / 2. The difference will be minimum
+        int s = sum / 2;
+        while (s > 0 && !dp[n][s])
+            s--;
 
-        return res;
+        return sum - 2 * s;
     }
 
     // https://www.interviewbit.com/problems/subset-sum-problem/
@@ -1287,14 +1261,12 @@ class DP {
             dp[i][0] = true;
 
         for (int i = 1; i <= n; i++) {
-            for (int b = 1; b <= B; b++) {
-                // if we can use current element, either use it or don't
-                if (A[i - 1] <= b)
-                    dp[i][b] = dp[i - 1][b - A[i - 1]] || dp[i - 1][b];
-                    // else don't use current element
-                else
-                    dp[i][b] = dp[i - 1][b];
-            }
+            // cannot use current element for sum smaller than it
+            for (int b = 1; b < A[i - 1] && b <= B; b++)
+                dp[i][b] = dp[i - 1][b];
+            // for sum >= A[i - 1], either use current element or don't
+            for (int b = A[i - 1]; b <= B; b++)
+                dp[i][b] = dp[i - 1][b - A[i - 1]] || dp[i - 1][b];
         }
 
         return dp[n][B] ? 1 : 0;
@@ -1597,7 +1569,7 @@ class DP {
     static int coinSumInfinite(int[] A, int B) {
         // can also be done using 2D dp and optimized with dp[2][B + 1]
         int MOD = 1000007;
-        // dp[i] = # ways sum = i can be obtained
+        // dp[i] = #ways sum = i can be obtained
         int[] dp = new int[B + 1];
         // base case: required sum = 0
         dp[0] = 1;
@@ -1674,25 +1646,22 @@ class DP {
         }
 
         for (int k = 2; k <= B; k++) {
-            for (int i = 0; i < n; i++) {
-                // #stables > #horses - use INT_MAX / 2 to avoid overflow
-                if (k > i + 1)
-                    dp[i][k] = Integer.MAX_VALUE / 2;
-                    // #stables = #horses
-                else if (k == i + 1)
-                    dp[i][k] = 0;
-                else {
-                    dp[i][k] = Integer.MAX_VALUE / 2;
-                    white = black = 0;
-                    // for each horse j in middle, try putting [0, j] horses in k - 1 stables and [j, i] horses in the kth stable
-                    for (int j = i; j > 0; j--) {
-                        if (A.charAt(j) == 'W')
-                            white++;
-                        else
-                            black++;
+            // #stables > #horses - use INT_MAX / 2 to avoid overflow
+            for (int i = 0; i + 1 < k && i < n; i++)
+                dp[i][k] = Integer.MAX_VALUE / 2;
+            // #stables = #horses - dp[k][k] = 0
+            // for remaining cases
+            for (int i = k; i < n; i++) {
+                dp[i][k] = Integer.MAX_VALUE / 2;
+                white = black = 0;
+                // for each horse j in middle, try putting [0, j] horses in k - 1 stables and [j, i] horses in the kth stable
+                for (int j = i; j > 0; j--) {
+                    if (A.charAt(j) == 'W')
+                        white++;
+                    else
+                        black++;
 
-                        dp[i][k] = Math.min(dp[i][k], dp[j - 1][k - 1] + white * black);
-                    }
+                    dp[i][k] = Math.min(dp[i][k], dp[j - 1][k - 1] + white * black);
                 }
             }
         }
@@ -1793,14 +1762,12 @@ class DP {
             dp[0][sum] = 101;
 
         for (int i = 1; i <= n; i++) {
-            for (int sum = 1; sum <= S / 2; sum++) {
-                // if we can use current element, either use it or don't
-                if (sum >= A[i - 1])
-                    dp[i][sum] = Math.min(1 + dp[i - 1][sum - A[i - 1]], dp[i - 1][sum]);
-                    // cannot use current element
-                else
-                    dp[i][sum] = dp[i - 1][sum];
-            }
+            // cannot use current element for sum smaller than it
+            for (int sum = 1; sum <= S / 2 && sum < A[i - 1]; sum++)
+                dp[i][sum] = dp[i - 1][sum];
+            // for sum >= A[i - 1], either use current element or don't
+            for (int sum = A[i - 1]; sum <= S / 2; sum++)
+                dp[i][sum] = Math.min(1 + dp[i - 1][sum - A[i - 1]], dp[i - 1][sum]);
         }
 
         // find the largest possible achievable sum close to totalSum / 2. Sign of all the elements in that subset must be flipped
@@ -1828,14 +1795,12 @@ class DP {
             dp[0][j] = Integer.MAX_VALUE / 2;
 
         for (int i = 1; i <= n; i++) {
-            for (int w = 1; w <= maxCapacity; w++) {
-                // if friend can eat current dish, either eat at least one of current dish or don't eat current dish
-                if (B[i - 1] <= w)
-                    dp[i][w] = Math.min(C[i - 1] + dp[i][w - B[i - 1]], dp[i - 1][w]);
-                    // else don't eat current dish
-                else
-                    dp[i][w] = dp[i - 1][w];
-            }
+            // cannot eat dishes with weight more than current capacity
+            for (int w = 1; w <= maxCapacity && w < B[i - 1]; w++)
+                dp[i][w] = dp[i - 1][w];
+            // for dishes with weight less than current capacity, either eat at least one or don't
+            for (int w = B[i - 1]; w <= maxCapacity; w++)
+                dp[i][w] = Math.min(C[i - 1] + dp[i][w - B[i - 1]], dp[i - 1][w]);
         }
 
         // compute sum of min cost for each friend
@@ -1853,14 +1818,12 @@ class DP {
         int[][] dp = new int[n + 1][C + 1];
         // dp[i][0] = 0, dp[0][j] = 0
         for (int i = 1; i <= n; i++) {
-            for (int w = 1; w <= C; w++) {
-                // if we can carry this object, either carry it or don't
-                if (B[i - 1] <= w)
-                    dp[i][w] = Math.max(A[i - 1] + dp[i - 1][w - B[i - 1]], dp[i - 1][w]);
-                    // else don't carry the object
-                else
-                    dp[i][w] = dp[i - 1][w];
-            }
+            // cannot carry objects with weight more than capacity
+            for (int w = 1; w <= C && w < B[i - 1]; w++)
+                dp[i][w] = dp[i - 1][w];
+            // for capacity more than weight of current item, either carry it or don't
+            for (int w = B[i - 1]; w <= C; w++)
+                dp[i][w] = Math.max(A[i - 1] + dp[i - 1][w - B[i - 1]], dp[i - 1][w]);
         }
 
         return dp[n][C];
@@ -1872,7 +1835,7 @@ class DP {
         for (int val : A)
             totalSum += val;
 
-        // dp[i][sum][len] = T/F for whether sum can be achieved with len numbers till A[i]
+        // dp[i][sum][len] = T/F for whether sum can be achieved with len numbers from A[i] to A[n - 1]
         boolean[][][] dp = new boolean[n][totalSum + 1][n / 2 + 1];
         for (boolean[][] a : dp) {
             for (boolean[] b : a)
@@ -2102,7 +2065,7 @@ class DP {
                     cnt = (cnt + sum2 * dp[x][height - 1]) % MOD;
                     // cnt = cnt + #trees with left half of h = height - 1 and right half of h = height - 1
                     cnt = (cnt + dp[x][height - 1] * dp[y][height - 1]) % MOD;
-                    // cnt = cnt * #permutations possible (x and y nodes should be in relative order hence fix x or y nodes (x+y)C(y))
+                    // cnt = cnt * #ways to choose sequence such that mutual ordering of both permutations is maintained
                     cnt = (cnt * C[x + y][y]) % MOD;
 
                     dp[i][height] = (dp[i][height] + cnt) % MOD;
@@ -2226,31 +2189,6 @@ class DP {
         return dp[start] = false;
     }
 
-    // https://www.interviewbit.com/problems/dice-throw/
-    static int findDiceSum(int A, int B, int C) {
-        int MOD = 1_000_000_007;
-        int[][] dp = new int[A + 1][C + 1];
-        // if you do not have any data, then the value must be 0, so the result is 1
-        dp[0][0] = 1;
-        // iterate over dices
-        for (int i = 1; i <= A; i++) {
-            // iterate over sum
-            for (int j = 1; j <= C; j++) {
-                // The result is obtained in two ways, pin the current dice and spending 1 of the value,
-                // so we have mem[i-1][j-1] remaining combinations, to find the remaining combinations we
-                // would have to pin the values ??above 1 then we use mem[i][j-1] to sum all combinations
-                // that pin the remaining j-1's. But there is a way, when "j-f-1> = 0" we would be adding
-                // extra combinations, so we remove the combinations that only pin the extrapolated dice face and
-                // subtract the extrapolated combinations.
-                dp[i][j] = (dp[i][j - 1] + dp[i - 1][j - 1]) % MOD;
-                if (j - B - 1 >= 0)
-                    dp[i][j] = (dp[i][j] - dp[i - 1][j - B - 1] + MOD) % MOD;
-            }
-        }
-
-        return dp[A][C];
-    }
-
     // https://www.interviewbit.com/problems/potions/
     static int minSmoke(int[] A) {
         int n = A.length;
@@ -2297,6 +2235,57 @@ class DP {
         return dp[0][n - 1];
     }
 
+    // https://www.interviewbit.com/problems/dice-throw/
+    static int findDiceSum(int A, int B, int C) {
+        int MOD = 1_000_000_007;
+        int[][] dp = new int[A + 1][C + 1];
+        // if you do not have any data, then the value must be 0, so the result is 1
+        dp[0][0] = 1;
+        // iterate over dices
+        for (int i = 1; i <= A; i++) {
+            // iterate over sum
+            for (int j = 1; j <= C; j++) {
+                // The result is obtained in two ways, pin the current dice and spending 1 of the value,
+                // so we have mem[i-1][j-1] remaining combinations, to find the remaining combinations we
+                // would have to pin the values ??above 1 then we use mem[i][j-1] to sum all combinations
+                // that pin the remaining j-1's. But there is a way, when "j-f-1> = 0" we would be adding
+                // extra combinations, so we remove the combinations that only pin the extrapolated dice face and
+                // subtract the extrapolated combinations.
+                dp[i][j] = (dp[i][j - 1] + dp[i - 1][j - 1]) % MOD;
+                if (j - B - 1 >= 0)
+                    dp[i][j] = (dp[i][j] - dp[i - 1][j - B - 1] + MOD) % MOD;
+            }
+        }
+
+        return dp[A][C];
+    }
+
+    static int findDiceSum2(int A, int B, int C) {
+        // min sum = 1 on all dices, max sum = B on all dices
+        if (C < A || C > A * B)
+            return 0;
+        // base-cases
+        if (C == A || C == A * B)
+            return 1;
+
+        int MOD = 1_000_000_007;
+        // dp[i][j] = #ways to achieve sum = j with i dices
+        int[][] dp = new int[A + 1][C + 1];
+        // for only one dice sum = 1 to min(B, C) is possible
+        for (int j = 1; j <= B && j <= C; j++)
+            dp[1][j] = 1;
+
+        for (int i = 2; i <= A; i++) {
+            for (int j = 1; j <= C; j++) {
+                // try for all possible outcomes on the ith dice
+                for (int k = 1; k <= B && k < j; k++)
+                    dp[i][j] = (dp[i][j] + dp[i - 1][j - k]) % MOD;
+            }
+        }
+
+        return dp[A][C];
+    }
+
     // https://www.interviewbit.com/problems/unique-binary-search-trees/
     @SuppressWarnings("unchecked")
     static ArrayList<TreeNode> generateTrees(int A) {
@@ -2308,9 +2297,6 @@ class DP {
 
         // dp[i][i] = BSTs generated with nodes numbered from i to i
         ArrayList<TreeNode>[][] dp = new ArrayList[A + 1][A + 1];
-        // base-case: nodes start with 1
-        dp[0][0] = new ArrayList<>();
-        dp[0][0].add(null);
         // base-case: only one node
         for (int i = 1; i <= A; i++) {
             dp[i][i] = new ArrayList<>();
@@ -2344,7 +2330,6 @@ class DP {
                     TreeNode root = new TreeNode(i);
                     root.left = left;
                     root.right = right;
-
                     dp[start][end].add(root);
                 }
             }

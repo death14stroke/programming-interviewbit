@@ -390,8 +390,8 @@ Interview bit problems topic wise
 - [Count Permutations Of BST](https://www.interviewbit.com/problems/count-permutations-of-bst/)
 - [Palindrome Partitioning II](https://www.interviewbit.com/problems/palindrome-partitioning-ii/)
 - [Word Break](https://www.interviewbit.com/problems/word-break/)
-- [Dice Throw](https://www.interviewbit.com/problems/dice-throw/)
 - [Potions](https://www.interviewbit.com/problems/potions/)
+- [Dice Throw](https://www.interviewbit.com/problems/dice-throw/)
 - [Unique Binary Search Trees](https://www.interviewbit.com/problems/unique-binary-search-trees/)
 
 ## Greedy Algorithm (10)
