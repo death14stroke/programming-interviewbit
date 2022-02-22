@@ -2,7 +2,7 @@
 
 Interview bit problems topic wise
 
-## Arrays (46)
+## Arrays (56)
 
 - [Spiral Order Matrix I](https://www.interviewbit.com/problems/spiral-order-matrix-i/)
 - [Insertion Sort](https://www.interviewbit.com/tutorial/insertion-sort-algorithm/)
@@ -10,11 +10,14 @@ Interview bit problems topic wise
 - [Quick Sort](https://www.interviewbit.com/tutorial/quicksort-algorithm/)
 - [Selection Sort](https://www.interviewbit.com/tutorial/selection-sort/)
 - [Bubble Sort](https://www.interviewbit.com/tutorial/bubble-sort/)
+- [Counting Sort](https://www.geeksforgeeks.org/counting-sort/)
+- [Radix Sort](https://www.geeksforgeeks.org/radix-sort/)
+- [Bucket Sort](https://www.geeksforgeeks.org/bucket-sort-2/)
 - [Max Non Negative SubArray](https://www.interviewbit.com/problems/max-non-negative-subarray/)
 - [Large Factorial](https://www.interviewbit.com/problems/large-factorial/)
 - [Pick from both sides!](https://www.interviewbit.com/problems/pick-from-both-sides/)
-- [Minimum Lights to Activate](https://www.interviewbit.com/problems/minimum-lights-to-activate/)
 - [Min Steps In Infinite Grid](https://www.interviewbit.com/problems/min-steps-in-infinite-grid/)
+- [Minimum Lights to Activate](https://www.interviewbit.com/problems/minimum-lights-to-activate/)
 - [Maximum Sum Triplet](https://www.interviewbit.com/problems/maximum-sum-triplet/)
 - [Max Sum Contiguous Subarray](https://www.interviewbit.com/problems/max-sum-contiguous-subarray/)
 - [Add One To Number](https://www.interviewbit.com/problems/add-one-to-number/)
@@ -50,6 +53,13 @@ Interview bit problems topic wise
 - [Repeat and Missing Number Array](https://www.interviewbit.com/problems/repeat-and-missing-number-array/)
 - [N/3 Repeat Number](https://www.interviewbit.com/problems/n3-repeat-number/)
 - [Leaders in an array](https://www.interviewbit.com/problems/leaders-in-an-array/)
+- [Reorder Data in Log Files](https://www.interviewbit.com/problems/reorder-data-in-log-files/)
+- [Move Zeroes](https://www.interviewbit.com/problems/move-zeroes/)
+- [Make equal elements Array](https://www.interviewbit.com/problems/make-equal-elements-array/)
+- [Segregate 0s and 1s in an array](https://www.interviewbit.com/problems/segregate-0s-and-1s-in-an-array/)
+- [Array Sum](https://www.interviewbit.com/problems/array-sum/)
+- [Set Intersection](https://www.interviewbit.com/problems/set-intersection/)
+- [Occurence of Each Number](https://www.interviewbit.com/problems/occurence-of-each-number/)
 
 ## Math (28)
 
