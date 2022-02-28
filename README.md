@@ -2,7 +2,7 @@
 
 Interview bit problems topic wise
 
-## Arrays (56)
+## Arrays (57)
 
 - [Spiral Order Matrix I](https://www.interviewbit.com/problems/spiral-order-matrix-i/)
 - [Insertion Sort](https://www.interviewbit.com/tutorial/insertion-sort-algorithm/)
@@ -60,8 +60,9 @@ Interview bit problems topic wise
 - [Array Sum](https://www.interviewbit.com/problems/array-sum/)
 - [Set Intersection](https://www.interviewbit.com/problems/set-intersection/)
 - [Occurence of Each Number](https://www.interviewbit.com/problems/occurence-of-each-number/)
+- [Diagonal Flip](https://www.interviewbit.com/problems/diagonal-flip/)
 
-## Math (28)
+## Math (38)
 
 - [All Factors](https://www.interviewbit.com/problems/all-factors/)
 - [Verify Prime](https://www.interviewbit.com/problems/verify-prime/)
@@ -89,14 +90,24 @@ Interview bit problems topic wise
 - [Next Similar Number](https://www.interviewbit.com/problems/next-similar-number/)
 - [Rearrange Array](https://www.interviewbit.com/problems/rearrange-array/)
 - [Numbers of length N and value less than K](https://www.interviewbit.com/problems/numbers-of-length-n-and-value-less-than-k/)
+- [City Tour](https://www.interviewbit.com/problems/city-tour/)
 - [Grid Unique Paths](https://www.interviewbit.com/problems/grid-unique-paths/)
+- [K-Th Permutation](https://www.interviewbit.com/problems/k-th-permutation/)
+- [Divisible by 60](https://www.interviewbit.com/problems/divisible-by-60/)
+- [Powerful Divisors](https://www.interviewbit.com/problems/powerful-divisors/)
+- [Addition without Summation](https://www.interviewbit.com/problems/addition-without-summation/)
+- [Highest Score](https://www.interviewbit.com/problems/highest-score/)
+- [Last digit K count](https://www.interviewbit.com/problems/last-digit-k-count/)
+- [Digital Root](https://www.interviewbit.com/problems/digital-root/)
+- [Lowest Common Multiple (LCM)](https://www.interviewbit.com/problems/lowest-common-multiple-lcm/)
+- [Which Season?](https://www.interviewbit.com/problems/which-season/)
 - [PRETTYPRINT](https://www.interviewbit.com/problems/prettyprint/)
 
-## Binary Search (16)
+## Binary Search (17)
 
-- [Square Root of Integer](https://www.interviewbit.com/problems/square-root-of-integer/)
 - [Count Element Occurence](https://www.interviewbit.com/problems/count-element-occurence/)
 - [Rotated Array](https://www.interviewbit.com/problems/rotated-array/)
+- [Square Root of Integer](https://www.interviewbit.com/problems/square-root-of-integer/)
 - [Search in Bitonic Array!](https://www.interviewbit.com/problems/search-in-bitonic-array/)
 - [Smaller or equal elements](https://www.interviewbit.com/problems/smaller-or-equal-elements/)
 - [WoodCutting Made Easy!](https://www.interviewbit.com/problems/woodcutting-made-easy/)
@@ -110,8 +121,9 @@ Interview bit problems topic wise
 - [Simple Queries](https://www.interviewbit.com/problems/simple-queries/)
 - [Median of Array](https://www.interviewbit.com/problems/median-of-array/)
 - [Rotated Sorted Array Search](https://www.interviewbit.com/problems/rotated-sorted-array-search/)
+- [Capacity To Ship Packages Within B Days](https://www.interviewbit.com/problems/capacity-to-ship-packages-within-b-days/)
 
-## Strings (27)
+## Strings (35)
 
 - [Palindrome String](https://www.interviewbit.com/problems/palindrome-string/)
 - [Vowel and Consonant Substrings!](https://www.interviewbit.com/problems/vowel-and-consonant-substrings/)
@@ -140,6 +152,14 @@ Interview bit problems topic wise
 - [Zigzag String](https://www.interviewbit.com/problems/zigzag-string/)
 - [Justified Text](https://www.interviewbit.com/problems/justified-text/)
 - [Pretty Json](https://www.interviewbit.com/problems/pretty-json/)
+- [Bulls And Cows](https://www.interviewbit.com/problems/bulls-and-cows/)
+- [Salutes](https://www.interviewbit.com/problems/salutes/)
+- [Character Frequencies](https://www.interviewbit.com/problems/character-frequencies/)
+- [Deserialize](https://www.interviewbit.com/problems/deserialize/)
+- [Self Permutation](https://www.interviewbit.com/problems/self-permutation/)
+- [Serialize](https://www.interviewbit.com/problems/serialize/)
+- [String And Its Frequency](https://www.interviewbit.com/problems/string-and-its-frequency/)
+- [Valid Password](https://www.interviewbit.com/problems/valid-password/)
 
 ## Bit Manipulation (11)
 

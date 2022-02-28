@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Maths {
     // https://www.interviewbit.com/problems/all-factors/
@@ -41,7 +38,7 @@ public class Maths {
 
     // https://www.interviewbit.com/problems/prime-numbers/
     public static ArrayList<Integer> sieve(int A) {
-        // Time complexity = O (A log log A)
+        // Time complexity = A * (1 / 2 + 1 / 3 + 1 / 5 +...) = O (A log log A) [harmonic sequence]
         ArrayList<Integer> res = new ArrayList<>();
         if (A < 2)
             return res;
@@ -49,7 +46,6 @@ public class Maths {
         // mark initially as prime
         boolean[] sieve = new boolean[A + 1];
         Arrays.fill(sieve, 2, A + 1, true);
-
         // i = 2 to sqrt(A)
         for (int i = 2; i * i <= A; i++) {
             if (sieve[i]) {
@@ -128,19 +124,16 @@ public class Maths {
     static int hammingDistance(final int[] A) {
         int n = A.length, MOD = 1000000007;
         long sum = 0;
-
         // check for each bit position
         for (int i = 0; i < 32; i++) {
-            // zeroCnt = # of integers where bit i is 0
-            // n - zeroCnt = # of integers where bit i is 1
+            // zeroCnt = #integers where bit i is 0
+            // n - zeroCnt = #integers where bit i is 1
             long zeroCnt = 0;
             int bitPos = 1 << i;
-
             for (int val : A) {
                 if ((val & bitPos) == 0)
                     zeroCnt++;
             }
-
             // arrange 1 each from both groups and order matters hence 2x
             sum = (sum + zeroCnt * (n - zeroCnt) * 2L) % MOD;
         }
@@ -173,10 +166,7 @@ public class Maths {
     // https://www.interviewbit.com/problems/is-rectangle/
     static int isRectangle(int A, int B, int C, int D) {
         // check if any pair of opposite sides is equal
-        if ((A == B && C == D) || (A == C && B == D) || (A == D && B == C))
-            return 1;
-        // not a rectangle else
-        return 0;
+        return (A == B && C == D) || (A == C && B == D) || (A == D && B == C) ? 1 : 0;
     }
 
     // https://www.interviewbit.com/problems/step-by-step/
@@ -184,16 +174,12 @@ public class Maths {
         // moving in either side is symmetric
         A = Math.abs(A);
         int sum = 0, steps = 0;
-
-        // keep moving forward till either destination is reached or
-        // the difference between target and destination is not even
+        // keep moving forward till either destination is reached or the difference between target and destination is not even
         while (sum < A || (sum - A) % 2 != 0) {
             steps++;
             sum += steps;
         }
-
-        // if difference is even i.e. sum - target = 2 * i,
-        // we can take ith step in the opposite direction to reach our destination
+        // if difference is even i.e. sum - target = 2 * i, we can take ith step in the opposite direction to reach our destination
         return steps;
     }
 
@@ -201,7 +187,6 @@ public class Maths {
     static int isPower(int A) {
         if (A < 2)
             return 1;
-
         // i^x = A. Check if x is integer or not
         // the largest possible 'i' will be sqrt(A)^2 = A hence loop till sqrt(A)
         for (int i = 2; i * i <= A; i++) {
@@ -231,10 +216,8 @@ public class Maths {
         while (A > 0) {
             // 1 is 'A' not 0 hence subtract 1 every time
             A--;
-
             char c = (char) ('A' + A % 26);
             builder.append(c);
-
             A /= 26;
         }
 
@@ -245,7 +228,6 @@ public class Maths {
     static int isPalindrome(int A) {
         if (A < 0)
             return 0;
-
         // reverse the int and check
         return A == reverseUtil(A) ? 1 : 0;
     }
@@ -282,11 +264,8 @@ public class Maths {
             res = (res * 10) + (A % 10);
             A /= 10;
         }
-
         // overflow has occurred
-        if (res > Integer.MAX_VALUE)
-            return 0;
-        return (int) res;
+        return res > Integer.MAX_VALUE ? 0 : (int) res;
     }
 
     // https://www.interviewbit.com/problems/next-smallest-palindrome/
@@ -299,15 +278,12 @@ public class Maths {
             for (int i = 0; i < n - 1; i++)
                 builder.append(0);
             builder.append(1);
-
             return builder.toString();
         }
 
         int mid = n / 2;
         // start from mid two elements (if even) or the two elements surrounding the middle character (if odd)
-        int i = mid - 1;
-        int j = (n % 2 == 0) ? mid : mid + 1;
-
+        int i = mid - 1, j = (n % 2 == 0) ? mid : mid + 1;
         // Remaining cases: initially skip the common middle part
         while (i >= 0 && A.charAt(i) == A.charAt(j)) {
             i--;
@@ -319,20 +295,15 @@ public class Maths {
 
         StringBuilder builder = new StringBuilder(A);
         // copy left half to right half
-        while (i >= 0) {
-            builder.setCharAt(j, A.charAt(i));
-            i--;
-            j++;
-        }
-
+        while (i >= 0)
+            builder.setCharAt(j++, A.charAt(i--));
         // rest of the cases
         if (!leftSmaller)
             return builder.toString();
 
         // Case 2: Input string is palindrome
         // Case 3: ith digit is less than jth digit hence only copying won't work
-        // In both cases: add 1 to middle character and keep adding the carry on left
-        // and copying digits to the right
+        // In both cases: add 1 to middle character and keep adding the carry on left and copying digits to the right
         int carry = 1;
         // if length is odd, add carry to the middle digit
         if (n % 2 == 1) {
@@ -347,14 +318,12 @@ public class Maths {
         // start from mid two elements (if even) or the two elements surrounding the middle element (if odd)
         i = mid - 1;
         j = (n % 2 == 0) ? mid : mid + 1;
-
         // loop till carry is found or reached left end
         while (i >= 0 && carry > 0) {
             // add carry to digit
             int num = A.charAt(i) - '0' + carry;
             char c = (char) ('0' + num % 10);
             carry = num / 10;
-
             // update characters at positions i and its mirror j
             builder.setCharAt(i--, c);
             builder.setCharAt(j++, c);
@@ -374,7 +343,7 @@ public class Maths {
     }
 
     // https://www.interviewbit.com/problems/greatest-common-divisor/
-    // Euclid's algorithm - O(log (min(a, b)))
+    // Euclid's algorithm - O(log(min(a, b)))
     static int gcd(int A, int B) {
         if (B == 0)
             return A;
@@ -392,8 +361,8 @@ public class Maths {
                 {1, 1},
                 {1, 0}
         };
-        // Mn = power(Mat({1, 1}, {1, 0}), A - 2) where Mn[0][0] = Fn
-        matrix = matrixPowerMod(matrix, A - 2, p);
+        // Mn = power(Mat({1, 1}, {1, 0}), n) where Mn = Mat({F(n + 1), F(n)}, {F(n), F(n - 1)})
+        matrix = matrixPowerMod(matrix, A - 1, p);
 
         return (int) matrix[0][0];
     }
@@ -401,10 +370,9 @@ public class Maths {
     // util to calculate matrix power modulo
     private static long[][] matrixPowerMod(long[][] A, int x, int p) {
         long[][] res = {
-                {1, 1},
-                {1, 1}
+                {1, 0},
+                {0, 1}
         };
-
         // calculate power(A, x) in O(log x)
         while (x > 0) {
             if (x % 2 == 1)
@@ -446,8 +414,7 @@ public class Maths {
     static int findRank(String A) {
         int MAX_CHAR = 256, p = 1000003;
         int n = A.length();
-
-        // count[i] = #characters in string < char i
+        // count[i] = #characters in string <= char i
         int[] count = new int[MAX_CHAR];
         // each character count
         for (char c : A.toCharArray())
@@ -455,15 +422,14 @@ public class Maths {
         // perform cumulative count
         for (int i = 1; i < MAX_CHAR; i++)
             count[i] += count[i - 1];
-
         // fact[i] = i! mod p
-        int[] fact = modFact(n, p);
+        long[] fact = modFact(n, p);
         long rank = 1;
 
         for (int i = 0; i < n; i++) {
             char c = A.charAt(i);
             // rank = rank + (#chars smaller than c)*(#places on the right)!
-            rank = (rank + ((long) count[c - 1] * fact[n - 1 - i]) % p) % p;
+            rank = (rank + (count[c - 1] * fact[n - 1 - i]) % p) % p;
             // remove the current character from all greater characters count
             for (int j = c; j < MAX_CHAR; j++)
                 count[j]--;
@@ -473,12 +439,12 @@ public class Maths {
     }
 
     // util to get factorial array with modulo values
-    private static int[] modFact(int n, int p) {
-        int[] fact = new int[n + 1];
+    private static long[] modFact(int n, int p) {
+        long[] fact = new long[n + 1];
         fact[0] = 1;
 
         for (int i = 1; i <= n; i++)
-            fact[i] = (int) ((fact[i - 1] * (long) i) % p);
+            fact[i] = (fact[i - 1] * i) % p;
 
         return fact;
     }
@@ -496,8 +462,7 @@ public class Maths {
     static int findRepeatRank(String A) {
         int MAX_CHAR = 256, p = 1000003;
         int n = A.length();
-
-        // count[i] = #characters in string < char i
+        // count[i] = #characters in string <= char i
         int[] count = new int[MAX_CHAR];
         // each character count
         for (char c : A.toCharArray())
@@ -505,21 +470,19 @@ public class Maths {
         // perform cumulative count
         for (int i = 1; i < 256; i++)
             count[i] += count[i - 1];
-
         // fact[i] = i! mod p
-        int[] fact = modFact(n, p);
+        long[] fact = modFact(n, p);
         long rank = 1;
 
         for (int i = 0; i < n; i++) {
             char c = A.charAt(i);
             // num = (#chars smaller than c)*(#places on the right)!
-            long num = ((long) count[c - 1] * fact[n - 1 - i]) % p;
+            long num = (count[c - 1] * fact[n - 1 - i]) % p;
             if (num != 0) {
                 // den = (p1! * p2! * ... pn!)
                 long den = fact[count[0]] % p;
                 for (int j = 1; j < MAX_CHAR; j++)
                     den = (den * fact[count[j] - count[j - 1]]) % p;
-
                 // rank = rank + num/den
                 // modular inverse for modulo division (p is prime)
                 rank = (rank + (num * modInverse(den, p)) % p) % p;
@@ -543,7 +506,6 @@ public class Maths {
         while (y > 0) {
             if (y % 2 == 1)
                 res = (res * x) % p;
-
             // x^y = (x^2)^(y/2)
             x = (x * x) % p;
             y /= 2;
@@ -573,7 +535,6 @@ public class Maths {
         // swap first digit of pair with its successor
         StringBuilder builder = new StringBuilder(A);
         swap(builder, last, nextPos);
-
         // reverse the remaining half of the string
         reverse(builder, last + 1, n - 1);
 
@@ -615,10 +576,8 @@ public class Maths {
 
     // https://www.interviewbit.com/problems/rearrange-array/
     static void arrange(ArrayList<Integer> A) {
-        // if x = a + bn where a is old value and b is new value then
-        // old value = x % n and new value = x / n
+        // if x = a + bn where a is old value and b is new value then old value = x % n and new value = x / n
         int n = A.size();
-
         // add new value b to old value a of each element (a + bn)
         for (int i = 0; i < n; i++) {
             int x = A.get(i), y = A.get(x) % n;
@@ -632,25 +591,22 @@ public class Maths {
 
     // https://www.interviewbit.com/problems/numbers-of-length-n-and-value-less-than-k/
     static int solve(int[] A, int B, int C) {
-        int MAX_DIG = 10;
         List<Integer> digits = getDigitsFromNumber(C);
-
         int n = A.length, d = digits.size();
         // CASE-1: no digits in set or output digits > limit number's digits
         if (n == 0 || B > d)
             return 0;
-
         // CASE-2: output digits < limit number's digits
         if (B < d) {
             if (A[0] == 0 && B != 1)
                 return (int) ((n - 1) * Math.pow(n, B - 1));
-            else
-                return (int) Math.pow(n, B);
+            return (int) Math.pow(n, B);
         }
 
         // CASE-3: output digits == limit number's digits
+        int MAX_DIG = 10;
         int[] lower = new int[MAX_DIG + 1];
-        // initialize lower for the digits in list a
+        // initialize lower for the digits in list A
         for (int dig : A)
             lower[dig + 1] = 1;
         // cumulative count
@@ -661,25 +617,22 @@ public class Maths {
         if (B == 1)
             return lower[digits.get(0)];
 
-        // dp[i] = #of numbers that can be formed with first i digits of A that is less than first i digits of C
+        // dp[i] = #numbers that can be formed with first i digits of A that is less than first i digits of C
         int[] dp = new int[B + 1];
         dp[0] = 0;
         // first digit can be all digits less than first digit of C except 0
         dp[1] = lower[digits.get(0)];
         if (A[0] == 0)
             dp[1]--;
-
         // if the first (i - 1) digits of C are present in A
         boolean eqFlag = lower[digits.get(0) + 1] - lower[digits.get(0)] == 1;
 
         for (int i = 2; i <= B; i++) {
-            // for digits lower than digit[i - 2]
-            // we can place all the digits in list A after them
+            // for digits lower than digit[i - 2] we can place all the digits in list A after them
             dp[i] = dp[i - 1] * n;
 
             int currDigit = digits.get(i - 1);
-            // if first (i - 1) digits present, pos i can have digits only lower than digit[i - 1] (current)
-            // for the equal first half case
+            // if first (i - 1) digits present, pos i can have digits only lower than digit[i - 1] (current) for the equal first half case
             if (eqFlag) {
                 dp[i] += lower[currDigit];
                 // update the flag by checking if current digit is present in A
@@ -692,22 +645,57 @@ public class Maths {
 
     private static List<Integer> getDigitsFromNumber(int n) {
         List<Integer> digits = new ArrayList<>();
-        // if n == 0
+        // base-case
         if (n == 0) {
             digits.add(0);
             return digits;
         }
 
-        // add new digit
         while (n > 0) {
             digits.add(n % 10);
             n /= 10;
         }
-
         // reverse the digits list
         Collections.reverse(digits);
 
         return digits;
+    }
+
+    // https://www.interviewbit.com/problems/city-tour/
+    static int cityTour(int A, int[] B) {
+        int p = 1000000007, m = B.length;
+        // base-case: all cities visited
+        if (A == m)
+            return 0;
+
+        // res = (k! / (X0! * X1! * ... * Xk!)) * (2^(X1 - 1) * 2^(X2 - 1) * ... * 2^(X(k-1) - 1)) where k = #unvisited cities
+        // see https://youtu.be/fUS9G-WG9SQ for explanation
+        long[] fact = modFact(A - m, p);
+        Arrays.sort(B);
+        // X[i] = #cities unvisited after city i and before city i + 1
+        int[] X = new int[m + 1];
+        // X[0] = #cities unvisited before first visited city
+        X[0] = B[0] - 1;
+        for (int i = 1; i < m; i++)
+            X[i] = B[i] - B[i - 1] - 1;
+        // X[m] = #cities unvisited after last visited city
+        X[m] = A - B[m - 1];
+
+        // total combinations
+        long num = fact[A - m];
+        // den = #combinations to be removed considering each visited subset with same relative order
+        long den = fact[X[0]];
+        for (int i = 1; i <= m; i++)
+            den = (den * fact[X[i]]) % p;
+
+        long comb = (num * modInverse(den, p)) % p;
+        int pow = 0;
+        for (int i = 1; i < m; i++)
+            pow += Math.max(0, X[i] - 1);
+        // choices = #ways to select cities from the middle unvisited sets
+        long choices = modPower(2, pow, p);
+
+        return (int) ((comb * choices) % p);
     }
 
     // https://www.interviewbit.com/problems/grid-unique-paths/
@@ -729,14 +717,189 @@ public class Maths {
         return res;
     }
 
-    //TODO: https://www.interviewbit.com/problems/city-tour/
+    // https://www.interviewbit.com/problems/k-th-permutation/
+    static ArrayList<Integer> findPerm(int A, Long B) {
+        // B is maximum 10^18 hence don't need to find more than 20!
+        long[] fact = new long[21];
+        fact[0] = 1;
+        for (int i = 1; i <= 20; i++)
+            fact[i] = i * fact[i - 1];
+        // 0-based ranking
+        B--;
 
-    // Jump to LEVEL-3 code
+        // only last 21 numbers will change - fix the first remaining numbers
+        ArrayList<Integer> res = new ArrayList<>();
+        for (int i = 0; i < A - 21; i++)
+            res.add(i + 1);
+        // mark the numbers remaining in permutation
+        List<Integer> nums = new ArrayList<>();
+        for (int i = Math.max(A - 20, 1); i <= A; i++)
+            nums.add(i);
+
+        for (int i = Math.min(20, A - 1); i >= 0; i--) {
+            int idx = (int) (B / fact[i]);
+            res.add(nums.get(idx));
+            // update remaining rank and numbers
+            B %= fact[i];
+            nums.remove(idx);
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/divisible-by-60/
+    static int divisibleBy60(int[] A) {
+        // 1-digit number only 0 is divisible by 60
+        if (A.length == 1)
+            return A[0] == 0 ? 1 : 0;
+        // 2-digit number only 60 is divisible by 60
+        if (A.length == 2)
+            return ((A[0] == 0 && A[1] == 6) || (A[0] == 6 && A[1] == 0)) ? 1 : 0;
+        // for larger numbers to be divisible by x it should be divisible by highest form of each prime factor
+        // i.e. for divisible by 60, should be divisible by (2^2 * 3 * 5) i.e by 3, 4 and 5.
+        // divisibility by 3 - sum of digits should be divisible by 3
+        // divisibility by 5 - last digit should be 0 or 5
+        // divisibility by 4 - last two digits should be divisible by 4
+        // Since the number is divisible by 5, we have to check for only one even number other than 0
+        boolean zero = false, even = false;
+        int sum = 0;
+
+        for (int digit : A) {
+            // found 0
+            if (digit == 0)
+                zero = true;
+                // found another even digit
+            else if (digit % 2 == 0)
+                even = true;
+            // update sum of digits
+            sum += digit;
+        }
+
+        return zero && even && (sum % 3 == 0) ? 1 : 0;
+    }
+
+    // https://www.interviewbit.com/problems/powerful-divisors/
+    static int[] powerfulDivisors(int[] A) {
+        int n = A.length;
+        // solve for the maximum query so others will be automatically solved
+        int max = A[0];
+        for (int i = 1; i < n; i++)
+            max = Math.max(max, A[i]);
+
+        // divisors[i] = #powerful divisors till i
+        int[] divisors = new int[max + 1];
+        divisors[1] = 1;
+        for (int i = 2; i <= max; i++) {
+            // add 2 divisors - 1 and self
+            divisors[i] += 2;
+            // check if i is powerful divisor
+            boolean powerful = (divisors[i] & divisors[i] - 1) == 0;
+            // update count of powerful divisors till i
+            divisors[i] = divisors[i - 1] + (powerful ? 1 : 0);
+
+            // update count of divisors for all the multiples (like sieve)
+            for (int j = 2 * i; j <= max; j += i)
+                divisors[j]++;
+        }
+
+        for (int i = 0; i < n; i++)
+            A[i] = divisors[A[i]];
+
+        return A;
+    }
+
+    // https://www.interviewbit.com/problems/addition-without-summation/
+    static int addNumbers(int A, int B) {
+        // using Half adder logic
+        while (B != 0) {
+            // carry now contains common set bits of A & B
+            int carry = A & B;
+            // sum of bits of A and B where at least one of the bits is not set
+            A = A ^ B;
+            // carry is shifted by one so that adding it to A gives the required sum
+            B = carry << 1;
+        }
+
+        return A;
+    }
+
+    // https://www.interviewbit.com/problems/highest-score/
+    static int highestScore(String[][] A) {
+        // map to store each student's total marks and #tests taken
+        Map<String, int[]> map = new HashMap<>();
+
+        for (String[] student : A) {
+            String name = student[0];
+            int marks = Integer.parseInt(student[1]);
+            // update or add new entry for the student
+            if (map.containsKey(name)) {
+                int[] result = map.get(name);
+                result[0] += marks;
+                result[1]++;
+            } else {
+                map.put(name, new int[]{marks, 1});
+            }
+        }
+
+        float maxAvg = 0;
+        // find float maximum average for accuracy
+        for (int[] result : map.values()) {
+            float avg = result[0] / (float) result[1];
+            maxAvg = Math.max(maxAvg, avg);
+        }
+
+        return (int) maxAvg;
+    }
+
+    // https://www.interviewbit.com/problems/last-digit-k-count/
+    static int lastDigitKCount(int A, int B, int C) {
+        // find the number with last digit as C and the rest part equal to A (e.g A = 15, C = 3 then newA = 13)
+        int newA = (A / 10) * 10 + C;
+        // if out of range, start from the next possible number (A = 15, newA = 13 then update newA = 23)
+        if (newA < A)
+            newA += 10;
+
+        // no number possible
+        if (newA > B)
+            return 0;
+        // same last digit will repeat after 10 numbers
+        return (B - newA) / 10 + 1;
+    }
+
+    // https://www.interviewbit.com/problems/digital-root/
+    static int digitalRoot(int A) {
+        // pattern: digit sum repeats at every 9 numbers (try for numbers 1 to 20 on paper)
+        int mod = A % 9;
+        return mod == 0 ? 9 : mod;
+    }
+
+    // https://www.interviewbit.com/problems/lowest-common-multiple-lcm/
+    static long lcm(int A, int B) {
+        return ((long) A * B) / gcd(A, B);
+    }
+
+    // https://www.interviewbit.com/problems/which-season/
+    static String whichSeason(int A) {
+        // invalid month
+        if (A > 12)
+            return "Invalid";
+        // March to May
+        if (A >= 3 && A <= 5)
+            return "Spring";
+        // June to August
+        if (A >= 6 && A <= 8)
+            return "Summer";
+        // September to November
+        if (A >= 9 && A <= 11)
+            return "Autumn";
+        // December to February
+        return "Winter";
+    }
+
     // https://www.interviewbit.com/problems/prettyprint/
     static int[][] prettyPrint(int A) {
         int len = 2 * A - 1;
         int[][] res = new int[len][len];
-
         // traverse in fashion similar to spiral matrix problem
         int t = 0, b = len - 1, l = 0, r = len - 1;
         while (A > 0) {
@@ -744,22 +907,18 @@ public class Maths {
             for (int i = l; i <= r; i++)
                 res[t][i] = A;
             t++;
-
             // move towards bottom in rightmost row
             for (int i = t; i <= b; i++)
                 res[i][r] = A;
             r--;
-
             // move towards left in bottommost row
             for (int i = r; i >= l; i--)
                 res[b][i] = A;
             b--;
-
             // move towards top in leftmost row
             for (int i = b; i >= t; i--)
                 res[i][l] = A;
             l++;
-
             // update the number to be filled
             A--;
         }

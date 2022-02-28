@@ -1020,4 +1020,157 @@ public class Strings {
             builder.append('\t');
         return builder;
     }
+
+    // https://www.interviewbit.com/problems/bulls-and-cows/
+    static String bullsAndCows(String A, String B) {
+        int[] map = new int[10];
+        int bulls = 0, cows = 0;
+        // count bulls from the secret string and frequency of other characters
+        for (int i = 0; i < A.length(); i++) {
+            if (A.charAt(i) == B.charAt(i))
+                bulls++;
+            else
+                map[A.charAt(i) - '0']++;
+        }
+        // loop over guess to find the cows
+        for (int i = 0; i < B.length(); i++) {
+            int num = B.charAt(i) - '0';
+            // if not bull and freq > 0 it is a cow
+            if (A.charAt(i) != B.charAt(i) && map[num] > 0) {
+                cows++;
+                map[num]--;
+            }
+        }
+
+        return bulls + "A" + cows + "B";
+    }
+
+    // https://www.interviewbit.com/problems/salutes/
+    static long countSalutes(String A) {
+        long res = 0;
+        int right = 0;
+        // for each soldier going left, #salutes = #soldiers encountered so far going to the right
+        for (char c : A.toCharArray()) {
+            // update count of soldiers going right
+            if (c == '>')
+                right++;
+                // add the #salutes for this soldier going left
+            else
+                res += right;
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/character-frequencies/
+    static int[] characterFreq(String A) {
+        // use LinkedHashMap to maintain the order of which character came first
+        Map<Character, Integer> map = new LinkedHashMap<>();
+        for (char c : A.toCharArray())
+            map.put(c, map.getOrDefault(c, 0) + 1);
+
+        int[] res = new int[map.size()];
+        int k = 0;
+        // copy frequencies to output array in order of occurrence
+        for (int val : map.values())
+            res[k++] = val;
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/deserialize/
+    static ArrayList<String> deserialize(String A) {
+        ArrayList<String> res = new ArrayList<>();
+        int n = A.length();
+
+        for (int i = 0; i < n; i++) {
+            int start = i;
+            // skip the alphabets
+            while (!Character.isDigit(A.charAt(i)))
+                i++;
+            // add the word to result
+            res.add(A.substring(start, i));
+            // skip to the delimiter
+            while (A.charAt(i) != '~')
+                i++;
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/self-permutation/
+    static int permuteStrings(String A, String B) {
+        // different length strings will never be anagrams
+        if (A.length() != B.length())
+            return 0;
+
+        int[] map = new int[26];
+        // add frequency to character map
+        for (char c : A.toCharArray())
+            map[c - 'a']++;
+        // remove frequency from character map
+        for (char c : B.toCharArray())
+            map[c - 'a']--;
+
+        for (int i = 0; i < 26; i++) {
+            // found character not present in both strings
+            if (map[i] != 0)
+                return 0;
+        }
+        // anagrams
+        return 1;
+    }
+
+    // https://www.interviewbit.com/problems/serialize/
+    static String serialize(String[] A) {
+        StringBuilder builder = new StringBuilder();
+        // for each word append word, its length and the delimiter
+        for (String word : A) {
+            builder.append(word);
+            builder.append(word.length());
+            builder.append('~');
+        }
+
+        return builder.toString();
+    }
+
+    // https://www.interviewbit.com/problems/string-and-its-frequency/
+    static String stringAndFrequency(String A) {
+        // use LinkedHashMap to maintain the order of which character came first
+        Map<Character, Integer> map = new LinkedHashMap<>();
+        for (char c : A.toCharArray())
+            map.put(c, map.getOrDefault(c, 0) + 1);
+
+        StringBuilder builder = new StringBuilder();
+        // append the character and its frequency for output string
+        for (Map.Entry<Character, Integer> e : map.entrySet()) {
+            builder.append(e.getKey());
+            builder.append(e.getValue());
+        }
+
+        return builder.toString();
+    }
+
+    // https://www.interviewbit.com/problems/valid-password/
+    static int validPassword(String A) {
+        int n = A.length();
+        // password too short or too long
+        if (n < 8 || n > 15)
+            return 0;
+
+        boolean digit = false, lower = false, upper = false, special = false;
+        // check if there is at least 1 digit, 1 lowercase char, 1 uppercase char and 1 special char
+        for (char c : A.toCharArray()) {
+            if (Character.isDigit(c))
+                digit = true;
+            else if (Character.isLowerCase(c))
+                lower = true;
+            else if (Character.isUpperCase(c))
+                upper = true;
+            else
+                special = true;
+        }
+
+        return digit && lower && upper && special ? 1 : 0;
+    }
 }

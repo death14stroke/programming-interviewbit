@@ -4,35 +4,6 @@ import java.util.List;
 import java.util.Stack;
 
 public class BinarySearch {
-    // https://www.interviewbit.com/problems/square-root-of-integer/
-    static int sqrt(int A) {
-        // sqrt(0) = 0, sqrt(1) = 1
-        if (A <= 1)
-            return A;
-
-        int l = 2, r = A;
-        int sqrt = 1;
-
-        while (l <= r) {
-            int mid = l + (r - l) / 2;
-            long prod = (long) mid * mid;
-
-            // perfect square
-            if (prod == A)
-                return mid;
-            // mid might be floor(sqrt(A)). Keep looking for larger numbers still
-            if (prod < A) {
-                sqrt = mid;
-                l = mid + 1;
-            }
-            // check for smaller numbers
-            else
-                r = mid - 1;
-        }
-
-        return sqrt;
-    }
-
     // https://www.interviewbit.com/problems/count-element-occurence/
     static int findCount(final int[] A, int B) {
         // find first occurrence of B
@@ -109,7 +80,7 @@ public class BinarySearch {
             int prev = (mid - 1) % n, next = (mid + 1) % n;
 
             // mid is the minimum
-            if (A.get(mid) <= A.get(prev) && A.get(mid) <= A.get(next))
+            if (A.get(mid) < A.get(prev) && A.get(mid) < A.get(next))
                 return A.get(mid);
             // if left half is sorted search in right half
             if (A.get(0) <= A.get(mid))
@@ -120,6 +91,34 @@ public class BinarySearch {
         }
 
         return -1;
+    }
+
+    // https://www.interviewbit.com/problems/square-root-of-integer/
+    static int sqrt(int A) {
+        // sqrt(0) = 0, sqrt(1) = 1
+        if (A <= 1)
+            return A;
+
+        int l = 2, r = A / 2;
+        int sqrt = 1;
+
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            long prod = (long) mid * mid;
+            // perfect square
+            if (prod == A)
+                return mid;
+            // mid might be floor(sqrt(A)). Keep looking for larger numbers still
+            if (prod < A) {
+                sqrt = mid;
+                l = mid + 1;
+            }
+            // check for smaller numbers
+            else
+                r = mid - 1;
+        }
+
+        return sqrt;
     }
 
     // https://www.interviewbit.com/problems/search-in-bitonic-array/
@@ -135,7 +134,7 @@ public class BinarySearch {
             // if current left half is sorted increasing
             if (A[l] <= A[mid]) {
                 // if target falls in range of left half, search in left half
-                if (A[l] <= B && B <= A[mid])
+                if (A[l] <= B && B < A[mid])
                     r = mid - 1;
                     // else search in right half
                 else
@@ -144,7 +143,7 @@ public class BinarySearch {
             // else current right half is sorted decreasing
             else {
                 // if target falls in range of right half, search in right half
-                if (A[mid] >= B && B >= A[n - 1])
+                if (A[mid] > B && B >= A[n - 1])
                     l = mid + 1;
                     // else search in left half
                 else
@@ -184,10 +183,9 @@ public class BinarySearch {
     // https://www.interviewbit.com/problems/woodcutting-made-easy/
     static int woodCutting(int[] A, int B) {
         // highest tree
-        int maxHeight = 0;
-        for (int tree : A)
-            maxHeight = Math.max(maxHeight, tree);
-
+        int maxHeight = A[0];
+        for (int i = 1; i < A.length; i++)
+            maxHeight = Math.max(maxHeight, A[i]);
         // try for all values from min saw height (all wood cut) to max saw height (0 wood cut)
         int l = 0, r = maxHeight;
         // optimum saw height
@@ -219,7 +217,6 @@ public class BinarySearch {
             if (woodCnt >= B)
                 return true;
         }
-
         // could not cut enough wood
         return false;
     }
@@ -256,7 +253,6 @@ public class BinarySearch {
 
         // find last occurrence
         int lastOccurrence = findLastOccurrence(A, B);
-
         return new int[]{firstOccurrence, lastOccurrence};
     }
 
@@ -294,30 +290,25 @@ public class BinarySearch {
         int m = A.length, n = A[0].length;
         // global minimum and maximum in matrix
         int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
-        // matrix is sorted by rows
-        // hence check top for each row for min and bottom for each row for max
+        // matrix is sorted by rows. Hence, check top for each row for min and bottom for each row for max
         for (int[] row : A) {
             min = Math.min(min, row[0]);
             max = Math.max(max, row[n - 1]);
         }
-
         // all entries in matrix are same
         if (min == max)
             return min;
 
-        // # elements <= median in odd size array is (n+1)/2
+        // #elements <= median in odd size array is (n+1)/2
         int req = (m * n + 1) / 2, res = -1;
         // check all values from min to max as median
         while (min <= max) {
             int mid = min + (max - min) / 2;
             int totalCnt = 0;
             // count for numbers <= mid in each row
-            for (int[] row : A) {
-                int cnt = lowerBoundPos(row, mid) + 1;
-                totalCnt += cnt;
-            }
-
-            // if mid has fewer elements < required, try higher value as median
+            for (int[] row : A)
+                totalCnt += lowerBoundPos(row, mid) + 1;
+            // if mid has fewer elements than required, try higher value as median
             if (totalCnt < req)
                 min = mid + 1;
                 // mid can be median if no duplicates for mid. Also try lower value as median
@@ -333,7 +324,7 @@ public class BinarySearch {
     // https://www.interviewbit.com/problems/allocate-books/
     static int books(int[] A, int B) {
         int n = A.length;
-        // number of students > books
+        // #students > books
         if (B > n)
             return -1;
 
@@ -365,22 +356,16 @@ public class BinarySearch {
         int currSum = 0;
 
         for (int page : pages) {
-            // if one book has more pages than page limit of a student
-            if (page > maxLimit)
-                return false;
-
+            // add more pages to curr student
+            currSum += page;
             // curr student cannot read more. Bring new student
-            if (currSum + page > maxLimit) {
+            if (currSum > maxLimit) {
                 currSum = page;
                 students--;
-
-                // if number of students exceeded
+                // if #students exceeded
                 if (students == 0)
                     return false;
             }
-            // add more pages to curr student
-            else
-                currSum += page;
         }
 
         return true;
@@ -409,31 +394,25 @@ public class BinarySearch {
             else
                 l = mid + 1;
         }
-
         // multiply length by time and take mod
         return (int) ((res * (long) B) % p);
     }
 
     // util to check if it is possible to paint all the boards with current max time per board
     private static boolean canPaint(int[] boards, int painters, int maxTime, int p) {
-        int currSum = 0, cnt = 1;
+        int currSum = 0;
 
         for (int cost : boards) {
-            // if board is longer than max length decided
-            if (cost > maxTime)
-                return false;
-
-            // if board is longer than painter's max length capacity add new painter
-            if ((currSum + cost) % p > maxTime) {
+            // allocate board to same painter
+            currSum = (currSum + cost) % p;
+            // current painter cannot paint more. Add new painter
+            if (currSum > maxTime) {
                 currSum = cost;
-                cnt++;
-                // if count of painters is reached
-                if (cnt > painters)
+                painters--;
+                // if #painters exceeded
+                if (painters == 0)
                     return false;
             }
-            // allocate board to same painter
-            else
-                currSum = (currSum + cost) % p;
         }
 
         return true;
@@ -444,7 +423,6 @@ public class BinarySearch {
         // pow(0, n) = 0
         if (x == 0)
             return 0;
-
         // x1 to avoid overflow
         long x1 = x, res = 1;
 
@@ -452,7 +430,6 @@ public class BinarySearch {
             // pow(x, 2k+1) = pow(x, 2k) * x
             if (n % 2 == 1)
                 res = (res * x1) % d;
-
             // pow(x, 2k) = pow (x^2, k)
             x1 = (x1 * x1) % d;
             n /= 2;
@@ -460,7 +437,6 @@ public class BinarySearch {
 
         // result cannot be negative
         res = (res + d) % d;
-
         return (int) res;
     }
 
@@ -526,20 +502,15 @@ public class BinarySearch {
     private static int[] findPreviousGreater(int[] A) {
         int n = A.length;
         int[] res = new int[n];
-        Arrays.fill(res, -1);
-
+        res[n - 1] = -1;
         Stack<Integer> s = new Stack<>();
-        s.push(0);
+        s.push(n - 1);
 
-        for (int i = 1; i < n; i++) {
-            // pop elements from stack while stack is not empty and top of stack is smaller than arr[i]
-            // we always have elements in decreasing order in a stack.
+        for (int i = n - 2; i >= 0; i--) {
+            res[i] = -1;
+            // pop elements from stack and mark previous greater as the current element
             while (!s.empty() && A[s.peek()] <= A[i])
-                s.pop();
-            // if stack becomes empty, then no element is greater on left side
-            // else top of stack is previous greater
-            if (!s.empty())
-                res[i] = s.peek();
+                res[s.pop()] = i;
 
             s.push(i);
         }
@@ -551,14 +522,14 @@ public class BinarySearch {
     private static int[] findNextGreater(int[] A) {
         int n = A.length;
         int[] res = new int[n];
-        Arrays.fill(res, n);
-
+        res[0] = n;
         Stack<Integer> s = new Stack<>();
         s.push(0);
 
         for (int i = 1; i < n; i++) {
-            // pop elements from stack and mark next greater as the current element
-            while (!s.empty() && A[s.peek()] <= A[i])
+            res[i] = n;
+            // pop elements from stack and mark next greater as the current element (use < to avoid double counting of subarrays)
+            while (!s.empty() && A[s.peek()] < A[i])
                 res[s.pop()] = i;
 
             s.push(i);
@@ -574,11 +545,8 @@ public class BinarySearch {
         for (int i = 1; i * i <= x; i++) {
             // if factor
             if (x % i == 0) {
-                // if same factor (sqrt(x))
-                if (i == x / i)
-                    cnt++;
-                else
-                    cnt += 2;
+                // if same factor (sqrt(x)) add one else both
+                cnt += (x / i == i) ? 1 : 2;
             }
         }
 
@@ -589,13 +557,13 @@ public class BinarySearch {
     private static int productOfFactors(int x) {
         // get count of factors
         int cnt = countFactors(x), p = 1000000007;
-        // each factor will come in pair except for perfect squares. Hence product will be pow(x, n/2) if even
+        // each factor will come in pair except for perfect squares. Hence, product will be pow(x, n/2) if even
         // or pow(x, n/2) * sqrt(x) if odd
-        int ans = pow(x, cnt / 2, p);
+        int res = pow(x, cnt / 2, p);
         if (cnt % 2 == 1)
-            ans = (int) ((ans * (long) Math.sqrt(x)) % p);
+            res = (int) ((res * (long) Math.sqrt(x)) % p);
 
-        return ans;
+        return res;
     }
 
     // data class to store value and its frequency
@@ -617,12 +585,12 @@ public class BinarySearch {
 
         int x = A.size(), y = B.size();
         int l = 0, r = x;
-
         // binary search for partition over x
         while (l <= r) {
             int partitionX = l + (r - l) / 2;
+            // partitionX + partitionY = (x - partitionX) + (y - partitionY) + 1
+            // added 1 to make sure partitionX has the extra element if x + y is odd
             int partitionY = (x + y + 1) / 2 - partitionX;
-
             // rightmost in left partition from array A
             int maxLeftX = (partitionX == 0) ? Integer.MIN_VALUE : A.get(partitionX - 1);
             // leftmost in right partition from array A
@@ -638,10 +606,9 @@ public class BinarySearch {
                 // (n/2 + 1) pos will be taken by min of right partitions
                 if ((x + y) % 2 == 0)
                     return (Math.max(maxLeftX, maxLeftY) + Math.min(minRightX, minRightY)) / 2.0;
-                    // result size is odd. n/2 pos will be taken by max of left partitions
-                    // (because left partition has one element extra)
-                else
-                    return Math.max(maxLeftX, maxLeftY);
+                // result size is odd. n/2 pos will be taken by max of left partitions
+                // (because left partition has one element extra)
+                return Math.max(maxLeftX, maxLeftY);
             }
             // left partition for x is too large. Move to left
             else if (maxLeftX > minRightY)
@@ -685,5 +652,52 @@ public class BinarySearch {
         }
 
         return -1;
+    }
+
+    // https://www.interviewbit.com/problems/capacity-to-ship-packages-within-b-days/
+    static int solve(int[] A, int B) {
+        // min capacity will be the weight of the largest item and max capacity will be the total sum
+        long max = A[0], sum = A[0];
+        for (int i = 1; i < A.length; i++) {
+            max = Math.max(max, A[i]);
+            sum += A[i];
+        }
+
+        long l = max, r = sum, res = -1;
+        // binary search on capacity
+        while (l <= r) {
+            long mid = l + (r - l) / 2;
+            // update answer and search for better answer
+            if (canShip(A, B, mid)) {
+                res = mid;
+                r = mid - 1;
+            }
+            // try increasing the capacity
+            else {
+                l = mid + 1;
+            }
+        }
+
+        return (int) res;
+    }
+
+    // util to check if all the weights in A can be shipped in B days with capacity
+    private static boolean canShip(int[] A, int B, long capacity) {
+        long curr = 0;
+
+        for (int val : A) {
+            curr += val;
+            // exceeded capacity, ship on the next day
+            if (curr > capacity) {
+                B--;
+                // no more days left
+                if (B <= 0)
+                    return false;
+
+                curr = val;
+            }
+        }
+
+        return true;
     }
 }

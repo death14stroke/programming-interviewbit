@@ -1685,4 +1685,19 @@ public class Array {
 
         return res;
     }
+
+    // https://www.interviewbit.com/problems/diagonal-flip/
+    public int[][] diagonalFlip(int[][] A) {
+        int n = A.length;
+        // swap the nodes except diagonal on the upper half with its counterpart opposite of the diagonal
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = i + 1; j < n; j++) {
+                int temp = A[i][j];
+                A[i][j] = A[j][i];
+                A[j][i] = temp;
+            }
+        }
+
+        return A;
+    }
 }
