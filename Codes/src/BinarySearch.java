@@ -231,7 +231,6 @@ public class BinarySearch {
             int mid = l + (r - l) / 2;
             // mapping to row and col in matrix
             int x = mid / n, y = mid % n;
-
             // found B
             if (A[x][y] == B)
                 return 1;
@@ -398,16 +397,16 @@ public class BinarySearch {
         return (int) ((res * (long) B) % p);
     }
 
-    // util to check if it is possible to paint all the boards with current max time per board
-    private static boolean canPaint(int[] boards, int painters, int maxTime, int p) {
+    // util to check if it is possible to paint all the boards with current max length per board
+    private static boolean canPaint(int[] boards, int painters, int maxLength, int p) {
         int currSum = 0;
 
-        for (int cost : boards) {
+        for (int board : boards) {
             // allocate board to same painter
-            currSum = (currSum + cost) % p;
+            currSum = (currSum + board) % p;
             // current painter cannot paint more. Add new painter
-            if (currSum > maxTime) {
-                currSum = cost;
+            if (currSum > maxLength) {
+                currSum = board;
                 painters--;
                 // if #painters exceeded
                 if (painters == 0)
@@ -465,14 +464,13 @@ public class BinarySearch {
             freqSum[i] = freqSum[i - 1] + G[i].freq;
 
         // query results
-        int[] res = new int[B.length];
         for (int i = 0; i < B.length; i++) {
             // find position by querying frequencies array for rank
             int pos = queryFrequencies(freqSum, B[i]);
-            res[i] = G[pos].val;
+            B[i] = G[pos].val;
         }
 
-        return res;
+        return B;
     }
 
     // util to query rank of x in the cumulative frequency array
