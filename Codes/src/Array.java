@@ -1686,6 +1686,34 @@ public class Array {
         return res;
     }
 
+    // https://www.interviewbit.com/problems/chips-factory/
+    static int[] chipsFactory(int[] A) {
+        int pi = 0;
+
+        for (int i = 0; i < A.length; i++) {
+            // swap non-zeroes to the left
+            if (A[i] > 0)
+                swap(A, i, pi++);
+        }
+
+        return A;
+    }
+
+    // https://www.interviewbit.com/problems/greater-than-all/
+    static int greaterThanAll(int[] A) {
+        int res = 0, max = 0;
+
+        for (int val : A) {
+            // if current element is greater than elements so far
+            if (val > max) {
+                max = val;
+                res++;
+            }
+        }
+
+        return res;
+    }
+
     // https://www.interviewbit.com/problems/diagonal-flip/
     public int[][] diagonalFlip(int[][] A) {
         int n = A.length;
@@ -1699,5 +1727,21 @@ public class Array {
         }
 
         return A;
+    }
+
+    // https://www.interviewbit.com/problems/positive-negative/
+    static int[] positiveNegative(int[] A) {
+        int[] res = new int[2];
+
+        for (int val : A) {
+            // update positives count
+            if (val > 0)
+                res[0]++;
+                // update negatives count
+            else if (val < 0)
+                res[1]++;
+        }
+
+        return res;
     }
 }

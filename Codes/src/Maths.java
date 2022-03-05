@@ -873,6 +873,66 @@ public class Maths {
         return mod == 0 ? 9 : mod;
     }
 
+    // https://www.interviewbit.com/problems/product-of-digits/
+    static int productOfDigits(int A) {
+        // base-case
+        if (A == 0)
+            return 0;
+
+        int res = 1;
+        // keep multiplying digits till end reached or 0-digit reached
+        while (A > 0 && res != 0) {
+            res *= (A % 10);
+            A /= 10;
+        }
+
+        return res;
+    }
+
+    // https://www.interviewbit.com/problems/odd-even-rule/
+    static int oddEvenRule(int[] A, int B, int C) {
+        // current day odd/even modularity
+        int day = B % 2;
+        int cnt = 0;
+
+        for (int val : A) {
+            // if modularity not same as current day, add to count
+            if (val % 2 != day)
+                cnt++;
+        }
+        // count * fine
+        return cnt * C;
+    }
+
+    // https://www.interviewbit.com/problems/armstrong-number/
+    static int armstrongNumber(int A) {
+        int[] map = new int[10];
+        int digits = 0, tempA = A;
+        // update frequency of each digit and count of total digits
+        while (tempA > 0) {
+            map[tempA % 10]++;
+            digits++;
+            tempA /= 10;
+        }
+
+        long res = 0;
+        // for each digit, add freq * armstrong sum
+        for (int i = 1; i <= 9; i++) {
+            res += map[i] * Math.pow(i, digits);
+            // if number so far exceeds
+            if (res > A)
+                return 0;
+        }
+
+        return res == A ? 1 : 0;
+    }
+
+    // https://www.interviewbit.com/problems/leap-year/
+    static int leapYear(int A) {
+        // every 4th century is leap year. Every other year divisible by 4 but not by 100 is leap year
+        return (A % 400 == 0) || (A % 4 == 0 && A % 100 != 0) ? 1 : 0;
+    }
+
     // https://www.interviewbit.com/problems/lowest-common-multiple-lcm/
     static long lcm(int A, int B) {
         return ((long) A * B) / gcd(A, B);
@@ -894,6 +954,22 @@ public class Maths {
             return "Autumn";
         // December to February
         return "Winter";
+    }
+
+    // https://www.interviewbit.com/problems/socks-pair/
+    static int socksPair(int[] A) {
+        int n = A.length;
+        // count freq of each type of sock
+        int[] map = new int[n + 1];
+        for (int val : A)
+            map[val]++;
+
+        int res = 0;
+        // for each type of sock, make as many pairs as possible
+        for (int i = 1; i <= n; i++)
+            res += map[i] / 2;
+
+        return res;
     }
 
     // https://www.interviewbit.com/problems/prettyprint/
