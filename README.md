@@ -171,7 +171,7 @@ Interview bit problems topic wise
 - [String Inversion](https://www.interviewbit.com/problems/string-inversion/)
 - [Valid Password](https://www.interviewbit.com/problems/valid-password/)
 
-## Bit Manipulation (11)
+## Bit Manipulation (12)
 
 - [Number of 1 Bits](https://www.interviewbit.com/problems/number-of-1-bits/)
 - [Trailing Zeroes](https://www.interviewbit.com/problems/trailing-zeroes/)
@@ -184,6 +184,7 @@ Interview bit problems topic wise
 - [XOR-ing the Subarrays!](https://www.interviewbit.com/problems/xor-ing-the-subarrays/)
 - [Single Number](https://www.interviewbit.com/problems/single-number/)
 - [Single Number II](https://www.interviewbit.com/problems/single-number-ii/)
+- [Swap Bits](https://www.interviewbit.com/problems/swap-bits/)
 
 ## Two Pointers (19)
 

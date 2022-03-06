@@ -16,13 +16,15 @@ public class BitManipulation {
     }
 
     // https://www.interviewbit.com/problems/trailing-zeroes/
-    static int solve(int A) {
-        int i = 0;
-        // keep checking ith bit till it is not 0
-        while (i < 32 && ((A & (1 << i)) == 0))
-            i++;
+    static int trailingZeroes(int A) {
+        int cnt = 0;
+        // keep shifting bits to the right till 1 is not encountered
+        while ((A & 1) == 0) {
+            cnt++;
+            A >>= 1;
+        }
 
-        return i;
+        return cnt;
     }
 
     // https://www.interviewbit.com/problems/reverse-bits/
@@ -50,6 +52,7 @@ public class BitManipulation {
         long quotient = 0, temp = 0;
         // check for each bit in quotient if it is set
         for (int i = 31; i >= 0; i--) {
+            // if temp + b * 2^i <= a then ith bit is set in quotient
             if (temp + (b << i) <= a) {
                 temp += (b << i);
                 quotient = quotient | (1L << i);
@@ -110,7 +113,6 @@ public class BitManipulation {
             else
                 curr = curr.child[1 - bit];
         }
-
         // minimum xor value including key with any number from trie
         return key ^ curr.data;
     }
@@ -119,13 +121,12 @@ public class BitManipulation {
         int data;
         TrieNode[] child;
 
-        // binary trie with two child for each bit
-        // trie runs from MSB to LSB
         TrieNode() {
             child = new TrieNode[2];
         }
     }
 
+    // binary trie with two child for each bit that runs from MSB to LSB
     private static class Trie {
         TrieNode root;
 
@@ -154,15 +155,12 @@ public class BitManipulation {
         // powerOfTwo: store 2 ** i at each pos
         // a: loop through LSB to MSB
         int powerOfTwo = 2, a = A;
-
         // check for each bit position from LSB to significant MSB
         while (a > 0) {
-            // for complete set of bit flips
-            // #groups of current bit flip pos = A / (2 ** i)
+            // for complete set of bit flips, #groups of current bit flip pos = A / (2 ** i)
             int noOfGroups = A / powerOfTwo;
             // cnt = cnt + no of groups * (group size / 2)
             cnt = (cnt + noOfGroups * (powerOfTwo >> 1)) % p;
-
             // if the incomplete set has complete zeroes but incomplete ones for current bit position
             // cnt = cnt + (N % (2 ** i) - ((2 ** (i - 1) - 1)
             if (A % powerOfTwo >= (powerOfTwo >> 1) - 1)
@@ -185,7 +183,6 @@ public class BitManipulation {
         // start from 2nd palindrome - "11" and find next ones using BFS
         Queue<String> q = new LinkedList<>();
         q.add("11");
-
         String front = "";
         // compute palindromes from 2nd number
         for (int i = 2; i <= A; i++) {
@@ -202,7 +199,6 @@ public class BitManipulation {
                 q.add(front.substring(0, len / 2) + mid + front.substring(len / 2));
             }
         }
-
         // convert binary string palindrome found to integer
         return binaryStringToInteger(front);
     }
@@ -211,8 +207,8 @@ public class BitManipulation {
     private static int binaryStringToInteger(String A) {
         int res = 0;
         // set each bit in result integer from binary string
-        for (int i = 0; i < A.length(); i++)
-            res = (res << 1) | (A.charAt(i) - '0');
+        for (char c : A.toCharArray())
+            res = (res << 1) | (c - '0');
 
         return res;
     }
@@ -258,5 +254,19 @@ public class BitManipulation {
         }
 
         return res;
+    }
+
+    // https://www.interviewbit.com/problems/swap-bits/
+    static int swapBits(int A, int B, int C) {
+        // find the bits at Bth and Cth position (position starts from 1)
+        int bit1 = (A & (1 << (B - 1))) == 0 ? 0 : 1;
+        int bit2 = (A & (1 << (C - 1))) == 0 ? 0 : 1;
+        // if both bits are not same, flip the bits at each position using XOR
+        if ((bit1 ^ bit2) != 0) {
+            A ^= (1 << (B - 1));
+            A ^= (1 << (C - 1));
+        }
+
+        return A;
     }
 }
