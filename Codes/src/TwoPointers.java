@@ -37,7 +37,6 @@ public class TwoPointers {
                     // move third pointer left
                 else
                     k--;
-
                 // if this sum is closer to target than previous sum
                 if (Math.abs(B - sum) < Math.abs(B - res))
                     res = sum;
@@ -85,7 +84,6 @@ public class TwoPointers {
                 else
                     k--;
             }
-
             // skip duplicate 1st element of triplet
             while (i + 1 < n && A.get(i).equals(A.get(i + 1)))
                 i++;
@@ -124,7 +122,7 @@ public class TwoPointers {
     static int diffK(int[] A, int B) {
         int n = A.length, i = 0, j = 1;
         // check from the first pair
-        while (i <= j && j < n) {
+        while (i < n && j < n) {
             int diff = A[j] - A[i];
             // found the difference
             if (diff == B && i != j)
@@ -144,10 +142,8 @@ public class TwoPointers {
     static int maxOnesLength(int[] A, int B) {
         // current window
         int start = 0, end = 0;
-        // best window size
-        int bestWindow = 0;
-        // number of zeroes in current window
-        int cnt = 0;
+        // best window size and #0's in current window
+        int bestWindow = 0, cnt = 0;
         // keep sliding window till end
         while (end < A.length) {
             // if window can contain more zeroes, expand on right
@@ -155,8 +151,7 @@ public class TwoPointers {
                 if (A[end] == 0)
                     cnt++;
                 end++;
-                // if number of zeroes in current window is below limit and
-                // this window is larger than the previous best window
+                // if #0's in current window is below limit and this window is larger than the previous best window
                 if (cnt <= B && bestWindow < end - start)
                     bestWindow = end - start;
             }
@@ -196,8 +191,7 @@ public class TwoPointers {
 
     // https://www.interviewbit.com/problems/subarrays-with-distinct-integers/
     static int subArraysWithDistinct(int[] A, int B) {
-        // # subarrays with exactly B distinct =
-        // # subarrays with at most B distinct - # subarrays with at most (B - 1) distinct
+        // #subarrays with exactly B distinct = #subarrays with at most B distinct - #subarrays with at most (B - 1) distinct
         return atMostB(A, B) - atMostB(A, B - 1);
     }
 
@@ -220,7 +214,6 @@ public class TwoPointers {
 
                 start++;
             }
-
             // add subarrays formed by current range to answer
             res += end - start + 1;
             // move right
@@ -234,10 +227,8 @@ public class TwoPointers {
     static int[] maxOne(int[] A, int B) {
         // current window
         int start = 0, end = 0;
-        // best window
-        int bestStart = 0, bestWindow = 0;
-        // number of zeroes in current window
-        int cnt = 0;
+        // best window and #0s in current window
+        int bestStart = 0, bestWindow = 0, cnt = 0;
         // keep sliding window till end
         while (end < A.length) {
             // if window can contain more zeroes, expand on right
@@ -294,7 +285,6 @@ public class TwoPointers {
     static int maxArea(int[] A) {
         int l = 0, r = A.length - 1;
         int maxArea = 0;
-
         // take the widest container and then keep shrinking it
         while (l < r) {
             maxArea = Math.max(maxArea, Math.min(A[l], A[r]) * (r - l));
@@ -324,10 +314,7 @@ public class TwoPointers {
             else
                 A.set(i + j + 1, B.get(j--));
         }
-        // add remaining elements of list A
-        while (i >= 0)
-            A.set(i, A.get(i--));
-        // else add remaining elements of list B
+        // add remaining elements of list B
         while (j >= 0)
             A.set(j, B.get(j--));
     }
@@ -362,10 +349,9 @@ public class TwoPointers {
         // 0th element is always unique. Start from 1st position
         for (int i = 1; i < A.size(); i++) {
             // if not duplicate add at first pointer and update
-            if (!A.get(i).equals(A.get(i - 1)))
+            if (!A.get(i).equals(A.get(pos - 1)))
                 A.set(pos++, A.get(i));
         }
-
         // return the length of new list
         return pos;
     }
@@ -383,9 +369,6 @@ public class TwoPointers {
             if (!A.get(i).equals(A.get(pos - 2)))
                 A.set(pos++, A.get(i));
         }
-
-        // remove the end of the list
-        A.subList(pos, n).clear();
         // return the length of new list
         return pos;
     }
@@ -399,7 +382,6 @@ public class TwoPointers {
             if (A.get(i) != B)
                 A.set(pos++, A.get(i));
         }
-
         // length of new array
         return pos;
     }
@@ -440,7 +422,7 @@ public class TwoPointers {
         int l = min, r = max;
         while (l <= r) {
             int mid = l + (r - l) / 2;
-            // count number of elements less than and less than equal to mid
+            // count #elements < mid and <= mid
             int lt = 0, le = 0;
             for (int val : A) {
                 if (val < mid)
@@ -448,9 +430,7 @@ public class TwoPointers {
                 if (val <= mid)
                     le++;
             }
-
-            // if number of elements less than mid is less than B and less than equal to mid is greater than equal B,
-            // then mid is the Bth smallest
+            // if 3elements < mid is less than B and <= mid is greater than equal B, then mid is the Bth smallest
             if (lt < B && le >= B)
                 return mid;
             // else look for higher value as answer
