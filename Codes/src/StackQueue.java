@@ -34,7 +34,6 @@ class StackQueue {
             else
                 return 0;
         }
-
         // if stack is empty, valid string else invalid string
         return s.empty() ? 1 : 0;
     }
@@ -55,7 +54,6 @@ class StackQueue {
             else
                 return 0;
         }
-
         // if all open balanced, valid string else invalid string
         return open == 0 ? 1 : 0;
     }
@@ -97,13 +95,14 @@ class StackQueue {
         for (char c : A.toCharArray()) {
             // if closing braces encountered
             if (c == ')') {
-                char top = s.pop();
                 int cnt = 0;
                 // keep popping from stack till corresponding opening parentheses is encountered
-                while (top != '(') {
-                    top = s.pop();
+                while (s.peek() != '(') {
+                    s.pop();
                     cnt++;
                 }
+                // pop the open parentheses
+                s.pop();
                 // if there was zero or only one operator/operand between
                 if (cnt < 2)
                     return 1;
@@ -113,7 +112,6 @@ class StackQueue {
                 s.push(c);
             }
         }
-
         // no redundant parentheses as all pairs contained at least one operator
         return 0;
     }
@@ -240,11 +238,9 @@ class StackQueue {
                 int areaWithTop = A[top] * (s.empty() ? i : i - s.peek() - 1);
                 maxArea = Math.max(maxArea, areaWithTop);
             }
-
             // stack is empty or current bar is higher
             s.push(i);
         }
-
         // check for the remaining sorted bars in stack
         while (!s.empty()) {
             int top = s.pop();
@@ -268,11 +264,9 @@ class StackQueue {
             // if current char is appearing for the first time
             if (map[c - 'a'] == 1)
                 q.add(c);
-
             // keep removing repeating chars from the front of queue until a non-repeating char is found
             while (!q.isEmpty() && map[q.peek() - 'a'] != 1)
                 q.poll();
-
             // if no non-repeating char, append '#'
             if (q.isEmpty())
                 res.append("#");
@@ -357,7 +351,6 @@ class StackQueue {
                     s.push(Integer.parseInt(str));
             }
         }
-
         // last number left will be the result of the expression
         return s.pop();
     }
@@ -368,7 +361,7 @@ class StackQueue {
         int n = A.length;
         int res = 0, l = 0, r = n - 1, leftMax = 0, rightMax = 0;
         // keep two pointers at extreme ends
-        while (l <= r) {
+        while (l < r) {
             // if left height is smaller, water will be trapped at this point
             if (A[l] < A[r]) {
                 leftMax = Math.max(leftMax, A[l]);
@@ -391,39 +384,38 @@ class StackQueue {
     // https://www.interviewbit.com/problems/hotel-service/
     static int[] nearestHotel(int[][] A, int[][] B) {
         int m = A.length, n = A[0].length;
-        Queue<Point> q = new LinkedList<>();
-        int[][] dist = new int[m][n];
-        // perform multi-level BFS from all hotel points
+        Queue<int[]> q = new LinkedList<>();
+        // perform multi-level BFS from all hotel points. Use A[][] as dist[][]
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 if (A[i][j] == 1) {
-                    dist[i][j] = 0;
-                    q.add(new Point(i, j));
+                    A[i][j] = 0;
+                    q.add(new int[]{i, j});
                 } else {
-                    dist[i][j] = Integer.MAX_VALUE;
+                    A[i][j] = Integer.MAX_VALUE;
                 }
             }
         }
 
         while (!q.isEmpty()) {
-            Point top = q.poll();
-            int x = top.x, y = top.y;
+            int[] top = q.poll();
+            int x = top[0], y = top[1];
             // update distance of 4 neighbours if they are not visited and add to queue
-            if (x + 1 < m && dist[x + 1][y] == Integer.MAX_VALUE) {
-                dist[x + 1][y] = dist[x][y] + 1;
-                q.add(new Point(x + 1, y));
+            if (x + 1 < m && A[x + 1][y] == Integer.MAX_VALUE) {
+                A[x + 1][y] = A[x][y] + 1;
+                q.add(new int[]{x + 1, y});
             }
-            if (x > 0 && dist[x - 1][y] == Integer.MAX_VALUE) {
-                dist[x - 1][y] = dist[x][y] + 1;
-                q.add(new Point(x - 1, y));
+            if (x > 0 && A[x - 1][y] == Integer.MAX_VALUE) {
+                A[x - 1][y] = A[x][y] + 1;
+                q.add(new int[]{x - 1, y});
             }
-            if (y + 1 < n && dist[x][y + 1] == Integer.MAX_VALUE) {
-                dist[x][y + 1] = dist[x][y] + 1;
-                q.add(new Point(x, y + 1));
+            if (y + 1 < n && A[x][y + 1] == Integer.MAX_VALUE) {
+                A[x][y + 1] = A[x][y] + 1;
+                q.add(new int[]{x, y + 1});
             }
-            if (y > 0 && dist[x][y - 1] == Integer.MAX_VALUE) {
-                dist[x][y - 1] = dist[x][y] + 1;
-                q.add(new Point(x, y - 1));
+            if (y > 0 && A[x][y - 1] == Integer.MAX_VALUE) {
+                A[x][y - 1] = A[x][y] + 1;
+                q.add(new int[]{x, y - 1});
             }
         }
 
@@ -432,19 +424,10 @@ class StackQueue {
         // compute res array from the dist[][] array
         for (int i = 0; i < qLen; i++) {
             int x = B[i][0] - 1, y = B[i][1] - 1;
-            res[i] = dist[x][y];
+            res[i] = A[x][y];
         }
 
         return res;
-    }
-
-    static class Point {
-        int x, y;
-
-        Point(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
     }
 
     // https://www.interviewbit.com/problems/subtract/
@@ -465,8 +448,7 @@ class StackQueue {
         }
 
         slow = head;
-        // start linked list traversal from head.
-        // Keep popping nodes from stack and update the value of nodes from beginning
+        // start linked list traversal from head. Keep popping nodes from stack and update the value of nodes from beginning
         while (!s.empty()) {
             slow.val = s.pop().val - slow.val;
             slow = slow.next;
