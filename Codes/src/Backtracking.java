@@ -16,7 +16,6 @@ class Backtracking {
         head.next.next = head;
         // remove old link of current node to its next
         head.next = null;
-
         // return the head of the reversed sublist
         return temp;
     }
@@ -30,7 +29,6 @@ class Backtracking {
         if (B == 0)
             return 1;
 
-        // y = A * A
         int y = (int) (((long) A * A) % C);
         long res;
         // if B is even, res = Mod(A * A, B / 2, C)
@@ -39,7 +37,6 @@ class Backtracking {
             // else res = A * Mod(A * A, B / 2, C)
         else
             res = ((long) A * Mod(y, B / 2, C)) % C;
-
         // if res is negative, add C and take mod C to make it positive
         return (int) ((res + C) % C);
     }
@@ -62,7 +59,6 @@ class Backtracking {
             if (maxChar < A.charAt(i))
                 maxChar = A.charAt(i);
         }
-
         // if max char is first char, no swap is needed. Check for smaller maximal substrings
         if (maxChar == A.charAt(pos))
             return maximalStringUtil(A, B, pos + 1);
@@ -100,7 +96,7 @@ class Backtracking {
         // convert to 0-based ranking
         B--;
         // pre-calculate factorials
-        long[] fact = new long[A];
+        int[] fact = new int[A];
         fact[0] = 1;
         for (int i = 1; i < A; i++) {
             fact[i] = i * fact[i - 1];
@@ -110,7 +106,6 @@ class Backtracking {
                 break;
             }
         }
-
         // list of all digits from 1 to A
         List<Integer> dig = new ArrayList<>();
         for (int i = 1; i <= A; i++)
@@ -120,12 +115,12 @@ class Backtracking {
         // fill up each position in permutation
         for (; A > 0; A--) {
             // position of digit to be added in the digits list
-            int pos = (int) (B / fact[A - 1]);
+            int pos = B / fact[A - 1];
             res.append(dig.get(pos));
             // remove current digit
             dig.remove(pos);
             // update remaining rank
-            B = (int) (B % fact[A - 1]);
+            B = B % fact[A - 1];
         }
 
         return res.toString();
@@ -151,7 +146,6 @@ class Backtracking {
 
         // find gray code sequence for A - 1 bits
         grayCodeUtil(A - 1, res);
-
         // G(A) = 0G(A-1) + 1R(A-1) where R(A) is the reverse sequence of G(A)
         int len = res.size(), pow = 1 << (A - 1);
         for (int i = len - 1; i >= 0; i--) {
@@ -173,8 +167,7 @@ class Backtracking {
     }
 
     // recursive util to find all subsets
-    private static void subsetUtil(ArrayList<Integer> A, int pos, ArrayList<Integer> subset,
-                                   ArrayList<ArrayList<Integer>> res) {
+    private static void subsetUtil(ArrayList<Integer> A, int pos, ArrayList<Integer> subset, ArrayList<ArrayList<Integer>> res) {
         // add current subset to output
         res.add(new ArrayList<>(subset));
         // for all elements remaining
@@ -219,7 +212,7 @@ class Backtracking {
             // remove current element to try another element in the next iteration
             curr.remove(curr.size() - 1);
             // skip duplicates in the candidate set
-            while (i < n && A.get(i).equals(A.get(i - 1)))
+            while (i + 1 < n && A.get(i + 1).equals(A.get(i)))
                 i++;
         }
     }
@@ -271,8 +264,7 @@ class Backtracking {
     }
 
     // recursive util to find all combinations
-    private static void combinationsUtil(int A, int B, int num, ArrayList<Integer> curr,
-                                         ArrayList<ArrayList<Integer>> res) {
+    private static void combinationsUtil(int A, int B, int num, ArrayList<Integer> curr, ArrayList<ArrayList<Integer>> res) {
         // if all B places are filled, add current combination to output
         if (B == 0) {
             res.add(new ArrayList<>(curr));
@@ -301,8 +293,7 @@ class Backtracking {
     }
 
     // recursive util to find all subsets
-    private static void subsets2Util(ArrayList<Integer> A, int pos, ArrayList<Integer> subset,
-                                     ArrayList<ArrayList<Integer>> res) {
+    private static void subsets2Util(ArrayList<Integer> A, int pos, ArrayList<Integer> subset, ArrayList<ArrayList<Integer>> res) {
         // add current subset to output
         res.add(new ArrayList<>(subset));
 
@@ -314,7 +305,6 @@ class Backtracking {
             subsets2Util(A, i + 1, subset, res);
             // remove current element to find more subsets without it
             subset.remove(subset.size() - 1);
-
             // skip duplicate elements in the given set
             while (i + 1 < n && A.get(i + 1).equals(A.get(i)))
                 i++;
@@ -351,8 +341,7 @@ class Backtracking {
             return;
         }
 
-        // try each character mapped to current number.
-        // Find all combinations with it and then remove it to try next character.
+        // try each character mapped to current number. Find all combinations with it and then remove it to try next character.
         for (char c : digitMap[A.charAt(pos) - '0']) {
             builder.append(c);
             letterPhoneUtil(A, pos + 1, builder, res);
@@ -386,13 +375,11 @@ class Backtracking {
                         ArrayList<String> temp = new ArrayList<>();
                         temp.add(str);
                         temp.addAll(list);
-
                         res[i].add(temp);
                     }
                 }
             }
         }
-
         // res[0] will contain palindromic partitions for the whole string
         return res[0];
     }
@@ -405,15 +392,13 @@ class Backtracking {
         // for len = 1 and len = 2 substrings
         for (int i = 1; i < n; i++) {
             isPalindrome[i][i] = true;
-            if (A.charAt(i) == A.charAt(i - 1))
-                isPalindrome[i - 1][i] = true;
+            isPalindrome[i - 1][i] = A.charAt(i) == A.charAt(i - 1);
         }
         // for higher length substrings
         for (int len = 3; len <= n; len++) {
             for (int i = 0; i + len - 1 < n; i++) {
                 int j = i + len - 1;
-                if (A.charAt(i) == A.charAt(j))
-                    isPalindrome[i][j] = isPalindrome[i + 1][j - 1];
+                isPalindrome[i][j] = A.charAt(i) == A.charAt(j) && isPalindrome[i + 1][j - 1];
             }
         }
 
@@ -462,8 +447,7 @@ class Backtracking {
     }
 
     // recursive util to find all permutations
-    private static void permutationsUtil(ArrayList<Integer> A, int pos, ArrayList<Integer> curr,
-                                         ArrayList<ArrayList<Integer>> res) {
+    private static void permutationsUtil(ArrayList<Integer> A, int pos, ArrayList<Integer> curr, ArrayList<ArrayList<Integer>> res) {
         // made a valid permutation
         if (pos == A.size()) {
             res.add(new ArrayList<>(curr));
@@ -511,7 +495,6 @@ class Backtracking {
             for (char[] arr : board)
                 sol.add(new String(arr));
             res.add(sol);
-
             return;
         }
 
@@ -535,19 +518,16 @@ class Backtracking {
             if (board[i][j] == 'Q')
                 return false;
         }
-
         // check in left direction
         for (int j = col - 1; j >= 0; j--) {
             if (board[row][j] == 'Q')
                 return false;
         }
-
         // check in bottom left direction
         for (int i = row + 1, j = col - 1; i < n && j >= 0; i++, j--) {
             if (board[i][j] == 'Q')
                 return false;
         }
-
         // no queens are in the way of this queen
         return true;
     }
@@ -613,7 +593,6 @@ class Backtracking {
                 boxes[box] &= ~mask;
             }
         }
-
         // if no number can fit here
         return false;
     }
@@ -635,9 +614,8 @@ class Backtracking {
 
     // recursive util to take each character from string at pos
     private static void specialStringsUtil(ArrayList<String> A, int pos, StringBuilder builder, ArrayList<String> res) {
-        int n = A.size();
         // found valid string
-        if (pos == n) {
+        if (pos == A.size()) {
             res.add(builder.toString());
             return;
         }
