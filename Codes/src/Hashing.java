@@ -21,7 +21,6 @@ class Hashing {
             // remove last digit for next set of subsequences
             A /= 10;
         }
-
         // all subsequence products unique, colorful number
         return 1;
     }
@@ -49,7 +48,6 @@ class Hashing {
             else
                 map.put(sum, i);
         }
-
         // return the sub-array with sum zero
         return Arrays.copyOfRange(A, maxLeft, maxLeft + maxSize);
     }
@@ -103,7 +101,6 @@ class Hashing {
             // add current element to map only if it is first occurrence
             map.putIfAbsent(A[i], i);
         }
-
         // no such pair found
         return new int[0];
     }
@@ -115,15 +112,14 @@ class Hashing {
         Collections.sort(A);
 
         ArrayList<ArrayList<Integer>> res = new ArrayList<>();
-        Map<Integer, List<Pair>> map = new HashMap<>();
+        Map<Integer, List<int[]>> map = new HashMap<>();
         // compute sum of each pair and store in hashmap with sum as key and list of pairs as values
         for (int i = 0; i < n - 1; i++) {
             for (int j = i + 1; j < n; j++) {
                 int sum = A.get(i) + A.get(j);
-                map.computeIfAbsent(sum, k -> new LinkedList<>()).add(new Pair(i, j));
+                map.computeIfAbsent(sum, k -> new LinkedList<>()).add(new int[]{i, j});
             }
         }
-
         // for each pair
         for (int i = 0; i < n - 1; i++) {
             for (int j = i + 1; j < n; j++) {
@@ -131,14 +127,14 @@ class Hashing {
                 // if remaining pair sum is present
                 if (map.containsKey(B - sum)) {
                     // for each pair with sum equal to remaining
-                    for (Pair pair : map.get(B - sum)) {
+                    for (int[] pair : map.get(B - sum)) {
                         // the two pairs are not overlapping and in order
-                        if (j < pair.first) {
+                        if (j < pair[0]) {
                             ArrayList<Integer> quad = new ArrayList<>();
                             quad.add(A.get(i));
                             quad.add(A.get(j));
-                            quad.add(A.get(pair.first));
-                            quad.add(A.get(pair.second));
+                            quad.add(A.get(pair[0]));
+                            quad.add(A.get(pair[1]));
                             // if output is empty or current quadruplet is unique
                             if (res.isEmpty() || !quad.equals(res.get(res.size() - 1)))
                                 res.add(quad);
@@ -155,16 +151,6 @@ class Hashing {
         }
 
         return res;
-    }
-
-    // pair class
-    static class Pair {
-        int first, second;
-
-        Pair(int first, int second) {
-            this.first = first;
-            this.second = second;
-        }
     }
 
     // https://www.interviewbit.com/problems/valid-sudoku/
@@ -189,7 +175,6 @@ class Hashing {
                 boxes[box] |= mask;
             }
         }
-
         // all rows, columns and boxes are valid
         return 1;
     }
@@ -204,7 +189,6 @@ class Hashing {
                 return 1;
             set.add(val);
         }
-
         // no such pair found
         return 0;
     }
@@ -233,7 +217,6 @@ class Hashing {
             int key = hash(A.get(i));
             map.computeIfAbsent(key, k -> new ArrayList<>()).add(i + 1);
         }
-
         // return all the entries in the map. Anagrams will have the same hash hence will be in common list
         return new ArrayList<>(map.values());
     }
@@ -244,7 +227,6 @@ class Hashing {
         int[] map = new int[26];
         for (char c : s.toCharArray())
             map[c - 'a']++;
-
         // calculate frequency based hash with prime number
         int hash = 0;
         for (int i = 0; i < 26; i++)
@@ -257,7 +239,7 @@ class Hashing {
     static int[] equal(int[] A) {
         int n = A.length;
         // map sum to first found pair
-        Map<Integer, Pair> map = new HashMap<>();
+        Map<Integer, int[]> map = new HashMap<>();
         int[] res = new int[4];
         Arrays.fill(res, n);
         // for each pair
@@ -266,38 +248,35 @@ class Hashing {
                 int sum = A[i] + A[j];
                 // if already a pair exists, get the first such pair
                 if (map.containsKey(sum)) {
-                    Pair pair = map.get(sum);
+                    int[] pair = map.get(sum);
                     // if not A1 < C1, B1 != D1 or B1 != C1
-                    if (pair.first >= i || pair.second == i || pair.second == j)
+                    if (pair[0] >= i || pair[1] == i || pair[1] == j)
                         continue;
                     // update if the new solution is lexicographically smaller than the previous one
-                    if (pair.first < res[0]) {
-                        res[0] = pair.first;
-                        res[1] = pair.second;
+                    if (pair[0] < res[0]) {
+                        res[0] = pair[0];
+                        res[1] = pair[1];
                         res[2] = i;
                         res[3] = j;
-                    } else if (pair.first == res[0] && pair.second < res[1]) {
-                        res[1] = pair.second;
+                    } else if (pair[0] == res[0] && pair[1] < res[1]) {
+                        res[1] = pair[1];
                         res[2] = i;
                         res[3] = j;
-                    } else if (pair.first == res[0] && pair.second == res[1] && i < res[2]) {
+                    } else if (pair[0] == res[0] && pair[1] == res[1] && i < res[2]) {
                         res[2] = i;
                         res[3] = j;
-                    } else if (pair.first == res[0] && pair.second == res[1] && i == res[2] && j < res[3]) {
+                    } else if (pair[0] == res[0] && pair[1] == res[1] && i == res[2] && j < res[3]) {
                         res[3] = j;
                     }
                 }
                 // add current pair to hashmap with its sum as key
                 else {
-                    map.put(sum, new Pair(i, j));
+                    map.put(sum, new int[]{i, j});
                 }
             }
         }
-
-        // if no solution found
-        if (res[0] == n)
-            return new int[0];
-        return res;
+        // found solution
+        return res[0] != n ? res : new int[0];
     }
 
     // https://www.interviewbit.com/problems/copy-list/
@@ -310,6 +289,7 @@ class Hashing {
         }
     }
 
+    // see leetcode discuss for without hashmap
     static RandomListNode copyList(RandomListNode head) {
         // hashmap to map old nodes to new nodes
         Map<RandomListNode, RandomListNode> map = new HashMap<>();
@@ -320,14 +300,11 @@ class Hashing {
             curr = curr.next;
         }
 
-        curr = head;
-        // traverse the list again and map the random and next pointers
-        while (curr != null) {
-            RandomListNode copy = map.get(curr);
-            copy.next = map.get(curr.next);
-            copy.random = map.get(curr.random);
-
-            curr = curr.next;
+        // traverse all the original nodes and map the random and next pointers
+        for (Map.Entry<RandomListNode, RandomListNode> e : map.entrySet()) {
+            RandomListNode node = e.getKey(), copy = e.getValue();
+            copy.next = map.get(node.next);
+            copy.random = map.get(node.random);
         }
 
         return map.get(head);
@@ -356,19 +333,17 @@ class Hashing {
 
     // https://www.interviewbit.com/problems/fraction/
     static String fraction(int A, int B) {
-        // typecast to long for handling overflow
-        long num = A, den = B;
-        if (num == 0)
+        // 0 / x = 0
+        if (A == 0)
             return "0";
 
         StringBuilder res = new StringBuilder();
         // check sign for output
-        boolean neg = (num < 0) ^ (den < 0);
+        boolean neg = (A < 0) ^ (B < 0);
         if (neg)
             res.append('-');
         // now perform operations on absolute values
-        num = Math.abs(num);
-        den = Math.abs(den);
+        long num = Math.abs((long) A), den = Math.abs((long) B);
         // integer part of the division
         res.append(num / den);
         // remainder. Use long to avoid negative numbers in modulo
@@ -376,9 +351,9 @@ class Hashing {
         // if perfect division
         if (rem == 0)
             return res.toString();
+
         // decimal point
         res.append('.');
-
         // map to keep track of remainders
         Map<Long, Integer> map = new HashMap<>();
         // perform division till remainder is not 0
@@ -389,7 +364,6 @@ class Hashing {
                 res.append(')');
                 break;
             }
-
             // else mark this remainder as seen with its position
             map.put(rem, res.length());
             // multiply remainder by 10 and perform division
@@ -410,19 +384,14 @@ class Hashing {
             return n;
 
         int res = 0;
-        // max number of points with slope equal to current point
-        int curMax;
-        // number of points repeating with current point
-        int overlapPoints;
-        // number of points on the vertical x = X[i] line
-        int verticalPoints;
-
         // for each point as reference
         for (int i = 0; i < n - 1; i++) {
             // map to store number of points with slope as key
             Map<Slope, Integer> map = new HashMap<>();
-            // init
-            curMax = overlapPoints = verticalPoints = 0;
+            // curMax = max #points with slope equal to current point
+            // overlapPoints = #points repeating with current point
+            // verticalPoints = #points on the vertical x = X[i] line
+            int curMax = 0, overlapPoints = 0, verticalPoints = 0;
             // for each possible pair
             for (int j = i + 1; j < n; j++) {
                 // overlapping point
@@ -446,7 +415,6 @@ class Hashing {
                     curMax = Math.max(curMax, map.get(slope));
                 }
             }
-
             // max of vertical points and max of definite slope
             curMax = Math.max(curMax, verticalPoints);
             // result max = max of prev points stats and current point max + overlaps for current point
@@ -495,7 +463,6 @@ class Hashing {
                 if (!map.containsKey(A[pos]) || pos < map.get(A[pos]))
                     map.put(A[pos], pos);
             }
-
             // mark first occurrence for the element
             map.put(A[i], i);
         }
@@ -551,6 +518,7 @@ class Hashing {
 
     @SuppressWarnings("unchecked")
     // https://www.interviewbit.com/problems/substring-concatenation/
+    // see solution approach for optimization (consider the words as characters and think as hash that is same for anagrams)
     static ArrayList<Integer> substrConcat(String A, final List<String> B) {
         int wordCnt = B.size(), wordLen = B.get(0).length();
         int totalChars = wordCnt * wordLen;
@@ -565,15 +533,14 @@ class Hashing {
         HashMap<String, Integer> map = new HashMap<>();
         for (String word : B)
             map.put(word, map.getOrDefault(word, 0) + 1);
-
         // check for all starting points
         for (int i = 0; i < n - totalChars + 1; i++) {
             // copy of original map to mark words visited
             HashMap<String, Integer> temp = (HashMap<String, Integer>) map.clone();
-            // count: no of words remaining to find
-            int j = i, count = wordCnt;
+            // count: #words remaining to find
+            int count = wordCnt;
             // for all the words of size wordLen starting from i
-            while (j < i + totalChars) {
+            for (int j = i; j < i + totalChars; j += wordLen) {
                 String word = A.substring(j, j + wordLen);
                 int freq = temp.getOrDefault(word, 0);
                 // if visited all occurrences or no occurrences in list
@@ -583,10 +550,8 @@ class Hashing {
                 else {
                     temp.put(word, freq - 1);
                     count--;
-                    j += wordLen;
                 }
             }
-
             // if all the words were found, add starting point to result
             if (count == 0)
                 res.add(i);
@@ -600,16 +565,17 @@ class Hashing {
         int res = 0, odd = 0;
         // maintain count of prefix arrays with i odd numbers excluding current position
         int[] count = new int[A.length + 1];
+        count[0] = 1;
 
         for (int val : A) {
-            // increase count of prefix arrays with i odd numbers
-            count[odd]++;
             // found one more odd number
             if (val % 2 == 1)
                 odd++;
             // if required count of odd numbers met, there will be count[odd - B] elements which can be used to form a permutation
             if (odd >= B)
                 res += count[odd - B];
+            // increase count of prefix arrays with i odd numbers
+            count[odd]++;
         }
 
         return res;
@@ -626,7 +592,7 @@ class Hashing {
         int start = 0, end = 0, cnt = 0, minStart = 0, minLen = Integer.MAX_VALUE;
         // sliding window two pointers
         while (end < n) {
-            char c = A.charAt(end);
+            char c = A.charAt(end++);
             // if present in pattern and frequency in current window not fulfilled yet
             if (map[c] < patMap[c])
                 cnt++;
@@ -635,24 +601,19 @@ class Hashing {
 
             c = A.charAt(start);
             // keep shrinking window till there are extra characters at the start
-            while (start < end && map[c] > patMap[c]) {
+            while (start < end - 1 && map[c] > patMap[c]) {
                 map[c]--;
                 start++;
                 c = A.charAt(start);
             }
             // found a valid window which is smaller than current window
-            if (cnt == B.length() && end - start + 1 < minLen) {
-                minLen = end - start + 1;
+            if (cnt == B.length() && end - start < minLen) {
+                minLen = end - start;
                 minStart = start;
             }
-
-            end++;
         }
-
-        // if no valid window was found
-        if (minLen == Integer.MAX_VALUE)
-            return "";
-        return A.substring(minStart, minStart + minLen);
+        // return valid window if found
+        return minLen != Integer.MAX_VALUE ? A.substring(minStart, minStart + minLen) : "";
     }
 
     // https://www.interviewbit.com/problems/longest-substring-without-repeat/
@@ -667,7 +628,6 @@ class Hashing {
                 set.remove(A.charAt(start));
                 start++;
             }
-
             // current character is unique. Add to set and update result
             set.add(c);
             res = Math.max(res, set.size());
@@ -686,9 +646,8 @@ class Hashing {
             // update prefix counts
             if (val == B)
                 countB++;
-            if (val == C)
+            else if (val == C)
                 countC++;
-
             // update diff count in map
             int diff = countB - countC;
             map.put(diff, map.getOrDefault(diff, 0) + 1);
@@ -722,7 +681,6 @@ class Hashing {
                 cnt++;
                 val++;
             }
-
             // update longest sequence length
             res = Math.max(res, cnt);
         }

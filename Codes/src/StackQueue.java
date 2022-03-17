@@ -19,19 +19,20 @@ class StackQueue {
     // https://www.interviewbit.com/problems/generate-all-parentheses/
     static int validMixParentheses(String A) {
         Stack<Character> s = new Stack<>();
+        Map<Character, Character> map = new HashMap<>();
+        map.put('(', ')');
+        map.put('[', ']');
+        map.put('{', '}');
 
         for (char c : A.toCharArray()) {
             // if open bracket, push to stack
-            if (c == '(' || c == '[' || c == '{')
+            if (map.containsKey(c))
                 s.push(c);
                 // if close bracket and stack is empty, string is invalid
             else if (s.empty())
                 return 0;
-                // if matching closing bracket with stack top, pop from the stack
-            else if ((c == ')' && s.peek() == '(') || (c == ']' && s.peek() == '[') || (c == '}' && s.peek() == '{'))
-                s.pop();
                 // not matching closing bracket with stack top, invalid string
-            else
+            else if (map.get(s.pop()) != c)
                 return 0;
         }
         // if stack is empty, valid string else invalid string
