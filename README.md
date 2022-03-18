@@ -298,8 +298,9 @@ Interview bit problems topic wise
 - [Subarray with equal occurences!](https://www.interviewbit.com/problems/subarray-with-equal-occurences/)
 - [Longest Consecutive Sequence](https://www.interviewbit.com/problems/longest-consecutive-sequence/)
 
-## Heaps And Maps (10)
+## Heaps And Maps (11)
 
+- [Heap Sort](https://www.interviewbit.com/tutorial/heap-sort-algorithm)
 - [Ways to form Max Heap](https://www.interviewbit.com/problems/ways-to-form-max-heap/)
 - [N max pair combinations](https://www.interviewbit.com/problems/n-max-pair-combinations/)
 - [K Largest Elements](https://www.interviewbit.com/problems/k-largest-elements/)

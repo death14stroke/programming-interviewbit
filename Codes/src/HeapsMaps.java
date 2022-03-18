@@ -1,7 +1,47 @@
 import java.util.*;
 
 class HeapsMaps {
-    // TODO: heapsort
+    // https://www.interviewbit.com/tutorial/heap-sort-algorithm
+    static void heapSort(int[] A) {
+        // build maxHeap from array
+        buildMaxHeap(A);
+        // swap the max element to the end and heapify rest of the array n
+        for (int i = A.length - 1; i >= 0; i--) {
+            swap(A, 0, i);
+            maxHeapify(A, i, 0);
+        }
+    }
+
+    // util to build heap from array in O(n) time
+    private static void buildMaxHeap(int[] A) {
+        int n = A.length;
+        // call heapify from the bottom most node except leaves
+        for (int i = n / 2 - 1; i >= 0; i--)
+            maxHeapify(A, n, i);
+    }
+
+    // util to max heapify from current node as root
+    private static void maxHeapify(int[] A, int n, int i) {
+        int largest = i, left = 2 * i + 1, right = 2 * i + 2;
+        // check if left or right child are greater
+        if (left < n && A[left] > A[largest])
+            largest = left;
+        if (right < n && A[right] > A[largest])
+            largest = right;
+        // if any child is greater, swap it with root and heapify recursively from the child
+        if (largest != i) {
+            swap(A, i, largest);
+            maxHeapify(A, n, largest);
+        }
+    }
+
+    // util to swap two positions in an array
+    private static void swap(int[] A, int i, int j) {
+        int temp = A[i];
+        A[i] = A[j];
+        A[j] = temp;
+    }
+
     // https://www.interviewbit.com/problems/ways-to-form-max-heap/
     private final int p = 1_000_000_007;
     private int[][] comb;
@@ -15,7 +55,8 @@ class HeapsMaps {
             Arrays.fill(row, -1);
         // dp[i] = #max heaps for i nodes
         dp = new long[A + 1];
-        Arrays.fill(dp, -1);
+        dp[0] = dp[1] = 1;
+        Arrays.fill(dp, 2, A + 1, -1);
         // log2[i] = log(i) to the base 2
         log2 = new int[A + 1];
         int currPow2 = 1, currLog2 = -1;
@@ -32,15 +73,11 @@ class HeapsMaps {
     }
 
     private long numberOfHeaps(int n) {
-        // base case
-        if (n <= 1)
-            return 1;
         // memoization
         if (dp[n] != -1)
             return dp[n];
 
-        // count nodes in left subtree
-        // l + r = n - 1 as root will always be the max element
+        // count nodes in left subtree. l + r = n - 1 as root will always be the max element
         int l = getLeft(n);
         // dp[i] = C(n - 1, l) * numberOfHeaps(l) * numberOfHeaps(r)
         dp[n] = (C(n - 1, l) * numberOfHeaps(l)) % p;
@@ -78,11 +115,8 @@ class HeapsMaps {
         // memoization
         if (comb[n][k] != -1)
             return comb[n][k];
-
         // C(n, k) = C(n - 1, k) + C(n - 1, k - 1)
-        comb[n][k] = (C(n - 1, k) + C(n - 1, k - 1)) % p;
-
-        return comb[n][k];
+        return comb[n][k] = (C(n - 1, k) + C(n - 1, k - 1)) % p;
     }
 
     // https://www.interviewbit.com/problems/n-max-pair-combinations/
@@ -127,17 +161,14 @@ class HeapsMaps {
     static int[] kLargest(int[] A, int B) {
         // build min heap of first B elements
         buildMinHeap(A, B);
-
-        int n = A.length;
         // for all elements starting from Bth position
-        for (int i = B; i < n; i++) {
+        for (int i = B; i < A.length; i++) {
             // if it is greater, swap with root of min heap and heapify
             if (A[i] > A[0]) {
                 swap(A, 0, i);
                 minHeapify(A, B, 0);
             }
         }
-
         // now array will contain max B elements in 0 to B positions
         return Arrays.copyOfRange(A, 0, B);
     }
@@ -152,7 +183,6 @@ class HeapsMaps {
     // util to min heapify from current node as root
     private static void minHeapify(int[] A, int n, int i) {
         int smallest = i, left = 2 * i + 1, right = 2 * i + 2;
-
         // check if left or right child are smaller
         if (left < n && A[left] < A[smallest])
             smallest = left;
@@ -164,13 +194,6 @@ class HeapsMaps {
             swap(A, smallest, i);
             minHeapify(A, n, smallest);
         }
-    }
-
-    // util to swap two positions in an array
-    private static void swap(int[] A, int i, int j) {
-        int temp = A[i];
-        A[i] = A[j];
-        A[j] = temp;
     }
 
     // https://www.interviewbit.com/problems/profit-maximisation/
@@ -192,31 +215,6 @@ class HeapsMaps {
         return res;
     }
 
-    // util to build heap from array in O(n) time
-    private static void buildMaxHeap(int[] A) {
-        int n = A.length;
-        // call heapify from the bottom most node except leaves
-        for (int i = n / 2 - 1; i >= 0; i--)
-            maxHeapify(A, n, i);
-    }
-
-    // util to max heapify from current node as root
-    private static void maxHeapify(int[] A, int n, int i) {
-        int largest = i, left = 2 * i + 1, right = 2 * i + 2;
-
-        // check if left or right child are greater
-        if (left < n && A[left] > A[largest])
-            largest = left;
-        if (right < n && A[right] > A[largest])
-            largest = right;
-
-        // if any child is greater, swap it with root and heapify recursively from the child
-        if (largest != i) {
-            swap(A, i, largest);
-            maxHeapify(A, n, largest);
-        }
-    }
-
     // https://www.interviewbit.com/problems/merge-k-sorted-arrays/
     @SuppressWarnings("ConstantConditions")
     static int[] mergeKSorted(int[][] A) {
@@ -224,35 +222,23 @@ class HeapsMaps {
         // array to keep track of current position in each array
         int[] kPos = new int[k];
         int[] res = new int[k * n];
-
         // min heap of size k
-        PriorityQueue<MergeNode> pq = new PriorityQueue<>(Comparator.comparingInt(n2 -> n2.val));
+        PriorityQueue<Integer> pq = new PriorityQueue<>(Comparator.comparingInt(i -> A[i][kPos[i]]));
         // add first element of each array in the heap
         for (int i = 0; i < k; i++)
-            pq.add(new MergeNode(A[i][0], i));
+            pq.add(i);
 
         for (int pos = 0; pos < k * n; pos++) {
             // get min from the heap and add to res. Update position of the array from which the element belongs to
-            MergeNode node = pq.poll();
-            res[pos] = node.val;
-            kPos[node.k]++;
-
+            int minPos = pq.poll();
+            res[pos] = A[minPos][kPos[minPos]];
+            kPos[minPos]++;
             // if any elements left in kth array, add to min heap
-            if (kPos[node.k] < n)
-                pq.add(new MergeNode(A[node.k][kPos[node.k]], node.k));
+            if (kPos[minPos] < n)
+                pq.add(minPos);
         }
 
         return res;
-    }
-
-    // util class to store the number and the array it belongs to
-    static class MergeNode {
-        int val, k;
-
-        MergeNode(int val, int k) {
-            this.val = val;
-            this.k = k;
-        }
     }
 
     // https://www.interviewbit.com/problems/magician-and-chocolates/
@@ -292,7 +278,6 @@ class HeapsMaps {
         for (; i >= 0; i--) {
             for (; j >= 0 && pq.size() < C; j--)
                 pq.add(A[i] + B[j]);
-
             // add sums with pairs starting with A[i]
             if (j == -1)
                 j = n - 1;
@@ -328,6 +313,7 @@ class HeapsMaps {
     }
 
     // https://www.interviewbit.com/problems/merge-k-sorted-lists/
+    // another approach: https://leetcode.com/problems/merge-k-sorted-lists/
     static class ListNode {
         int val;
         ListNode next;
@@ -350,7 +336,6 @@ class HeapsMaps {
             ListNode top = pq.poll();
             if (top.next != null)
                 pq.add(top.next);
-
             // link current node to output
             curr.next = top;
             curr = curr.next;
@@ -388,7 +373,6 @@ class HeapsMaps {
                 map.put(A[i - B], freq);
             // increase count of the new element
             map.put(A[i], map.getOrDefault(A[i], 0) + 1);
-
             // calculate result for current window
             res[i - B + 1] = map.size();
         }
@@ -462,8 +446,8 @@ class HeapsMaps {
 
         // util to shift a node at the end
         private void shiftNodeToEnd(Node curr) {
-            // if current node itself is tail or only one node
-            if (curr == tail || map.size() == 1)
+            // if current node itself is tail
+            if (curr == tail)
                 return;
             // if current node is head node, update new head
             if (curr == head) {
