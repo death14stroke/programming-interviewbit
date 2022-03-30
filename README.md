@@ -449,7 +449,7 @@ Interview bit problems topic wise
 - [Majority Element](https://www.interviewbit.com/problems/majority-element/)
 - [Gas Station](https://www.interviewbit.com/problems/gas-station/)
 
-## Graph Data Structure & Algorithms (31)
+## Graph Data Structure & Algorithms (32)
 
 - [Path in Directed Graph](https://www.interviewbit.com/problems/path-in-directed-graph/)
 - [Water Flow](https://www.interviewbit.com/problems/water-flow/)
@@ -479,6 +479,7 @@ Interview bit problems topic wise
 - [Word Ladder I](https://www.interviewbit.com/problems/word-ladder-i/)
 - [Word Ladder II](https://www.interviewbit.com/problems/word-ladder-ii/)
 - [Clone Graph](https://www.interviewbit.com/problems/clone-graph/)
+- [Connected Components](https://www.interviewbit.com/problems/connected-components/)
+- [File Search](https://www.interviewbit.com/problems/file-search/)
 - [Mother Vertex](https://www.interviewbit.com/problems/mother-vertex/)
 - [Path in Matrix](https://www.interviewbit.com/problems/path-in-matrix/)
-- [File Search](https://www.interviewbit.com/problems/file-search/)
