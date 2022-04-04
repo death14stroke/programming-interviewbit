@@ -83,7 +83,6 @@ class Greedy {
             start[i] = A[i][0];
             end[i] = A[i][1];
         }
-
         // sort both the arrays in increasing order
         Arrays.sort(start);
         Arrays.sort(end);
@@ -198,19 +197,8 @@ class Greedy {
                 }
             }
         }
-
-        count = 0;
-        // count number of occurrences of candidate element
-        for (int val : A) {
-            if (val == first)
-                count++;
-        }
-
-        // candidate is the actual majority element
-        if (count > n / 2)
-            return first;
-        // no majority element
-        return -1;
+        // given majority element always exists
+        return first;
     }
 
     // https://www.interviewbit.com/problems/gas-station/
@@ -227,7 +215,6 @@ class Greedy {
                 index = i + 1;
             }
         }
-
         // if we can complete circle, return the index else return -1
         return total >= 0 ? index : -1;
     }
