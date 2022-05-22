@@ -67,7 +67,6 @@ class DP {
                     dp[i][j] = Math.max(dp[i][j - 1], dp[i - 1][j]);
             }
         }
-
         // longest repeating subsequence length must be >= 2
         return dp[n][n] >= 2 ? 1 : 0;
     }
@@ -89,11 +88,12 @@ class DP {
 
         for (int i = 1; i <= m; i++) {
             for (int j = 1; j <= n; j++) {
-                // if last character matches, use it
+                // if last character matches, either use it or not
                 if (A.charAt(i - 1) == B.charAt(j - 1))
-                    dp[i][j] = dp[i - 1][j - 1];
-                // delete last character
-                dp[i][j] += dp[i - 1][j];
+                    dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j];
+                    // delete last character
+                else
+                    dp[i][j] = dp[i - 1][j];
             }
         }
 
@@ -135,14 +135,12 @@ class DP {
                 map.put(key, true);
                 return true;
             }
-
             // recursively check for first half of A and last half of B && last half of A and first half of B
             if (scrambleStringUtil(A.substring(0, i), B.substring(n - i)) && scrambleStringUtil(A.substring(i), B.substring(0, n - i))) {
                 map.put(key, true);
                 return true;
             }
         }
-
         // none of the conditions satisfy
         map.put(key, false);
         return false;
@@ -167,7 +165,6 @@ class DP {
             if (val != 0)
                 return false;
         }
-
         // all character frequencies are equal
         return true;
     }
@@ -288,7 +285,6 @@ class DP {
                     lis[i] = Math.max(lis[i], lis[j] + 1);
             }
         }
-
         // lds[i] = longest decreasing subsequence ending at i
         int[] lds = new int[n];
         lds[n - 1] = 1;
@@ -388,8 +384,8 @@ class DP {
     // https://www.interviewbit.com/problems/paint-house/
     static int paintHouse(int[][] A) {
         int n = A.length;
-        // dp[i][j] = cost to paint houses till i with color j on the ith house
-        // = cost to paint current house with color j + min of cost to paint previous i - 1 houses with last color as any other than j
+        // dp[i][j] = cost to paint houses till i with color j on the ith house =
+        // cost to paint current house with color j + min of cost to paint previous i - 1 houses with last color as any other than j
         for (int i = 1; i < n; i++) {
             A[i][0] += Math.min(A[i - 1][1], A[i - 1][2]);
             A[i][1] += Math.min(A[i - 1][0], A[i - 1][2]);
@@ -477,7 +473,6 @@ class DP {
         long[] dp = new long[A + 1];
         // base cases
         dp[0] = dp[1] = 1;
-
         // for i chords there are 2 * i points. 1st chord can be either of 1 - 2, 1 - 4, 1 - 6,..., 1 - 2 * i.
         // for chord 1 - 3, there will always remain a point empty in between hence no odd numbered end points
         for (int i = 2; i <= A; i++) {
@@ -560,14 +555,13 @@ class DP {
             return -1;
 
         // initialize for the starting point
-        int i = 1, jumps = 1, maxReach = A[0], steps = A[0];
+        int jumps = 1, maxReach = A[0], steps = A[0];
         // check from the 1st position
-        for (; i < n - 1 && i <= maxReach; i++) {
+        for (int i = 1; i < n - 1 && i <= maxReach; i++) {
             // update maximum reachable position
             maxReach = Math.max(maxReach, i + A[i]);
             // use a step
             steps--;
-
             // if no steps remaining
             if (steps == 0) {
                 // perform a jump (from the point where maxReach was updated)
@@ -576,9 +570,8 @@ class DP {
                 steps = maxReach - i;
             }
         }
-
         // if reached destination return optimum path length
-        return i == n - 1 ? jumps : -1;
+        return maxReach >= n - 1 ? jumps : -1;
     }
 
     // https://www.interviewbit.com/problems/longest-arithmetic-progression/
@@ -641,6 +634,7 @@ class DP {
     // https://www.interviewbit.com/problems/shortest-common-superstring/
     // another possible solution is DP with bitmask (see question hint)
     static int shortestCommonSuperstring(String[] A) {
+        // NP-Hard problem. Approximate greedy solution
         int n = A.length;
         Set<Integer> subsets = new HashSet<>();
         // mark strings which are substring of some other string to remove
@@ -651,7 +645,7 @@ class DP {
             for (int j = i + 1; j < n; j++) {
                 if (A[i].length() <= A[j].length() && A[j].contains(A[i]))
                     subsets.add(i);
-                else if (A[i].contains(A[j]))
+                else if (A[j].length() < A[i].length() && A[i].contains(A[j]))
                     subsets.add(j);
             }
         }
@@ -679,7 +673,6 @@ class DP {
                     }
                 }
             }
-
             // if no overlap merge last string with first
             if (maxOverlap == 0) {
                 A[0] += A[len - 1];
@@ -704,7 +697,7 @@ class DP {
             if (A.substring(m - i).compareTo(B.substring(0, i)) == 0)
                 return new Overlap(i, A + B.substring(i));
         }
-
+        // no overlap found
         return new Overlap(0, null);
     }
 
@@ -733,7 +726,6 @@ class DP {
             color3 = (11 * color3 + 10 * color2) % p;
             color2 = (5 * temp + 7 * color2) % p;
         }
-
         // result will be the sum of 3-color and 2-color combinations
         return (int) ((color3 + color2) % p);
     }
@@ -760,7 +752,6 @@ class DP {
                     dp[i][j] = Math.max(A[i][j], Math.max(Math.max(top, bottom), Math.max(left, right)));
                 }
             }
-
             // swap matrix references such that A = sol for K = d
             int[][] temp = dp;
             dp = A;
@@ -913,7 +904,6 @@ class DP {
                     else
                         r = mid - 1;
                 }
-
                 // find #drops for both the floors derived
                 int opt1 = Math.max(dp[k - 1][l - 1], dp[k][i - l]);
                 int opt2 = Math.max(dp[k - 1][r - 1], dp[k][i - r]);
@@ -993,7 +983,7 @@ class DP {
 
     // https://www.interviewbit.com/problems/max-edge-queries/
     @SuppressWarnings("unchecked")
-    public static int[] solve(int[][] A, int[][] B) {
+    public static int[] maxEdgeQueries(int[][] A, int[][] B) {
         int n = A.length + 1;
         // adjacency list for the tree
         List<int[]>[] adj = new List[n + 1];
@@ -1086,20 +1076,26 @@ class DP {
         TreeNode(int val) {
             this.val = val;
         }
+
+        TreeNode(int val, TreeNode left, TreeNode right) {
+            this.val = val;
+            this.left = left;
+            this.right = right;
+        }
     }
 
-    private static int maxSum;
+    private static int res;
 
     static int maxSumPathBinaryTree(TreeNode root) {
         // empty tree
         if (root == null)
             return 0;
 
-        maxSum = Integer.MIN_VALUE;
+        res = Integer.MIN_VALUE;
         // max path sum at each node can be found using max path sum from both subtrees by inorder traversal
         treeSumUtil(root);
 
-        return maxSum;
+        return res;
     }
 
     // util for inorder traversal which returns max height at each node
@@ -1114,7 +1110,7 @@ class DP {
         // maxPath = max(maxHeight, complete path)
         int maxPath = Math.max(maxPathFromRoot, root.val + leftSum + rightSum);
         // update result
-        maxSum = Math.max(maxSum, maxPath);
+        res = Math.max(res, maxPath);
 
         return maxPathFromRoot;
     }
@@ -1149,9 +1145,8 @@ class DP {
 
     // https://www.interviewbit.com/problems/maximum-path-in-triangle/
     static int maxPathInTriangle(int[][] A) {
-        int n = A.length;
         // move from bottom to top and calculate max path for going to (i + 1, j) or (i + 1, j + 1)
-        for (int i = n - 2; i >= 0; i--) {
+        for (int i = A.length - 2; i >= 0; i--) {
             for (int j = 0; j <= i; j++)
                 A[i][j] += Math.max(A[i + 1][j], A[i + 1][j + 1]);
         }
@@ -1164,8 +1159,8 @@ class DP {
         int m = A.length, n = A[0].length;
         int res = 0;
         // check for 1 length squares in first col
-        for (int[] row : A) {
-            if (row[0] == 1) {
+        for (int i = 0; i < m; i++) {
+            if (A[i][0] == 1) {
                 res = 1;
                 break;
             }
@@ -1198,7 +1193,6 @@ class DP {
         // dp[i][j] = T/F for whether there is path to (i, j) or not
         boolean[][] dp = new boolean[m][n];
         dp[0][0] = true;
-
         // check for first column
         for (int i = 1; i < m && A[i][0] > A[i - 1][0]; i++)
             dp[i][0] = true;
@@ -1214,7 +1208,6 @@ class DP {
                 dp[i][j] = top || left;
             }
         }
-
         // if there is a path to (m - 1, n - 1) its length will always be m + n - 1 (when only bottom and right dirs are allowed)
         return dp[m - 1][n - 1] ? m + n - 1 : -1;
     }
@@ -1247,7 +1240,7 @@ class DP {
         int s = sum / 2;
         while (s > 0 && !dp[n][s])
             s--;
-
+        // diff = (sum - s) - s
         return sum - 2 * s;
     }
 
@@ -1330,9 +1323,8 @@ class DP {
                 A[i][j] = Math.min(0, Math.min(A[i][j], A[i][j] + bestPath));
             }
         }
-
         // we need at least 1 hit-point to survive
-        return Math.abs(A[0][0]) + 1;
+        return -A[0][0] + 1;
     }
 
     // https://www.interviewbit.com/problems/min-sum-path-in-matrix/
@@ -1400,7 +1392,6 @@ class DP {
             // push current bar to stack
             s.push(i);
         }
-
         // calculate area with s.top() as height
         while (!s.empty()) {
             int top = s.pop();
@@ -1426,7 +1417,6 @@ class DP {
         long[][] dp = new long[m + 2][m + 2];
         // minCostPos[i][j] = index of the cut which gives min cost
         int[][] minCostPos = new int[m + 2][m + 2];
-
         // for all cuts array of size >= 3 (since first and last cut are only for length purpose)
         for (int len = 3; len <= m + 2; len++) {
             for (int i = 0; i + len - 1 < m + 2; i++) {
@@ -1548,13 +1538,12 @@ class DP {
     private static int subArraysWithZeroSum(int[] A) {
         int sum = 0, res = 0;
         Map<Integer, Integer> map = new HashMap<>();
+        // base-case: for empty subset sum = 0
+        map.put(0, 1);
 
         for (int val : A) {
             // update prefix sum
             sum += val;
-            // found a prefix array with sum = 0
-            if (sum == 0)
-                res++;
             // if found prefix array with sum = current sum, add count of all sub-arrays that can be formed in between having sum = 0
             if (map.containsKey(sum))
                 res += map.get(sum);
@@ -1647,9 +1636,9 @@ class DP {
 
         for (int k = 2; k <= B; k++) {
             // #stables > #horses - use INT_MAX / 2 to avoid overflow
-            for (int i = 0; i + 1 < k && i < n; i++)
+            for (int i = 0; i < k - 1; i++)
                 dp[i][k] = Integer.MAX_VALUE / 2;
-            // #stables = #horses - dp[k][k] = 0
+            // #stables = #horses - dp[k - 1][k] = 0
             // for remaining cases
             for (int i = k; i < n; i++) {
                 dp[i][k] = Integer.MAX_VALUE / 2;
@@ -1834,9 +1823,8 @@ class DP {
         int n = A.length, totalSum = 0;
         for (int val : A)
             totalSum += val;
-
         // dp[i][sum][len] = T/F for whether sum can be achieved with len numbers from A[i] to A[n - 1]
-        boolean[][][] dp = new boolean[n][totalSum + 1][n / 2 + 1];
+        boolean[][][] dp = new boolean[n][totalSum / 2 + 1][n / 2 + 1];
         for (boolean[][] a : dp) {
             for (boolean[] b : a)
                 Arrays.fill(b, true);
@@ -1857,7 +1845,6 @@ class DP {
             if (canFormSum(A, 0, sum1, len, list, dp))
                 return computePartitions(A, list);
         }
-
         // partition not possible
         return new int[0][0];
     }
@@ -1883,11 +1870,9 @@ class DP {
             // backtrack
             list.removeLast();
         }
-
         // exclude current element from subset
         if (canFormSum(A, pos + 1, sum, len, list, dp))
             return true;
-
         // subset sum not possible
         return dp[pos][sum][len] = false;
     }
@@ -2160,7 +2145,6 @@ class DP {
         int n = A.length();
         // dp[i] = true/false is A.substring(i) can be formed from dictionary
         Boolean[] dp = new Boolean[n];
-
         // recursively check if string can be divided into words of dictionary
         return wordBreakUtil(A, 0, trie.root, dp) ? 1 : 0;
     }
@@ -2286,6 +2270,68 @@ class DP {
         return dp[A][C];
     }
 
+    // https://www.interviewbit.com/problems/double-increasing-series/
+    static int doubleIncreasingSeries(int A, int B) {
+        int MOD = 1_000_000_007;
+        // dp[i][j] = #series with last element <= j and length i
+        int[][] dp = new int[B + 1][A + 1];
+        // base-case: len = 1
+        for (int j = 1; j <= A; j++)
+            dp[1][j] = j;
+
+        for (int i = 2; i <= B; i++) {
+            // dp[i][j] = #series with last element < j + #series with last element = j
+            for (int j = 1; j <= A; j++)
+                dp[i][j] = (dp[i][j - 1] + dp[i - 1][j / 2]) % MOD;
+        }
+
+        return dp[B][A];
+    }
+
+    // https://www.interviewbit.com/problems/dice-rolls/
+    static int diceRolls(int A) {
+        // base-case
+        if (A == 1)
+            return 1;
+
+        int MOD = 1_000_000_007;
+        // dp[i] = #ways to get sum = i
+        int[] dp = new int[A + 1];
+        dp[0] = dp[1] = 1;
+
+        for (int i = 2; i <= A; i++) {
+            // each dice roll will be between 1 to min(6, sum)
+            for (int k = 1; k <= 6 && k <= i; k++)
+                dp[i] = (dp[i] + dp[i - k]) % MOD;
+        }
+
+        return dp[A];
+    }
+
+    // https://www.interviewbit.com/problems/palindromic-substrings/
+    static int palindromicSubstrings(String A) {
+        int res = 0;
+        // count palindromes centered at each position
+        for (int i = 0; i < A.length(); i++) {
+            // count odd length palindromes
+            res += countPalindromes(A, i, i);
+            // count even length palindromes
+            res += countPalindromes(A, i - 1, i);
+        }
+
+        return res;
+    }
+
+    // util to expand string from center and count palindromes
+    private static int countPalindromes(String A, int l, int r) {
+        int res = 0;
+        // keep expanding string till characters at both ends match
+        while (l >= 0 && r < A.length() && A.charAt(l--) == A.charAt(r++))
+            res++;
+
+        return res;
+    }
+
     // https://www.interviewbit.com/problems/unique-binary-search-trees/
     @SuppressWarnings("unchecked")
     static ArrayList<TreeNode> generateTrees(int A) {
@@ -2326,12 +2372,8 @@ class DP {
             ArrayList<TreeNode> rightList = generateTreesUtil(i + 1, end, dp);
             // add each combination of left and right subtree to result
             for (TreeNode left : leftList) {
-                for (TreeNode right : rightList) {
-                    TreeNode root = new TreeNode(i);
-                    root.left = left;
-                    root.right = right;
-                    dp[start][end].add(root);
-                }
+                for (TreeNode right : rightList)
+                    dp[start][end].add(new TreeNode(i, left, right));
             }
         }
 

@@ -365,7 +365,7 @@ Interview bit problems topic wise
 - [Maximum level sum](https://www.interviewbit.com/problems/maximum-level-sum/)
 - [INVERSIONS](https://www.interviewbit.com/problems/inversions/)
 
-## Dynamic Programming (68)
+## Dynamic Programming (71)
 
 - [Longest Common Subsequence](https://www.interviewbit.com/problems/longest-common-subsequence/)
 - [Longest Palindromic Subsequence](https://www.interviewbit.com/problems/longest-palindromic-subsequence/)
@@ -434,6 +434,9 @@ Interview bit problems topic wise
 - [Word Break](https://www.interviewbit.com/problems/word-break/)
 - [Potions](https://www.interviewbit.com/problems/potions/)
 - [Dice Throw](https://www.interviewbit.com/problems/dice-throw/)
+- [Double Increasing Series](https://www.interviewbit.com/problems/double-increasing-series/)
+- [Dice Rolls](https://www.interviewbit.com/problems/dice-rolls/)
+- [Palindromic Substrings](https://www.interviewbit.com/problems/palindromic-substrings/)
 - [Unique Binary Search Trees](https://www.interviewbit.com/problems/unique-binary-search-trees/)
 
 ## Greedy Algorithm (10)
