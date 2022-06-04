@@ -481,14 +481,20 @@ class Backtracking {
         char[][] board = new char[A][A];
         for (char[] row : board)
             Arrays.fill(row, '.');
+        // optimizing isSafe function
+        // values of (row - col) and (row + col) will match for main diagonal and off diagonal entries respectively
+        boolean[] rowCheck = new boolean[A];
+        boolean[] diagUpCheck = new boolean[2 * A - 1];
+        boolean[] diagDownCheck = new boolean[2 * A - 1];
         // recursively try for each position column-wise
-        nQueensUtil(0, A, board, res);
+        nQueensUtil(0, A, board, res, rowCheck, diagUpCheck, diagDownCheck);
 
         return res;
     }
 
     // recursive util to check if col queens can be placed in col columns
-    private static void nQueensUtil(int col, int A, char[][] board, ArrayList<ArrayList<String>> res) {
+    private static void nQueensUtil(int col, int A, char[][] board, ArrayList<ArrayList<String>> res,
+                                    boolean[] rowCheck, boolean[] diagUpCheck, boolean[] diagDownCheck) {
         // found a valid solution
         if (col == A) {
             ArrayList<String> sol = new ArrayList<>();
@@ -500,36 +506,24 @@ class Backtracking {
 
         for (int i = 0; i < A; i++) {
             // if queen can be placed at this position
-            if (isSafe(board, i, col)) {
+            if (isSafe(i, col, A, rowCheck, diagUpCheck, diagDownCheck)) {
                 board[i][col] = 'Q';
+                rowCheck[i] = true;
+                diagUpCheck[i - col + A - 1] = true;
+                diagDownCheck[i + col] = true;
                 // recursively compute solution with queen placed here
-                nQueensUtil(col + 1, A, board, res);
+                nQueensUtil(col + 1, A, board, res, rowCheck, diagUpCheck, diagDownCheck);
                 // remove queen from current position
-                board[i][col] = '.';
+                rowCheck[i] = false;
+                diagUpCheck[i - col + A - 1] = false;
+                diagDownCheck[i + col] = false;
             }
         }
     }
 
     // util to check if queen is safe at this position
-    private static boolean isSafe(char[][] board, int row, int col) {
-        int n = board.length;
-        // check in top left direction
-        for (int i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--) {
-            if (board[i][j] == 'Q')
-                return false;
-        }
-        // check in left direction
-        for (int j = col - 1; j >= 0; j--) {
-            if (board[row][j] == 'Q')
-                return false;
-        }
-        // check in bottom left direction
-        for (int i = row + 1, j = col - 1; i < n && j >= 0; i++, j--) {
-            if (board[i][j] == 'Q')
-                return false;
-        }
-        // no queens are in the way of this queen
-        return true;
+    private static boolean isSafe(int row, int col, int A, boolean[] rowCheck, boolean[] diagUpCheck, boolean[] diagDownCheck) {
+        return !rowCheck[row] && !diagUpCheck[row - col + A - 1] && !diagDownCheck[row + col];
     }
 
     // https://www.interviewbit.com/problems/sudoku/

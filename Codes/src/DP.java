@@ -462,6 +462,48 @@ class DP {
         return res;
     }
 
+    // better approach: T.C = O(nlogn)
+    static int lis2(final int[] A) {
+        int n = A.length;
+        // length of LIS
+        int len = 1;
+        // array to keep track of last element of each length LIS
+        int[] tail = new int[n];
+        tail[0] = A[0];
+
+        for (int i = 1; i < n; i++) {
+            // if current element can extend largest LIS
+            if (A[i] > tail[len - 1])
+                tail[len++] = A[i];
+            else {
+                // find LIS in which last element can be replaced with current element
+                int pos = upperBound(tail, 0, len - 1, A[i]);
+                if (pos != -1)
+                    tail[pos] = A[i];
+            }
+        }
+
+        return len;
+    }
+
+    // util to find upper bound in an array
+    private static int upperBound(int[] A, int l, int r, int x) {
+        int res = -1;
+
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            // found an upper bound - try for smaller element
+            if (A[mid] >= x) {
+                res = mid;
+                r = mid - 1;
+            } else { // look for larger element
+                l = mid + 1;
+            }
+        }
+
+        return res;
+    }
+
     // https://www.interviewbit.com/problems/intersecting-chords-in-a-circle/
     static int intersectingChords(int A) {
         // base case
