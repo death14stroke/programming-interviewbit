@@ -286,7 +286,7 @@ class StackQueue {
         B = Math.min(B, n);
 
         int[] res = new int[n - B + 1];
-        Deque<Integer> q = new LinkedList<>();
+        Deque<Integer> q = new ArrayDeque<>();
         // for the first window
         for (int i = 0; i < B; i++) {
             // remove all elements smaller than current from the back end of deque
@@ -301,7 +301,7 @@ class StackQueue {
         // for the remaining windows
         for (int i = B; i < n; i++) {
             // if first element in deque is out of range, remove
-            if (!q.isEmpty() && q.peekFirst() <= i - B)
+            if (q.peekFirst() <= i - B)
                 q.pollFirst();
             // remove all elements smaller than current from the back end of deque
             while (!q.isEmpty() && A[i] >= A[q.peekLast()])

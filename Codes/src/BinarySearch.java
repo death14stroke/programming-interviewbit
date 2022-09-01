@@ -28,13 +28,9 @@ public class BinarySearch {
             if (A[mid] == x) {
                 res = mid;
                 r = mid - 1;
-            }
-            // found smaller number. Search in right half
-            else if (A[mid] < x) {
+            } else if (A[mid] < x) { // found smaller number. Search in right half
                 l = mid + 1;
-            }
-            // else search in left half
-            else {
+            } else { // else search in left half
                 r = mid - 1;
             }
         }
@@ -52,13 +48,9 @@ public class BinarySearch {
             if (A[mid] == x) {
                 res = mid;
                 l = mid + 1;
-            }
-            // found smaller number. Search in right half
-            else if (A[mid] < x) {
+            } else if (A[mid] < x) { // found smaller number. Search in right half
                 l = mid + 1;
-            }
-            // else search in left half
-            else {
+            } else { // else search in left half
                 r = mid - 1;
             }
         }
@@ -388,10 +380,9 @@ public class BinarySearch {
             if (canPaint(C, A, mid, p)) {
                 res = mid;
                 r = mid - 1;
-            }
-            // else increase the time limit for a possible solution
-            else
+            } else { // else increase the time limit for a possible solution
                 l = mid + 1;
+            }
         }
         // multiply length by time and take mod
         return (int) ((res * (long) B) % p);
@@ -433,7 +424,6 @@ public class BinarySearch {
             x1 = (x1 * x1) % d;
             n /= 2;
         }
-
         // result cannot be negative
         res = (res + d) % d;
         return (int) res;
@@ -631,20 +621,16 @@ public class BinarySearch {
                 return mid;
             // if left sub-array is strictly increasing
             if (A[0] <= A[mid]) {
-                // B lies in left sub-array
-                if (A[0] <= B && B < A[mid])
+                if (A[0] <= B && B < A[mid]) // B lies in left sub-array
                     r = mid - 1;
-                    // else search in right
-                else
+                else // else search in right
                     l = mid + 1;
             }
             // right sub-array is strictly increasing
             else {
-                // B lies in right sub-array
-                if (A[mid] < B && B <= A[n - 1])
+                if (A[mid] < B && B <= A[n - 1]) // B lies in right sub-array
                     l = mid + 1;
-                    // else search in left
-                else
+                else // else search in left
                     r = mid - 1;
             }
         }
@@ -697,5 +683,25 @@ public class BinarySearch {
         }
 
         return true;
+    }
+
+    // https://www.interviewbit.com/problems/find-a-peak-element/
+    static int findPeak(int[] A) {
+        int n = A.length;
+        int l = 0, r = n - 1;
+
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            // found peak
+            if ((mid == 0 || A[mid] >= A[mid - 1]) && (mid == n - 1 || A[mid] >= A[mid + 1]))
+                return A[mid];
+
+            if (mid == 0 || A[mid] >= A[mid - 1]) // A[mid] is >= only previous - search in right half
+                l = mid + 1;
+            else // search in left half
+                r = mid - 1;
+        }
+
+        return -1;
     }
 }

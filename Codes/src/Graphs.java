@@ -81,8 +81,8 @@ class Graphs {
         int m = A.length, n = A[0].length;
         int[][] dirs = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
         // queue for BFS
-        Queue<int[]> q = new LinkedList<>();
-        q.add(new int[]{i, j});
+        Queue<int[]> q = new ArrayDeque<>();
+        q.offer(new int[]{i, j});
         // mark current cell as visited by river
         vis[i][j] += river;
 
@@ -95,7 +95,7 @@ class Graphs {
                 if (x < 0 || x >= m || y < 0 || y >= n || A[x][y] < A[front[0]][front[1]] || vis[x][y] >= river)
                     continue;
                 // add to queue for BFS
-                q.add(new int[]{x, y});
+                q.offer(new int[]{x, y});
                 // mark as visited by river
                 vis[x][y] += river;
             }
@@ -272,7 +272,7 @@ class Graphs {
         // create adjacency list
         List<Integer>[] adj = new List[n];
         for (int i = 0; i < n; i++)
-            adj[i] = new LinkedList<>();
+            adj[i] = new ArrayList<>();
         // root of the tree
         int root = 0;
         for (int i = 0; i < n; i++) {
@@ -1164,8 +1164,8 @@ class Graphs {
         // initial distance
         int level = 1;
         // queue for BFS
-        Queue<String> q = new LinkedList<>();
-        q.add(A);
+        Queue<String> q = new ArrayDeque<>();
+        q.offer(A);
         // visited set for string
         Set<String> visited = new HashSet<>();
         visited.add(A);
@@ -1184,10 +1184,10 @@ class Graphs {
                     // generate intermediate string at position i
                     builder.setCharAt(i, '*');
                     // for each original string mapped to this intermediate string
-                    for (String str : map.getOrDefault(builder.toString(), new LinkedList<>())) {
+                    for (String str : map.getOrDefault(builder.toString(), new ArrayList<>())) {
                         // if not visited, mark visited and add to queue for BFS
                         if (!visited.contains(str)) {
-                            q.add(str);
+                            q.offer(str);
                             visited.add(str);
                         }
                     }
@@ -1210,7 +1210,7 @@ class Graphs {
             // generate intermediate string at position i
             builder.setCharAt(i, '*');
             // add to map of intermediate string and its list of original strings
-            map.computeIfAbsent(builder.toString(), k -> new LinkedList<>()).add(str);
+            map.computeIfAbsent(builder.toString(), k -> new ArrayList<>()).add(str);
 
             builder.setCharAt(i, str.charAt(i));
         }
@@ -1232,8 +1232,8 @@ class Graphs {
         // flag to check if path found
         boolean found = false;
         // queue for BFS
-        Queue<String> q = new LinkedList<>();
-        q.add(start);
+        Queue<String> q = new ArrayDeque<>();
+        q.offer(start);
         // visited strings set
         Set<String> visited = new HashSet<>();
         visited.add(start);
@@ -1253,10 +1253,10 @@ class Graphs {
                 for (int i = 0; i < front.length(); i++) {
                     builder.setCharAt(i, '*');
                     // for each original string that can form this intermediate string
-                    for (String str : map.getOrDefault(builder.toString(), new LinkedList<>())) {
+                    for (String str : map.getOrDefault(builder.toString(), new ArrayList<>())) {
                         // if not visited, mark visited and add to queue for BFS
                         if (!visited.contains(str)) {
-                            q.add(str);
+                            q.offer(str);
                             visited.add(str);
                         }
                     }
@@ -1273,10 +1273,8 @@ class Graphs {
         if (!found)
             return res;
 
-        // clear visited set
-        visited.clear();
         // perform DFS till depth = distance to get all possible shortest paths
-        wordLadder2Util(start, end, level, map, visited, new ArrayList<>(), res);
+        wordLadder2Util(start, end, level, map, new HashSet<>(), new ArrayList<>(), res);
 
         return res;
     }
@@ -1307,7 +1305,7 @@ class Graphs {
         for (int i = 0; i < word.length(); i++) {
             builder.setCharAt(i, '*');
             // for each original string that can form this intermediate string
-            for (String str : map.getOrDefault(builder.toString(), new LinkedList<>())) {
+            for (String str : map.getOrDefault(builder.toString(), new ArrayList<>())) {
                 // if not visited, explore using DFS
                 if (!visited.contains(str))
                     wordLadder2Util(str, dest, distance, map, visited, curr, res);
@@ -1327,7 +1325,7 @@ class Graphs {
 
         UndirectedGraphNode(int label) {
             this.label = label;
-            neighbors = new LinkedList<>();
+            neighbors = new ArrayList<>();
         }
     }
 
@@ -1336,8 +1334,8 @@ class Graphs {
         Map<UndirectedGraphNode, UndirectedGraphNode> map = new HashMap<>();
         map.put(root, new UndirectedGraphNode(root.label));
         // queue for BFS
-        Queue<UndirectedGraphNode> q = new LinkedList<>();
-        q.add(root);
+        Queue<UndirectedGraphNode> q = new ArrayDeque<>();
+        q.offer(root);
         // perform BFS
         while (!q.isEmpty()) {
             UndirectedGraphNode front = q.poll();
@@ -1346,7 +1344,7 @@ class Graphs {
                 // if node not cloned before, clone it and add original node to queue for BFS
                 if (!map.containsKey(node)) {
                     map.put(node, new UndirectedGraphNode(node.label));
-                    q.add(node);
+                    q.offer(node);
                 }
                 // update neighbors of cloned front node
                 map.get(front).neighbors.add(map.get(node));

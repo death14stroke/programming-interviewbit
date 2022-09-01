@@ -291,7 +291,6 @@ public class Array {
                 start = i + 1;
             }
         }
-
         // update maximum sum subset ending at last element (if non-negative)
         if (A[n - 1] >= 0 && (maxSum < sum || (maxSum == sum && n - start > maxEnd - maxStart))) {
             maxStart = start;
@@ -638,7 +637,6 @@ public class Array {
         int min, max;
         // starting index
         int i;
-
         // if array length is odd, same min-max and start from 1
         if (n % 2 == 1) {
             min = max = A[0];
@@ -656,7 +654,6 @@ public class Array {
 
             i = 2;
         }
-
         // take elements in pairs - compare larger of them with max and smaller with min and update global max-min
         for (; i + 1 < n; i += 2) {
             if (A[i] > A[i + 1]) {
@@ -1255,13 +1252,10 @@ public class Array {
         int i = 0, j = 0, maxGap = 0;
         // traverse both arrays from left to right and maximize j-i
         while (i < n && j < n) {
-            // update max gap and check for further j
-            if (A[i] <= rightMax[j]) {
+            if (A[i] <= rightMax[j]) { // update max gap and check for further j
                 maxGap = Math.max(maxGap, j - i);
                 j++;
-            }
-            // try another i which might have a smaller value in array
-            else {
+            } else { // try another i which might have a smaller value in array
                 i++;
                 // try j with gap higher than current maxGap
                 j = i + maxGap + 1;
@@ -1461,26 +1455,17 @@ public class Array {
         int first = A.get(0), second = A.get(0), count1 = 0, count2 = 0;
 
         for (int val : A) {
-            // first candidate repeating
-            if (val == first) {
+            if (val == first) { // first candidate repeating
                 count1++;
-            }
-            // second candidate repeating
-            else if (val == second) {
+            } else if (val == second) { // second candidate repeating
                 count2++;
-            }
-            // change first candidate
-            else if (count1 == 0) {
+            } else if (count1 == 0) { // change first candidate
                 count1 = 1;
                 first = val;
-            }
-            // change second candidate
-            else if (count2 == 0) {
+            } else if (count2 == 0) { // change second candidate
                 count2 = 1;
                 second = val;
-            }
-            // number is not equal to both first and second
-            else {
+            } else { // number is not equal to both first and second
                 count1--;
                 count2--;
             }

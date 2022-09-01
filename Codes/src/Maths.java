@@ -274,7 +274,6 @@ public class Maths {
         // Case 1: All '9's in the string
         if (allNines(A)) {
             StringBuilder builder = new StringBuilder("1");
-            //noinspection StringRepeatCanBeUsed
             for (int i = 0; i < n - 1; i++)
                 builder.append(0);
             builder.append(1);

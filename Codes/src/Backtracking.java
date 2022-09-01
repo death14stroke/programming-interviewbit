@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 class Backtracking {
     // https://www.interviewbit.com/problems/reverse-link-list-recursion
@@ -476,6 +473,7 @@ class Backtracking {
 
     // https://www.interviewbit.com/problems/nqueens/
     static ArrayList<ArrayList<String>> nQueens(int A) {
+        // T.C - T(n) = n * T(n - 1) + c = O(n!)
         ArrayList<ArrayList<String>> res = new ArrayList<>();
         // initially mark all positions as empty
         char[][] board = new char[A][A];
@@ -621,6 +619,44 @@ class Backtracking {
             specialStringsUtil(A, pos + 1, builder, res);
             // backtrack
             builder.setLength(builder.length() - 1);
+        }
+    }
+
+    // https://www.interviewbit.com/problems/all-unique-permutations/
+    static ArrayList<ArrayList<Integer>> permute(ArrayList<Integer> A) {
+        // frequency map of list
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int val : A)
+            map.put(val, map.getOrDefault(val, 0) + 1);
+
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        // recursively permute for each position for each unique number
+        permuteUtil(0, A.size(), new ArrayList<>(), map, res);
+
+        return res;
+    }
+
+    private static void permuteUtil(int pos, int n, List<Integer> curr, Map<Integer, Integer> map, ArrayList<ArrayList<Integer>> res) {
+        // found permutation
+        if (pos == n) {
+            res.add(new ArrayList<>(curr));
+            return;
+        }
+        // try each unique entry at current position
+        for (Map.Entry<Integer, Integer> e : map.entrySet()) {
+            int num = e.getKey();
+            int cnt = e.getValue();
+            if (cnt == 0)
+                continue;
+
+            // add at current position and update remaining count
+            curr.add(num);
+            map.put(num, cnt - 1);
+            // recursively permute for other positions
+            permuteUtil(pos + 1, n, curr, map, res);
+            // backtrack
+            curr.remove(curr.size() - 1);
+            map.put(num, cnt);
         }
     }
 }

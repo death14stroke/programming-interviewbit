@@ -335,7 +335,7 @@ class HeapsMaps {
         while (!pq.isEmpty()) {
             ListNode top = pq.poll();
             if (top.next != null)
-                pq.add(top.next);
+                pq.offer(top.next);
             // link current node to output
             curr.next = top;
             curr = curr.next;

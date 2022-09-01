@@ -102,7 +102,6 @@ public class Strings {
             // prefix length will be incremented
             endIndex++;
         }
-
         // prefix of length endIndex
         return A[0].substring(0, endIndex);
     }
@@ -891,7 +890,6 @@ public class Strings {
                 spaces++;
             }
         }
-
         // add the remaining words to last line
         String line = constructLineWithSpaces(A, start, A.size(), B, chars, spaces);
         res.add(line);
@@ -900,13 +898,11 @@ public class Strings {
     }
 
     // util to construct string with equal spaces in middle as per limit
-    @SuppressWarnings("StringRepeatCanBeUsed")
     private static String constructLineWithSpaces(ArrayList<String> A, int start, int end, int B, int chars, int spaces) {
         // total white spaces in the string
         int totalSpace = B - chars;
-        StringBuilder line = new StringBuilder();
         // add the first word
-        line.append(A.get(start));
+        StringBuilder line = new StringBuilder(A.get(start));
 
         // if there is only one word on the line
         if (spaces == 0) {

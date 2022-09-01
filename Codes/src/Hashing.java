@@ -117,7 +117,7 @@ class Hashing {
         for (int i = 0; i < n - 1; i++) {
             for (int j = i + 1; j < n; j++) {
                 int sum = A.get(i) + A.get(j);
-                map.computeIfAbsent(sum, k -> new LinkedList<>()).add(new int[]{i, j});
+                map.computeIfAbsent(sum, k -> new ArrayList<>()).add(new int[]{i, j});
             }
         }
         // for each pair

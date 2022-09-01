@@ -289,11 +289,11 @@ public class TwoPointers {
         while (l < r) {
             maxArea = Math.max(maxArea, Math.min(A[l], A[r]) * (r - l));
             // if left side is smaller, shrink on left side
-            if (A[l] < A[r])
+            if (A[l] < A[r]) {
                 l++;
-                // shrink on right side
-            else
+            } else { // shrink on right side
                 r--;
+            }
         }
 
         return maxArea;

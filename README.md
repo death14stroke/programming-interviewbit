@@ -111,7 +111,7 @@ Interview bit problems topic wise
 - [Socks Pair](https://www.interviewbit.com/problems/socks-pair/)
 - [PRETTYPRINT](https://www.interviewbit.com/problems/prettyprint/)
 
-## Binary Search (17)
+## Binary Search (18)
 
 - [Count Element Occurence](https://www.interviewbit.com/problems/count-element-occurence/)
 - [Rotated Array](https://www.interviewbit.com/problems/rotated-array/)
@@ -130,6 +130,7 @@ Interview bit problems topic wise
 - [Median of Array](https://www.interviewbit.com/problems/median-of-array/)
 - [Rotated Sorted Array Search](https://www.interviewbit.com/problems/rotated-sorted-array-search/)
 - [Capacity To Ship Packages Within B Days](https://www.interviewbit.com/problems/capacity-to-ship-packages-within-b-days/)
+- [Find A Peak Element](https://www.interviewbit.com/problems/find-a-peak-element/)
 
 ## Strings (37)
 
@@ -251,7 +252,7 @@ Interview bit problems topic wise
 - [SUBTRACT](https://www.interviewbit.com/problems/subtract/)
 - [NEXTGREATER](https://www.interviewbit.com/problems/nextgreater/)
 
-## Backtracking (17)
+## Backtracking (18)
 
 - [Reverse Link List Recursion](https://www.interviewbit.com/problems/reverse-link-list-recursion)
 - [Modular Expression](https://www.interviewbit.com/problems/modular-expression/)
@@ -270,6 +271,7 @@ Interview bit problems topic wise
 - [NQueens](https://www.interviewbit.com/problems/nqueens/)
 - [Sudoku](https://www.interviewbit.com/problems/sudoku/)
 - [All Possible Combinations](https://www.interviewbit.com/problems/all-possible-combinations/)
+- [All Unique Permutations](https://www.interviewbit.com/problems/all-unique-permutations/)
 
 ## Hashing (24)
 
